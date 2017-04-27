@@ -39,11 +39,10 @@ plugins:
 - folders
 - files
 - hbase
- ```
-  
+```
 Note than plugins order may be of importance. It will drive the order of playbook execution. For example, it make sense to have folder creation before file copying take place.
  
-If no plugins list is present, the default value will be:
+ If no plugins list is present, the default value will be:
 
 ```yaml
 plugins:
@@ -54,7 +53,7 @@ plugins:
 - kafka
 - hive
 - ranger
- ```
+```
 
 If this list is explicity defined, it will overwrite the default value (There is no concatenation of the two lists). 
 
@@ -73,7 +72,7 @@ plugins_paths:
 If not starting with a '/', path are relative to the file holding the `plugin_paths` definition.
 
  
-## Plugin reference
+## Plugin internals
 
 This part is of interest only if you intend to build your own plugin. (Which in fact is a very easy task).
 
@@ -95,10 +94,10 @@ All these files and folder are optionnal.
 
 The `groomer.py` python code may hold the following function.
 
-name | description
----: | ---
-`def groom(model, context)`|Called after the data model has been loaded from the master application file. Allow whatever check or enrichment of this model.
-`def getSchema(context)`|Return a list of schema object, to be merged in the overall schema.<br>If not provided, a default function is used which return only the schema build from the plugin's `schema.yml`.<br>This is intended for very specific case where one wants to have different schema based on the context.   
+Name | Description
+--- | ---
+`groom(model, context)`|Called after the data model has been loaded from the master application file. Allow whatever check or enrichment of this model.
+`getSchema(context)`|Return a list of schema object, to be merged in the overall schema.<br>If not provided, a default function is used which return only the schema build from the plugin's `schema.yml`.<br>This is intended for very specific case where one wants to have different schema based on the context.   
 
 ### Context object
 
