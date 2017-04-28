@@ -75,7 +75,7 @@ mkdir -p ${WF}
 echo "HADEPLOY_HOME: $HADEPLOY_HOME"
 echo "WORKING_FOLDER: $WF"
 
-python $HADEPLOY_HOME/src/main/hadeploy.py --workingFolder $WF --yamlLoggingConf $LOGCF --src $SRC
+python $HADEPLOY_HOME/src/core/main.py --workingFolder $WF --yamlLoggingConf $LOGCF --src $SRC
 if [ $? -ne "0" ]
 then 
 	exit 1

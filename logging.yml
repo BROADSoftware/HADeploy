@@ -10,15 +10,15 @@ handlers:
     stream: ext://sys.stdout
 loggers:
   hadeploy.main:
-    level: INFO
+    level: DEBUG
     handlers: [console]
     propagate: no
-  hadeploy.Parser:
-    level: INFO
+  hadeploy.plugin:
+    level: DEBUG
     handlers: [console]
     propagate: no
-  hadeploy.Templator:
-    level: INFO
+  hadeploy.plugins.master:
+    level: DEBUG
     handlers: [console]
     propagate: no
 root:

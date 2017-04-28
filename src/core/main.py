@@ -22,6 +22,8 @@ import yaml
 
 import misc
 
+from plugin import Plugin
+from context import Context
 
 logger = logging.getLogger("hadeploy.main")
 
@@ -50,7 +52,18 @@ def main():
     if len(os.listdir(workingFolder)) > 0:
         misc.ERROR("{0} must be an existing EMPTY folder".format(workingFolder))
     
+    # We must make a first read of the file, in a reduced context to fetch modules definition
+    builtinPath = os.path.abspath(os.path.join(mydir, "../plugins"))
+    context = Context()
 
+    masterPlugin = Plugin("master", [builtinPath])
+    context.addPlugin(masterPlugin)
+
+    testPlugin = Plugin("test", [builtinPath])
+    context.addPlugin(testPlugin)
+    
+    masterPlugin.onLoad(masterPlugin, context)
+    testPlugin.onLoad(testPlugin, context)
 
 if __name__ == "__main__":
     main()

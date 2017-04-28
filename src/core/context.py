@@ -15,10 +15,21 @@
 # You should have received a copy of the GNU General Public License
 # along with HADeploy.  If not, see <http://www.gnu.org/licenses/>.
 
-import logging
-
-logger = logging.getLogger("hadeploy.plugins.master")
 
 
-def onLoad(plugin, context):
-    logger.debug("Called master onLoad()")
+        
+            
+    
+
+class Context:
+    def __init__(self):
+        self.plugins = []
+        self.pluginByName = {}
+
+    def addPlugin(self, plugin):
+        self.plugins.append(plugin)
+        self.pluginByName[plugin.name] = plugin
+        
+        
+        
+        
