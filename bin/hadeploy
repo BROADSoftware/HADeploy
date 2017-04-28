@@ -1,0 +1,107 @@
+# Copyright (C) 2016 BROADSoftware
+#
+# This file is part of HADeploy
+#
+# HADeploy is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# HADeploy is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with HADeploy.  If not, see <http://www.gnu.org/licenses/>.
+
+HADEPLOY_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+
+
+function usage {
+	echo 'hadeploy --src <srcFile> [--src <srcFile>, ...] --action <CHECK|DEPLOY|PACKAGE|REMOVE|NONE> [--workingFolder <workingFolder>] [--loggingConf <loginConfFile>] '
+}
+
+
+SRC=""
+WF=""
+VAR=""
+
+while [[ $# > 0 ]]
+do
+	case $1 in
+		--src)
+			SRC="$SRC $2"
+			shift
+		;;
+		--var)
+			SRC="$SRC $2"
+			shift
+		;;
+		--workingFolder)
+			WF=$2
+			shift
+		;;
+		--loggingConf)
+			LOGCF=$2
+			shift
+		;;
+		--action)
+			ACTION=$2
+			shift
+		;;
+		*)
+			echo "Unknown parameter $1"
+			usage
+			exit 1
+		;;
+	esac
+	shift
+done
+
+if [ "$SRC" = "" ]; then echo "At least one --src file must be defined"; usage; exit 1; fi
+if [ "$ACTION" = "" ]; then usage; exit 1; fi
+if [ "$LOGCF" = "" ]; then LOGCF="$HADEPLOY_HOME/logging.yml"; fi
+
+if [ "$WF" = "" ]
+then
+	WF="/tmp/hadeploy-work-$$"
+else
+	WF="${WF}/hadeploy-work"
+	rm -rf "${WF}"
+fi
+mkdir -p ${WF}
+
+echo "HADEPLOY_HOME: $HADEPLOY_HOME"
+echo "WORKING_FOLDER: $WF"
+
+python $HADEPLOY_HOME/src/main/hadeploy.py --workingFolder $WF --yamlLoggingConf $LOGCF --src $SRC
+if [ $? -ne "0" ]
+then 
+	exit 1
+fi
+
+case $ACTION in
+	CHECK)
+		bash -c "cd $WF; ansible-playbook --check install.yml"
+	;;
+	DEPLOY)
+		bash -c "cd $WF; ansible-playbook install.yml"
+	;;
+	REMOVE)
+		bash -c "cd $WF; ansible-playbook remove.yml"
+	;;
+	PACKAGE)
+		echo "Not yet implemented"
+	;;
+	NONE)
+	;;
+	*)
+		echo "Unknown action $1"
+		usage
+		exit 1
+	;;
+esac
+		
+
+						

@@ -1,0 +1,25 @@
+site_name: HADeploy
+
+pages:
+- Home: index.md
+- Installation: installation.md
+- "Getting started": gettingstarted.md
+- References:
+  - "Inventory: ansible_inventory_files": plugins_reference/inventory/ansible_inventory_files.md
+  - "Inventory: hosts": plugins_reference/inventory/hosts.md
+  - "Inventory: host_overrides": plugins_reference/inventory/host_overrides.md
+  - "Files: folders": plugins_reference/files/folders.md
+- "Plugins reference":
+  - Inventory: 
+    - ansible_inventory_files: plugins_reference/inventory/ansible_inventory_files.md
+    - hosts: plugins_reference/inventory/hosts.md
+    - host_overrides: plugins_reference/inventory/host_overrides.md
+  - Files:
+    - folders: plugins_reference/files/folders.md
+- Architecture: architecture.md
+
+#theme: readthedocs
+theme: mkdocs
+#theme: 'material'
+#theme: yeti  # Bootswatch
+#theme: bootstrap

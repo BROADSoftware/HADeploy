@@ -55,11 +55,11 @@ plugins:
 - ranger
 ```
 
-If this list is explicity defined, it will overwrite the default value (There is no concatenation of the two lists). 
+If this list is explicitly defined, it will overwrite the default value (There is no concatenation of the two lists). 
 
 ## Plugin path
 
-HADeploy come with a set of builtin plugins. But, of course, aim is to be able to handle user's provided plugin. This can be easily achieved by defining a `plugins_paths` entry;
+HADeploy come with a set of builtin plugins. But, of course, aim is to be able to handle user's provided plugins. This can be easily achieved by defining a `plugins_paths` entry;
 
 ```yaml
 plugins_paths:
@@ -83,7 +83,7 @@ A plugin is a folder of the same name. This folder may contains the following el
 File or folder | Description
 ---: | ---
 `schema.yml`|The partial schema controlling Master file syntax.
-`groomer.py`|Python code hosting plugins runtime function. See the other table below
+`code.py`|Python code hosting plugins runtime function. See the other table below for a list of entry points
 `install.yml`|This is the Jinja2 template file which will be part of the resulting Ansible playbook used to deploy the application.  
 `remove.yml`|This is the Jinja2 template file which will be part of the resulting Ansible playbook used to remove the application.
 `roles`|A folder containing Ansible roles used by this plugin. If present, the path will be added to the `roles_path` of Ansible.
@@ -110,7 +110,16 @@ TODO
 
 ## The data model
 
-TODO
+The data model is the object exposed to the Jinja2 template to build the resulting Ansible playbook.
+
+It is made of a couple of sub-object:
+
+Name | Description
+---: | ---
+`src`| This is the Source Application files representation, with no or minor modification (i.e. File path adjustement)
+`data`| For several reason, one may need to perform some transformation, aggregation or whatever modification on the source to ease template rendering. Such modified value will be stored in this object.
+`helper`| This object contains data related to current HADeploy installation.
+ 
 
 ## Raw Ansible  
 
