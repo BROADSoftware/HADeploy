@@ -22,7 +22,9 @@ def main():
     print ctx.xxx
     #print ctx.pluginByName['abc'].path
 
-
+    x = ( 1, 3, 9)
+    for a in x:
+        print a
 
 
 if __name__ == "__main__":

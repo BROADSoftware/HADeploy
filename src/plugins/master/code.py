@@ -16,9 +16,15 @@
 # along with HADeploy.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+from plugin import Plugin
 
 logger = logging.getLogger("hadeploy.plugins.master")
 
+class MasterPlugin(Plugin):
+    
+    def __init__(self, name, path):
+        Plugin.__init__(self, name, path)
 
-def onLoad(plugin, context):
-    logger.debug("Called master onLoad()")
+    
+    def onNewSnippet(self, context):
+        logger.debug("Called master self.onNewSnippet()")

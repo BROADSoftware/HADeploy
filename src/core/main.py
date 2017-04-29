@@ -19,6 +19,8 @@ import os
 import argparse 
 import logging.config
 import yaml
+import imp
+import inspect
 
 import misc
 
@@ -26,6 +28,39 @@ from plugin import Plugin
 from context import Context
 
 logger = logging.getLogger("hadeploy.main")
+
+
+def loadPlugin(name, paths):
+    for p in paths:
+        path = os.path.join(p, name)
+        if os.path.isdir(path):
+            codeFile = os.path.join(path, "code.py")
+            if os.path.isfile(codeFile):
+                #logger.debug("Plugin '{0}': Will load code from '{1}'".format(name, codeFile))
+                module = imp.load_source(name, codeFile)
+                pluginClass = None
+                for className, obj in inspect.getmembers(module):
+                    if inspect.isclass(obj):
+                        #logger.debug("Name: {0}  Obj:{1}".format(className, obj))
+                        bases =  obj.__bases__
+                        for base in bases:
+                            if base == Plugin:
+                                pluginClass = obj
+                if pluginClass == None:
+                    misc.ERROR("Invalid plugin '{0}' code.py: Missing MyPlugin(Plugin) class".format(name))
+                else:
+                    #logger.debug("Plugin '{0}': Found class {1}".format(name, str(pluginClass)))
+                    plugin = pluginClass(name, path)
+                    logger.debug("Loaded plugin '{0}' with 'code.py' module  (path:'{1}')".format(name, path))    
+                    return plugin    
+            else:
+                # Module without code
+                logger.debug("Loaded plugin '{0}' without 'code.py' module  (path:'{1}')".format(name, path))    
+                return Plugin(name, path)    
+        misc.ERROR("Unable to find a plugin of name '{0}' in plugin paths {1}".format(name, paths))
+        
+         
+                
 
 
 def main():
@@ -52,18 +87,23 @@ def main():
     if len(os.listdir(workingFolder)) > 0:
         misc.ERROR("{0} must be an existing EMPTY folder".format(workingFolder))
     
-    # We must make a first read of the file, in a reduced context to fetch modules definition
+    # We must make a first read of the file, in a reduced context just to fetch modules definition
     builtinPath = os.path.abspath(os.path.join(mydir, "../plugins"))
     context = Context()
 
-    masterPlugin = Plugin("master", [builtinPath])
+    
+    masterPlugin = loadPlugin("master", [builtinPath])
     context.addPlugin(masterPlugin)
 
-    testPlugin = Plugin("test", [builtinPath])
-    context.addPlugin(testPlugin)
+    test1Plugin = loadPlugin("test1", [builtinPath])
+    context.addPlugin(test1Plugin)
+
+    test2Plugin = loadPlugin("test2", [builtinPath])
+    context.addPlugin(test2Plugin)
     
-    masterPlugin.onLoad(masterPlugin, context)
-    testPlugin.onLoad(testPlugin, context)
+    masterPlugin.onNewSnippet(context)
+    test1Plugin.onNewSnippet(context)
+    test2Plugin.onNewSnippet(context)
 
 if __name__ == "__main__":
     main()

@@ -16,19 +16,14 @@
 # along with HADeploy.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+from plugin import Plugin
 
-logger = logging.getLogger("hadeploy.plugin")
+logger = logging.getLogger("hadeploy.plugins.test2")
 
-
-class Plugin:
+class Test2Plugin(Plugin):
+    
     def __init__(self, name, path):
-        self.name = name
-        self.path = path
-        #logger.debug("Plugin '{0}':  type:'{1}' path:'{2}'".format(name, str(self.__class__), path))
+        Plugin.__init__(self,name, path)
 
-        
-    def onNewSnippet(self, context):
-        logger.debug("Called default self.onNewSnippet() for plugin '{0}'".format(self.name))
-        
-            
-        
+    
+    
