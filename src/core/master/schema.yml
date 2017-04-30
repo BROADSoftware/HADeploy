@@ -1,0 +1,17 @@
+
+
+type: map
+mapping:
+  "vars":
+    type: any
+  
+  "plugins":
+    type: "seq"
+    sequence:
+    - type: str
+
+  "plugins_paths":
+    type: "seq"
+    sequence:
+    - type: str
+        

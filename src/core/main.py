@@ -21,10 +21,13 @@ import logging.config
 import yaml
 
 import misc
+import schema
+import dump
 
 from context import Context
 from parser import Parser
 from const import PLUGINS, PLUGINS_PATHS, SRC
+
 
 logger = logging.getLogger("hadeploy.main")
 
@@ -81,9 +84,14 @@ def main():
     # And groom all plugins
     context.groom()
 
+    dump.dumpModel(context)
+    
+    # Now, build the schema for source validation, by merge of all schema plugin
+    theSchema = context.getSchema()
+    dump.dumpSchema(context, theSchema)
+    
+    schema.validate(context.model[SRC], theSchema)
 
-
-    context.generateDebugFile()
 
 
 

@@ -18,14 +18,14 @@
 
 
 import os        
-import pprint            
 import imp
 import inspect
 import logging
     
 from plugin import Plugin
 import misc
-from const import SRC,DATA,HELPER
+from const import DATA
+import schema
 
 logger = logging.getLogger("hadeploy.context")
 
@@ -41,9 +41,7 @@ class Context:
     def loadPlugin(self, name, paths):
         for p in paths:
             path = os.path.join(p, name)
-            if not os.path.isdir(path):
-                misc.ERROR("Unable to find a plugin of name '{0}' in plugin paths {1}".format(name, paths))
-            else:
+            if os.path.isdir(path):
                 codeFile = os.path.join(path, "code.py")
                 if os.path.isfile(codeFile):
                     #logger.debug("Plugin '{0}': Will load code from '{1}'".format(name, codeFile))
@@ -68,25 +66,21 @@ class Context:
                     plugin = Plugin(name, path)    
                 self.plugins.append(plugin)
                 self.pluginByName[plugin.name] = plugin
-
-    def generateDebugFile(self):
-        if SRC in self.model:
-            path = os.path.normpath(os.path.join(self.workingFolder, "model_src.json"))
-            output = file(path, 'w')
-            pp = pprint.PrettyPrinter(indent=2, stream=output)
-            pp.pprint(self.model[SRC])
-        if DATA in self.model:
-            path = os.path.normpath(os.path.join(self.workingFolder, "model_data.json"))
-            output = file(path, 'w')
-            pp = pprint.PrettyPrinter(indent=2, stream=output)
-            pp.pprint(self.model[DATA])
-        if HELPER in self.model:
-            path = os.path.normpath(os.path.join(self.workingFolder, "model_helper.json"))
-            output = file(path, 'w')
-            pp = pprint.PrettyPrinter(indent=2, stream=output)
-            pp.pprint(self.model[HELPER])
+                return
+        misc.ERROR("Unable to find a plugin of name '{0}' in plugin paths {1}".format(name, paths))
 
     def groom(self):
         for plugin in self.plugins:
             plugin.onGrooming(self)
+
+    # Build the schema for source validation, by merge of all schema plugin
+    def getSchema(self):
+        theSchema = {}
+        for plugin in self.plugins:
+            schema2 = plugin.getSchema()
+            if schema2 != None:
+                schema.schemaMerge(theSchema, schema2)
+        return theSchema
+
+
         

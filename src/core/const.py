@@ -32,4 +32,4 @@ PLUGINS = "plugins"
 DEFAULT_PLUGINS_PATHS = ["src/plugins"]
 
 # default plugins list
-DEFAULT_PLUGINS = [ 'test1', 'test2']
+DEFAULT_PLUGINS = [ 'inventory', 'test1', 'test2']

@@ -16,6 +16,8 @@
 # along with HADeploy.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+import os
+import yaml
 
 logger = logging.getLogger("hadeploy.plugin")
 
@@ -34,3 +36,10 @@ class Plugin:
     def onGrooming(self, context):
         logger.debug("Called default self.onGrooming() for plugin '{0}'".format(self.name))
         pass
+    
+    def getSchema(self):
+        schemaFile = os.path.join(self.path, "schema.yml")
+        if os.path.isfile(schemaFile):
+            return yaml.load(open(schemaFile))
+        else:
+            return None
