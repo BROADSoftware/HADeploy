@@ -27,8 +27,10 @@ class Plugin:
         #logger.debug("Plugin '{0}':  type:'{1}' path:'{2}'".format(name, str(self.__class__), path))
 
         
-    def onNewSnippet(self, context):
+    def onNewSnippet(self, context, snippetPath):
         logger.debug("Called default self.onNewSnippet() for plugin '{0}'".format(self.name))
         
             
-        
+    def onGrooming(self, context):
+        logger.debug("Called default self.onGrooming() for plugin '{0}'".format(self.name))
+        pass

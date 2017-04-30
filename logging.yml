@@ -13,6 +13,10 @@ loggers:
     level: DEBUG
     handlers: [console]
     propagate: no
+  hadeploy.context:
+    level: DEBUG
+    handlers: [console]
+    propagate: no
   hadeploy.plugin:
     level: DEBUG
     handlers: [console]

@@ -15,16 +15,21 @@
 # You should have received a copy of the GNU General Public License
 # along with HADeploy.  If not, see <http://www.gnu.org/licenses/>.
 
-import logging
-from plugin import Plugin
+# ----------------------------------------------- Index in dict
+SRC = "src"
+DATA = "data"
+HELPER = "helper"
 
-logger = logging.getLogger("hadeploy.plugins.master")
+VARS = "vars"
+HADEPLOY_HOME = "HADEPLOY_HOME"
 
-class MasterPlugin(Plugin):
-    
-    def __init__(self, name, path):
-        Plugin.__init__(self, name, path)
+PLUGINS_PATHS = "plugins_paths"
+PLUGINS = "plugins"
 
-    
-    def onNewSnippet(self, context):
-        logger.debug("Called master self.onNewSnippet()")
+
+# ------------------------------------------------ Defaut values
+# default plugins_paths, from HADEPLOY_HOME:
+DEFAULT_PLUGINS_PATHS = ["src/plugins"]
+
+# default plugins list
+DEFAULT_PLUGINS = [ 'test1', 'test2']

@@ -19,48 +19,27 @@ import os
 import argparse 
 import logging.config
 import yaml
-import imp
-import inspect
 
 import misc
 
-from plugin import Plugin
 from context import Context
+from parser import Parser
+from const import PLUGINS, PLUGINS_PATHS, SRC
 
 logger = logging.getLogger("hadeploy.main")
 
 
-def loadPlugin(name, paths):
-    for p in paths:
-        path = os.path.join(p, name)
-        if os.path.isdir(path):
-            codeFile = os.path.join(path, "code.py")
-            if os.path.isfile(codeFile):
-                #logger.debug("Plugin '{0}': Will load code from '{1}'".format(name, codeFile))
-                module = imp.load_source(name, codeFile)
-                pluginClass = None
-                for className, obj in inspect.getmembers(module):
-                    if inspect.isclass(obj):
-                        #logger.debug("Name: {0}  Obj:{1}".format(className, obj))
-                        bases =  obj.__bases__
-                        for base in bases:
-                            if base == Plugin:
-                                pluginClass = obj
-                if pluginClass == None:
-                    misc.ERROR("Invalid plugin '{0}' code.py: Missing MyPlugin(Plugin) class".format(name))
-                else:
-                    #logger.debug("Plugin '{0}': Found class {1}".format(name, str(pluginClass)))
-                    plugin = pluginClass(name, path)
-                    logger.debug("Loaded plugin '{0}' with 'code.py' module  (path:'{1}')".format(name, path))    
-                    return plugin    
-            else:
-                # Module without code
-                logger.debug("Loaded plugin '{0}' without 'code.py' module  (path:'{1}')".format(name, path))    
-                return Plugin(name, path)    
-        misc.ERROR("Unable to find a plugin of name '{0}' in plugin paths {1}".format(name, paths))
-        
-         
-                
+
+def handleSourceFiles(srcFileList, context):
+    parser = Parser()
+    for src in srcFileList:
+        base = os.path.dirname(os.path.abspath(src))
+        parser.parse(src)
+        # Adjust some environment variable, as they are relative to source file path
+        context.model['src'] = parser.getResult()
+        for plugin in context.plugins:
+            plugin.onNewSnippet(context, base)
+
 
 
 def main():
@@ -87,14 +66,28 @@ def main():
     if len(os.listdir(workingFolder)) > 0:
         misc.ERROR("{0} must be an existing EMPTY folder".format(workingFolder))
     
-    # We must make a first read of the file, in a reduced context just to fetch modules definition
-    builtinPath = os.path.abspath(os.path.join(mydir, "../plugins"))
-    context = Context()
+    # ----- We must make a first read of the file, with only the 'master' plugin to fetch plugins list and path
+    masterPluginPath = os.path.abspath(os.path.join(mydir, "."))
+    context = Context(workingFolder)
+    context.loadPlugin("master", [masterPluginPath])
+    handleSourceFiles(param.src, context)
+    context.groom()
 
-    
-    masterPlugin = loadPlugin("master", [builtinPath])
-    context.addPlugin(masterPlugin)
+    # Now, we must have the effective PLUGINS list and PLUGINS_PATHS in the context. We can load all plugins
+    for plName in context.model[SRC][PLUGINS]:
+            context.loadPlugin(plName, context.model[SRC][PLUGINS_PATHS])
+    # And reload source files, with now all plugins activated
+    handleSourceFiles(param.src, context)
+    # And groom all plugins
+    context.groom()
 
+
+
+    context.generateDebugFile()
+
+
+
+"""
     test1Plugin = loadPlugin("test1", [builtinPath])
     context.addPlugin(test1Plugin)
 
@@ -104,6 +97,7 @@ def main():
     masterPlugin.onNewSnippet(context)
     test1Plugin.onNewSnippet(context)
     test2Plugin.onNewSnippet(context)
+"""
 
 if __name__ == "__main__":
     main()
