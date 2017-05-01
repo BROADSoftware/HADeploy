@@ -142,7 +142,4 @@ def handleHostOverride(host, overrider):
     for k in todel:
         del host[k]
 
-def buildForceSetupHostList(model):
-    hostsToSetup = Set()
-                                
         

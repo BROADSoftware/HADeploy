@@ -1,0 +1,7 @@
+
+type: map
+mapping:
+  "ansible_inventory_files":
+    type: "seq"
+    sequence:
+    - type: str
