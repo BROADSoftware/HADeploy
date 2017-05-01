@@ -5,15 +5,20 @@ pages:
 - Installation: installation.md
 - "Getting started": gettingstarted.md
 - References:
-  - "Inventory: ansible_inventory_files": plugins_reference/inventory/ansible_inventory_files.md
+  - "Ansible: ansible_inventory_files": plugins_reference/ansible/ansible_inventory_files.md
+  - "Files: folders": plugins_reference/files/folders.md
   - "Inventory: hosts": plugins_reference/inventory/hosts.md
   - "Inventory: host_overrides": plugins_reference/inventory/host_overrides.md
-  - "Files: folders": plugins_reference/files/folders.md
+  - "Inventory: host_groups": plugins_reference/inventory/host_groups.md
+  - "Users: users": plugins_reference/users/users.md
+  - "Users: groups": plugins_reference/users/groups.md
 - "Plugins reference":
+  - Ansible:
+    - ansible_inventory_files: plugins_reference/ansible/ansible_inventory_files.md
   - Inventory: 
-    - ansible_inventory_files: plugins_reference/inventory/ansible_inventory_files.md
     - hosts: plugins_reference/inventory/hosts.md
     - host_overrides: plugins_reference/inventory/host_overrides.md
+    - host_groups: plugins_reference/inventory/host_groups.md
   - Files:
     - folders: plugins_reference/files/folders.md
 - Architecture: architecture.md

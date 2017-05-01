@@ -24,7 +24,7 @@ import logging
     
 from plugin import Plugin
 import misc
-from const import DATA
+from const import DATA,ANSIBLE_ROLES_PATHS,HELPER
 import schema
 
 logger = logging.getLogger("hadeploy.context")
@@ -35,6 +35,8 @@ class Context:
         self.pluginByName = {}
         self.model = {}
         self.model[DATA] = {}
+        self.model[HELPER] = {}
+        #self.workingFolder = os.path.abspath(workingFolder)
         self.workingFolder = workingFolder
         
 
@@ -82,5 +84,47 @@ class Context:
                 schema.schemaMerge(theSchema, schema2)
         return theSchema
 
+           
+    def checkScope(self, scope):
+        l = scope.split(":")
+        for h in l:
+            if h == 'all':
+                return True
+            if 'hostByName' in self.model[DATA] and h in self.model[DATA]['hostByName']:
+                return True
+            if 'hostGroupByName' in self.model[DATA] and h in self.model[DATA]['hostGroupByName']:
+                return True
+            print("Unknown host or host_group: '{0}'".format(h))
+            return False
 
+    def buildInstallTemplate(self):
+        output = file(os.path.normpath(os.path.join(self.workingFolder, "install.yml.jj2")), 'w')
+        for plugin in self.plugins:
+            tmpl = plugin.getInstallTemplate()
+            if tmpl != None and os.path.isfile(tmpl):
+                f = open(tmpl, 'r')
+                output.write("\n# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = PLUGIN {0}:\n\n".format(plugin.name))
+                output.write(f.read())
+                f.close()
+        output.close()
         
+        
+    def buildRemoveTemplate(self):
+        output = file(os.path.normpath(os.path.join(self.workingFolder, "remove.yml.jj2")), 'w')
+        for plugin in reversed(self.plugins):
+            tmpl = plugin.getRemoveTemplate()
+            if tmpl != None and os.path.isfile(tmpl):
+                f = open(tmpl, 'r')
+                output.write("\n# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = PLUGIN {0}:\n\n".format(plugin.name))
+                output.write(f.read())
+                f.close()
+        output.close()
+        
+    def builRolesPath(self):
+        rolesPaths = []
+        for plugin in self.plugins:
+            p = plugin.getRolesPath()
+            if p != None and os.path.isdir(p):
+                rolesPaths.append(p)
+        self.model[HELPER][ANSIBLE_ROLES_PATHS] = rolesPaths
+            

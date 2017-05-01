@@ -19,6 +19,7 @@ ssh_user|no||Allow to override ssh_user
 ssh_private_key_file|no||Allow to override ssh_private_key_file
 ssh_password|no||Allow to override ssh_password
 ssh_extra_args|no||Allow to override ssh_extra_args
+force_setup|no||A common Ansible problem is when referencing host info for a host which has not being accessed, so there is no fact grabbed for it.<br>Setting this flag to `yes` will trigger an access to this host at the begining of the play.
 
 > To suppress an attribute, set it to empty string: ''
 

@@ -34,3 +34,17 @@ def ERROR(err):
     exit(1)
 
 
+def ensureObjectInMaps(root, keys, defaultObj):
+    for key in keys[:-1]:
+        if not key in root:
+            root[key] = {}
+        root = root[key]
+    key = keys[-1:][0]
+    if not key in root:
+        root[key] = defaultObj
+
+def setDefaultInMap(root, key, defaultValue):
+    if not key in root:
+        root[key] = defaultValue
+                
+        

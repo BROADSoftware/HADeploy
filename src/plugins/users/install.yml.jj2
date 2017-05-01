@@ -1,0 +1,59 @@
+# ------------------------------------------------------------------------------ Handle groups and users
+
+{{% for scopeName, scope in data.usersScopeByName.iteritems() %}}
+{{% if scope.users|length > 0 or scope.groups|length > 0 %}}
+- hosts: {{{ scopeName }}}
+  tasks:
+{{% for group in scope.groups %}}
+{{% if group.managed %}}
+  - name: Create group '{{{group.name}}}'
+    group: name={{{group.name}}} system={{{group.system}}}
+{{% endif %}}
+{{% endfor %}}
+
+{{% for user in scope.users %}}
+{{% if user.managed %}}
+  - name: Create user '{{{user.login}}}'
+    user: name={{{user.login}}} system={{{user.system}}} createhome={{{user.create_home}}}{{% if user.comment is defined %}} comment="{{{user.comment}}}"{{%endif%}}{{% if user.group is defined %}} group="{{{user.group}}}"{{%endif%}}{{% if user.groups is defined %}} groups="{{{user.groups}}}"{{%endif%}}{{% if user.password is defined %}} password="{{{user.password}}}"{{%endif%}}
+
+{{% endif %}}
+
+{{% if user.authorized_keys is defined %}}
+  - name: Set authorized_keys for user '{{{user.login}}}'
+    authorized_key: user={{{user.login}}} state=present key={{item}}
+    with_file:
+{{% for k in user.authorized_keys %}}
+    - {{{k}}}
+{{% endfor %}}
+{{% endif %}}
+{{% if user.can_sudo_to is defined %}}   
+  - name: Grants sudo rights for '{{{user.can_sudo_to}}}' to '{{{user.login}}}'
+    copy: content="{{{user.login}}}  ALL=({{{user.can_sudo_to}}}) NOPASSWD:ALL\n" dest=/etc/sudoers.d/{{{user.login}}} mode=040 owner=root group=root
+{{%endif%}}
+{{% endfor %}}
+{{% for group in scope.groups %}}
+{{% if not group.managed %}}
+  - name: Ensure group '{{{group.name}}}' exists
+    shell: getent group {{{group.name}}}
+    register: getent_return
+    failed_when: false
+    changed_when: false
+  - fail: msg="group '{{{group.name}}}' DOES NOT EXIST"
+    when: getent_return.rc != 0 
+{{% endif %}}
+{{% endfor %}}
+
+{{% for user in scope.users %}}
+{{% if not user.managed %}}
+  - name: Ensure user '{{{user.login}}}' exists
+    shell: getent passwd {{{user.login}}}
+    register: getent_return
+    failed_when: false
+    changed_when: false
+  - fail: msg="user '{{{user.login}}}' DOES NOT EXIST"
+    when: getent_return.rc != 0 
+{{% endif %}}
+{{% endfor %}}
+{{% endif %}}
+{{% endfor %}}
+

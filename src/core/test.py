@@ -25,7 +25,12 @@ def main():
     x = ( 1, 3, 9)
     for a in x:
         print a
-
+    
+    y = [1, 2, 3]
+    #y = [1]
+    #y = [1,2]
+    print y[:-1]
+    print y[-1:]
 
 if __name__ == "__main__":
     main()

@@ -30,12 +30,18 @@ class Plugin:
 
         
     def onNewSnippet(self, context, snippetPath):
-        logger.debug("Called default self.onNewSnippet() for plugin '{0}'".format(self.name))
+        #logger.debug("Called default self.onNewSnippet() for plugin '{0}'".format(self.name))
+        pass
         
             
     def onGrooming(self, context):
-        logger.debug("Called default self.onGrooming() for plugin '{0}'".format(self.name))
+        #logger.debug("Called default self.onGrooming() for plugin '{0}'".format(self.name))
         pass
+    
+    
+    
+    # Following function follow standard and documented naming convention. 
+    # So override only in case of need, such as returning different values depending of the context. 
     
     def getSchema(self):
         schemaFile = os.path.join(self.path, "schema.yml")
@@ -43,3 +49,15 @@ class Plugin:
             return yaml.load(open(schemaFile))
         else:
             return None
+    
+    def getInstallTemplate(self):
+        return os.path.join(self.path, "install.yml.jj2")
+
+    def getRemoveTemplate(self):
+        return os.path.join(self.path, "remove.yml.jj2")
+        
+    def getRolesPath(self):
+        return os.path.join(self.path, "roles")
+        
+        
+        

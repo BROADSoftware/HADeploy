@@ -25,6 +25,10 @@ loggers:
     level: DEBUG
     handlers: [console]
     propagate: no
+  hadeploy.plugins.inventory:
+    level: DEBUG
+    handlers: [console]
+    propagate: no
 root:
   level: WARN
   handlers: [console]

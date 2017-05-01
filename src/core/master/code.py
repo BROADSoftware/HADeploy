@@ -31,7 +31,7 @@ class MasterPlugin(Plugin):
 
     
     def onNewSnippet(self, context, snippetPath):
-        logger.debug("Called master self.onNewSnippet()")
+        #logger.debug("Called master self.onNewSnippet()")
         if PLUGINS_PATHS in context.model[SRC]:
             newList = []
             for p in context.model[SRC][PLUGINS_PATHS]:
@@ -44,7 +44,7 @@ class MasterPlugin(Plugin):
 
     # This should be idempotent, as called twice (One on bootstrap, and on on regular case)
     def onGrooming(self, context):
-        logger.debug("Called self.onGrooming() for plugin '{0}'".format(self.name))
+        #logger.debug("Called self.onGrooming() for plugin '{0}'".format(self.name))
         if VARS not in context.model[SRC] or HADEPLOY_HOME not in context.model[SRC][VARS]:
             misc.ERROR("Undefined {0} variable. Please inject it on launch..".format(HADEPLOY_HOME))
         if not PLUGINS_PATHS in context.model[SRC]:

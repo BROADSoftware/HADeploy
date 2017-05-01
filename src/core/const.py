@@ -26,10 +26,11 @@ HADEPLOY_HOME = "HADEPLOY_HOME"
 PLUGINS_PATHS = "plugins_paths"
 PLUGINS = "plugins"
 
+ANSIBLE_ROLES_PATHS = "ansible_roles_paths"
 
-# ------------------------------------------------ Defaut values
+# ------------------------------------------------ Default values
 # default plugins_paths, from HADEPLOY_HOME:
 DEFAULT_PLUGINS_PATHS = ["src/plugins"]
 
 # default plugins list
-DEFAULT_PLUGINS = [ 'inventory', 'test1', 'test2']
+DEFAULT_PLUGINS = [ 'inventory', 'users', 'test1', 'test2']

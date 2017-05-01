@@ -1,0 +1,25 @@
+{{% if src.hosts is defined %}}
+{{% for host in src.hosts -%}}
+	{{{ host.name }}} ansible_ssh_host={{{ host.ssh_host}}}  ansible_ssh_user={{{ host.ssh_user }}} 
+	{{%- if host.ssh_private_key_file is defined -%}}
+		{{{" "}}}ansible_ssh_private_key_file={{{host.ssh_private_key_file}}}
+	{{%- endif -%}}
+	{{%- if host.ssh_password is defined -%}}
+		{{{" "}}}ansible_ssh_password={{{host.ssh_password}}}
+	{{%- endif -%}}
+	{{%- if host.ssh_extra_args is defined -%}}
+		{{{" "}}}ansible_ssh_extra_args="{{{host.ssh_extra_args}}}"
+	{{%- endif -%}}
+	{{{""}}}
+{{% endfor %}}
+{{%endif%}}
+
+{{% if src.host_groups is defined %}}
+{{% for hg in src.host_groups %}}
+
+[{{{hg.name}}}]
+{{% 	for h in hg.hosts %}}
+{{{ h }}}
+{{% 	endfor %}}
+{{% endfor %}}
+{{%endif%}}

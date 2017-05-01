@@ -27,6 +27,7 @@ import dump
 from context import Context
 from parser import Parser
 from const import PLUGINS, PLUGINS_PATHS, SRC
+from templator import Templator
 
 
 logger = logging.getLogger("hadeploy.main")
@@ -81,31 +82,30 @@ def main():
             context.loadPlugin(plName, context.model[SRC][PLUGINS_PATHS])
     # And reload source files, with now all plugins activated
     handleSourceFiles(param.src, context)
-    # And groom all plugins
-    context.groom()
+    if 'include' in context.model[SRC]:
+        del(context.model[SRC]['include'])  # Must remove, as not part of the schema
 
-    dump.dumpModel(context)
-    
     # Now, build the schema for source validation, by merge of all schema plugin
     theSchema = context.getSchema()
     dump.dumpSchema(context, theSchema)
-    
+    # And validate against this schema
     schema.validate(context.model[SRC], theSchema)
 
+    # And groom all plugins
+    context.groom()
 
+    context.buildInstallTemplate()
+    context.buildRemoveTemplate()
+    context.builRolesPath()
 
+    dump.dumpModel(context)
 
-"""
-    test1Plugin = loadPlugin("test1", [builtinPath])
-    context.addPlugin(test1Plugin)
-
-    test2Plugin = loadPlugin("test2", [builtinPath])
-    context.addPlugin(test2Plugin)
+    templator = Templator([os.path.join(mydir, './templates'), context.workingFolder], context.model)
+    templator.generate("inventory.jj2", os.path.join(context.workingFolder, "inventory"))
+    templator.generate("ansible.cfg.jj2", os.path.join(context.workingFolder, "ansible.cfg"))
+    templator.generate("install.yml.jj2", os.path.join(context.workingFolder, "install.yml"))
+    templator.generate("remove.yml.jj2", os.path.join(context.workingFolder, "remove.yml"))
     
-    masterPlugin.onNewSnippet(context)
-    test1Plugin.onNewSnippet(context)
-    test2Plugin.onNewSnippet(context)
-"""
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,8 @@
+[defaults] 
+{{% if helper.ansible_roles_paths|length > 0 %}}
+roles_path={{% for path in helper.ansible_roles_paths %}}{{% if not loop.first %}}:{{% endif %}}{{{path}}}{{%endfor%}}
+
+{{% endif %}}
+inventory = inventory
+host_key_checking = False
+retry_files_enabled = False 

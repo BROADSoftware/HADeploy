@@ -1,0 +1,37 @@
+
+type: map
+mapping:
+
+  "groups":
+    type: "seq"
+    sequence:
+    - type: map
+      mapping:
+        "name": { type: str, required: true }
+        "system": { type: bool, required: false }     # Default to false
+        "managed": { type: bool, required: false }    # Default to true
+        "scope": { type: str, required: false }       # Default to 'all'
+        "no_remove": { type: bool, required: false }    # Default to false
+        
+          
+  "users":
+    type: "seq"
+    sequence:
+    - type: map
+      mapping:
+        "login": { type: str, required: true }
+        "comment": { type: str, required: false }
+        "group": { type: str, required: false }
+        "groups": { type: str, required: false }
+        "can_sudo_to": { type: str, required: false }
+        "scope": { type: str, required: false }        # Default to 'all'
+        "managed": { type: bool, required: false }    # Default to true
+        "create_home": { type: bool, required: false }    # Default to true
+        "password": { type: str, required: false }    # Crypted password
+        "system": { type: bool, required: false }     # Default to false
+        "no_remove": { type: bool, required: false }    # Default to false
+        "authorized_keys":
+          type: seq
+          sequence:
+          - type: str
+
