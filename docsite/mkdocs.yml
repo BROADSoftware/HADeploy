@@ -4,23 +4,23 @@ pages:
 - Home: index.md
 - Installation: installation.md
 - "Getting started": gettingstarted.md
-- References:
-  - "Ansible_inventory: ansible_inventory_files": plugins_reference/ansible_inventory/ansible_inventory_files.md
-  - "Files: folders": plugins_reference/files/folders.md
-  - "Inventory: hosts": plugins_reference/inventory/hosts.md
-  - "Inventory: host_overrides": plugins_reference/inventory/host_overrides.md
-  - "Inventory: host_groups": plugins_reference/inventory/host_groups.md
-  - "Users: users": plugins_reference/users/users.md
-  - "Users: groups": plugins_reference/users/groups.md
 - "Plugins reference":
   - Ansible_inventory:
     - ansible_inventory_files: plugins_reference/ansible_inventory/ansible_inventory_files.md
   - Files:
+    - files: plugins_reference/files/files.md
     - folders: plugins_reference/files/folders.md
+    - local_files_folders: plugins_reference/files/local_files_folders.md
+    - local_templates_folders: plugins_reference/files/local_templates_folders.md
+    - trees: plugins_reference/files/trees.md
+  - Hdfs:
+    - source_host_credentials: plugins_reference/hdfs/source_host_credentials.md
   - Inventory: 
     - hosts: plugins_reference/inventory/hosts.md
     - host_overrides: plugins_reference/inventory/host_overrides.md
     - host_groups: plugins_reference/inventory/host_groups.md
+  - Ranger:
+    - hdfs_ranger_policies: plugins_reference/ranger/hdfs_ranger_policies.md
   - Users:
     - "users": plugins_reference/users/users.md
     - "groups": plugins_reference/users/groups.md
@@ -32,3 +32,13 @@ theme: mkdocs
 #theme: 'material'
 #theme: yeti  # Bootswatch
 #theme: bootstrap
+
+unused:
+- References:
+  - "Ansible_inventory: ansible_inventory_files": plugins_reference/ansible_inventory/ansible_inventory_files.md
+  - "Files: folders": plugins_reference/files/folders.md
+  - "Inventory: hosts": plugins_reference/inventory/hosts.md
+  - "Inventory: host_overrides": plugins_reference/inventory/host_overrides.md
+  - "Inventory: host_groups": plugins_reference/inventory/host_groups.md
+  - "Users: users": plugins_reference/users/users.md
+  - "Users: groups": plugins_reference/users/groups.md

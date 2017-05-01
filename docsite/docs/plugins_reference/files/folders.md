@@ -11,7 +11,7 @@ Each item of the list has the following attributes:
 Name | req?	| Default |	Description
 --- | --- | --- | ---
 path|yes||The path of the folder to create
-scope|yes||On which target does this folder be create? May be:<ul><li>A single host name</li><li>A single host_group name</li><li>Several hosts or host_groups, separated by the character ':'</li><li>the `hdfs` token.</li></ul>
+scope|yes||On which target does this folder be create? May be:<ul><li>A single `host` name</li><li>A single `host_group` name</li><li>Several `hosts` or `host_groups`, separated by the character ':'</li><li>the `hdfs` token.</li></ul>
 owner|yes||The owner of the file
 group|yes||The group of the file
 mode|yes||The permission of the file. Must be an octal representation embedded in a string (ie: "0755")

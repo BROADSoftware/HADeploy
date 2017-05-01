@@ -1,0 +1,79 @@
+
+type: map
+mapping:
+
+  "local_files_folders":
+    type: "seq"
+    sequence:
+    - type: str
+  "local_templates_folders":
+    type: "seq"
+    sequence:
+    - type: str
+
+        
+  "folders":
+    type: "seq"
+    sequence:
+    - type: map
+      mapping:
+        "scope": { type: str, required: true }   
+        "path": { type: str, required: true }
+        "owner": { type: str, required: true }
+        "group": { type: str, required: true }
+        "mode": { type: str, required: true }
+        "no_remove": { type: bool, required: false }    # Default to false
+          
+
+# For src attribute
+#http://
+#https://
+#file://
+#tmpl://
+#<node>:///
+
+# <node>:// src apply only on scope=hdfs. And path must be absolute 
+
+# file and node handle file patern matching  (?, *) 
+
+        
+  "files":        
+    type: "seq"
+    sequence:
+    - type: map
+      mapping:
+        "src": { type: str, required: true }
+        "scope": { type: str, required: true }
+        "dest_folder": { type: str, required: true }     # Target folder
+        "owner": { type: str, required: true }
+        "group": { type: str, required: true }
+        "mode": { type: str, required: true }
+        "dest_name": { type: str, required: false }  # Default to basename(src) 
+        "validate_certs": { type: bool, required: false }   # For https:// Default to true 
+        "force_basic_auth": { type: bool, required: false } # For http/https
+        "url_username":  { type: str, required: false } # For http/https
+        "url_password":  { type: str, required: false } # For http/https
+        "no_remove": { type: bool, required: false }    # Default to false
+        
+
+# For src attribute
+#file://
+#tmpl://
+#<node>:///
+
+# <node>:// src apply only on scope=hdfs. And path must be absolute 
+        
+  "trees":        
+    type: "seq"
+    sequence:
+    - type: map
+      mapping:
+        "src": { type: str, required: true }
+        "scope": { type: str, required: true }
+        "dest_folder": { type: str, required: true }     # Target folder. Will be deleted on removal
+        "owner": { type: str, required: true }
+        "group": { type: str, required: true }
+        "file_mode": { type: str, required: true }
+        "folder_mode": { type: str, required: true }
+        "no_remove": { type: bool, required: false }    # Default to false
+        
