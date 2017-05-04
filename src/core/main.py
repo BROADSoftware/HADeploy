@@ -33,16 +33,10 @@ from templator import Templator
 logger = logging.getLogger("hadeploy.main")
 
 
-
 def handleSourceFiles(srcFileList, context):
-    parser = Parser()
+    parser = Parser(context)
     for src in srcFileList:
-        base = os.path.dirname(os.path.abspath(src))
         parser.parse(src)
-        # Adjust some environment variable, as they are relative to source file path
-        context.model['src'] = parser.getResult()
-        for plugin in context.plugins:
-            plugin.onNewSnippet(context, base)
 
 
 
@@ -105,6 +99,8 @@ def main():
     templator.generate("ansible.cfg.jj2", os.path.join(context.workingFolder, "ansible.cfg"))
     templator.generate("install.yml.jj2", os.path.join(context.workingFolder, "install.yml"))
     templator.generate("remove.yml.jj2", os.path.join(context.workingFolder, "remove.yml"))
+    misc.ensureFolder(os.path.join(context.workingFolder, "group_vars"))
+    templator.generate("group_vars_all.jj2", os.path.join(context.workingFolder, "group_vars/all"))
     
 
 if __name__ == "__main__":

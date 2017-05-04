@@ -1,0 +1,44 @@
+
+# ------------------------------------------------------------------------------ Remove node files and trees
+
+{{% for scopeName, scope in data.files.scopeByName.iteritems() %}}
+{{% if scope.files|length > 0 or  scope.trees|length > 0 %}}
+- hosts: {{{ scopeName }}}
+  tasks:
+{{% for file in scope.files|reverse %}}
+{{% if not file.no_remove %}}
+  - name: Remove file {{{file._target_}}}
+    file: path={{{file._target_}}} state=absent
+{{%endif %}}
+{{% endfor %}}
+{{% for tree in scope.trees|reverse %}}
+{{% if not tree.no_remove %}}
+  - name: Remove tree {{{tree.dest_folder}}}
+    file: path={{{tree.dest_folder}}} state=absent
+{{%endif %}}
+{{% endfor %}}
+
+
+{{%endif%}}
+{{% endfor %}}
+
+
+
+# ------------------------------------------------------------------------------ Remove nodes folders
+
+
+{{% for scopeName, scope in data.files.scopeByName.iteritems() %}}
+{{% if scope.folders|length > 0 %}}
+- hosts: {{{ scopeName }}}
+  tasks:
+{{% for folder in scope.folders|reverse %}}
+{{% if not folder.no_remove %}}
+  - name: Remove folder '{{{folder.path}}}'
+    file: path={{{folder.path}}} state=absent
+{{%endif %}}
+{{% endfor %}}
+{{%endif %}}
+
+{{% endfor %}}
+
+    

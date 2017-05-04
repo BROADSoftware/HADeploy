@@ -27,6 +27,12 @@ import misc
 from const import DATA,ANSIBLE_ROLES_PATHS,HELPER
 import schema
 
+        
+INVENTORY="inventory"
+HOST_BY_NAME="hostByName"        
+HOST_GROUP_BY_NAME="hostGroupByName"
+
+
 logger = logging.getLogger("hadeploy.context")
 
 class Context:
@@ -90,9 +96,9 @@ class Context:
         for h in l:
             if h == 'all':
                 return True
-            if 'hostByName' in self.model[DATA] and h in self.model[DATA]['hostByName']:
+            if INVENTORY in self.model[DATA] and HOST_BY_NAME in self.model[DATA][INVENTORY] and h in self.model[DATA][INVENTORY][HOST_BY_NAME]:
                 return True
-            if 'hostGroupByName' in self.model[DATA] and h in self.model[DATA]['hostGroupByName']:
+            if INVENTORY in self.model[DATA] and HOST_GROUP_BY_NAME in self.model[DATA][INVENTORY] and h in self.model[DATA][INVENTORY][HOST_GROUP_BY_NAME]:
                 return True
             print("Unknown host or host_group: '{0}'".format(h))
             return False

@@ -24,7 +24,7 @@ from sets import Set
 
 logger = logging.getLogger("hadeploy.plugins.inventory")
 
-
+INVENTORY="inventory"
 HOSTS="hosts"
 SSH_PRIVATE_FILE_FILE="ssh_private_key_file"
 HOST_OVERRIDE="host_overrides"
@@ -61,6 +61,7 @@ class InventoryPlugin(Plugin):
             
 
     def onGrooming(self, context):
+        context.model[DATA][INVENTORY] = {}
         buildHostDicts(context.model)
         handleHostOverrides(context.model)
         check(context.model)
@@ -76,12 +77,12 @@ def buildHostDicts(model):
     if HOSTS in model[SRC]:
         for host in model[SRC][HOSTS]:
             hostByName[host[NAME]] = host
-    model[DATA][HOST_BY_NAME] = hostByName
+    model[DATA][INVENTORY][HOST_BY_NAME] = hostByName
     hostGroupByName = {}
     if HOST_GROUPS in model[SRC]:
         for hg in model[SRC][HOST_GROUPS]:
             hostGroupByName[hg[NAME]] = hg
-    model[DATA][HOST_GROUP_BY_NAME] = hostGroupByName
+    model[DATA][INVENTORY][HOST_GROUP_BY_NAME] = hostGroupByName
 
    
     
@@ -103,11 +104,11 @@ def check(model):
         for hg in model[SRC][HOST_GROUPS]:
             misc.setDefaultInMap(hg, FORCE_SETUP, False)
             for hname in hg[HOSTS]:
-                if not hname in model[DATA][HOST_BY_NAME]:
+                if not hname in model[DATA][INVENTORY][HOST_BY_NAME]:
                     misc.ERROR("Group '{0}': Host '{1}' is not defined!".format(hg[NAME], hname))      
                 if hg[FORCE_SETUP]:
                     hostsToSetup.add(hname)
-    model[DATA][HOSTS_TO_SETUP] = list(hostsToSetup)
+    model[DATA][INVENTORY][HOSTS_TO_SETUP] = list(hostsToSetup)
 
 def handleHostOverrides(model):
     if HOST_OVERRIDE in model[SRC]:
@@ -116,8 +117,8 @@ def handleHostOverrides(model):
                 for host in model[SRC][HOSTS]:
                     handleHostOverride(host, hover)
             else:
-                if hover[NAME] in model[DATA][HOST_BY_NAME]:
-                    handleHostOverride(model[DATA][HOST_BY_NAME][hover[NAME]], hover)
+                if hover[NAME] in model[DATA][INVENTORY][HOST_BY_NAME]:
+                    handleHostOverride(model[DATA][INVENTORY][HOST_BY_NAME][hover[NAME]], hover)
                 else:
                     misc.ERROR("Trying to override unexisting host: '{0}'".format(hover[NAME]))
                                 

@@ -22,6 +22,7 @@ import misc
 import jinja2
 import os
 
+from const import SRC
 
 logger = logging.getLogger("hadeploy.Parser")
 
@@ -180,7 +181,8 @@ trueRegex = re.compile(r"^(?:y|Y|yes|Yes|YES|true|True|TRUE|on|On|ON)$")
 falseRegex = re.compile(r"^(?:n|N|no|No|NO|false|False|FALSE|off|Off|OFF)$")
 
 class Parser:
-    def __init__(self):
+    def __init__(self, context):
+        self.context = context
         self.path = Path()
         self.state = State.WAITING_FOR_TYPE
         self.vars = None
@@ -351,7 +353,13 @@ class Parser:
                 raise Exception("Unknown event:" + repr(event))
         
         logger.debug("End or parsing: Anchors:{0}".format(str(self.anchors)))
-        
+        # Adjust some environment variable, as they are relative to source file path
+        if fileName != None:
+            base = os.path.dirname(os.path.abspath(fileName))
+            self.context.model[SRC] = self.getResult()
+            for plugin in self.context.plugins:
+                plugin.onNewSnippet(self.context, base)
+
         
     def getResult(self):
         return self.path.top().object

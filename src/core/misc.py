@@ -16,6 +16,8 @@
 # along with HADeploy.  If not, see <http://www.gnu.org/licenses/>.
 
 import pprint
+import os
+import errno
 
 
 prettyPrinter = pprint.PrettyPrinter(indent=2)
@@ -34,6 +36,16 @@ def ERROR(err):
     exit(1)
 
 
+
+def ensureFolder(path):
+    try:
+        os.makedirs(path)
+    except OSError as exception:
+        if exception.errno != errno.EEXIST:
+            raise
+        else:
+            pass
+                
 def ensureObjectInMaps(root, keys, defaultObj):
     for key in keys[:-1]:
         if not key in root:

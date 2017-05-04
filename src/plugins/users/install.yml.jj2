@@ -1,6 +1,6 @@
 # ------------------------------------------------------------------------------ Handle groups and users
 
-{{% for scopeName, scope in data.usersScopeByName.iteritems() %}}
+{{% for scopeName, scope in data.users.scopeByName.iteritems() %}}
 {{% if scope.users|length > 0 or scope.groups|length > 0 %}}
 - hosts: {{{ scopeName }}}
   tasks:

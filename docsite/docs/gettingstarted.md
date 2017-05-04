@@ -228,7 +228,7 @@ And, as demonstrated by the `app_jar_url:` entry, variable value can themself in
 
 Note also than variable can be a scalar (String, int, etc...) but also a map.
 
-There is also a method to provide variable definition on the command line when launching HADeploy. See Launching HADeploy below (LINK).
+There is also a method to provide variable definition on the command line when launching HADeploy. See [Launching HADeploy](./gettingstarted/#launching-hadeploy) below.
 
 ### Groups
 

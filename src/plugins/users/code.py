@@ -33,7 +33,7 @@ NO_REMOVE="no_remove"
 MANAGED="managed"
 CREATE_HOME="create_home"
 
-USER_SCOPE_BY_NAME="usersScopeByName"
+SCOPE_BY_NAME="scopeByName"
 
 
 class UsersPlugin(Plugin):
@@ -56,11 +56,20 @@ class UsersPlugin(Plugin):
 
 
     def onGrooming(self, context):
+        misc.ensureObjectInMaps(context.model[DATA], [USERS, SCOPE_BY_NAME], {})
         groomUsers(context)
         groomGroups(context)
 
 
 # ---------------------------------------------------- Static functions
+
+
+def ensureScope(context, scope):
+    root = context.model[DATA][USERS][SCOPE_BY_NAME]
+    if not scope in root:
+        misc.ensureObjectInMaps(root, [scope, USERS], [])
+        misc.ensureObjectInMaps(root, [scope, GROUPS], [])
+
 
 def groomUsers(context):
     model = context.model
@@ -78,9 +87,8 @@ def groomUsers(context):
             if not context.checkScope(usr[SCOPE]):
                 misc.ERROR("User {0}: Scope attribute '{1}' does not match any host or host_group!".format(usr['login'], usr[SCOPE]))
             # We group operation per scope, to optimize ansible run. Note of a scope exists, it must hold both 'users' and 'groups'
-            misc.ensureObjectInMaps(context.model[DATA], [USER_SCOPE_BY_NAME, usr[SCOPE], USERS], [])
-            misc.ensureObjectInMaps(context.model[DATA], [USER_SCOPE_BY_NAME, usr[SCOPE], GROUPS], [])
-            context.model[DATA][USER_SCOPE_BY_NAME][usr[SCOPE]][USERS].append(usr)
+            ensureScope(context, usr[SCOPE])
+            context.model[DATA][USERS][SCOPE_BY_NAME][usr[SCOPE]][USERS].append(usr)
 
 
 def groomGroups(context):
@@ -94,8 +102,7 @@ def groomGroups(context):
             if not context.checkScope(grp[SCOPE]):
                 misc.ERROR("Group {0}: Scope attribute '{1}' does not match any host or host_group!".format(grp['name'], grp[SCOPE]))
             # We group operation per scope, to optimize ansible run. Note of a scope exists, it must hold both 'users' and 'groups'
-            misc.ensureObjectInMaps(context.model[DATA], [USER_SCOPE_BY_NAME, grp[SCOPE], USERS], [])
-            misc.ensureObjectInMaps(context.model[DATA], [USER_SCOPE_BY_NAME, grp[SCOPE], GROUPS], [])
-            context.model[DATA][USER_SCOPE_BY_NAME][grp[SCOPE]][GROUPS].append(grp)
+            ensureScope(context, grp[SCOPE])
+            context.model[DATA][USERS][SCOPE_BY_NAME][grp[SCOPE]][GROUPS].append(grp)
             
             

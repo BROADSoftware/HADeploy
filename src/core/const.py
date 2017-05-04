@@ -33,4 +33,4 @@ ANSIBLE_ROLES_PATHS = "ansible_roles_paths"
 DEFAULT_PLUGINS_PATHS = ["src/plugins"]
 
 # default plugins list
-DEFAULT_PLUGINS = [ 'ansible_inventory', 'inventory', 'users']
+DEFAULT_PLUGINS = [ 'ansible_inventory', 'inventory', 'users', 'files']

@@ -1,0 +1,60 @@
+
+# ------------------------------------------------------------------------------ Handle node folders
+
+{{% for scopeName, scope in data.files.scopeByName.iteritems() %}}
+{{% if scope.folders|length > 0 %}}
+- hosts: {{{ scopeName }}}
+  tasks:
+{{% for folder in scope.folders %}}
+  - name: Create folder '{{{folder.path}}}'
+    file: path={{{folder.path}}} owner={{{folder.owner}}} group={{{folder.group}}} mode="{{{folder.mode}}}" state=directory
+{{% endfor %}}
+{{%endif %}}
+{{% endfor %}}
+
+# ------------------------------------------------------------------------------ Handle node files and trees
+
+{{% for scopeName, scope in data.files.scopeByName.iteritems() %}}
+{{% if scope.files|length > 0 or  scope.trees|length > 0 %}}
+- hosts: {{{ scopeName }}}
+  tasks:
+{{% for file in scope.files %}}
+{{% if file.src.startswith("file://") %}}
+  - name: Copy file '{{{file._displaySrc_}}}' to '{{{file._target_}}}'
+    copy: src={{{file._src_}}} dest={{{file._target_}}} owner={{{file.owner}}} group={{{file.group}}} mode="{{{file.mode}}}" 
+{{% elif file.src.startswith("http://") or file.src.startswith("https://") %}}
+  - name: Download '{{{file.src}}}' to '{{{file._target_}}}'
+    get_url: url={{{file.src}}} dest={{{file._target_}}} owner={{{file.owner}}} group={{{file.group}}} mode="{{{file.mode}}}" validate_certs={{{file.validate_certs}}} force_basic_auth={{{file.force_basic_auth }}} {{% if file.url_username is defined %}}url_username={{{file.url_username}}}{{%endif%}} {{% if file.url_password is defined %}}url_password={{{file.url_password}}}{{%endif%}}
+{{% elif file.src.startswith("tmpl://")  %}}
+  - name: Copy template file '{{{file._displaySrc_}}}' to '{{{file._target_}}}'
+    template: src={{{file._src_}}} dest={{{file._target_}}} owner={{{file.owner}}} group={{{file.group}}} mode="{{{file.mode}}}" 
+{{% endif %}}
+
+{{% endfor %}}
+
+{{% for tree in scope.trees %}}
+  - name: Adjust rights on subfolders (And create empty ones if neeeded)
+    file: path="{{item}}" owner={{{tree.owner}}} group={{{tree.group}}} mode="{{{tree.folder_mode}}}" state=directory
+    with_items:
+{{% for dirname in tree._targetFolders_ %}}
+    - {{{ dirname }}}
+{{% endfor %}}
+{{% if tree.src.startswith("file://") %}}
+  - name: Copy tree '{{{tree._displaySrc_}}}' to '{{{tree.dest_folder}}}'
+    copy: src={{{tree._src_}}} dest={{{tree.dest_folder}}} owner={{{tree.owner}}} group={{{tree.group}}} mode="{{{tree.file_mode}}}"  directory_mode="{{{tree.folder_mode}}}"
+{{% elif tree.src.startswith("tmpl://")  %}}
+{{% if tree._tmplList|length > 0 %}}
+  - name: Copy template tree '{{{tree._displaySrc_}}}' to '{{{tree.dest_folder}}}'
+    template: src={{item.src}} dest={{item.dst}} owner={{{tree.owner}}} group={{{tree.group}}} mode="{{{tree.file_mode}}}"
+    with_items:
+{{% for x in tree._tmplList %}}
+    - { src: "{{{ x.src }}}", dst: "{{{ x.dst }}}" }
+{{% endfor %}}    
+    loop_control:
+      label: "{{item.dst}}"
+{{% endif %}}
+{{% endif %}}
+{{% endfor %}}
+
+{{%endif%}}
+{{% endfor %}}
