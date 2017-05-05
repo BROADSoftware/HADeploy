@@ -1,0 +1,76 @@
+> HDFS_CMD
+
+  THIS IS A MODIFIED VERSION OF THE [command] MODULE which lookup `creates' and `removes' files in HDFS instead of local file.
+  The [hdfs_cmd] module takes a `cmd' option holding all the command line to be executed The given command will be executed on
+  all selected nodes. By default it will not be processed through the shell, so variables like `$HOME' and operations like
+  `"<"', `">"', `"|"', and `"&"' will not work (Set uses_shell=true to activate theses features).
+
+Options (= is mandatory):
+
+- chdir
+        cd into this directory before running the command
+        [Default: None]
+= cmd
+        The command to execute.
+        [Default: None]
+- executable
+        Change the shell used to execute the command. Should be an absolute path to the executable.
+        [Default: None]
+- hadoop_conf_dir
+        Where to find Haddop configuration file, specially hdfs-site.xml, in order to lookup WebHDFS endpoint (`dfs.namenode
+        .http-address') Used only if webhdfs_endpoint is not defined
+        [Default: /etc/hadoop/conf]
+- hdfs_creates
+        An absolute HDFS path, when it already exists, this step will *not* be run.
+        [Default: None]
+- hdfs_removes
+        An absolute HDFS path, when it does not exist, this step will *not* be run.
+        [Default: None]
+- hdfs_user
+        Define account to impersonate to perform required operation on HDFS through WebHDFS.
+        WARNING: This will impact only `hdfs_creates' and `hdfs_removes'. The command operation is still performed under
+        ansible_ssh_user account.
+        Also accepts the special value `KERBEROS'. In such case, a valid Kerberos ticket must exist for the ansible_ssh_user
+        account. (A `kinit' must be issued under this account). Then `hdfs_creates' and `hdfs_removes' will be performed on
+        behalf of the user defined by the Kerberos ticket.
+        [Default: hdfs]
+- uses_shell
+        Activate shell mode. Same as `shell' module against `command' module.
+        [Default: (null)]
+- webhdfs_endpoint
+        Provide WebHDFS REST API entry point. Typically `<namenodeHost>:50070'. It could also be a comma separated list of entry
+        point, which will be checked up to a valid one. This will allow Namenode H.A. handling. If not defined, will be looked
+        up in local hdfs-site.xml
+        [Default: None]
+Notes:
+  * If you want to run a command through the shell (say you are using `<', `>', `|', etc), you actually need to set
+        uses_shell=true. The [command] module is much more secure as it's not affected by the user's environment.
+  *  `creates', `removes', and `chdir' can be specified after the command. For instance, if you only want to run a command
+        if a certain file does not exist, use this.
+  * As HDFS is a distributed file system shared by all nodes of a cluster, this module must be launched on one node only.
+        Note there is no protection against race condition (Same operation performed simultaneously from several nodes).
+  * All HDFS operations are performed using WebHDFS REST API.
+EXAMPLES:
+
+# How to copy a file from the file system of the targeted host to HDFS
+- hdfs_cmd: cmd="sudo -u joe hdfs dfs -put /etc/passwd /user/joe/passwd1" hdfs_creates=/user/joe/passwd1
+
+# Same, using different syntax
+- hdfs_cmd: cmd="sudo -u joe hdfs dfs -put /etc/passwd /user/joe/passwd2"
+  args:
+    hdfs_creates: /user/joe/passwd2
+    
+# Same, using different syntax
+- name: "Copy passwd3 to hdfs"
+  hdfs_cmd: 
+    cmd: sudo -u joe hdfs dfs -put ./passwd /user/joe/passwd3
+    hdfs_creates: /user/joe/passwd3
+    chdir: /etc
+
+# Copy the file and adjust permissions using hdfs_file
+- hdfs_cmd: cmd="sudo -u hdfs hdfs dfs -put /etc/passwd /user/joe/passwd4" hdfs_creates=/user/joe/passwd4
+- hdfs_file: hdfs_path=/user/joe/passwd4 owner=joe group=users mode=0770
+      
+
+
+MAINTAINERS: Ansible Core Team, Michael DeHaan, Serge ALEXANDRE

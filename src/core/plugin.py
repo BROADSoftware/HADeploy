@@ -56,8 +56,8 @@ class Plugin:
     def getRemoveTemplate(self):
         return os.path.join(self.path, "remove.yml.jj2")
         
-    def getRolesPath(self):
-        return os.path.join(self.path, "roles")
+    def getRolesPaths(self):
+        return [os.path.join(self.path, "roles")]
         
         
         

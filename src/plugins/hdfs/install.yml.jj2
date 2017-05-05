@@ -54,24 +54,24 @@
 {{% for file in data.hdfs.files %}}
   # ------------------------------------ Handle file to hdfs://{{{file._target_}}} 
 {{% if file.src.startswith("file://") %}}
-  - name: Copy file '{{{file._displaySrc_}}}' to '{{{file._ttarget_}}}'
-    copy: src={{{file._src_}}} dest={{{file._ttarget_}}} owner={{{file.owner}}} group={{{file.group}}} mode="0644" # 0644 as hdfs user must be able to read it
+  - name: Copy file '{{{file._displaySrc_}}}' to '{{{file._cacheTarget_}}}'
+    copy: src={{{file._src_}}} dest={{{file._cacheTarget_}}} owner={{{file.owner}}} group={{{file.group}}} mode="0644" # 0644 as hdfs user must be able to read it
 {{% elif file.src.startswith("http://") or file.src.startswith("https://") %}}
-  - name: Download '{{{file.src}}}' to '{{{file._ttarget_}}}'
-    get_url: url={{{file.src}}} dest={{{file._ttarget_}}} owner={{{file.owner}}} group={{{file.group}}} mode="0644" validate_certs={{{file.validate_certs}}} force_basic_auth={{{file.force_basic_auth }}} {{% if file.url_username is defined %}}url_username={{{file.url_username}}}{{%endif%}} {{% if file.url_password is defined %}}url_password={{{file.url_password}}}{{%endif%}} # 0644 as hdfs user must be able to read it
+  - name: Download '{{{file.src}}}' to '{{{file._cacheTarget_}}}'
+    get_url: url={{{file.src}}} dest={{{file._cacheTarget_}}} owner={{{file.owner}}} group={{{file.group}}} mode="0644" validate_certs={{{file.validate_certs}}} force_basic_auth={{{file.force_basic_auth }}} {{% if file.url_username is defined %}}url_username={{{file.url_username}}}{{%endif%}} {{% if file.url_password is defined %}}url_password={{{file.url_password}}}{{%endif%}} # 0644 as hdfs user must be able to read it
 {{% elif file.src.startswith("tmpl://")  %}}
-  - name: Copy template file '{{{file._displaySrc_}}}' to '{{{file._ttarget_}}}'
-    template: src={{{file._src_}}} dest={{{file._ttarget_}}} owner={{{file.owner}}} group={{{file.group}}} mode="0644" # 0644 as hdfs user must be able to read it 
+  - name: Copy template file '{{{file._displaySrc_}}}' to '{{{file._cacheTarget_}}}'
+    template: src={{{file._src_}}} dest={{{file._cacheTarget_}}} owner={{{file.owner}}} group={{{file.group}}} mode="0644" # 0644 as hdfs user must be able to read it 
 {{% endif %}}
-  - name: Push '{{{file._ttarget_}}}' to HDFS as {{{file._target_}}}
-    hdfs_put: src={{{file._ttarget_}}} hdfs_dest={{{file._target_}}} owner={{{file.owner}}} group={{{file.group}}} mode="{{{file.mode}}}" hdfs_user={{{src.hdfs_relay.user}}}
+  - name: Push '{{{file._cacheTarget_}}}' to HDFS as {{{file._target_}}}
+    hdfs_put: src={{{file._cacheTarget_}}} hdfs_dest={{{file._target_}}} owner={{{file.owner}}} group={{{file.group}}} mode="{{{file.mode}}}" hdfs_user={{{src.hdfs_relay.user}}}
 {{% endfor %}}
 
 {{% for tree in data.hdfs.trees %}}
   # ------------------------------------ Handle tree to hdfs://{{{tree.dest_folder}}} 
 {{% if tree.src.startswith("file://") %}}
-  - name: Copy tree '{{{tree._displaySrc_}}}' to '{{{tree._ttarget_}}}'
-    copy: src={{{tree._src_}}} dest={{{tree._ttarget_}}} owner={{{tree.owner}}} group={{{tree.group}}} mode="0644" # 0644 as hdfs user must be able to read it
+  - name: Copy tree '{{{tree._displaySrc_}}}' to '{{{tree._cacheTarget_}}}'
+    copy: src={{{tree._src_}}} dest={{{tree._cacheTarget_}}} owner={{{tree.owner}}} group={{{tree.group}}} mode="0644" # 0644 as hdfs user must be able to read it
 {{% elif tree.src.startswith("tmpl://")  %}}
   - name: Create subfolder in cache
     file: path="{{item}}" state=directory
@@ -80,7 +80,7 @@
     - {{{ dirname }}}
 {{% endfor %}}
 {{% if tree._tmplList|length >0 %}}
-  - name: Generate template tree '{{{tree._displaySrc_}}}' to '{{{tree._ttarget_}}}'
+  - name: Generate template tree '{{{tree._displaySrc_}}}' to '{{{tree._cacheTarget_}}}'
     template: src={{item.src}} dest={{item.dst}} owner={{{tree.owner}}} group={{{tree.group}}} mode="{{{tree.file_mode}}}"
     with_items:
 {{% for x in tree._tmplList %}}
@@ -92,8 +92,8 @@
 {{% endif %}}
   - name: Create folder '{{{tree.dest_folder}}}'
     hdfs_file: hdfs_path={{{tree.dest_folder}}} state=directory  owner={{{tree.owner}}} group={{{tree.group}}} mode="{{{tree.folder_mode}}}" hdfs_user={{{src.hdfs_relay.user}}}
-  - name: Push '{{{tree._ttarget_}}}' to HDFS as {{{tree.dest_folder}}}
-    hdfs_put: src={{{tree._ttarget_}}} hdfs_dest={{{tree.dest_folder}}} owner={{{tree.owner}}} group={{{tree.group}}} mode="{{{tree.file_mode}}}" directory_mode="{{{tree.folder_mode}}}" hdfs_user={{{src.hdfs_relay.user}}}
+  - name: Push '{{{tree._cacheTarget_}}}' to HDFS as {{{tree.dest_folder}}}
+    hdfs_put: src={{{tree._cacheTarget_}}} hdfs_dest={{{tree.dest_folder}}} owner={{{tree.owner}}} group={{{tree.group}}} mode="{{{tree.file_mode}}}" directory_mode="{{{tree.folder_mode}}}" hdfs_user={{{src.hdfs_relay.user}}}
 {{% endfor %}}
 {{%endif%}}
 
@@ -112,18 +112,18 @@
 
 # ------------------------------------------------------- Handle node to HDFS push files and trees
 
-{{% for scopeName, scope in data.hdfs.scopeByName.iteritems() %}}
-{{% if scope.nodeFileToHdfs|length > 0 or scope.nodeTreeToHdfs|length %}}
+{{% for scopeName, scope in data.hdfs.nodeToHdfsByName.iteritems() %}}
+{{% if scope.files|length > 0 or scope.trees|length %}}
 - hosts: {{{ scopeName }}}
   roles:
   - hdfs_modules    
   tasks:
 
-{{% if data.credentialByHost[scopeName] is defined %}}
+{{% if data.hdfs.credentialByHost[scopeName] is defined %}}
   - name: Perform kinit for HDFS access from {{{ scopeName }}}
-    shell: kinit -kt {{{ data.credentialByHost[scopeName].keytab_path }}} {{{ data.credentialByHost[scopeName].principal }}}
+    shell: kinit -kt {{{ data.hdfs.credentialByHost[scopeName].keytab_path }}} {{{ data.hdfs.credentialByHost[scopeName].principal }}}
     changed_when: false
-{{% if data.credentialByHost[scopeName].kdebug %}} 
+{{% if data.hdfs.credentialByHost[scopeName].kdebug %}} 
   - name: Check kerberos ticket for HDFS access
     shell: klist
     register: klist_result
@@ -132,7 +132,7 @@
 {{%endif%}}
 {{%endif%}}
   
-{{% for file in scope.nodeFileToHdfs %}}
+{{% for file in scope.files %}}
   - name: Ensure '{{{file._src_}}}' is not a folder
     stat: path={{{file._src_}}}
     register: st
@@ -146,7 +146,7 @@
     hdfs_put: src={{{file._src_}}} hdfs_dest={{{file._target_}}} owner={{{file.owner}}} group={{{file.group}}} mode="{{{file.mode}}}" hdfs_user={{{src.hdfs_relay.user}}}
 {{% endfor %}}
 
-{{% for tree in scope.nodeTreeToHdfs %}}
+{{% for tree in scope.trees %}}
   - name: Ensure '{{{tree._tsrc_}}}' is a folder
     stat: path={{{tree._tsrc_}}}
     register: st
@@ -162,7 +162,7 @@
     hdfs_put: src={{{tree._src_}}} hdfs_dest={{{tree.dest_folder}}} owner={{{tree.owner}}} group={{{tree.group}}} mode="{{{tree.file_mode}}}" directory_mode="{{{tree.folder_mode}}}" hdfs_user={{{src.hdfs_relay.user}}}
 {{% endfor %}}
 
-{{% if data.credentialByHost[scopeName] is defined %}}
+{{% if data.hdfs.credentialByHost[scopeName] is defined %}}
   - name: Perform kdestroy for HDFS access from {{{ scopeName }}}
     shell: kdestroy
     changed_when: false

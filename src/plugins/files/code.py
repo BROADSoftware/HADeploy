@@ -59,14 +59,18 @@ DEST_FOLDER="dest_folder"
 VALIDATE_CERTS="validate_certs"
 FORCE_BASIC_AUTH="force_basic_auth"
 
-SCOPE_BY_NAME="scopeByName"          
+SCOPE_BY_NAME="scopeByName"     
+
+NODE_TO_HDFS_BY_NAME="nodeToHdfsByName"     
 
 _SRC_="_src_"
 _TARGET_="_target_"
 _TARGETFOLDERS_="_targetFolders_"
 _DISPLAY_SRC_="_displaySrc_"
-_TTARGET_="_ttarget_"
+_CACHE_TARGET_="_cacheTarget_"
 _TSRC_="_tsrc_"
+
+NODE_TO_HDFS_FLAG="_nodeToHdfs_"
 
 logger = logging.getLogger("hadeploy.plugins.files")
 
@@ -97,10 +101,14 @@ class FilesPlugin(Plugin):
 
     def onGrooming(self, context):
         misc.ensureObjectInMaps(context.model[DATA], [FILES, SCOPE_BY_NAME], {})
-        if HDFS_RELAY in context.model[SRC]:
+        if HDFS in context.pluginByName:
             # We need to anticipate on works performed by hdfs plugin, as we need it right now
-            misc.ensureObjectInMaps(context.model[DATA], [HDFS, SCOPE_BY_NAME], {})
+            misc.ensureObjectInMaps(context.model[DATA], [HDFS, NODE_TO_HDFS_BY_NAME], {})
+            misc.ensureObjectInMaps(context.model[DATA], [HDFS, FILES], [] )
+            misc.ensureObjectInMaps(context.model[DATA], [HDFS, FOLDERS], [] )
+            misc.ensureObjectInMaps(context.model[DATA], [HDFS, TREES], [] )
             misc.ensureObjectInMaps(context.model[DATA], [HDFS, CACHEFOLDERS], Set())
+        if HDFS_RELAY in context.model[SRC]:
             misc.setDefaultInMap(context.model[SRC][HDFS_RELAY], CACHE_FOLDER, DEFAULT_HDFS_RELAY_CACHE_FOLDER)
         groomFolders(context)
         groomFiles(context)
@@ -109,18 +117,18 @@ class FilesPlugin(Plugin):
 
 # ---------------------------------------------------- Static functions
 
-def ensureScope(context, scope):
-    root = context.model[DATA][FILES][SCOPE_BY_NAME]
+def ensureScope(model, scope):
+    root = model[DATA][FILES][SCOPE_BY_NAME]
     if not scope in root:
         misc.ensureObjectInMaps(root, [scope, FILES], [])
         misc.ensureObjectInMaps(root, [scope, FOLDERS], [])
         misc.ensureObjectInMaps(root, [scope, TREES], [])
 
 def ensureHdfsScope(model, scope):
-    root = model[DATA][HDFS][SCOPE_BY_NAME]
+    root = model[DATA][HDFS][NODE_TO_HDFS_BY_NAME]
     if not scope in root:
-        misc.ensureObjectInMaps(root, [scope, NODE_FILE_TO_HDFS], [])
-        misc.ensureObjectInMaps(root, [scope, NODE_TREE_TO_HDFS], [])
+        misc.ensureObjectInMaps(root, [scope, FILES], [])
+        misc.ensureObjectInMaps(root, [scope, TREES], [])
 
 
 
@@ -133,13 +141,12 @@ def groomFolders(context):
                 if not HDFS_RELAY in model[SRC]:
                     misc.ERROR("Scope of folder '{0}' is 'hdfs' while no hdfs_relay was defined!".format(folder['path']))
                 else:
-                    misc.ensureObjectInMaps(model[DATA], [HDFS, FOLDERS], [] )
                     model[DATA][HDFS][FOLDERS].append(folder)
             else:
                 if not context.checkScope(folder[SCOPE]):
                     misc.ERROR("Folder {0}: Scope attribute '{1}' does not match any host or host_group and is not 'hdfs'!".format(folder['path'], folder[SCOPE]))
                 else:
-                    ensureScope(context, folder[SCOPE])
+                    ensureScope(model, folder[SCOPE])
                     context.model[DATA][FILES][SCOPE_BY_NAME][folder[SCOPE]][FOLDERS].append(folder)
    
 def groomFiles(context):
@@ -147,18 +154,6 @@ def groomFiles(context):
     if FILES in model[SRC]:
         for f in model[SRC][FILES]:
             misc.setDefaultInMap(f, NO_REMOVE, False)
-            if f[SCOPE] == HDFS:
-                if not HDFS_RELAY in model[SRC]:
-                    misc.ERROR("Scope of file '{0}' is 'hdfs' while no hdfs_relay was defined!".format(f[SRC]))
-                else:
-                    misc.ensureObjectInMaps(model[DATA], [HDFS, FILES], [] )
-                    model[DATA][HDFS][FILES].append(f)
-            else:
-                if not context.checkScope(f[SCOPE] ):
-                    misc.ERROR("File {0}: Scope attribute '{1}' does not match any host or host_group and is not 'hdfs'!".format(f[FSRC], f[SCOPE]))
-                else:
-                    ensureScope(context, f[SCOPE])
-                    context.model[DATA][FILES][SCOPE_BY_NAME][f[SCOPE]][FILES].append(f)
             misc.setDefaultInMap(f, DEST_NAME,  os.path.basename(f[FSRC]))
             f[_TARGET_] = os.path.normpath(os.path.join(f[DEST_FOLDER], f[DEST_NAME]))
             if f[FSRC].startswith('file://'):
@@ -170,14 +165,27 @@ def groomFiles(context):
             else:
                 groomNodeToHdfsFiles(f, model)
             if f[SCOPE] == HDFS:
-                # This one is intended to be used in the cache
-                f[_TTARGET_] = os.path.normpath(model[SRC][HDFS_RELAY][CACHE_FOLDER] + "/" +  manglePath(f[_TARGET_]))
-                model[DATA][HDFS][CACHEFOLDERS].add(os.path.dirname(f[_TTARGET_]))
+                if not HDFS_RELAY in model[SRC]:
+                    misc.ERROR("Scope of file '{0}' is 'hdfs' while no hdfs_relay was defined!".format(f[SRC]))
+                else:
+                    model[DATA][HDFS][FILES].append(f)
+                    # This one is intended to be used in the cache
+                    f[_CACHE_TARGET_] = os.path.normpath(model[SRC][HDFS_RELAY][CACHE_FOLDER] + "/" +  manglePath(f[_TARGET_]))
+                    model[DATA][HDFS][CACHEFOLDERS].add(os.path.dirname(f[_CACHE_TARGET_]))
+            else:
+                if not context.checkScope(f[SCOPE] ):
+                    misc.ERROR("File {0}: Scope attribute '{1}' does not match any host or host_group and is not 'hdfs'!".format(f[FSRC], f[SCOPE]))
+                else:
+                    if NODE_TO_HDFS_FLAG in f:
+                        ensureHdfsScope(model, f[SCOPE])
+                        model[DATA][HDFS][NODE_TO_HDFS_BY_NAME][f[SCOPE]][FILES].append(f)
+                    else:
+                        ensureScope(model, f[SCOPE])
+                        context.model[DATA][FILES][SCOPE_BY_NAME][f[SCOPE]][FILES].append(f)
+                
         
 def groomNodeToHdfsFiles(f, model):
     groomNodeToHdfsFilesOrTrees(f, model)
-    ensureHdfsScope(model, f[SCOPE])
-    model[DATA][HDFS][SCOPE_BY_NAME][f[SCOPE]][NODE_FILE_TO_HDFS].append(f)
     
 
 # Simpler to handle this here than in hdfs plugin
@@ -196,7 +204,7 @@ def groomNodeToHdfsFilesOrTrees(f, model):
                     misc.ERROR("Files: {0} is not a valid form for 'src' attribute: Copying from node require an absolute path".format(f[FSRC]))
                 f[_SRC_] = path
                 f[SCOPE] = node
-                f['_nodeToHdfs'] = True    # Flag it as a special meaning
+                f[NODE_TO_HDFS_FLAG] = True    # Flag it as a special meaning
     else:
         misc.ERROR("Files: {0} is not a valid form as 'src' attribute".format(f[FSRC]))
 
@@ -257,24 +265,27 @@ def groomTrees(context):
                 if not HDFS_RELAY in model[SRC]:
                     misc.ERROR("Scope of tree '{0}' is 'hdfs' while no hdfs_relay was defined!".format(t[FSRC]))
                 else:
-                    # This one is intended to be used in the cache
-                    t[_TTARGET_] = os.path.normpath(model[SRC][HDFS_RELAY][CACHE_FOLDER] + "/" +  manglePath(t[DEST_FOLDER]))
-                    model[DATA][HDFS][CACHEFOLDERS].add(os.path.dirname(t[_TTARGET_]))
-                    misc.ensureObjectInMaps(model[DATA], [HDFS, TREES], [] )
-                    model[DATA][HDFS][TREES].append(t)
-            else:
-                if not context.checkScope(t[SCOPE] ):
-                    misc.ERROR("Tree {0}: Scope attribute '{1}' does not match any host or host_group and is not 'hdfs'!".format(t[FSRC], t[SCOPE]))
-                else:
-                    # If a scope is defined, it must host both FILES and TREES
-                    ensureScope(context, t[SCOPE])
-                    context.model[DATA][FILES][SCOPE_BY_NAME][t[SCOPE]][TREES].append(t)
+                    # Need to setup cache now
+                    t[_CACHE_TARGET_] = os.path.normpath(model[SRC][HDFS_RELAY][CACHE_FOLDER] + "/" +  manglePath(t[DEST_FOLDER]))
+                    model[DATA][HDFS][CACHEFOLDERS].add(os.path.dirname(t[_CACHE_TARGET_]))
             if t[FSRC].startswith('file://'):
                 groomFileTrees(t, model)
             elif t[FSRC].startswith('tmpl://'):
                 groomTmplTrees(t, model)
             else:
                 groomNodeToHdfsTrees(t, model)
+            if t[SCOPE] == HDFS:
+                model[DATA][HDFS][TREES].append(t)
+            else:
+                if not context.checkScope(t[SCOPE] ):
+                    misc.ERROR("Tree {0}: Scope attribute '{1}' does not match any host or host_group and is not 'hdfs'!".format(t[FSRC], t[SCOPE]))
+                else:
+                    if NODE_TO_HDFS_FLAG in t:
+                        ensureHdfsScope(model, t[SCOPE])
+                        model[DATA][HDFS][NODE_TO_HDFS_BY_NAME][t[SCOPE]][TREES].append(t)
+                    else:
+                        ensureScope(model, t[SCOPE])
+                        context.model[DATA][FILES][SCOPE_BY_NAME][t[SCOPE]][TREES].append(t)
 
 
 def groomFileTrees(tree, model):
@@ -290,8 +301,8 @@ def groomFileTrees(tree, model):
     if tree[SCOPE] != HDFS:
         addTargetFolders(tree, tree[DEST_FOLDER])
     else:
-        if not tree[_TTARGET_].endswith('/'):
-            tree[_TTARGET_] = tree[_TTARGET_] + '/'
+        if not tree[_CACHE_TARGET_].endswith('/'):
+            tree[_CACHE_TARGET_] = tree[_CACHE_TARGET_] + '/'
 
 
 def addTargetFolders(tree, targetRoot):
@@ -319,10 +330,10 @@ def groomTmplTrees(tree, model):
         addTargetFolders(tree, tree[DEST_FOLDER])
         addTmplList(tree, tree[DEST_FOLDER])
     else:
-        addTargetFolders(tree, tree[_TTARGET_])
-        addTmplList(tree, tree[_TTARGET_])
-        if not tree[_TTARGET_].endswith("/"):
-            tree[_TTARGET_] = tree[_TTARGET_] + "/"
+        addTargetFolders(tree, tree[_CACHE_TARGET_])
+        addTmplList(tree, tree[_CACHE_TARGET_])
+        if not tree[_CACHE_TARGET_].endswith("/"):
+            tree[_CACHE_TARGET_] = tree[_CACHE_TARGET_] + "/"
 
 
 def addTmplList(tree, targetRoot):
@@ -346,9 +357,6 @@ def groomNodeToHdfsTrees(tree, model):
         tree[_TSRC_] = tree[_TSRC_][:-1]
     if not tree[_SRC_].endswith("/"):
         tree[_SRC_] = tree[_SRC_] + "/"
-    #misc.ERROR("Nodes to hdfs trees not yet implemented")    
-    ensureHdfsScope(model, tree[SCOPE])
-    model[DATA][HDFS][SCOPE_BY_NAME][tree[SCOPE]][NODE_TREE_TO_HDFS].append(tree)
     
 
     

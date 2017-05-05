@@ -2,6 +2,8 @@
 {{% if helper.ansible_roles_paths|length > 0 %}}
 roles_path={{% for path in helper.ansible_roles_paths %}}{{% if not loop.first %}}:{{% endif %}}{{{path}}}{{%endfor%}}
 
+{{% else %}}
+roles_path=
 {{% endif %}}
 inventory = inventory
 host_key_checking = False

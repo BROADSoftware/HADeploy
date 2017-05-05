@@ -1,18 +1,18 @@
 
 # --------------------------------------------------------- Remove node to HDFS pushed files and trees
 
-{{% for scopeName, scope in data.hdfs.scopeByName.iteritems() %}}
-{{% if scope.nodeFileToHdfs|length > 0 or scope.nodeTreeToHdfs|length > 0 %}}
+{{% for scopeName, scope in data.hdfs.nodeToHdfsByName.iteritems() %}}
+{{% if scope.files|length > 0 or scope.files|length > 0 %}}
 - hosts: {{{ scopeName }}}
   roles:
   - hdfs_modules    
   tasks:
 
-{{% if data.credentialByHost[scopeName] is defined %}}
+{{% if data.hdfs.credentialByHost[scopeName] is defined %}}
   - name: Perform kinit for HDFS access from {{{ scopeName }}}
-    shell: kinit -kt {{{ data.credentialByHost[scopeName].keytab_path }}} {{{ data.credentialByHost[scopeName].principal }}}
+    shell: kinit -kt {{{ data.hdfs.credentialByHost[scopeName].keytab_path }}} {{{ data.hdfs.credentialByHost[scopeName].principal }}}
     changed_when: false
-{{% if data.credentialByHost[scopeName].kdebug %}} 
+{{% if data.hdfs.credentialByHost[scopeName].kdebug %}} 
   - name: Check kerberos ticket for HDFS access
     shell: klist
     register: klist_result
@@ -21,21 +21,21 @@
 {{%endif%}}
 {{%endif%}}  
   
-{{% for file in scope.nodeFileToHdfs %}}
+{{% for file in scope.files %}}
 {{% if not file.no_remove %}}
   - name: Remove '{{{file._target_}}}' from HDFS
     hdfs_file: hdfs_path={{{file._target_}}} state=absent hdfs_user={{{src.hdfs_relay.user}}}
 {{%endif %}}
 {{% endfor %}}
 
-{{% for tree in scope.nodeTreeToHdfs %}}
+{{% for tree in scope.trees %}}
 {{% if not tree.no_remove %}}
   - name: Remove '{{{tree.dest_folder}}}' from HDFS
     hdfs_file: hdfs_path={{{tree.dest_folder}}} state=absent hdfs_user={{{src.hdfs_relay.user}}}
 {{%endif %}}
 {{% endfor %}}
 
-{{% if data.credentialByHost[scopeName] is defined %}}
+{{% if data.hdfs.credentialByHost[scopeName] is defined %}}
   - name: Perform kdestroy for HDFS access from {{{ scopeName }}}
     shell: kdestroy
     changed_when: false
@@ -79,7 +79,7 @@
     hdfs_file: hdfs_path={{{file._target_}}} state=absent hdfs_user={{{src.hdfs_relay.user}}}
 {{%endif %}}
 {{% endfor %}}
-{{% for tree in d.hdfsTrees|reverse %}}
+{{% for tree in data.hdfs.trees|reverse %}}
 {{% if not tree.no_remove %}}
   # ------------------------------------ Handle hdfs://{{{tree.dest_folder}}} 
   - name: Remove {{{tree.dest_folder}}} from HDFS

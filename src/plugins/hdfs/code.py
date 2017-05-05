@@ -87,7 +87,7 @@ def groomHdfsRelay(model):
 
 
 def groomSourceHostCredentials(model):
-    model[DATA][HDFS][CREDENTIAL_BY_HOST] = {}
+    misc.ensureObjectInMaps(model[DATA], [HDFS, CREDENTIAL_BY_HOST], {})
     if SOURCE_HOST_CREDENTIALS in model[SRC]:
         for h in model[SRC][SOURCE_HOST_CREDENTIALS]:
             key = h[HOST]

@@ -129,8 +129,10 @@ class Context:
     def builRolesPath(self):
         rolesPaths = []
         for plugin in self.plugins:
-            p = plugin.getRolesPath()
-            if p != None and os.path.isdir(p):
-                rolesPaths.append(p)
+            paths = plugin.getRolesPaths()
+            if paths != None:
+                for p in paths:
+                    if p != None and os.path.isdir(p):
+                        rolesPaths.append(p)
         self.model[HELPER][ANSIBLE_ROLES_PATHS] = rolesPaths
             

@@ -1,0 +1,72 @@
+> HDFS_PUT
+
+  The [put] module copies a file or a folder from the remote box to HDFS.
+
+Options (= is mandatory):
+
+- backup
+        Create a backup file including the timestamp information so you can get the original file back if you somehow clobbered
+        it incorrectly.
+        (Choices: yes, no)[Default: no]
+- directory_mode
+        When doing a recursive copy set the mode for the directories. If this is not set we will use the system defaults. The
+        mode is only set on directories which are newly created, and will not affect those that already existed.
+        [Default: (null)]
+- force
+        the default is `yes', which will replace the target file when size or modification time is different from the source. If
+        `no', the file will only be transferred if the destination does not exist.
+        (Choices: yes, no)[Default: yes]
+- force_ext
+        the default is `yes', which will adjust owner/group/mode on target files and directory with the provided value, if any.
+        If `no', existing files and directories will not be modified.
+        (Choices: yes, no)[Default: yes]
+- group
+        Name of the group that will own the file, as would be fed by HDFS 'FileSystem.setOwner'
+        [Default: None]
+- hadoop_conf_dir
+        Where to find Hadoop configuration file, specially hdfs-site.xml, in order to lookup WebHDFS endpoint (`dfs.namenode
+        .http-address') Used only if webhdfs_endpoint is not defined
+        [Default: /etc/hadoop/conf]
+= hdfs_dest
+        HDFS absolute path where the file should be copied to. If it is a directory, file will be copied into with its source
+        name. If not, this will be the target full path. In this case, dirname must exist If src is a directory, this must be a
+        directory too.
+        [Default: None]
+- hdfs_user
+        Define account to impersonate to perform required operation on HDFS through WebHDFS.
+        Also accepts the special value `KERBEROS'. In such case, a valid Kerberos ticket must exist for the ansible_ssh_user
+        account. (A `kinit' must be issued under this account). Then HDFS operation will be performed on behalf of the user
+        defined by the Kerberos ticket.
+        [Default: hdfs]
+- mode
+        Mode (Permission) the file will be set, such as 0644 as would be fed by HDFS 'FileSystem.setPermission'
+        [Default: None]
+- owner
+        Name of the user that will own the file, as would be fed by HDFS 'FileSystem.setOwner'
+        [Default: None]
+= src
+        Path on the remote box to a file to copy to HDFS. Can be absolute or relative. If path is a directory, it is copied
+        recursively. In this case, if path ends with "/", only inside contents of that directory are copied to destination.
+        Otherwise, if it does not end with "/", the directory itself with all contents is copied. This behavior is similar to
+        Rsync. When a file is copied, target modification time is adjusted to the source value.
+        [Default: None]
+- webhdfs_endpoint
+        Provide WebHDFS REST API entry point. Typically `<namenodeHost>:50070'. It could also be a comma separated list of entry
+        point, which will be checked up to a valid one. This will allow Namenode H.A. handling. If not defined, will be looked
+        up in local hdfs-site.xml
+        [Default: None]
+EXAMPLES:
+
+  # ------------------------- Directory copy
+  # Let's say we have /tmp/file/tree/file1.txt on the remote node and /tmp/tree is an existing hdfs folder
+  
+  # The following will result in /tmp/tree/file1.txt in HDFS
+  - hdfs_copy: src=/tmp/files/tree/ hdfs_dest=/tmp/tree
+  
+  # The following will result in /tmp/tree/tree/file1.txt in HDFS (/tmp/tree/tree is created if not existsing
+  - hdfs_copy: src=/tmp/files/tree hdfs_dest=/tmp/tree
+  
+
+
+
+MAINTAINERS: Serge ALEXANDRE

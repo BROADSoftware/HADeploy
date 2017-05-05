@@ -1,0 +1,82 @@
+> HDFS_INFO
+
+  Allow testing of file/folder existence. And retrieve owner, group and mode of an existing file/folder on HDFS.
+
+Options (= is mandatory):
+
+- hadoop_conf_dir
+        Where to find Haddop configuration file, specially hdfs-site.xml, in order to lookup WebHDFS endpoint (`dfs.namenode
+        .http-address') Used only if webhdfs_endpoint is not defined
+        [Default: /etc/hadoop/conf]
+= hdfs_path
+        HDFS path to the file being managed.  Aliases: `dest', `name'
+        [Default: None]
+- hdfs_user
+        Define account to impersonate to perform required operation on HDFS through WebHDFS.
+        Also accepts the special value `KERBEROS'. In such case, a valid Kerberos ticket must exist for the ansible_ssh_user
+        account. (A `kinit' must be issued under this account). Then HDFS operation will be performed on behalf of the user
+        defined by the Kerberos ticket.
+        [Default: hdfs]
+- webhdfs_endpoint
+        Provide WebHDFS REST API entry point. Typically `<namenodeHost>:50070'. It could also be a comma separated list of entry
+        point, which will be checked up to a valid one. This will allow Namenode H.A. handling. If not defined, will be looked
+        up in local hdfs-site.xml
+        [Default: None]
+Notes:
+  * As HDFS is a distributed file system shared by all nodes of a cluster, this module must be launched on one node only.
+        Note there is no protection against race condition (Same operation performed simultaneously from several nodes).
+  * All HDFS operations are performed using WebHDFS REST API.
+EXAMPLES:
+
+
+
+
+RETURN VALUES:
+hdfs_path:
+    description: file/path to grab info from
+    returned: always
+    type: string
+    sample: "/path/to/file.txt"
+exits:
+    description: If the path exists
+    returned: always
+    type: boolean
+    sample: True
+type:
+    description: 'file', 'directory' or 'absent'
+    returned: always
+    type: string
+    sample: "directory"
+owner:
+    description: Owner of the file or directory
+    returned: if exists
+    type: string
+    sample: "joe"
+group:
+    description: Group of the file or directory
+    returned: if exists
+    type: string
+    sample: "users"
+mode:
+    description: Permission of the file or directory
+    returned: if exists
+    type: string
+    sample: "0755"
+int_mode:
+    description: Permission of the file or directory
+    returned: if exists
+    type: int
+    sample: 493
+size:
+    description: Size of the file
+    returned: always
+    type: integer
+    sample: 2354
+modificationTime:
+    description: Last modification time, in second since Epoch
+    returned: always
+    type: integer
+    sample: 1483097882
+
+
+MAINTAINERS: Serge ALEXANDRE

@@ -1,0 +1,73 @@
+> HDFS_FILE
+
+  Sets attributes of HDFS files, and directories, or removes them. Allow also HDFS directory creation. Similar to Ansible File
+  module, but operate on HDFS files.
+
+Options (= is mandatory):
+
+- force
+        Used only when state==directory. The default is `yes', which will adjust owner/group/mode on target directory with the
+        provided value, if any. If `no', existing directories will not be modified. owner/group/mode will only be used for newly
+        created.
+        (Choices: yes, no)[Default: yes]
+- group
+        Name of the group that will own the file/directory, as would be fed by HDFS 'FileSystem.setOwner'
+        [Default: None]
+- hadoop_conf_dir
+        Where to find Hadoop configuration file, specially hdfs-site.xml, in order to lookup WebHDFS endpoint (`dfs.namenode
+        .http-address') Used only if webhdfs_endpoint is not defined
+        [Default: /etc/hadoop/conf]
+= hdfs_path
+        HDFS path to the file being managed.  Aliases: `dest', `name'
+        [Default: None]
+- hdfs_user
+        Define account to impersonate to perform required operation on HDFS through WebHDFS.
+        Also accepts the special value `KERBEROS'. In such case, a valid Kerberos ticket must exist for the ansible_ssh_user
+        account. (A `kinit' must be issued under this account). Then HDFS operation will be performed on behalf of the user
+        defined by the Kerberos ticket.
+        [Default: hdfs]
+- mode
+        Mode (Permission) the file or directory will be set, such as 0644 as would be fed by HDFS 'FileSystem.setPermission'
+        [Default: None]
+- owner
+        Name of the user that will own the file/directory, as would be fed by HDFS 'FileSystem.setOwner'
+        [Default: None]
+- state
+        If `directory', all immediate sub-directories will be created if they do not exists, by calling HDFS FileSystem.mkdirs
+        If `file', the file will NOT be created if it does not exist. In both cases, owner, group and mode will be adjusted to
+        provided value. If `absent', directories will be recursively deleted (USE WITH CARE), and file will be deleted.
+        (Choices: file, directory, absent)[Default: None]
+- webhdfs_endpoint
+        Provide WebHDFS REST API entry point. Typically `<namenodeHost>:50070'. It could also be a comma separated list of entry
+        point, which will be checked up to a valid one. This will allow Namenode H.A. handling. If not defined, will be looked
+        up in local hdfs-site.xml
+        [Default: None]
+Notes:
+  * As HDFS is a distributed file system shared by all nodes of a cluster, this module must be launched on one node only.
+        Note there is no protection against race condition (Same operation performed simultaneously from several nodes).
+  * All HDFS operations are performed using WebHDFS REST API.
+EXAMPLES:
+
+# Create a directory if it does not exist. 
+# If already existing, adjust owner, group and mode if different.
+- hdfs_file: hdfs_path=/user/joe/some_directory owner=joe group=users mode=0755 state=directory
+
+# Remove this folder.
+- hdfs_file: hdfs_path=/user/joe/some_directory state=absent
+
+# Change permission. Only hdfs user will be able to access this file or folder.
+- hdfs_file: hdfs_path=/user/hdfs/some_file_or_folder owner=hdfs group=hdfs mode=0700
+
+# Change only permission on a file. Leave owner and group unchanged
+- name: Change permission on this_file
+  hdfs_file:
+    hdfs_path: /usr/joe/some_file
+    mode: 0600
+
+# Ensure the directory exists. If yes, do not touch it. If no, create it with provided default_xxxx values.
+- hdfs_file: hdfs_path=/user/joe/may_exist_directory default_owner=joe default_group=users default_mode=0755 state=directory
+
+
+
+
+MAINTAINERS: Serge ALEXANDRE
