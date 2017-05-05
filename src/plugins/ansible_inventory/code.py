@@ -33,7 +33,7 @@ HOST_GROUPS="host_groups"
 NAME="name"
 SSH_PRIVATE_FILE_FILE="ssh_private_key_file"
 GROUPS="groups"
-
+ANSIBLE_INVENTORY_FILE="ansible_inventory_files"
 
 logger = logging.getLogger("hadeploy.plugins.ansible")
 
@@ -42,9 +42,21 @@ class AnsiblePlugin(Plugin):
     def __init__(self, name, path):
         Plugin.__init__(self, name, path)
 
+
+    def onNewSnippet(self, context, snippetPath):
+        if ANSIBLE_INVENTORY_FILE in context.model[SRC]:
+            l2 = []
+            for p in context.model[SRC][ANSIBLE_INVENTORY_FILE]:
+                if not os.path.isabs(p):
+                    l2.append(os.path.normpath(os.path.join(snippetPath, p)))
+                else:
+                    l2.append(p)
+            context.model[SRC][ANSIBLE_INVENTORY_FILE] = l2
+
+
     def onGrooming(self, context):
-        if 'ansible_inventory_files' in context.model[SRC]:
-            for inventoryFile in context.model[SRC]['ansible_inventory_files']:
+        if ANSIBLE_INVENTORY_FILE in context.model[SRC]:
+            for inventoryFile in context.model[SRC][ANSIBLE_INVENTORY_FILE]:
                 if not os.path.exists(inventoryFile):
                     misc.ERROR("Ansible inventory file '{0}' does not exists!".format(inventoryFile))
                 else:

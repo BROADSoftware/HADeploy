@@ -1,0 +1,174 @@
+
+# ------------------------------------------------------------------------------ Setup hdfs_relay cache
+
+{{% if src.hdfs_relay is defined %}}
+- hosts: {{{ src.hdfs_relay.host }}}
+  tasks:
+  - name: Create hdfs relay cache
+    file: path={{{ src.hdfs_relay.cache_folder }}} owner={{ansible_ssh_user}} mode="0755" state=directory
+{{% for cf in data.hdfs.cacheFolders %}}
+  - name: Create {{{cf}}} folder in cache
+    file: path={{{cf}}} state=directory
+{{%endfor%}}  
+{{%endif%}}
+
+
+
+# ---------------------------------------------------------------------------- HDFS task from hdfs relay
+
+
+{{% if src.hdfs_relay is defined %}}
+- hosts: {{{ src.hdfs_relay.host }}}   # This is the hdfs_relay
+  roles:
+  - hdfs_modules    
+  tasks:
+# ---------------------------------------------------------- Handle kerberos authentication for hdfs
+
+{{% if src.hdfs_relay.kerberos %}}
+  - name: Perform kinit for HDFS access
+    shell: kinit -kt {{{ src.hdfs_relay.keytab_path }}} {{{ src.hdfs_relay.principal }}}
+    changed_when: false
+{{% if src.hdfs_relay.kdebug %}} 
+  - name: Check kerberos ticket for HDFS access
+    shell: klist
+    register: klist_result
+    changed_when: false
+  - debug: var=klist_result
+{{%endif%}}
+{{%endif%}}
+
+# ------------------------------------------------------------------------------ Handle hdfs folders
+
+{{% if data.hdfs.folders|length > 0 %}}
+{{% for folder in data.hdfs.folders %}}
+  - name: Will create HDFS folder {{{ folder.path }}}
+    hdfs_file: hdfs_path={{{folder.path}}} owner={{{folder.owner}}} group={{{folder.group}}} mode="{{{folder.mode}}}" state=directory{{%if src.hdfs_relay.hadoop_conf_dir is defined%}} hadoop_conf_dir={{{src.hdfs_relay.hadoop_conf_dir}}}{{%endif%}}{{%if src.hdfs_relay.webhdfs_endpoint is defined%}} webhdfs_endpoint={{{src.hdfs_relay.webhdfs_endpoint}}}{{%endif%}} hdfs_user={{{src.hdfs_relay.user}}}
+
+{{% endfor %}}
+{{%endif%}}
+  
+
+# ------------------------------------------------------------------------- Handle hdfs files and trees 
+
+{{% if data.hdfs.files|length > 0 or data.hdfs.trees|length > 0 %}}
+{{% for file in data.hdfs.files %}}
+  # ------------------------------------ Handle file to hdfs://{{{file._target_}}} 
+{{% if file.src.startswith("file://") %}}
+  - name: Copy file '{{{file._displaySrc_}}}' to '{{{file._ttarget_}}}'
+    copy: src={{{file._src_}}} dest={{{file._ttarget_}}} owner={{{file.owner}}} group={{{file.group}}} mode="0644" # 0644 as hdfs user must be able to read it
+{{% elif file.src.startswith("http://") or file.src.startswith("https://") %}}
+  - name: Download '{{{file.src}}}' to '{{{file._ttarget_}}}'
+    get_url: url={{{file.src}}} dest={{{file._ttarget_}}} owner={{{file.owner}}} group={{{file.group}}} mode="0644" validate_certs={{{file.validate_certs}}} force_basic_auth={{{file.force_basic_auth }}} {{% if file.url_username is defined %}}url_username={{{file.url_username}}}{{%endif%}} {{% if file.url_password is defined %}}url_password={{{file.url_password}}}{{%endif%}} # 0644 as hdfs user must be able to read it
+{{% elif file.src.startswith("tmpl://")  %}}
+  - name: Copy template file '{{{file._displaySrc_}}}' to '{{{file._ttarget_}}}'
+    template: src={{{file._src_}}} dest={{{file._ttarget_}}} owner={{{file.owner}}} group={{{file.group}}} mode="0644" # 0644 as hdfs user must be able to read it 
+{{% endif %}}
+  - name: Push '{{{file._ttarget_}}}' to HDFS as {{{file._target_}}}
+    hdfs_put: src={{{file._ttarget_}}} hdfs_dest={{{file._target_}}} owner={{{file.owner}}} group={{{file.group}}} mode="{{{file.mode}}}" hdfs_user={{{src.hdfs_relay.user}}}
+{{% endfor %}}
+
+{{% for tree in data.hdfs.trees %}}
+  # ------------------------------------ Handle tree to hdfs://{{{tree.dest_folder}}} 
+{{% if tree.src.startswith("file://") %}}
+  - name: Copy tree '{{{tree._displaySrc_}}}' to '{{{tree._ttarget_}}}'
+    copy: src={{{tree._src_}}} dest={{{tree._ttarget_}}} owner={{{tree.owner}}} group={{{tree.group}}} mode="0644" # 0644 as hdfs user must be able to read it
+{{% elif tree.src.startswith("tmpl://")  %}}
+  - name: Create subfolder in cache
+    file: path="{{item}}" state=directory
+    with_items:
+{{% for dirname in tree._targetFolders_ %}}
+    - {{{ dirname }}}
+{{% endfor %}}
+{{% if tree._tmplList|length >0 %}}
+  - name: Generate template tree '{{{tree._displaySrc_}}}' to '{{{tree._ttarget_}}}'
+    template: src={{item.src}} dest={{item.dst}} owner={{{tree.owner}}} group={{{tree.group}}} mode="{{{tree.file_mode}}}"
+    with_items:
+{{% for x in tree._tmplList %}}
+    - { src: "{{{ x.src }}}", dst: "{{{ x.dst }}}" }
+{{% endfor %}}    
+    loop_control:
+      label: "{{item.dst}}"
+{{% endif %}}
+{{% endif %}}
+  - name: Create folder '{{{tree.dest_folder}}}'
+    hdfs_file: hdfs_path={{{tree.dest_folder}}} state=directory  owner={{{tree.owner}}} group={{{tree.group}}} mode="{{{tree.folder_mode}}}" hdfs_user={{{src.hdfs_relay.user}}}
+  - name: Push '{{{tree._ttarget_}}}' to HDFS as {{{tree.dest_folder}}}
+    hdfs_put: src={{{tree._ttarget_}}} hdfs_dest={{{tree.dest_folder}}} owner={{{tree.owner}}} group={{{tree.group}}} mode="{{{tree.file_mode}}}" directory_mode="{{{tree.folder_mode}}}" hdfs_user={{{src.hdfs_relay.user}}}
+{{% endfor %}}
+{{%endif%}}
+
+
+# -------------------------------------------------- Cleanup kerberos authentication for hdfs
+
+{{% if src.hdfs_relay.kerberos %}}
+  - name: Perform kdestroy for HDFS access
+    shell: kdestroy
+    changed_when: false
+{{%endif%}}
+
+{{%endif%}}
+# --------------------------------------------------------------- End of HDFS task from hdfs relay
+
+
+# ------------------------------------------------------- Handle node to HDFS push files and trees
+
+{{% for scopeName, scope in data.hdfs.scopeByName.iteritems() %}}
+{{% if scope.nodeFileToHdfs|length > 0 or scope.nodeTreeToHdfs|length %}}
+- hosts: {{{ scopeName }}}
+  roles:
+  - hdfs_modules    
+  tasks:
+
+{{% if data.credentialByHost[scopeName] is defined %}}
+  - name: Perform kinit for HDFS access from {{{ scopeName }}}
+    shell: kinit -kt {{{ data.credentialByHost[scopeName].keytab_path }}} {{{ data.credentialByHost[scopeName].principal }}}
+    changed_when: false
+{{% if data.credentialByHost[scopeName].kdebug %}} 
+  - name: Check kerberos ticket for HDFS access
+    shell: klist
+    register: klist_result
+    changed_when: false
+  - debug: var=klist_result
+{{%endif%}}
+{{%endif%}}
+  
+{{% for file in scope.nodeFileToHdfs %}}
+  - name: Ensure '{{{file._src_}}}' is not a folder
+    stat: path={{{file._src_}}}
+    register: st
+#  - debug: var=st
+  - fail: msg="{{{file._src_}}} does not exists"
+    when: not st.stat.exists  
+  - fail: msg="{{{file._src_}}} is a folder. Use 'trees' block to recursivly copy a folder"
+    when: st.stat.isdir  
+
+  - name: Push '{{{file._src_}}}' to HDFS as '{{{file._target_}}}'
+    hdfs_put: src={{{file._src_}}} hdfs_dest={{{file._target_}}} owner={{{file.owner}}} group={{{file.group}}} mode="{{{file.mode}}}" hdfs_user={{{src.hdfs_relay.user}}}
+{{% endfor %}}
+
+{{% for tree in scope.nodeTreeToHdfs %}}
+  - name: Ensure '{{{tree._tsrc_}}}' is a folder
+    stat: path={{{tree._tsrc_}}}
+    register: st
+#  - debug: var=st
+  - fail: msg="{{{tree._tsrc_}}} does not exists"
+    when: not st.stat.exists  
+  - fail: msg="{{{tree._tsrc_}}} is not a folder. Use 'files' block to copy a single file"
+    when: not st.stat.isdir  
+
+  - name: Create folder '{{{tree.dest_folder}}}'
+    hdfs_file: hdfs_path={{{tree.dest_folder}}} state=directory  owner={{{tree.owner}}} group={{{tree.group}}} mode="{{{tree.folder_mode}}}" hdfs_user={{{src.hdfs_relay.user}}}
+  - name: Push '{{{tree._src_}}}' to HDFS to '{{{tree.dest_folder}}}'
+    hdfs_put: src={{{tree._src_}}} hdfs_dest={{{tree.dest_folder}}} owner={{{tree.owner}}} group={{{tree.group}}} mode="{{{tree.file_mode}}}" directory_mode="{{{tree.folder_mode}}}" hdfs_user={{{src.hdfs_relay.user}}}
+{{% endfor %}}
+
+{{% if data.credentialByHost[scopeName] is defined %}}
+  - name: Perform kdestroy for HDFS access from {{{ scopeName }}}
+    shell: kdestroy
+    changed_when: false
+{{%endif%}}
+
+
+{{%endif%}}
+{{% endfor %}}
+

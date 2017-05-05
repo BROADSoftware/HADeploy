@@ -17,6 +17,7 @@ pages:
     - local_templates_folders: plugins_reference/files/local_templates_folders.md
     - trees: plugins_reference/files/trees.md
   - Hdfs:
+    - hdfs_relay: plugins_reference/hdfs/hdfs_relay.md
     - source_host_credentials: plugins_reference/hdfs/source_host_credentials.md
   - Inventory: 
     - hosts: plugins_reference/inventory/hosts.md

@@ -1,0 +1,28 @@
+
+type: map
+mapping:
+
+  "hdfs_relay":
+    type: map
+    mapping:
+      "host": { type: str, required: true }                  
+      "cache_folder": { type: str, required: false }        # Default: /var/cache/hadeploy           
+      "user": { type: str, required: false }                # Default: hdfs           
+      "hadoop_conf_dir": { type: str, required: false }     # default: "/etc/hadoop/conf"       
+      "webhdfs_endpoint": { type: str, required: false }    # Default: Lookup in <hadoop_conf_dir>/hdfs-site.xml     
+      "principal": { type: str, required: false }           # Kerberos principal
+      "keytab_path": { type: str, required: false }         # Path to a keytab file
+      "kdebug": { type: bool, required: false }             # Display klist result
+      
+                  
+  "source_host_credentials":
+    type: "seq"
+    sequence:
+    - type: map
+      mapping:
+        "host": { type: str, required: true } 
+        "principal": { type: str, required: true }          
+        "keytab_path": { type: str, required: true }       
+        "kdebug": { type: bool, required: false }             # Display klist result
+
+          

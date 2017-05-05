@@ -1,0 +1,124 @@
+
+# --------------------------------------------------------- Remove node to HDFS pushed files and trees
+
+{{% for scopeName, scope in data.hdfs.scopeByName.iteritems() %}}
+{{% if scope.nodeFileToHdfs|length > 0 or scope.nodeTreeToHdfs|length > 0 %}}
+- hosts: {{{ scopeName }}}
+  roles:
+  - hdfs_modules    
+  tasks:
+
+{{% if data.credentialByHost[scopeName] is defined %}}
+  - name: Perform kinit for HDFS access from {{{ scopeName }}}
+    shell: kinit -kt {{{ data.credentialByHost[scopeName].keytab_path }}} {{{ data.credentialByHost[scopeName].principal }}}
+    changed_when: false
+{{% if data.credentialByHost[scopeName].kdebug %}} 
+  - name: Check kerberos ticket for HDFS access
+    shell: klist
+    register: klist_result
+    changed_when: false
+  - debug: var=klist_result
+{{%endif%}}
+{{%endif%}}  
+  
+{{% for file in scope.nodeFileToHdfs %}}
+{{% if not file.no_remove %}}
+  - name: Remove '{{{file._target_}}}' from HDFS
+    hdfs_file: hdfs_path={{{file._target_}}} state=absent hdfs_user={{{src.hdfs_relay.user}}}
+{{%endif %}}
+{{% endfor %}}
+
+{{% for tree in scope.nodeTreeToHdfs %}}
+{{% if not tree.no_remove %}}
+  - name: Remove '{{{tree.dest_folder}}}' from HDFS
+    hdfs_file: hdfs_path={{{tree.dest_folder}}} state=absent hdfs_user={{{src.hdfs_relay.user}}}
+{{%endif %}}
+{{% endfor %}}
+
+{{% if data.credentialByHost[scopeName] is defined %}}
+  - name: Perform kdestroy for HDFS access from {{{ scopeName }}}
+    shell: kdestroy
+    changed_when: false
+{{%endif%}}
+
+{{%endif%}}
+{{% endfor %}}
+
+
+
+# --------------------------------------------------------------------------- HDFS task from hdfs relay
+
+{{% if src.hdfs_relay is defined %}}
+- hosts: {{{ src.hdfs_relay.host }}}   # This is the hdfs_relay
+  roles:
+  - hdfs_modules    
+  tasks:
+
+# ------------------------------------------------------------- Handle kerberos authentication for hdfs
+
+{{% if src.hdfs_relay.kerberos %}}
+  - name: Perform kinit for HDFS access
+    shell: kinit -kt {{{ src.hdfs_relay.keytab_path }}} {{{ src.hdfs_relay.principal }}}
+    changed_when: false
+{{% if src.hdfs_relay.kdebug %}} 
+  - name: Check kerberos ticket for HDFS access
+    shell: klist
+    register: klist_result
+    changed_when: false
+  - debug: var=klist_result
+{{%endif%}}
+{{%endif%}}
+
+# ------------------------------------------------------------------------- Remove hdfs files and trees
+
+{{% if data.hdfs.files|length > 0 or data.hdfs.trees|length > 0 %}}
+{{% for file in data.hdfs.files|reverse %}}
+{{% if not file.no_remove %}}
+  # ------------------------------------ Handle hdfs://{{{file._target_}}} 
+  - name: Remove {{{file._target_}}} from HDFS
+    hdfs_file: hdfs_path={{{file._target_}}} state=absent hdfs_user={{{src.hdfs_relay.user}}}
+{{%endif %}}
+{{% endfor %}}
+{{% for tree in d.hdfsTrees|reverse %}}
+{{% if not tree.no_remove %}}
+  # ------------------------------------ Handle hdfs://{{{tree.dest_folder}}} 
+  - name: Remove {{{tree.dest_folder}}} from HDFS
+    hdfs_file: hdfs_path={{{tree.dest_folder}}} state=absent hdfs_user={{{src.hdfs_relay.user}}}
+{{%endif %}}
+{{% endfor %}}
+
+{{%endif%}}
+
+# --------------------------------------------------------------------- Remove hdfs folders
+
+{{% if data.hdfs.folders is defined and data.hdfs.folders|length > 0 %}}
+{{% for folder in data.hdfs.folders|reverse %}}
+{{% if not folder.no_remove %}}
+  - name: Remove HDFS folder {{{ folder.path }}}
+    hdfs_file: hdfs_path={{{folder.path}}} state=absent{{%if src.hdfs_relay.hadoop_conf_dir is defined%}} hadoop_conf_dir={{{src.hdfs_relay.hadoop_conf_dir}}}{{%endif%}}{{%if src.hdfs_relay.webhdfs_endpoint is defined%}} webhdfs_endpoint={{{src.hdfs_relay.webhdfs_endpoint}}}{{%endif%}} hdfs_user={{{src.hdfs_relay.user}}}
+{{%endif %}}
+    
+{{% endfor %}}
+{{%endif%}}
+
+# --------------------------------------------------- Cleanup kerberos authentication for hdfs
+
+{{% if src.hdfs_relay.kerberos %}}
+  - name: Perform kdestroy for HDFS access
+    shell: kdestroy
+    changed_when: false
+{{%endif%}}
+
+{{%endif%}}
+# --------------------------------------------------------------------- End of HDFS task from hdfs relay
+
+# ----------------------------------------------------------------------------- Cleanup hdfs_relay cache 
+
+{{% if src.hdfs_relay is defined %}}
+- hosts: {{{ src.hdfs_relay.host }}}
+  tasks:
+  - name: Cleanup HADeploy cache
+    file: path={{{ src.hdfs_relay.cache_folder }}}  state=absent
+{{%endif%}}
+
+  

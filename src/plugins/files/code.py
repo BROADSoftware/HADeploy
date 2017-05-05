@@ -18,20 +18,34 @@
 import logging
 import misc
 import os
+from sets import Set
 
 
 from plugin import Plugin
 from const import SRC,DATA
 
+"""
+    This plugin also prepare data for the HDFS plugin, conditioned by the fact an hdfs_relay is defined
+"""
+
+DEFAULT_HDFS_RELAY_CACHE_FOLDER='/var/cache/hadeploy/files'
+
+
 NO_REMOVE="no_remove"
 FILES="files"
 FOLDERS="folders"
 TREES="trees"
+
+NODE_FILE_TO_HDFS="nodeFileToHdfs"
+NODE_TREE_TO_HDFS="nodeTreeToHdfs"
+
 HDFS="hdfs"
 HDFS_RELAY="hdfs_relay"
 CACHEFOLDERS="cacheFolders"
 LOCAL_FILES_FOLDERS="local_files_folders"
 LOCAL_TEMPLATES_FOLDERS="local_templates_folders"
+
+
         
 INVENTORY="inventory"
 HOST_BY_NAME="hostByName"        
@@ -46,7 +60,7 @@ VALIDATE_CERTS="validate_certs"
 FORCE_BASIC_AUTH="force_basic_auth"
 
 SCOPE_BY_NAME="scopeByName"          
-# 
+
 _SRC_="_src_"
 _TARGET_="_target_"
 _TARGETFOLDERS_="_targetFolders_"
@@ -83,6 +97,11 @@ class FilesPlugin(Plugin):
 
     def onGrooming(self, context):
         misc.ensureObjectInMaps(context.model[DATA], [FILES, SCOPE_BY_NAME], {})
+        if HDFS_RELAY in context.model[SRC]:
+            # We need to anticipate on works performed by hdfs plugin, as we need it right now
+            misc.ensureObjectInMaps(context.model[DATA], [HDFS, SCOPE_BY_NAME], {})
+            misc.ensureObjectInMaps(context.model[DATA], [HDFS, CACHEFOLDERS], Set())
+            misc.setDefaultInMap(context.model[SRC][HDFS_RELAY], CACHE_FOLDER, DEFAULT_HDFS_RELAY_CACHE_FOLDER)
         groomFolders(context)
         groomFiles(context)
         groomTrees(context)
@@ -97,6 +116,14 @@ def ensureScope(context, scope):
         misc.ensureObjectInMaps(root, [scope, FOLDERS], [])
         misc.ensureObjectInMaps(root, [scope, TREES], [])
 
+def ensureHdfsScope(model, scope):
+    root = model[DATA][HDFS][SCOPE_BY_NAME]
+    if not scope in root:
+        misc.ensureObjectInMaps(root, [scope, NODE_FILE_TO_HDFS], [])
+        misc.ensureObjectInMaps(root, [scope, NODE_TREE_TO_HDFS], [])
+
+
+
 def groomFolders(context):
     model = context.model
     if FOLDERS in model[SRC]:
@@ -106,7 +133,8 @@ def groomFolders(context):
                 if not HDFS_RELAY in model[SRC]:
                     misc.ERROR("Scope of folder '{0}' is 'hdfs' while no hdfs_relay was defined!".format(folder['path']))
                 else:
-                    pass # TODO: HDFS handling
+                    misc.ensureObjectInMaps(model[DATA], [HDFS, FOLDERS], [] )
+                    model[DATA][HDFS][FOLDERS].append(folder)
             else:
                 if not context.checkScope(folder[SCOPE]):
                     misc.ERROR("Folder {0}: Scope attribute '{1}' does not match any host or host_group and is not 'hdfs'!".format(folder['path'], folder[SCOPE]))
@@ -123,7 +151,8 @@ def groomFiles(context):
                 if not HDFS_RELAY in model[SRC]:
                     misc.ERROR("Scope of file '{0}' is 'hdfs' while no hdfs_relay was defined!".format(f[SRC]))
                 else:
-                    pass # TODO: HDFS handling
+                    misc.ensureObjectInMaps(model[DATA], [HDFS, FILES], [] )
+                    model[DATA][HDFS][FILES].append(f)
             else:
                 if not context.checkScope(f[SCOPE] ):
                     misc.ERROR("File {0}: Scope attribute '{1}' does not match any host or host_group and is not 'hdfs'!".format(f[FSRC], f[SCOPE]))
@@ -143,10 +172,13 @@ def groomFiles(context):
             if f[SCOPE] == HDFS:
                 # This one is intended to be used in the cache
                 f[_TTARGET_] = os.path.normpath(model[SRC][HDFS_RELAY][CACHE_FOLDER] + "/" +  manglePath(f[_TARGET_]))
-                model[DATA][CACHEFOLDERS].add(os.path.dirname(f[_TTARGET_]))
+                model[DATA][HDFS][CACHEFOLDERS].add(os.path.dirname(f[_TTARGET_]))
         
 def groomNodeToHdfsFiles(f, model):
     groomNodeToHdfsFilesOrTrees(f, model)
+    ensureHdfsScope(model, f[SCOPE])
+    model[DATA][HDFS][SCOPE_BY_NAME][f[SCOPE]][NODE_FILE_TO_HDFS].append(f)
+    
 
 # Simpler to handle this here than in hdfs plugin
 def groomNodeToHdfsFilesOrTrees(f, model):
@@ -227,8 +259,9 @@ def groomTrees(context):
                 else:
                     # This one is intended to be used in the cache
                     t[_TTARGET_] = os.path.normpath(model[SRC][HDFS_RELAY][CACHE_FOLDER] + "/" +  manglePath(t[DEST_FOLDER]))
-                    model[DATA][CACHEFOLDERS].add(os.path.dirname(t[_TTARGET_]))
-                    pass  # TODO: HDFS
+                    model[DATA][HDFS][CACHEFOLDERS].add(os.path.dirname(t[_TTARGET_]))
+                    misc.ensureObjectInMaps(model[DATA], [HDFS, TREES], [] )
+                    model[DATA][HDFS][TREES].append(t)
             else:
                 if not context.checkScope(t[SCOPE] ):
                     misc.ERROR("Tree {0}: Scope attribute '{1}' does not match any host or host_group and is not 'hdfs'!".format(t[FSRC], t[SCOPE]))
@@ -314,4 +347,8 @@ def groomNodeToHdfsTrees(tree, model):
     if not tree[_SRC_].endswith("/"):
         tree[_SRC_] = tree[_SRC_] + "/"
     #misc.ERROR("Nodes to hdfs trees not yet implemented")    
+    ensureHdfsScope(model, tree[SCOPE])
+    model[DATA][HDFS][SCOPE_BY_NAME][tree[SCOPE]][NODE_TREE_TO_HDFS].append(tree)
+    
+
     
