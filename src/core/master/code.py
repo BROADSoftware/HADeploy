@@ -26,31 +26,32 @@ logger = logging.getLogger("hadeploy.plugins.master")
 class MasterPlugin(Plugin):
   
     
-    def __init__(self, name, path):
-        Plugin.__init__(self, name, path)
+    def __init__(self, name, path, context):
+        Plugin.__init__(self, name, path, context)
 
     
-    def onNewSnippet(self, context, snippetPath):
+    def onNewSnippet(self, snippetPath):
         #logger.debug("Called master self.onNewSnippet()")
-        if PLUGINS_PATHS in context.model[SRC]:
+        if PLUGINS_PATHS in self.context.model[SRC]:
             newList = []
-            for p in context.model[SRC][PLUGINS_PATHS]:
+            for p in self.context.model[SRC][PLUGINS_PATHS]:
                 if os.path.isabs(p):
                     newList.append(p)
                 else:
                     newList.append(os.path.normpath(os.path.join(snippetPath, p)))
-            context.model[SRC][PLUGINS_PATHS] = newList
+            self.context.model[SRC][PLUGINS_PATHS] = newList
 
 
     # This should be idempotent, as called twice (One on bootstrap, and on on regular case)
-    def onGrooming(self, context):
+    def onGrooming(self):
+        model = self.context.model
         #logger.debug("Called self.onGrooming() for plugin '{0}'".format(self.name))
-        if VARS not in context.model[SRC] or HADEPLOY_HOME not in context.model[SRC][VARS]:
+        if VARS not in model[SRC] or HADEPLOY_HOME not in model[SRC][VARS]:
             misc.ERROR("Undefined {0} variable. Please inject it on launch..".format(HADEPLOY_HOME))
-        if not PLUGINS_PATHS in context.model[SRC]:
-            context.model[SRC][PLUGINS_PATHS] = []
+        if not PLUGINS_PATHS in model[SRC]:
+            model[SRC][PLUGINS_PATHS] = []
             for path in DEFAULT_PLUGINS_PATHS:
-                context.model[SRC][PLUGINS_PATHS].append(os.path.normpath(os.path.join(context.model[SRC][VARS][HADEPLOY_HOME], path)))
-        if not PLUGINS in context.model[SRC]:
-            context.model[SRC][PLUGINS] = DEFAULT_PLUGINS
+                model[SRC][PLUGINS_PATHS].append(os.path.normpath(os.path.join(model[SRC][VARS][HADEPLOY_HOME], path)))
+        if not PLUGINS in model[SRC]:
+            model[SRC][PLUGINS] = DEFAULT_PLUGINS
     

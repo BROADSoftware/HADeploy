@@ -1,0 +1,130 @@
+
+
+# ----------------------------------------------------------------------------- Ranger policies handling
+{{% if src.ranger_relay is defined %}}
+- hosts: {{{ src.ranger_relay.host }}}
+  roles:
+  - ranger_modules
+  tasks:
+
+{{% if src.ranger_relay.ca_bundle_local_file is defined %}}
+  - name: Copy CA_BUNDLE
+    copy: src={{{src.ranger_relay.ca_bundle_local_file}}} dest={{{src.ranger_relay.ca_bundle_relay_file}}} owner={{ansible_ssh_user}} group={{ansible_ssh_user}} mode="0400"
+    changed_when: false 
+{{%endif%}}
+
+{{% if src.hdfs_ranger_policies is defined and src.hdfs_ranger_policies|length > 0 %}}
+  - name: will set HDFS policies
+    ranger_hdfs_policies:
+      admin_url: "{{{ src.ranger_relay.ranger_url }}}"
+      admin_username: "{{{ src.ranger_relay.ranger_username }}}"
+      admin_password: "{{{ src.ranger_relay.ranger_password }}}"
+      validate_certs: "{{{ src.ranger_relay.validate_certs }}}"
+{{% if src.ranger_relay.hdfs_service_name is defined %}}
+      service_name: "{{{ src.ranger_relay.hdfs_service_name }}}"
+{{%endif%}}
+{{% if src.ranger_relay.ca_bundle_relay_file is defined %}}
+      ca_bundle_file: "{{{ src.ranger_relay.ca_bundle_relay_file }}}"
+{{%endif%}}
+      policies: 
+{{% for policy in src.hdfs_ranger_policies %}}
+      - name: "{{{policy.name}}}"
+        paths: [ {{% for p in policy.paths %}}{{% if not loop.first %}}, {{% endif %}}"{{{p}}}"{{%endfor%}} ]
+        recursive: {{{policy.recursive}}}
+        audit: {{{policy.audit}}}
+        enabled: {{{policy.enabled}}}
+{{% if policy.permissions is not defined or policy.permissions|length == 0 %}}
+        permissions: []
+{{% else %}}
+        permissions:         
+{{% for perms in policy.permissions %}}
+        - accesses: [ {{% for acc in perms.accesses %}}{{% if not loop.first %}}, {{% endif %}}"{{{acc}}}"{{%endfor%}} ] 
+          users: [ {{% for user in perms.users %}}{{% if not loop.first %}}, {{% endif %}}"{{{user}}}"{{%endfor%}} ] 
+          groups: [ {{% for group in perms.groups %}}{{% if not loop.first %}}, {{% endif %}}"{{{group}}}"{{%endfor%}} ]
+          delegate_admin: {{{ perms.delegate_admin }}} 
+{{% endfor %}}
+{{%endif%}}
+{{% endfor %}}
+{{%endif%}}
+
+
+{{% if src.hbase_ranger_policies is defined and src.hbase_ranger_policies|length > 0 %}}
+  - name: will set HBase policies
+    ranger_hbase_policies:
+      admin_url: "{{{ src.ranger_relay.ranger_url }}}"
+      admin_username: "{{{ src.ranger_relay.ranger_username }}}"
+      admin_password: "{{{ src.ranger_relay.ranger_password }}}"
+      validate_certs: "{{{ src.ranger_relay.validate_certs }}}"
+{{% if src.ranger_relay.hbase_service_name is defined %}}
+      service_name: "{{{ src.ranger_relay.hbase_service_name }}}"
+{{%endif%}}
+{{% if src.ranger_relay.ca_bundle_relay_file is defined %}}
+      ca_bundle_file: "{{{ src.ranger_relay.ca_bundle_relay_file }}}"
+{{%endif%}}
+      policies: 
+{{% for policy in src.hbase_ranger_policies %}}
+      - name: "{{{policy.name}}}"
+        tables: [ {{% for t in policy.tables %}}{{% if not loop.first %}}, {{% endif %}}"{{{t}}}"{{%endfor%}} ]
+        column_families: [ {{% for cf in policy.column_families %}}{{% if not loop.first %}}, {{% endif %}}"{{{cf}}}"{{%endfor%}} ]
+        columns: [ {{% for c in policy.columns %}}{{% if not loop.first %}}, {{% endif %}}"{{{c}}}"{{%endfor%}} ]
+        audit: {{{policy.audit}}}
+        enabled: {{{policy.enabled}}}
+{{% if policy.permissions is not defined or policy.permissions|length == 0 %}}
+        permissions: []
+{{% else %}}
+        permissions:         
+{{% for perms in policy.permissions %}}
+        - accesses: [ {{% for acc in perms.accesses %}}{{% if not loop.first %}}, {{% endif %}}"{{{acc}}}"{{%endfor%}} ] 
+          users: [ {{% for user in perms.users %}}{{% if not loop.first %}}, {{% endif %}}"{{{user}}}"{{%endfor%}} ] 
+          groups: [ {{% for group in perms.groups %}}{{% if not loop.first %}}, {{% endif %}}"{{{group}}}"{{%endfor%}} ]
+          delegate_admin: {{{ perms.delegate_admin }}} 
+{{% endfor %}}
+{{%endif%}}
+{{% endfor %}}
+{{%endif%}}
+
+
+{{% if src.kafka_ranger_policies is defined and src.kafka_ranger_policies|length > 0 %}}
+  - name: will set Kafka policies
+    ranger_kafka_policies:
+      admin_url: "{{{ src.ranger_relay.ranger_url }}}"
+      admin_username: "{{{ src.ranger_relay.ranger_username }}}"
+      admin_password: "{{{ src.ranger_relay.ranger_password }}}"
+      validate_certs: "{{{ src.ranger_relay.validate_certs }}}"
+{{% if src.ranger_relay.kafka_service_name is defined %}}
+      service_name: "{{{ src.ranger_relay.kafka_service_name }}}"
+{{%endif%}}
+{{% if src.ranger_relay.ca_bundle_relay_file is defined %}}
+      ca_bundle_file: "{{{ src.ranger_relay.ca_bundle_relay_file }}}"
+{{%endif%}}
+      policies: 
+{{% for policy in src.kafka_ranger_policies %}}
+      - name: "{{{policy.name}}}"
+        topics: [ {{% for t in policy.topics %}}{{% if not loop.first %}}, {{% endif %}}"{{{t}}}"{{%endfor%}} ]
+        audit: {{{policy.audit}}}
+        enabled: {{{policy.enabled}}}
+{{% if policy.permissions is not defined or policy.permissions|length == 0 %}}
+        permissions: []
+{{% else %}}
+        permissions:         
+{{% for perms in policy.permissions %}}
+        - accesses: [ {{% for acc in perms.accesses %}}{{% if not loop.first %}}, {{% endif %}}"{{{acc}}}"{{%endfor%}} ] 
+          users: [ {{% for user in perms.users %}}{{% if not loop.first %}}, {{% endif %}}"{{{user}}}"{{%endfor%}} ] 
+          groups: [ {{% for group in perms.groups %}}{{% if not loop.first %}}, {{% endif %}}"{{{group}}}"{{%endfor%}} ]
+          ip_addresses: [ {{% for ipr in perms.ip_addresses %}}{{% if not loop.first %}}, {{% endif %}}"{{{ipr}}}"{{%endfor%}} ] 
+          delegate_admin: {{{ perms.delegate_admin }}} 
+{{% endfor %}}
+{{%endif%}}
+{{% endfor %}}
+{{%endif%}}
+
+
+
+  
+{{% if src.ranger_relay.ca_bundle_local_file is defined %}}
+  - name: Remove CA_BUNDLE
+    file: path={{{src.ranger_relay.ca_bundle_relay_file}}} state=absent 
+    changed_when: false 
+{{%endif%}}
+
+{{%endif%}}

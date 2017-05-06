@@ -38,13 +38,13 @@ SCOPE_BY_NAME="scopeByName"
 
 class UsersPlugin(Plugin):
     
-    def __init__(self, name, path):
-        Plugin.__init__(self, name, path)
+    def __init__(self, name, path, context):
+        Plugin.__init__(self, name, path, context)
 
-    def onNewSnippet(self, context, snippetPath):
+    def onNewSnippet(self, snippetPath):
         #logger.debug("Called users self.onNewSnippet()")
-        if USERS in context.model[SRC]:
-            for u in context.model[SRC][USERS]:
+        if USERS in self.context.model[SRC]:
+            for u in self.context.model[SRC][USERS]:
                 if AUTHORIZED_KEYS in u:
                     absKeys = []
                     for key in u[AUTHORIZED_KEYS]:
@@ -55,10 +55,10 @@ class UsersPlugin(Plugin):
                     u[AUTHORIZED_KEYS] = absKeys
 
 
-    def onGrooming(self, context):
-        misc.ensureObjectInMaps(context.model[DATA], [USERS, SCOPE_BY_NAME], {})
-        groomUsers(context)
-        groomGroups(context)
+    def onGrooming(self):
+        misc.ensureObjectInMaps(self.context.model[DATA], [USERS, SCOPE_BY_NAME], {})
+        groomUsers(self.context)
+        groomGroups(self.context)
 
 
 # ---------------------------------------------------- Static functions

@@ -358,7 +358,7 @@ class Parser:
             base = os.path.dirname(os.path.abspath(fileName))
             self.context.model[SRC] = self.getResult()
             for plugin in self.context.plugins:
-                plugin.onNewSnippet(self.context, base)
+                plugin.onNewSnippet(base)
 
         
     def getResult(self):

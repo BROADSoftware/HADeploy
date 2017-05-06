@@ -24,7 +24,7 @@ url_password|no||String; In case of `src: http://...` or `src: https://...`. The
 no_remove|no|no|Boolean: Prevent this file to be removed when HADeploy will be used in REMOVE mode
 ranger_policy|no||Definition of Apache Ranger policy bound to this file. <br>Parameters are same as [`hdfs_ranger_policies`](../ranger/hdfs_ranger_policies) items, excepts than paths should not be defined as automatically set to the file path, and the policy is not recursive by default.<br>Scope must be hdfs.<br>The policy name can be explicitly defined. Otherwise, a name will be generated as `"_<targetPath>_"`.<br>See example below for more information.
 
-> src: must reference a file. To copy a folder content, use the `trees` definition.
+> NB: `src:` must not reference a folder. To create a folder, use the `folders` definition and to copy a folder content, use the `trees` definition.
 
 ## Example
 

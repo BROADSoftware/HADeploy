@@ -54,13 +54,13 @@ INVENTORY="inventory"
 
 class FilesPlugin(Plugin):
     
-    def __init__(self, name, path):
-        Plugin.__init__(self, name, path)
+    def __init__(self, name, path, context):
+        Plugin.__init__(self, name, path, context)
 
-    def onGrooming(self, context):
-        #misc.ensureObjectInMaps(context.model[DATA], [HDFS, SCOPE_BY_NAME], {})  # Also performed if file plugin if HDFS_RELAY is defined.
-        groomHdfsRelay(context.model)
-        groomSourceHostCredentials(context.model)
+    def onGrooming(self):
+        #misc.ensureObjectInMaps(self.context.model[DATA], [HDFS, SCOPE_BY_NAME], {})  # Also performed if file plugin if HDFS_RELAY is defined.
+        groomHdfsRelay(self.context.model)
+        groomSourceHostCredentials(self.context.model)
         
 # ---------------------------------------------------- Static functions
 

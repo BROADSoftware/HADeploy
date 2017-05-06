@@ -42,29 +42,29 @@ HOSTS_TO_SETUP="hostsToSetup"
 
 class InventoryPlugin(Plugin):
     
-    def __init__(self, name, path):
-        Plugin.__init__(self, name, path)
+    def __init__(self, name, path, context):
+        Plugin.__init__(self, name, path, context)
         self.myHostGroups = []
     
-    def onNewSnippet(self, context, snippetPath):
+    def onNewSnippet(self, snippetPath):
         #logger.debug("Called inventory self.onNewSnippet()")
-        if HOSTS in context.model[SRC]:
-            for h in context.model[SRC][HOSTS]:
+        if HOSTS in self.context.model[SRC]:
+            for h in self.context.model[SRC][HOSTS]:
                 if SSH_PRIVATE_FILE_FILE in h and h[SSH_PRIVATE_FILE_FILE] != '':
                     if not os.path.isabs(h[SSH_PRIVATE_FILE_FILE]):
                         h[SSH_PRIVATE_FILE_FILE] = os.path.normpath(os.path.join(snippetPath, h[SSH_PRIVATE_FILE_FILE]))
-        if HOST_OVERRIDE in context.model[SRC]:
-            for h in context.model[SRC][HOST_OVERRIDE]:
+        if HOST_OVERRIDE in self.context.model[SRC]:
+            for h in self.context.model[SRC][HOST_OVERRIDE]:
                 if SSH_PRIVATE_FILE_FILE in h and h[SSH_PRIVATE_FILE_FILE] != '':
                     if not os.path.isabs(h[SSH_PRIVATE_FILE_FILE]):
                         h[SSH_PRIVATE_FILE_FILE] = os.path.normpath(os.path.join(snippetPath, h[SSH_PRIVATE_FILE_FILE]))
             
 
-    def onGrooming(self, context):
-        context.model[DATA][INVENTORY] = {}
-        buildHostDicts(context.model)
-        handleHostOverrides(context.model)
-        check(context.model)
+    def onGrooming(self):
+        self.context.model[DATA][INVENTORY] = {}
+        buildHostDicts(self.context.model)
+        handleHostOverrides(self.context.model)
+        check(self.context.model)
         
 
         

@@ -23,18 +23,19 @@ logger = logging.getLogger("hadeploy.plugin")
 
 
 class Plugin:
-    def __init__(self, name, path):
+    def __init__(self, name, path, context):
         self.name = name
         self.path = path
+        self.context = context
         #logger.debug("Plugin '{0}':  type:'{1}' path:'{2}'".format(name, str(self.__class__), path))
 
         
-    def onNewSnippet(self, context, snippetPath):
+    def onNewSnippet(self, snippetPath):
         #logger.debug("Called default self.onNewSnippet() for plugin '{0}'".format(self.name))
         pass
         
             
-    def onGrooming(self, context):
+    def onGrooming(self):
         #logger.debug("Called default self.onGrooming() for plugin '{0}'".format(self.name))
         pass
     

@@ -66,12 +66,12 @@ class Context:
                         misc.ERROR("Invalid plugin '{0}' code.py: Missing MyPlugin(Plugin) class".format(name))
                     else:
                         #logger.debug("Plugin '{0}': Found class {1}".format(name, str(pluginClass)))
-                        plugin = pluginClass(name, path)
+                        plugin = pluginClass(name, path, self)
                         logger.debug("Loaded plugin '{0}' with 'code.py' module  (path:'{1}')".format(name, path))    
                 else:
-                    # Module without code
+                    # Plugin without code
                     logger.debug("Loaded plugin '{0}' without 'code.py' module  (path:'{1}')".format(name, path))    
-                    plugin = Plugin(name, path)    
+                    plugin = Plugin(name, path, self)    
                 self.plugins.append(plugin)
                 self.pluginByName[plugin.name] = plugin
                 return
@@ -79,7 +79,7 @@ class Context:
 
     def groom(self):
         for plugin in self.plugins:
-            plugin.onGrooming(self)
+            plugin.onGrooming()
 
     # Build the schema for source validation, by merge of all schema plugin
     def getSchema(self):

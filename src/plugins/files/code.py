@@ -76,43 +76,44 @@ logger = logging.getLogger("hadeploy.plugins.files")
 
 class FilesPlugin(Plugin):
     
-    def __init__(self, name, path):
-        Plugin.__init__(self, name, path)
+    def __init__(self, name, path, context):
+        Plugin.__init__(self, name, path, context)
 
 
-    def onNewSnippet(self, context, snippetPath):
-        if LOCAL_FILES_FOLDERS in context.model[SRC]:
+    def onNewSnippet(self, snippetPath):
+        model = self.context.model
+        if LOCAL_FILES_FOLDERS in model[SRC]:
             l2 = []
-            for p in context.model[SRC][LOCAL_FILES_FOLDERS]:
+            for p in model[SRC][LOCAL_FILES_FOLDERS]:
                 if not os.path.isabs(p):
                     l2.append(os.path.normpath(os.path.join(snippetPath, p)))
                 else:
                     l2.append(p)
-            context.model[SRC][LOCAL_FILES_FOLDERS] = l2
-        if LOCAL_TEMPLATES_FOLDERS in context.model[SRC]:
+            model[SRC][LOCAL_FILES_FOLDERS] = l2
+        if LOCAL_TEMPLATES_FOLDERS in model[SRC]:
             l2 = []
-            for p in context.model[SRC][LOCAL_TEMPLATES_FOLDERS]:
+            for p in model[SRC][LOCAL_TEMPLATES_FOLDERS]:
                 if not os.path.isabs(p):
                     l2.append(os.path.normpath(os.path.join(snippetPath, p)))
                 else:
                     l2.append(p)
-            context.model[SRC][LOCAL_TEMPLATES_FOLDERS] = l2
+            model[SRC][LOCAL_TEMPLATES_FOLDERS] = l2
 
 
-    def onGrooming(self, context):
-        misc.ensureObjectInMaps(context.model[DATA], [FILES, SCOPE_BY_NAME], {})
-        if HDFS in context.pluginByName:
+    def onGrooming(self):
+        misc.ensureObjectInMaps(self.context.model[DATA], [FILES, SCOPE_BY_NAME], {})
+        if HDFS in self.context.pluginByName:
             # We need to anticipate on works performed by hdfs plugin, as we need it right now
-            misc.ensureObjectInMaps(context.model[DATA], [HDFS, NODE_TO_HDFS_BY_NAME], {})
-            misc.ensureObjectInMaps(context.model[DATA], [HDFS, FILES], [] )
-            misc.ensureObjectInMaps(context.model[DATA], [HDFS, FOLDERS], [] )
-            misc.ensureObjectInMaps(context.model[DATA], [HDFS, TREES], [] )
-            misc.ensureObjectInMaps(context.model[DATA], [HDFS, CACHEFOLDERS], Set())
-        if HDFS_RELAY in context.model[SRC]:
-            misc.setDefaultInMap(context.model[SRC][HDFS_RELAY], CACHE_FOLDER, DEFAULT_HDFS_RELAY_CACHE_FOLDER)
-        groomFolders(context)
-        groomFiles(context)
-        groomTrees(context)
+            misc.ensureObjectInMaps(self.context.model[DATA], [HDFS, NODE_TO_HDFS_BY_NAME], {})
+            misc.ensureObjectInMaps(self.context.model[DATA], [HDFS, FILES], [] )
+            misc.ensureObjectInMaps(self.context.model[DATA], [HDFS, FOLDERS], [] )
+            misc.ensureObjectInMaps(self.context.model[DATA], [HDFS, TREES], [] )
+            misc.ensureObjectInMaps(self.context.model[DATA], [HDFS, CACHEFOLDERS], Set())
+        if HDFS_RELAY in self.context.model[SRC]:
+            misc.setDefaultInMap(self.context.model[SRC][HDFS_RELAY], CACHE_FOLDER, DEFAULT_HDFS_RELAY_CACHE_FOLDER)
+        groomFolders(self.context)
+        groomFiles(self.context)
+        groomTrees(self.context)
     
 
 # ---------------------------------------------------- Static functions

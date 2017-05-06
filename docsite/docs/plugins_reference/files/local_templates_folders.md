@@ -2,7 +2,7 @@
 
 ## Synopsis
 
-Allow defining a list of local folder where HADeploy will lookup local templates to be deployed on the target clusters.
+Allow definition of a list of local folder where HADeploy will lookup local templates to be deployed on the target clusters.
 
 ## Attributes
 

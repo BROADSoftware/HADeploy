@@ -1,0 +1,102 @@
+
+
+# ----------------------------------------------------------------------------- Ranger policies handling
+{{% if src.ranger_relay is defined %}}
+- hosts: {{{ src.ranger_relay.host }}}
+  roles:
+  - ranger_modules
+  tasks:
+
+{{% if src.ranger_relay.ca_bundle_local_file is defined %}}
+  - name: Copy CA_BUNDLE
+    copy: src={{{src.ranger_relay.ca_bundle_local_file}}} dest={{{src.ranger_relay.ca_bundle_relay_file}}} owner={{ansible_ssh_user}} group={{ansible_ssh_user}} mode="0400"
+    changed_when: false 
+{{%endif%}}
+
+{{% if src.hdfs_ranger_policies is defined and data.hdfsRangerPoliciesToRemove > 0 %}}
+  - name: will remove HDFS policies
+    ranger_hdfs_policies:
+      state: absent
+      admin_url: "{{{ src.ranger_relay.ranger_url }}}"
+      admin_username: "{{{ src.ranger_relay.ranger_username }}}"
+      admin_password: "{{{ src.ranger_relay.ranger_password }}}"
+      validate_certs: "{{{ src.ranger_relay.validate_certs }}}"
+{{% if src.ranger_relay.hdfs_service_name is defined %}}
+      service_name: "{{{ src.ranger_relay.hdfs_service_name }}}"
+{{%endif%}}
+{{% if src.ranger_relay.ca_bundle_relay_file is defined %}}
+      ca_bundle_file: "{{{ src.ranger_relay.ca_bundle_relay_file }}}"
+{{%endif%}}
+      policies: 
+{{% for policy in src.hdfs_ranger_policies %}}
+{{% if not policy.no_remove %}}
+      - name: "{{{policy.name}}}"
+        paths: [ {{% for p in policy.paths %}}{{% if not loop.first %}}, {{% endif %}}"{{{p}}}"{{%endfor%}} ]
+        permissions: []
+{{%endif%}}
+{{% endfor %}}
+{{%endif%}}
+
+
+{{% if src.hbase_ranger_policies is defined and data.hbaseRangerPoliciesToRemove > 0 %}}
+  - name: will remove HBase policies
+    ranger_hbase_policies:
+      state: absent
+      admin_url: "{{{ src.ranger_relay.ranger_url }}}"
+      admin_username: "{{{ src.ranger_relay.ranger_username }}}"
+      admin_password: "{{{ src.ranger_relay.ranger_password }}}"
+      validate_certs: "{{{ src.ranger_relay.validate_certs }}}"
+{{% if src.ranger_relay.hbase_service_name is defined %}}
+      service_name: "{{{ src.ranger_relay.hbase_service_name }}}"
+{{%endif%}}
+{{% if src.ranger_relay.ca_bundle_relay_file is defined %}}
+      ca_bundle_file: "{{{ src.ranger_relay.ca_bundle_relay_file }}}"
+{{%endif%}}
+      policies: 
+{{% for policy in src.hbase_ranger_policies %}}
+{{% if not policy.no_remove %}}
+      - name: "{{{policy.name}}}"
+        tables: [ {{% for t in policy.tables %}}{{% if not loop.first %}}, {{% endif %}}"{{{t}}}"{{%endfor%}} ]
+        column_families: [ {{% for cf in policy.column_families %}}{{% if not loop.first %}}, {{% endif %}}"{{{cf}}}"{{%endfor%}} ]
+        columns: [ {{% for c in policy.columns %}}{{% if not loop.first %}}, {{% endif %}}"{{{c}}}"{{%endfor%}} ]
+        permissions: []
+{{%endif%}}
+{{% endfor %}}
+{{%endif%}}
+
+
+
+{{% if src.kafka_ranger_policies is defined and data.kafkaRangerPoliciesToRemove > 0 %}}
+  - name: will remove Kafka policies
+    ranger_kafka_policies:
+      state: absent
+      admin_url: "{{{ src.ranger_relay.ranger_url }}}"
+      admin_username: "{{{ src.ranger_relay.ranger_username }}}"
+      admin_password: "{{{ src.ranger_relay.ranger_password }}}"
+      validate_certs: "{{{ src.ranger_relay.validate_certs }}}"
+{{% if src.ranger_relay.kafka_service_name is defined %}}
+      service_name: "{{{ src.ranger_relay.kafka_service_name }}}"
+{{%endif%}}
+{{% if src.ranger_relay.ca_bundle_relay_file is defined %}}
+      ca_bundle_file: "{{{ src.ranger_relay.ca_bundle_relay_file }}}"
+{{%endif%}}
+      policies: 
+{{% for policy in src.kafka_ranger_policies %}}
+{{% if not policy.no_remove %}}
+      - name: "{{{policy.name}}}"
+        topics: [ {{% for t in policy.topics %}}{{% if not loop.first %}}, {{% endif %}}"{{{t}}}"{{%endfor%}} ]
+        permissions: []
+{{%endif%}}
+{{% endfor %}}
+{{%endif%}}
+
+
+  
+{{% if src.ranger_relay.ca_bundle_local_file is defined %}}
+  - name: Remove CA_BUNDLE
+    file: path={{{src.ranger_relay.ca_bundle_relay_file}}} state=absent 
+    changed_when: false 
+{{%endif%}}
+
+{{%endif%}}
+

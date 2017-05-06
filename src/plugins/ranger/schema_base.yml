@@ -1,0 +1,20 @@
+
+type: map
+mapping:
+
+  "ranger_relay":
+    type: map
+    mapping:
+      "host": { type: str, required: true }
+      "ranger_url": { type: str, required: true }
+      "ranger_username": { type: str, required: true }
+      "ranger_password": { type: str, required: true }
+      "validate_certs": { type: bool, required: false }    # Default to true
+      "ca_bundle_relay_file": { type: str, required: false }
+      "ca_bundle_local_file": { type: str, required: false }
+      "hdfs_service_name": { type: str, required: false }
+      "hbase_service_name": { type: str, required: false }
+      "kafka_service_name": { type: str, required: false }
+      "policy_name_decorator": { type: str, required: false } # Default to "HAD[{0}]"
+      
+      

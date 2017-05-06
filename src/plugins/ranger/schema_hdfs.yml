@@ -2,6 +2,29 @@
 type: map
 mapping:
 
+     
+  "hdfs_ranger_policies":
+    type: seq
+    sequence:
+    - type: map
+      mapping:
+        "name": { type: str, required: true }
+        "paths": { type: seq, sequence: [ { type: str } ], required: true }
+        "recursive": { type: bool, required: false }    # Default to True
+        "audit": { type: bool, required: false }    # Default to True
+        "enabled": { type: bool, required: false }    # Default to True
+        "no_remove": { type: bool, required: false }    # Default to false
+        "permissions": 
+          type: seq
+          sequence:
+          - type: map
+            mapping:
+              "users": { type: seq, sequence: [ { type: str } ] }
+              "groups": { type: seq, sequence: [ { type: str } ] }
+              "accesses": { type: seq, sequence: [ { type: str } ], required: true }
+              "delegate_admin": { type: bool, required: false }    # Default to False
+        
+        
         
   "folders":
     type: "seq"

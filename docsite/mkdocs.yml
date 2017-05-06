@@ -25,6 +25,7 @@ pages:
     - host_groups: plugins_reference/inventory/host_groups.md
   - Ranger:
     - hdfs_ranger_policies: plugins_reference/ranger/hdfs_ranger_policies.md
+    - ranger_relay: plugins_reference/ranger/ranger_relay.md
   - Users:
     - "users": plugins_reference/users/users.md
     - "groups": plugins_reference/users/groups.md
