@@ -1,0 +1,18 @@
+
+# Set JAVA_HOME. Must be at least 1.7.
+# If not set, will try to lookup a correct version.
+# JAVA_HOME=/some/place/where/to/find/java
+
+# Set the log configuration file
+JOPTS="$JOPTS -Dlog4j.configuration=file:{{hbase_relay_tools_folder}}/jdchtable/log4j.xml"
+
+# Dump configuration, for debugging
+# OPTS="$OPTS --dumpConfigFile /tmp/jdchtable-conf.txt"
+
+# Set kerberos principal and keytab (Will not use kinit)
+{% if hbase_relay_kerberos %}
+OPTS="$OPTS --principal {{hbase_relay_principal}} --keytab {{ hbase_relay_keytab_path }}"
+{% endif %}
+
+
+

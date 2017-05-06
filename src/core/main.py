@@ -94,6 +94,8 @@ def main():
 
     dump.dumpModel(context)
 
+    context.generatePrivateTemplate()
+
     templator = Templator([os.path.join(mydir, './templates'), context.workingFolder], context.model)
     templator.generate("inventory.jj2", os.path.join(context.workingFolder, "inventory"))
     templator.generate("ansible.cfg.jj2", os.path.join(context.workingFolder, "ansible.cfg"))

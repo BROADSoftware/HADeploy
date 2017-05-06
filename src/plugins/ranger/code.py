@@ -89,10 +89,10 @@ class RangerPlugin(Plugin):
         self.myHostGroups = []
     
     def onNewSnippet(self, snippetPath):
-        if 'ranger_relay' in self.context.model:
-            if 'ca_bundle_local_file' in self.context.model['ranger_relay']:
-                if not os.path.isabs(self.context.model['ranger_relay']['ca_bundle_local_file']):
-                    self.context.model['ranger_relay']['ca_bundle_local_file'] = os.path.normpath(os.path.join(snippetPath, self.context.model['ranger_relay']['ca_bundle_local_file']))
+        if RANGER_RELAY in self.context.model[SRC]:
+            if CA_BUNDLE_LOCAL_FILE in self.context.model[SRC][RANGER_RELAY]:
+                if not os.path.isabs(self.context.model[SRC][RANGER_RELAY][CA_BUNDLE_LOCAL_FILE]):
+                    self.context.model[SRC][RANGER_RELAY][CA_BUNDLE_LOCAL_FILE] = os.path.normpath(os.path.join(snippetPath, self.context.model[SRC][RANGER_RELAY][CA_BUNDLE_LOCAL_FILE]))
             
 
     def onGrooming(self):
@@ -105,7 +105,7 @@ class RangerPlugin(Plugin):
             groomRangerKafkaPolicies(self.context.model)
 
     def getSchema(self):
-        schemaFile = os.path.join(self.path, "schema_base.yml")
+        schemaFile = os.path.join(self.path, "schema_core.yml")
         theSchema=yaml.load(open(schemaFile))
         if 'hdfs' in self.context.pluginByName:
             schemaFile = os.path.join(self.path, "schema_hdfs.yml")

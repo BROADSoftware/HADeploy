@@ -1,4 +1,4 @@
-# Copyright (C) 2017 BROADSoftware
+# Copyright (C) 2016 BROADSoftware
 #
 # This file is part of HADeploy
 #
@@ -15,26 +15,18 @@
 # You should have received a copy of the GNU General Public License
 # along with HADeploy.  If not, see <http://www.gnu.org/licenses/>.
 
-# ----------------------------------------------- Index in dict
-SRC = "src"
-DATA = "data"
-HELPER = "helper"
+MYDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-VARS = "vars"
-HADEPLOY_HOME = "HADEPLOY_HOME"
+JDCHTABLE_VERSION="0.2.0"
+HBLOAD_VERSION="0.2.0"
 
-PLUGINS_PATHS = "plugins_paths"
-PLUGINS = "plugins"
+if [ ! -f $MYDIR/jdchtable/jdchtable_uber-${JDCHTABLE_VERSION}.jar ]
+then
+	curl -L https://github.com/BROADSoftware/jdchtable/releases/download/v${JDCHTABLE_VERSION}/jdchtable_uber-${JDCHTABLE_VERSION}.jar -o $MYDIR/jdchtable/jdchtable_uber-${JDCHTABLE_VERSION}.jar
+fi
 
-ANSIBLE_ROLES_PATHS = "ansible_roles_paths"
+if [ ! -f $MYDIR/hbload/hbload_uber-${HBLOAD_VERSION}.jar ]
+then
+	curl -L https://github.com/BROADSoftware/hbtools/releases/download/v${HBLOAD_VERSION}/hbload_uber-${HBLOAD_VERSION}.jar -o $MYDIR/hbload/hbload_uber-${HBLOAD_VERSION}.jar
+fi
 
-# ------------------------------------------------ Default values
-# default plugins_paths, from HADEPLOY_HOME:
-DEFAULT_PLUGINS_PATHS = ["src/plugins"]
-
-# default plugins list
-DEFAULT_PLUGINS = [ 'ansible_inventory', 'inventory', 'users', 'files', 'hdfs', 'hbase', 'ranger']
-
-DEFAULT_HDFS_RELAY_CACHE_FOLDER='/var/cache/hadeploy/files'
-
-DEFAULT_TOOLS_FOLDER="/opt/hadeploy"

@@ -81,6 +81,12 @@ class Context:
         for plugin in self.plugins:
             plugin.onGrooming()
 
+
+    def generatePrivateTemplate(self):
+        for plugin in self.plugins:
+            plugin.onTemplateGeneration()
+        
+
     # Build the schema for source validation, by merge of all schema plugin
     def getSchema(self):
         theSchema = {}
@@ -106,33 +112,33 @@ class Context:
     def buildInstallTemplate(self):
         output = file(os.path.normpath(os.path.join(self.workingFolder, "install.yml.jj2")), 'w')
         for plugin in self.plugins:
-            tmpl = plugin.getInstallTemplate()
-            if tmpl != None and os.path.isfile(tmpl):
-                f = open(tmpl, 'r')
+            tmpls = plugin.getInstallTemplates()
+            if len(tmpls) > 0:
                 output.write("\n# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = PLUGIN {0}:\n\n".format(plugin.name))
-                output.write(f.read())
-                f.close()
+                for tmpl in tmpls:
+                    f = open(tmpl, 'r')
+                    output.write(f.read())
+                    f.close()
         output.close()
         
         
     def buildRemoveTemplate(self):
         output = file(os.path.normpath(os.path.join(self.workingFolder, "remove.yml.jj2")), 'w')
         for plugin in reversed(self.plugins):
-            tmpl = plugin.getRemoveTemplate()
-            if tmpl != None and os.path.isfile(tmpl):
-                f = open(tmpl, 'r')
+            tmpls = plugin.getRemoveTemplates()
+            if len(tmpls) > 0:
                 output.write("\n# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = PLUGIN {0}:\n\n".format(plugin.name))
-                output.write(f.read())
-                f.close()
+                for tmpl in tmpls:
+                    f = open(tmpl, 'r')
+                    output.write(f.read())
+                    f.close()
         output.close()
         
     def builRolesPath(self):
         rolesPaths = []
         for plugin in self.plugins:
             paths = plugin.getRolesPaths()
-            if paths != None:
-                for p in paths:
-                    if p != None and os.path.isdir(p):
-                        rolesPaths.append(p)
+            for p in paths:
+                rolesPaths.append(p)
         self.model[HELPER][ANSIBLE_ROLES_PATHS] = rolesPaths
             

@@ -39,7 +39,8 @@ class Plugin:
         #logger.debug("Called default self.onGrooming() for plugin '{0}'".format(self.name))
         pass
     
-    
+    def onTemplateGeneration(self):
+        pass
     
     # Following function follow standard and documented naming convention. 
     # So override only in case of need, such as returning different values depending of the context. 
@@ -51,14 +52,18 @@ class Plugin:
         else:
             return None
     
-    def getInstallTemplate(self):
-        return os.path.join(self.path, "install.yml.jj2")
+    def getInstallTemplates(self):
+        f = os.path.join(self.path, "install.yml.jj2")
+        return [f] if os.path.isfile(f) else []
 
-    def getRemoveTemplate(self):
-        return os.path.join(self.path, "remove.yml.jj2")
+    def getRemoveTemplates(self):
+        f = os.path.join(self.path, "remove.yml.jj2")
+        return [f] if os.path.isfile(f) else []
         
     def getRolesPaths(self):
-        return [os.path.join(self.path, "roles")]
+        p = os.path.join(self.path, "roles")
+        return [p] if os.path.isdir(p) else []
+        
         
         
         

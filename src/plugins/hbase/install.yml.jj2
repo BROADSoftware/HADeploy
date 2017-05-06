@@ -1,0 +1,76 @@
+
+
+# ------------------------------------------------------------------------------- Handle hbase tables
+
+{{% if src.hbase_namespaces is defined and  src.hbase_namespaces|length > 0 %}}
+
+- hosts: {{{ src.hbase_relay.host }}}
+  tasks:
+  - name: "hbase: Create a temporary file name"
+    shell: mktemp
+    register: mktemp
+    changed_when: false
+
+  - name: "hbase: Generate the description file"
+    template: src=desc_htables.yml.j2 dest={{mktemp.stdout}} mode=0644
+    changed_when: false
+
+{{% if src.hbase_relay.debug %}}
+  - shell: cat {{mktemp.stdout}}
+    register: jdch
+    changed_when: false
+  - debug: var=jdch.stdout_lines
+{{% endif %}}  
+
+  - name: "hbase: Apply potential update"
+    shell: {{{ src.hbase_relay.tools_folder}}}/jdchtable/jdchtable --inputFile {{mktemp.stdout}} 
+    register: jdch
+    changed_when: jdch.stdout.find(" 0 modification(s)") == -1
+
+  - name: "hbase: Cleanup temporary file"
+    file: path={{mktemp.stdout}} state=absent
+    changed_when: false
+    
+{{% endif %}}  
+  
+# ------------------------------------------------------------------------------- Handle hbase datasets
+
+
+{{% if src.hbase_datasets is defined and  src.hbase_datasets|length > 0 %}}
+- hosts: {{{ src.hbase_relay.host }}}
+  tasks:
+{{% for dataset in src.hbase_datasets %}}
+
+  - name: "hbase_dataset: Create a temporary file name"
+    shell: mktemp
+    register: mktemp
+    changed_when: false
+
+{{% if dataset.src.startswith("file://") %}}
+  - name: Copy file '{{{dataset._displaySrc_}}}' to temporary file
+    copy: src={{{dataset._src_}}} dest={{mktemp.stdout}} mode=0644 
+    changed_when: false
+{{% elif dataset.src.startswith("http://") or dataset.src.startswith("https://") %}}
+  - name: Download '{{{dataset.src}}}' to temporary file
+    get_url: url={{{dataset.src}}} dest={{mktemp.stdout}} force=yes validate_certs={{{dataset.validate_certs}}} force_basic_auth={{{dataset.force_basic_auth }}} {{% if dataset.url_username is defined %}}url_username={{{dataset.url_username}}}{{%endif%}} {{% if dataset.url_password is defined %}}url_password={{{dataset.url_password}}}{{%endif%}} #
+    changed_when: false
+{{% elif dataset.src.startswith("tmpl://")  %}}
+  - name: Copy template file '{{{dataset._displaySrc_}}}' to temporary file
+    template: src={{{dataset._src_}}} dest={{mktemp.stdout}} mode=0644 
+    changed_when: false
+{{% endif %}}
+
+  - name: "hbase_datasets: Apply potential update"
+    shell: {{{ src.hbase_relay.tools_folder}}}/hbload/hbload --inputFile {{mktemp.stdout}} --namespace {{{dataset.namespace}}} --table {{{dataset.table}}} {{%if dataset.delRows%}} --delRows{{%endif%}}{{%if dataset.delValues%}} --delValues{{%endif%}}{{%if dataset.dontAddRow%}} --dontAddRow{{%endif%}}{{%if dataset.dontAddValue%}} --dontAddValue{{%endif%}}{{%if dataset.updValues%}} --updValues{{%endif%}}  # 
+    register: hbl
+    changed_when: hbl.stdout.find(" 0 modification(s)") == -1
+    
+  - name: "hbase_datasets: Cleanup temporary file"
+    file: path={{mktemp.stdout}} state=absent
+    changed_when: false
+    
+{{% endfor %}}
+{{% endif %}}  
+
+
+

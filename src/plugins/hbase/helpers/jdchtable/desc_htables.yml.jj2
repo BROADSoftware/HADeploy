@@ -1,0 +1,39 @@
+
+namespaces:
+{{% for namespace in data.hbase.namespaceByName.values() %}}
+- name: {{{ namespace.name }}}
+  managed: {{{ namespace.managed }}}
+  tables:
+{{% for table in namespace.tables %}}
+  - name: {{{ table.name }}}
+{{% if table.properties is defined %}}
+    properties:
+{{% for k,v in table.properties.iteritems() %}}
+      {{{k}}}: {{{v}}}
+{{% endfor %}}
+{{% endif %}}
+    columnFamilies:
+{{% for cf in table.column_families %}}
+    - name: {{{ cf.name }}}
+{{% if cf.properties is defined %}}
+      properties:
+{{% for k,v in cf.properties.iteritems() %}}
+        {{{k}}}: {{{v}}}
+{{% endfor %}}
+{{% endif %}}
+{{%endfor%}}
+{{% if table.presplit is defined %}}
+    presplit:
+{{% if table.presplit.splits is defined %}}
+      keys:
+{{% for k in table.presplit.splits %}}
+      - '{{{k}}}'
+{{% endfor %}}
+{{% else %}}
+      startKey: '{{{ table.presplit.start_key }}}'
+      endKey: '{{{ table.presplit.end_key }}}'
+      numRegion: {{{ table.presplit.num_region }}}
+{{% endif %}}
+{{% endif %}}
+{{%endfor%}}
+{{% endfor %}}

@@ -1,0 +1,34 @@
+
+# ------------------------------------------------------------------------------- Handle hbase tables
+
+{{% if src.hbase_namespaces is defined and  src.hbase_namespaces|length > 0 %}}
+
+- hosts: {{{ src.hbase_relay.host }}}
+  tasks:
+  - name: "hbase: Create a temporary folder"
+    shell: mktemp
+    register: mktemp
+    changed_when: false
+
+  - name: "hbase: Generate the removal file"
+    template: src=desc_unhtables.yml.j2 dest={{mktemp.stdout}} mode=0644
+    changed_when: false
+
+{{% if src.hbase_relay.debug %}}
+  - shell: cat {{mktemp.stdout}}
+    register: jdch
+    changed_when: false
+  - debug: var=jdch.stdout_lines
+{{% endif %}}  
+
+  - name: "hbase: Apply potential update"
+    shell: {{{ src.hbase_relay.tools_folder}}}/jdchtable/jdchtable --inputFile {{mktemp.stdout}} 
+    register: jdch
+    changed_when: jdch.stdout.find("0 modification(s)") == -1
+
+  - name: "hbase: Cleanup temporary file"
+    file: path={{mktemp.stdout}} state=absent
+    changed_when: false
+    
+{{% endif %}}  
+  
