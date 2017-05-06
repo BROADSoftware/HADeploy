@@ -1,0 +1,112 @@
+
+
+
+type: map
+mapping:
+
+  "hbase_relay":
+    type: map
+    mapping:
+      "host": { type: str, required: true }                  
+      "tools_folder": { type: str, required: false }
+      "principal": { type: str, required: false }           # Kerberos principal
+      "keytab_path": { type: str, required: false }         # Path to a keytab file
+      "debug": { type: bool, required: false }              # Display jdctopic input file
+
+
+
+  "hbase_namespaces":        
+    type: "seq"
+    sequence:
+    - type: map
+      mapping:
+        "name": { type: str, required: true }
+        "no_remove": { type: bool, required: false }    # Default to false
+        "managed": { type: bool, required: false }    # Default to true
+        "ranger_policy":
+          type: map
+          mapping:
+            "name": { type: str, required: false }
+            "audit": { type: bool, required: false }    # Default to True
+            "enabled": { type: bool, required: false }    # Default to True
+            "permissions": 
+              type: seq
+              sequence:
+              - type: map
+                mapping:
+                  "users": { type: seq, sequence: [ { type: str } ] }
+                  "groups": { type: seq, sequence: [ { type: str } ] }
+                  "accesses": { type: seq, sequence: [ { type: str } ], required: true }
+                  "delegate_admin": { type: bool, required: false }    # Default to False
+        
+          
+  "hbase_tables":        
+    type: "seq"
+    sequence:
+    - type: map
+      mapping:
+        "name": { type: str, required: true }
+        "namespace": { type: str, required: true }
+        "properties": 
+          type: map
+          allowempty: True
+        "column_families": 
+          type: "seq"
+          required: true
+          sequence:
+          - type: map
+            mapping:
+              "name": { type: str, required: true }
+              "properties": 
+                 type: map
+                 allowempty: True
+        "presplit":
+          type: map
+          mapping:
+            "splits": 
+              type: seq
+              sequence:
+              - type: str
+            "start_key": { type: str, required: false }
+            "end_key": { type: str, required: false }
+            "num_region": { type: int, required: false }
+        "no_remove": { type: bool, required: false }    # Default to false
+        "ranger_policy":
+          type: map
+          mapping:
+            "name": { type: str, required: false }
+            "audit": { type: bool, required: false }    # Default to True
+            "enabled": { type: bool, required: false }    # Default to True
+            "permissions": 
+              type: seq
+              sequence:
+              - type: map
+                mapping:
+                  "users": { type: seq, sequence: [ { type: str } ] }
+                  "groups": { type: seq, sequence: [ { type: str } ] }
+                  "accesses": { type: seq, sequence: [ { type: str } ], required: true }
+                  "delegate_admin": { type: bool, required: false }    # Default to False
+        
+      
+  "hbase_datasets":
+    type: "seq"
+    sequence:
+    - type: map
+      mapping:
+        "namespace": { type: str, required: true }
+        "table": { type: str, required: true }
+        "src": {  type: str, required: true }
+        "delRows": { type: bool, required: false } # Default to false
+        "delValues": { type: bool, required: false } # Default to false
+        "dontAddRow": { type: bool, required: false } # Default to false
+        "dontAddValue": { type: bool, required: false } # Default to false
+        "updValues": { type: bool, required: false } # Default to false
+        "validate_certs": { type: bool, required: false }   # For https:// Default to true 
+        "force_basic_auth": { type: bool, required: false } # For http/https
+        "url_username":  { type: str, required: false } # For http/https
+        "url_password":  { type: str, required: false } # For http/https
+        "no_remove": { type: bool, required: false }    # Default to false
+                
+                
+                
+                

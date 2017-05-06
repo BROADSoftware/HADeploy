@@ -16,6 +16,11 @@ pages:
     - local_files_folders: plugins_reference/files/local_files_folders.md
     - local_templates_folders: plugins_reference/files/local_templates_folders.md
     - trees: plugins_reference/files/trees.md
+  - HBase:
+    - hbase_datasets: plugins_reference/hbase/hbase_datasets.md
+    - hbase_namespaces: plugins_reference/hbase/hbase_namespaces.md
+    - hbase_relay: plugins_reference/hbase/hbase_relay.md
+    - hbase_tabless: plugins_reference/hbase/hbase_tables.md
   - Hdfs:
     - hdfs_relay: plugins_reference/hdfs/hdfs_relay.md
     - source_host_credentials: plugins_reference/hdfs/source_host_credentials.md
@@ -24,6 +29,7 @@ pages:
     - host_overrides: plugins_reference/inventory/host_overrides.md
     - host_groups: plugins_reference/inventory/host_groups.md
   - Ranger:
+    - hbase_ranger_policies: plugins_reference/ranger/hbase_ranger_policies.md
     - hdfs_ranger_policies: plugins_reference/ranger/hdfs_ranger_policies.md
     - ranger_relay: plugins_reference/ranger/ranger_relay.md
   - Users:
