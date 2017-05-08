@@ -30,7 +30,7 @@ ANSIBLE_ROLES_PATHS = "ansible_roles_paths"
 
 # ------------------------------------------------ Default values
 # default plugins_paths, from HADEPLOY_HOME:
-DEFAULT_PLUGINS_PATHS = ["src/plugins"]
+DEFAULT_PLUGINS_PATHS = ["plugins"]
 
 # default plugins list
 DEFAULT_PLUGINS = [ 'header', 'ansible_inventory', 'inventory', 'users', 'files', 'hdfs', 'hbase', 'kafka', 'ranger', 'footer']
