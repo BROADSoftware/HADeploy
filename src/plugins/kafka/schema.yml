@@ -1,0 +1,43 @@
+
+
+
+
+type: map
+mapping:
+
+     
+  "kafka_relay":
+    type: map
+    mapping:
+      "host": { type: str, required: true }                  
+      "zk_host_group": { type: str, required: true } 
+      "zk_port": { type: int, required: false }    # Default to 2181
+      "zk_path": { type: str, required: false }    # Default to 2181
+      "broker_id_map":
+        type: map
+        allowempty: True
+      "tools_folder": { type: str, required: false }
+      "principal": { type: str, required: false }           # Kerberos principal
+      "keytab_path": { type: str, required: false }         # Path to a keytab file
+      "kdebug": { type: bool, required: false }             # Display klist result            
+     
+          
+  "kafka_topics":        
+    type: "seq"
+    sequence:
+    - type: map
+      mapping:
+        "name": { type: str, required: true }
+        "replication_factor": { type: int, required: false }
+        "partition_factor": { type: int, required: false }
+        "assignments":
+          type: map
+          allowempty: True
+        "properties": 
+          type: map
+          allowempty: True
+        "no_remove": { type: bool, required: false }    # Default to false
+        
+
+
+          

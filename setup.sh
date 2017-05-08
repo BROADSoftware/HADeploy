@@ -19,16 +19,9 @@
 
 MYDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-JDCHTABLE_VERSION="0.2.0"
-HBLOAD_VERSION="0.2.0"
+$MYDIR/src/plugins/hbase/helpers/setup.sh
 
-if [ ! -f $MYDIR/jdchtable/jdchtable_uber-${JDCHTABLE_VERSION}.jar ]
-then
-	curl -L https://github.com/BROADSoftware/jdchtable/releases/download/v${JDCHTABLE_VERSION}/jdchtable_uber-${JDCHTABLE_VERSION}.jar -o $MYDIR/jdchtable/jdchtable_uber-${JDCHTABLE_VERSION}.jar
-fi
+$MYDIR/src/plugins/kafka/helpers/setup.sh
 
-if [ ! -f $MYDIR/hbload/hbload_uber-${HBLOAD_VERSION}.jar ]
-then
-	curl -L https://github.com/BROADSoftware/hbtools/releases/download/v${HBLOAD_VERSION}/hbload_uber-${HBLOAD_VERSION}.jar -o $MYDIR/hbload/hbload_uber-${HBLOAD_VERSION}.jar
-fi
+
 

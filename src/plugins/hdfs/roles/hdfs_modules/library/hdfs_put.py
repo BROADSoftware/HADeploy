@@ -264,7 +264,7 @@ class WebHDFS:
         f = open(localPath, "rb")
         resp2 = requests.put(url2, data=f, headers={'content-type': 'application/octet-stream'})
         if not resp2.status_code == 201:
-           error("Invalid returned http code '{0}' when calling '{1}'".format(resp2.status_code, url2))
+            error("Invalid returned http code '{0}' when calling '{1}'".format(resp2.status_code, url2))
            
     def rename(self, hdfsPath, newName):
         url = "http://{0}/webhdfs/v1{1}?{2}op=RENAME&destination={3}".format(self.endpoint, hdfsPath, self.auth, newName)
@@ -645,9 +645,9 @@ def main():
     else:
         # ----------------------------------------------------------------------------------------------- Source is a directory. Use copy by mirroring
         if destPathType == "NOT_FOUND":
-           error("Path {0} non existing on HDFS", p.hdfsDest)
+            error("Path {0} non existing on HDFS", p.hdfsDest)
         if destPathType == "FILE":
-           error("HDFS path {0} is a file. Must be a directory", p.hdfsDest)
+            error("HDFS path {0} is a file. Must be a directory", p.hdfsDest)
         elif destPathType == "NO_ACCESS":
             error("HDFS path {0}: No access", p.hdfsDest)
         elif destPathType != "DIRECTORY":

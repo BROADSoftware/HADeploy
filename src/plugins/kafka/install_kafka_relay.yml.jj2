@@ -1,0 +1,23 @@
+
+{{% if src.kafka_relay is defined %}}
+
+- hosts: {{{ src.kafka_relay.host }}}
+  vars: 
+    kafka_relay_tools_folder: {{{ src.kafka_relay.tools_folder}}}
+  tasks:
+  - name: Setup kafka_relay helper (1/3)
+    file: path={{{ src.kafka_relay.tools_folder}}}/jdctopic owner={{ansible_ssh_user}} mode="0755" state=directory
+
+  - name: Setup kafka_relay helper (2/3)
+    copy: src={{{helper.kafka.dir}}}/jdctopic/{{{helper.kafka.jdctopic_jar}}} dest={{{ src.kafka_relay.tools_folder}}}/jdctopic/ owner={{ansible_ssh_user}} mode="0644"
+
+  - name: Setup kafka_relay helper (3/3)  
+    template: src={{{helper.kafka.dir}}}/jdctopic/templates/{{item.file}}.j2 dest={{{ src.kafka_relay.tools_folder}}}/jdctopic/{{item.file}} owner={{ansible_ssh_user}} mode={{item.mode}}
+    with_items:
+    - { file: "jdctopic", mode: "0755" }
+    - { file: "setenv.sh", mode: "0644" }
+    - { file: "log4j.xml", mode: "0644" }
+    loop_control:
+      label: "{{item.file}}"
+    
+{{%endif%}}

@@ -1,0 +1,25 @@
+
+
+zookeeper: {% for host in groups['{{{src.kafka_relay.zk_host_group}}}'] %}{% if not loop.first %},{% endif %}{{  hostvars[host]['ansible_fqdn'] }}:{{{src.kafka_relay.zk_port}}}{% endfor %}{{{src.kafka_relay.zk_path}}}
+
+topics:
+{{% for topic in src.kafka_topics %}}
+- name: {{{ topic.name }}}
+{{% if topic.assignments is defined %}}
+  assignments:
+{{% for k,v in topic.assignments.iteritems() %}}
+    {{{k}}}: [ {{% for b in v %}}{{% if not loop.first %}}, {{% endif %}}{{{b}}}{{%endfor%}} ]
+{{% endfor %}}
+{{% else %}}
+  replicationFactor: {{{topic.replication_factor}}}
+  partitionFactor: {{{topic.partition_factor}}}
+{{% endif %}}
+{{% if topic.properties is defined %}}
+  properties:
+{{% for k,v in topic.properties.iteritems() %}}
+    {{{k}}}: {{{v}}}
+{{% endfor %}}
+{{% endif %}}
+
+{{% endfor %}}
+

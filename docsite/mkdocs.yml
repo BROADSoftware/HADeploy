@@ -26,11 +26,16 @@ pages:
     - source_host_credentials: plugins_reference/hdfs/source_host_credentials.md
   - Inventory: 
     - hosts: plugins_reference/inventory/hosts.md
-    - host_overrides: plugins_reference/inventory/host_overrides.md
     - host_groups: plugins_reference/inventory/host_groups.md
+    - host_group_overrides: plugins_reference/inventory/host_group_overrides.md
+    - host_overrides: plugins_reference/inventory/host_overrides.md
+  - Kafka:
+    - kafka_relay: plugins_reference/kafka/kafka_relay.md
+    - kafka_topic: plugins_reference/kafka/kafka_topics.md
   - Ranger:
     - hbase_ranger_policies: plugins_reference/ranger/hbase_ranger_policies.md
     - hdfs_ranger_policies: plugins_reference/ranger/hdfs_ranger_policies.md
+    - kafka_ranger_policies: plugins_reference/ranger/kafka_ranger_policies.md
     - ranger_relay: plugins_reference/ranger/ranger_relay.md
   - Users:
     - "users": plugins_reference/users/users.md
@@ -39,8 +44,8 @@ pages:
 - Architecture: architecture.md
 
 #theme: readthedocs
-theme: mkdocs
-#theme: 'material'
+#theme: mkdocs
+theme: 'material'
 #theme: yeti  # Bootswatch
 #theme: bootstrap
 

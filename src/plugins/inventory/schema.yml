@@ -42,4 +42,18 @@ mapping:
           sequence:
           - type: str
         "force_setup": { type: bool, required: false }     # Default to false
-          
+
+        
+  "host_group_overrides":
+    type: "seq"
+    sequence:
+    - type: map
+      mapping:
+        "name": { type: str, required: true }        
+        "hosts": 
+          type: seq
+          required: false
+          sequence:
+          - type: str
+        "force_setup": { type: bool, required: false }     # Default to false
+                    

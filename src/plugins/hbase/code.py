@@ -81,9 +81,10 @@ class HBasePlugin(Plugin):
 
     
     def onTemplateGeneration(self):
-        templator = Templator([os.path.join(self.path, './helpers/jdchtable')], self.context.model)
-        templator.generate("desc_htables.yml.jj2", os.path.join(self.context.workingFolder, "desc_htables.yml.j2"))
-        templator.generate("desc_unhtables.yml.jj2", os.path.join(self.context.workingFolder, "desc_unhtables.yml.j2"))
+        if HBASE_NAMESPACE in self.context.model[SRC] and len(self.context.model[SRC][HBASE_NAMESPACE]) > 0:
+            templator = Templator([os.path.join(self.path, './helpers/jdchtable')], self.context.model)
+            templator.generate("desc_htables.yml.jj2", os.path.join(self.context.workingFolder, "desc_htables.yml.j2"))
+            templator.generate("desc_unhtables.yml.jj2", os.path.join(self.context.workingFolder, "desc_unhtables.yml.j2"))
     
     def getInstallTemplates(self):
         return [os.path.join(self.path, "install_hbase_relay.yml.jj2"), os.path.join(self.path, "install.yml.jj2")]
@@ -96,12 +97,12 @@ class HBasePlugin(Plugin):
         helper[DIR] = os.path.normpath(os.path.join(self.path, "helpers"))
         jdchtablejars = glob.glob(os.path.join(helper[DIR], "jdchtable/jdchtable_uber*.jar"))
         if len(jdchtablejars) < 1:
-            raise Exception("Unable to find helper for HBase.Please, refer to the documentation about Installation")
+            misc.ERROR("Unable to find helper for HBase.Please, refer to the documentation about Installation")
         helper[JDCHTABLE_JAR] = os.path.basename(jdchtablejars[0])
         
         hbloadjars = glob.glob(os.path.join(helper[DIR], "hbload/hbload_uber*.jar"))
         if len(hbloadjars) < 1:
-            raise Exception("Unable to find helper for HBase datasets loader. Please, refer to the documentation about Installation")
+            misc.ERROR("Unable to find helper for HBase datasets loader. Please, refer to the documentation about Installation")
         helper[HBLOAD_JAR] = os.path.basename(hbloadjars[0])
         misc.ensureObjectInMaps(self.context.model, [HELPER, HBASE], helper)
         

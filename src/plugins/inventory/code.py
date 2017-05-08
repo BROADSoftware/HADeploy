@@ -27,7 +27,8 @@ logger = logging.getLogger("hadeploy.plugins.inventory")
 INVENTORY="inventory"
 HOSTS="hosts"
 SSH_PRIVATE_FILE_FILE="ssh_private_key_file"
-HOST_OVERRIDE="host_overrides"
+HOST_OVERRIDES="host_overrides"
+HOST_GROUP_OVERRIDES="host_group_overrides"
 NAME="name"
 HOST_GROUPS="host_groups"
 SSH_HOST="ssh_host"
@@ -53,8 +54,8 @@ class InventoryPlugin(Plugin):
                 if SSH_PRIVATE_FILE_FILE in h and h[SSH_PRIVATE_FILE_FILE] != '':
                     if not os.path.isabs(h[SSH_PRIVATE_FILE_FILE]):
                         h[SSH_PRIVATE_FILE_FILE] = os.path.normpath(os.path.join(snippetPath, h[SSH_PRIVATE_FILE_FILE]))
-        if HOST_OVERRIDE in self.context.model[SRC]:
-            for h in self.context.model[SRC][HOST_OVERRIDE]:
+        if HOST_OVERRIDES in self.context.model[SRC]:
+            for h in self.context.model[SRC][HOST_OVERRIDES]:
                 if SSH_PRIVATE_FILE_FILE in h and h[SSH_PRIVATE_FILE_FILE] != '':
                     if not os.path.isabs(h[SSH_PRIVATE_FILE_FILE]):
                         h[SSH_PRIVATE_FILE_FILE] = os.path.normpath(os.path.join(snippetPath, h[SSH_PRIVATE_FILE_FILE]))
@@ -64,6 +65,7 @@ class InventoryPlugin(Plugin):
         self.context.model[DATA][INVENTORY] = {}
         buildHostDicts(self.context.model)
         handleHostOverrides(self.context.model)
+        handleHostGroupOverrides(self.context.model)
         check(self.context.model)
         
 
@@ -111,8 +113,8 @@ def check(model):
     model[DATA][INVENTORY][HOSTS_TO_SETUP] = list(hostsToSetup)
 
 def handleHostOverrides(model):
-    if HOST_OVERRIDE in model[SRC]:
-        for hover in model[SRC][HOST_OVERRIDE]:
+    if HOST_OVERRIDES in model[SRC]:
+        for hover in model[SRC][HOST_OVERRIDES]:
             if hover[NAME] == 'all' or hover[NAME] == '*':
                 for host in model[SRC][HOSTS]:
                     handleHostOverride(host, hover)
@@ -143,4 +145,22 @@ def handleHostOverride(host, overrider):
     for k in todel:
         del host[k]
 
+def handleHostGroupOverrides(model):
+    if HOST_GROUP_OVERRIDES in model[SRC]:
+        for hgover in model[SRC][HOST_GROUP_OVERRIDES]:
+            if hgover[NAME] == 'all' or hgover[NAME] == '*':
+                for hg in model[SRC][HOST_GROUPS]:
+                    handleHostGroupOverride(hg, hgover)
+            else:
+                if hgover[NAME] in model[DATA][INVENTORY][HOST_GROUP_BY_NAME]:
+                    handleHostGroupOverride(model[DATA][INVENTORY][HOST_GROUP_BY_NAME][hgover[NAME]], hgover)
+                else:
+                    misc.ERROR("Trying to override unexisting host_group: '{0}'".format(hgover[NAME]))
+                    
+
+def handleHostGroupOverride(hostGroup, overrider):
+    if HOSTS in overrider:
+        hostGroup[HOSTS] = overrider[HOSTS]
+    if FORCE_SETUP in overrider:
+        hostGroup[FORCE_SETUP] = overrider[FORCE_SETUP]
         

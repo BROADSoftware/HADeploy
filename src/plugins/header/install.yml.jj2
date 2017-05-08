@@ -1,0 +1,5 @@
+# ----------------------------------------------------------------------------- Grab info for hosts to setup
+
+{{% if data.inventory.hostsToSetup|length > 0 %}}
+- hosts: {{% for h in data.inventory.hostsToSetup%}}{{% if not loop.first %}}:{{% endif %}}{{{h}}}{{%endfor%}}
+{{%endif%}}

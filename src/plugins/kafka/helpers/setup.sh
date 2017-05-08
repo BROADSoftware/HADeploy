@@ -19,16 +19,12 @@
 
 MYDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-JDCHTABLE_VERSION="0.2.0"
-HBLOAD_VERSION="0.2.0"
+JDCTOPIC_VERSION="0.2.0"
 
-if [ ! -f $MYDIR/jdchtable/jdchtable_uber-${JDCHTABLE_VERSION}.jar ]
+if [ ! -f $MYDIR/jdctopic/jdctopic_uber-${JDCTOPIC_VERSION}.jar ]
 then
-	curl -L https://github.com/BROADSoftware/jdchtable/releases/download/v${JDCHTABLE_VERSION}/jdchtable_uber-${JDCHTABLE_VERSION}.jar -o $MYDIR/jdchtable/jdchtable_uber-${JDCHTABLE_VERSION}.jar
+	curl -L https://github.com/Kappaware/jdctopic/releases/download/v${JDCTOPIC_VERSION}/jdctopic_uber-${JDCTOPIC_VERSION}.jar -o $MYDIR/jdctopic/jdctopic_uber-${JDCTOPIC_VERSION}.jar
 fi
 
-if [ ! -f $MYDIR/hbload/hbload_uber-${HBLOAD_VERSION}.jar ]
-then
-	curl -L https://github.com/BROADSoftware/hbtools/releases/download/v${HBLOAD_VERSION}/hbload_uber-${HBLOAD_VERSION}.jar -o $MYDIR/hbload/hbload_uber-${HBLOAD_VERSION}.jar
-fi
+
 
