@@ -16,10 +16,20 @@
  	<logger name="com.kappaware"><level value="info"/></logger>
   
  	<logger name="org.apache.zookeeper"><level value="warn"/></logger>
+
+
+	 <appender name="STDERR" class="org.apache.log4j.ConsoleAppender">
+    	<param name="Target" value="System.err" />
+    	<layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%d{ISO8601}] %-5p %c:%L %m %n" />
+        </layout>
+    </appender>
+
     
     <root>
         <level value="info" /> 
     	<appender-ref ref="FILE" />
+    	<appender-ref ref="STDERR" />
 	</root>
 	
 </log4j:configuration>

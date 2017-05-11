@@ -1,5 +1,5 @@
 # folders
-***
+
 ## Synopsis
 
 Provided a list of folders to be created and configured on the target infrastructure

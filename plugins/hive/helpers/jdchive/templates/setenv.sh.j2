@@ -20,7 +20,7 @@ OPTS="$OPTS --configFile $HIVE_CONFIG_FILE"
 #OPTS="$OPTS --dumpConfigFile /tmp/jdchive-conf.txt"
 
 # Report performed opération
-OPTS="$OPTS --reportFile /tmp/jdchive-report-$(date +%y%m%d-%H%M%S).yml"
+# OPTS="$OPTS --reportFile /tmp/jdchive-report-$(date +%y%m%d-%H%M%S).yml"
 
 {% if hive_relay_kerberos %}
 OPTS="$OPTS --principal {{hive_relay_principal}} --keytab {{ hive_relay_keytab_path }}"

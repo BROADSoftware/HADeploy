@@ -137,10 +137,8 @@ def groomHBaseNamespaces(model):
             misc.ERROR('A hbase_relay must be defined if at least one hbase_namespace is defined')
         namespaceByName = {}    
         for ns in model[SRC][HBASE_NAMESPACES]:
-            if not NO_REMOVE in ns:
-                ns[NO_REMOVE] = False
-            if MANAGED not in ns:
-                ns[MANAGED] = True
+            misc.setDefaultInMap(ns, NO_REMOVE, False)
+            misc.setDefaultInMap(ns, MANAGED, True)
             if ns[NAME] == 'default':
                 if not ns[NO_REMOVE]:
                     misc.ERROR("HBase namespace 'default' can't be removed. Please set no_remove: True")

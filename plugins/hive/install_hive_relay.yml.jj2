@@ -12,13 +12,13 @@
     hive_relay_keytab_path: {{{ src.hive_relay.keytab_path }}}
 {{% endif %}}    
   tasks:
-  - name: Setup hive_relay helper (1/3)
-    file: path={{{ src.hive_relay.tools_folder}}}/jdchive owner={{ansible_ssh_user}}  mode="0755" state=directory
+  - name: Setup hive_relay helper (1/4)
+    file: path={{{ src.hive_relay.tools_folder}}}/jdchive owner={{%if src.hive_relay.user is defined%}}{{{src.hive_relay.user}}}{{%else%}}{{ansible_ssh_user}}{{%endif%}}  mode="0755" state=directory
 
-  - name: Setup hive_relay helper (2/3)
+  - name: Setup hive_relay helper (2/4)
     copy: src={{{helper.hive.dir}}}/jdchive/{{{helper.hive.jdchive_jar}}} dest={{{ src.hive_relay.tools_folder}}}/jdchive owner={{ansible_ssh_user}}  mode="0644"
 
-  - name: Setup hive_relay helper (3/3)  
+  - name: Setup hive_relay helper (3/4)  
     template: src={{{helper.hive.dir}}}/jdchive/templates/{{item.file}}.j2 dest={{{ src.hive_relay.tools_folder}}}/jdchive/{{item.file}} owner={{ansible_ssh_user}} mode={{item.mode}}
     with_items:
     - { file: "jdchive", mode: "0755" }
@@ -26,5 +26,10 @@
     - { file: "log4j.xml", mode: "0644" }
     loop_control:
       label: "{{item.file}}"
+
+  # Ensure log file ownership
+  - name: Setup hive_relay helper (4/4)  
+    file: path={{{ src.hive_relay.tools_folder}}}/jdchive/jdchive.log owner={{%if src.hive_relay.user is defined%}}{{{src.hive_relay.user}}}{{%else%}}{{ansible_ssh_user}}{{%endif%}} state=file
+    
     
 {{%endif%}}

@@ -30,6 +30,14 @@ def to_nice_yaml(a, **kw):
     return yaml.dump(a, width=10240,  indent=4, allow_unicode=True, default_flow_style=False, **kw)
 
 
+def to_yaml(a, **kw):
+    '''Make yaml'''
+    #transformed = yaml.dump(a, Dumper=AnsibleDumper, indent=4, allow_unicode=True, default_flow_style=False, **kw)
+    #return to_unicode(transformed)
+    #return yaml.dump(a, width=120, default_flow_style=False,  canonical=False, default_style='"', tags=False, **kw)
+    return yaml.dump(a, width=10240,  indent=2, allow_unicode=True, default_flow_style=True, **kw)
+
+
 
 class Templator():
 
@@ -47,6 +55,7 @@ class Templator():
             comment_end_string="#}}"
         )
         self.env.filters['to_nice_yaml'] = to_nice_yaml
+        self.env.filters['to_yaml'] = to_yaml
    
         
 

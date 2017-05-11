@@ -12,6 +12,14 @@
 			value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m %n" />
 	   </layout>
 	</appender>
+
+	 <appender name="STDERR" class="org.apache.log4j.ConsoleAppender">
+    	<param name="Target" value="System.err" />
+    	<layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%d{ISO8601}] %-5p %c:%L %m %n" />
+        </layout>
+    </appender>
+
     
  	<logger name="com.kappaware"><level value="info"/></logger>
   
@@ -20,6 +28,7 @@
     <root>
         <level value="info" /> 
     	<appender-ref ref="FILE" />
+    	<appender-ref ref="STDERR" />
 	</root>
 	
 </log4j:configuration>

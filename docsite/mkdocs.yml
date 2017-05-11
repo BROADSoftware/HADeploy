@@ -24,6 +24,9 @@ pages:
   - Hdfs:
     - hdfs_relay: plugins_reference/hdfs/hdfs_relay.md
     - source_host_credentials: plugins_reference/hdfs/source_host_credentials.md
+  - Hive:
+    - hive_databases: plugins_reference/hive/hive_databases.md
+    - hive_relay: plugins_reference/hive/hive_relay.md
   - Inventory: 
     - hosts: plugins_reference/inventory/hosts.md
     - host_groups: plugins_reference/inventory/host_groups.md
@@ -40,8 +43,9 @@ pages:
   - Users:
     - "users": plugins_reference/users/users.md
     - "groups": plugins_reference/users/groups.md
-
-- Architecture: architecture.md
+- More:
+  - Architecture: more/architecture.md
+  - "Hive assets migration": more/hive_assets_migration.md
 
 #theme: readthedocs
 #theme: mkdocs

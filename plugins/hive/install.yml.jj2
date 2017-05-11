@@ -1,2 +1,64 @@
 
 # ------------------------------------------------------------------------------- Handle hive tables
+
+{{% if src.hive_relay is defined %}}
+
+- hosts: {{{ src.hive_relay.host }}}
+  tasks:
+  - name: "hive: Create a temporary file name for description file"
+    shell: mktemp
+    register: tmpInput
+    changed_when: false
+
+{{% if src.hive_relay.report_file is defined %}}
+  - name: "hive: Create a temporary file name for report file"
+    shell: mktemp
+    register: tmpReport
+    changed_when: false
+{{% endif %}}  
+
+
+  - name: "hive: Generate the description file"
+    template: src=desc_hive.yml.j2 dest={{tmpInput.stdout}} mode=0644
+    changed_when: false
+
+{{% if src.hive_relay.debug %}}
+  - shell: cat {{tmpInput.stdout}}
+    register: jdch
+    changed_when: false
+  - debug: var=jdch.stdout_lines
+{{% endif %}}  
+
+  - name: "hive: Apply potential update"
+    shell: {{{ src.hive_relay.tools_folder}}}/jdchive/jdchive --inputFile {{tmpInput.stdout}} {{% if src.hive_relay.report_file is defined %}} --reportFile {{tmpReport.stdout}}{{%endif%}}
+    
+    register: jdch
+{{% if src.hive_relay.user is defined %}}
+    become: true
+    become_user: {{{src.hive_relay.user}}}
+{{% if src.hive_relay.become_method is defined %}}
+    become_method: {{{src.hive_relay.become_method}}}
+{{%endif%}}
+{{%endif%}}
+    changed_when: jdch.stdout.find(" 0 modification(s)") == -1
+
+    
+
+  - name: "hive: Cleanup temporary file"
+    file: path={{tmpInput.stdout}} state=absent
+    changed_when: false
+    
+
+{{% if src.hive_relay.report_file is defined %}}
+  - name: "hive: Fetch back the report file"
+    fetch: src={{tmpReport.stdout}} dest={{{src.hive_relay.report_file}}} flat=true
+    changed_when: false
+{{%endif%}}
+
+  - fail:
+      msg: "Unable to modify some table or databases: {{jdch.stdout}}."
+    when:  jdch.stdout.find(" 0 migration(s)") == -1
+
+{{%endif%}}
+
+

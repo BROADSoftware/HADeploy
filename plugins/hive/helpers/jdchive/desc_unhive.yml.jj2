@@ -1,0 +1,9 @@
+
+{{% if src.hive_databases is defined and  src.hive_databases|length > 0 %}}
+databases:
+{{% for db in src.hive_databases %}}
+- name: {{{ db.name }}}
+  state: absent
+
+{{% endfor %}}
+{{% endif %}}

@@ -25,7 +25,7 @@ from templator import Templator
 from plugin import Plugin
 from const import SRC,DATA,DEFAULT_TOOLS_FOLDER
 
-logger = logging.getLogger("hadeploy.plugins.hbase")
+logger = logging.getLogger("hadeploy.plugins.hive")
 
 HIVE="hive"
 HIVE_DATABASES="hive_databases"
@@ -43,13 +43,20 @@ DEBUG="debug"
 
 HIVE_RELAY="hive_relay"
 TOOLS_FOLDER="tools_folder"
-
+REPORT_FILE="report_file"
 
 class HBasePlugin(Plugin):
     
     def __init__(self, name, path, context):
         Plugin.__init__(self, name, path, context)
 
+    def onNewSnippet(self, snippetPath):
+        model = self.context.model
+        if HIVE_RELAY in model[SRC] and REPORT_FILE in model[SRC][HIVE_RELAY]:
+            if not os.path.isabs( model[SRC][HIVE_RELAY][REPORT_FILE]):
+                model[SRC][HIVE_RELAY][REPORT_FILE] = os.path.normpath(os.path.join(snippetPath, model[SRC][HIVE_RELAY][REPORT_FILE]))                
+            
+            
     def onGrooming(self):
         self.buildHelper()
         misc.ensureObjectInMaps(self.context.model[DATA], [HIVE], {})
@@ -82,6 +89,10 @@ class HBasePlugin(Plugin):
         
 # ---------------------------------------------------- Static functions
 
+HIVE_DATABASES="hive_databases"
+NAME="name"
+NO_REMOVE="no_remove"
+
 def groomHiveRelay(model):
     if HIVE_RELAY in model[SRC]:
         if (not HIVE_DATABASES in model[SRC] or len(model[SRC][HIVE_DATABASES]) == 0) and (not HIVE_TABLES in model[SRC] or len(model[SRC][HIVE_TABLES]) == 0):
@@ -100,4 +111,18 @@ def groomHiveRelay(model):
                 model[SRC][HIVE_RELAY][KERBEROS] = False
             misc.setDefaultInMap( model[SRC][HIVE_RELAY], DEBUG, False)
                 
+def groomHiveDatabases(model):
+    if HIVE_DATABASES in model[SRC] and len(model[SRC][HIVE_DATABASES]) > 0 :
+        if not HIVE_RELAY in model[SRC]:
+            misc.ERROR('A hive_relay must be defined if at least one hbase_namespace is defined')
+        #databaseByName = {}    
+        for db in model[SRC][HIVE_DATABASES]:
+            misc.setDefaultInMap(db, NO_REMOVE, False)
+            if db[NAME] == 'default':
+                if not db[NO_REMOVE]:
+                    misc.ERROR("HIVE database 'default' can't be removed. Please set no_remove: True")
+            #databaseByName[db[NAME]] = db
+        #model[DATA][HIVE][DATABASE_BY_NAME] = databaseByName
+    
+                    
         

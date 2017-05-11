@@ -108,6 +108,14 @@ TODO
  
 TODO
 
+### Variable substitution
+
+
+TODO
+
+{{{ }}} vs {{ }}
+
+
 ## The data model
 
 The data model is the object exposed to the Jinja2 template to build the resulting Ansible playbook.
