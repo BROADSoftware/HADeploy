@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+   
+	<appender name="FILE" class="org.apache.log4j.RollingFileAppender">
+	   <param name="maxFileSize" value="100KB" />
+	   <param name="maxBackupIndex" value="5" />
+	   <!-- For Tomcat -->
+	   <param name="file" value="{{hive_relay_tools_folder}}/jdchive/jdchive.log" />
+	   <layout class="org.apache.log4j.PatternLayout">
+		<param name="ConversionPattern" 
+			value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m %n" />
+	   </layout>
+	</appender>
+    
+ 	<logger name="com.kappaware"><level value="info"/></logger>
+  
+ 	<logger name="org.apache.zookeeper"><level value="warn"/></logger>
+    
+    <root>
+        <level value="info" /> 
+    	<appender-ref ref="FILE" />
+	</root>
+	
+</log4j:configuration>
+
+ 

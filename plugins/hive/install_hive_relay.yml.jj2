@@ -1,0 +1,30 @@
+
+# ------------------------------------------------------------------------------ Install Hive relay
+
+{{% if src.hive_relay is defined %}}
+
+- hosts: {{{ src.hive_relay.host }}}
+  vars: 
+    hive_relay_tools_folder: {{{ src.hive_relay.tools_folder }}}
+    hive_relay_kerberos:  {{{ src.hive_relay.kerberos }}}
+{{% if  src.hive_relay.kerberos %}}
+    hive_relay_principal: {{{ src.hive_relay.principal }}}
+    hive_relay_keytab_path: {{{ src.hive_relay.keytab_path }}}
+{{% endif %}}    
+  tasks:
+  - name: Setup hive_relay helper (1/3)
+    file: path={{{ src.hive_relay.tools_folder}}}/jdchive owner={{ansible_ssh_user}}  mode="0755" state=directory
+
+  - name: Setup hive_relay helper (2/3)
+    copy: src={{{helper.hive.dir}}}/jdchive/{{{helper.hive.jdchive_jar}}} dest={{{ src.hive_relay.tools_folder}}}/jdchive owner={{ansible_ssh_user}}  mode="0644"
+
+  - name: Setup hive_relay helper (3/3)  
+    template: src={{{helper.hive.dir}}}/jdchive/templates/{{item.file}}.j2 dest={{{ src.hive_relay.tools_folder}}}/jdchive/{{item.file}} owner={{ansible_ssh_user}} mode={{item.mode}}
+    with_items:
+    - { file: "jdchive", mode: "0755" }
+    - { file: "setenv.sh", mode: "0644" }
+    - { file: "log4j.xml", mode: "0644" }
+    loop_control:
+      label: "{{item.file}}"
+    
+{{%endif%}}

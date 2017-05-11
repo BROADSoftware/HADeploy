@@ -1,0 +1,29 @@
+
+type: map
+mapping:
+
+
+  "hive_relay":
+    type: map
+    mapping:
+      "host": { type: str, required: true }                  
+      "tools_folder": { type: str, required: false }
+      "principal": { type: str, required: false }           # Kerberos principal
+      "keytab_path": { type: str, required: false }         # Path to a keytab file
+      "debug": { type: bool, required: false }              # Display jdchive input file
+
+     
+  "hive_databases":        
+    type: "seq"
+    sequence:
+    - type: map
+      mapping:
+        "name": { type: str, required: true }
+        "location": { type: str, required: false }
+        "owner": { type: str, required: false }
+        "owner_type": { type: str, required: false, enum: [ 'USER', 'GROUP', 'ROLE', 'user', 'group', 'role' ] }
+        "comment": { type: str, required: false }
+        "no_remove": { type: bool, required: false }    # Default to false
+        "properties": 
+          type: map
+          allowempty: True

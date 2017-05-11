@@ -394,6 +394,8 @@ def main():
                 error("mode must be in octal form")
     
         p.mode = oct(p.mode).lstrip("0")
+        if p.mode == '':        # Thanks Jocelyn
+            p.mode = '0'
         #print '{ mode_type: "' + str(type(p.mode)) + '",  mode_value: "' + str(p.mode) + '"}'
 
     if not p.path.startswith("/"):

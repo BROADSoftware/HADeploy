@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+#
 # Copyright (C) 2017 BROADSoftware
 #
 # This file is part of HADeploy
@@ -15,26 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with HADeploy.  If not, see <http://www.gnu.org/licenses/>.
 
-# ----------------------------------------------- Index in dict
-SRC = "src"
-DATA = "data"
-HELPER = "helper"
+MYDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-VARS = "vars"
-HADEPLOY_HOME = "HADEPLOY_HOME"
+JDCHIVE_VERSION="0.1.0"
 
-PLUGINS_PATHS = "plugins_paths"
-PLUGINS = "plugins"
+if [ ! -f $MYDIR/jdchive/jdchive_uber-${JDCHTABLE_VERSION}.jar ]
+then
+	curl -L https://github.com/BROADSoftware/jdchive/releases/download/v${JDCHIVE_VERSION}/jdchive_uber-${JDCHIVE_VERSION}.jar -o $MYDIR/jdchive/jdchive_uber-${JDCHIVE_VERSION}.jar
+fi
 
-ANSIBLE_ROLES_PATHS = "ansible_roles_paths"
-
-# ------------------------------------------------ Default values
-# default plugins_paths, from HADEPLOY_HOME:
-DEFAULT_PLUGINS_PATHS = ["plugins"]
-
-# default plugins list
-DEFAULT_PLUGINS = [ 'header', 'ansible_inventory', 'inventory', 'users', 'files', 'hdfs', 'hbase', 'hive', 'kafka', 'ranger', 'footer']
-
-DEFAULT_HDFS_RELAY_CACHE_FOLDER='/var/cache/hadeploy/files'
-
-DEFAULT_TOOLS_FOLDER="/opt/hadeploy"
