@@ -30,6 +30,7 @@ logger = logging.getLogger("hadeploy.plugins.hbase")
 HIVE="hive"
 HIVE_DATABASES="hive_databases"
 
+HIVE_TABLES="hive_tables"
 
 HELPER="helper"
 DIR="dir"
@@ -57,7 +58,7 @@ class HBasePlugin(Plugin):
     
     def onTemplateGeneration(self):
         pass
-        if HIVE_DATABASES in self.context.model[SRC] and len(self.context.model[SRC][HIVE_DATABASES]) > 0:
+        if (HIVE_DATABASES in self.context.model[SRC] and len(self.context.model[SRC][HIVE_DATABASES]) > 0) or (HIVE_TABLES in self.context.model[SRC] and len(self.context.model[SRC][HIVE_TABLES]) > 0):
             templator = Templator([os.path.join(self.path, './helpers/jdchive')], self.context.model)
             templator.generate("desc_hive.yml.jj2", os.path.join(self.context.workingFolder, "desc_hive.yml.j2"))
             templator.generate("desc_unhive.yml.jj2", os.path.join(self.context.workingFolder, "desc_unhive.yml.j2"))
@@ -83,16 +84,20 @@ class HBasePlugin(Plugin):
 
 def groomHiveRelay(model):
     if HIVE_RELAY in model[SRC]:
-        if not TOOLS_FOLDER in model[SRC][HIVE_RELAY]:
-            model[SRC][HIVE_RELAY][TOOLS_FOLDER] = DEFAULT_TOOLS_FOLDER
-        if PRINCIPAL in  model[SRC][HIVE_RELAY]:
-            if KEYTAB_PATH not in model[SRC][HIVE_RELAY]:
-                misc.ERROR("hive_relay: Please provide a 'keytab_path' if you want to use a Kerberos 'principal'")
-            model[SRC][HIVE_RELAY][KERBEROS] = True
+        if (not HIVE_DATABASES in model[SRC] or len(model[SRC][HIVE_DATABASES]) == 0) and (not HIVE_TABLES in model[SRC] or len(model[SRC][HIVE_TABLES]) == 0):
+            # Optimization for execution
+            del (model[SRC][HIVE_RELAY])
         else:
-            if KEYTAB_PATH in model[SRC][HIVE_RELAY]:
-                misc.ERROR("hive_relay: Please, provide a 'principal' if you need to use a keytab")
-            model[SRC][HIVE_RELAY][KERBEROS] = False
-        misc.setDefaultInMap( model[SRC][HIVE_RELAY], DEBUG, False)
+            if not TOOLS_FOLDER in model[SRC][HIVE_RELAY]:
+                model[SRC][HIVE_RELAY][TOOLS_FOLDER] = DEFAULT_TOOLS_FOLDER
+            if PRINCIPAL in  model[SRC][HIVE_RELAY]:
+                if KEYTAB_PATH not in model[SRC][HIVE_RELAY]:
+                    misc.ERROR("hive_relay: Please provide a 'keytab_path' if you want to use a Kerberos 'principal'")
+                model[SRC][HIVE_RELAY][KERBEROS] = True
+            else:
+                if KEYTAB_PATH in model[SRC][HIVE_RELAY]:
+                    misc.ERROR("hive_relay: Please, provide a 'principal' if you need to use a keytab")
+                model[SRC][HIVE_RELAY][KERBEROS] = False
+            misc.setDefaultInMap( model[SRC][HIVE_RELAY], DEBUG, False)
                 
         

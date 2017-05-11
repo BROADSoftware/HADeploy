@@ -115,17 +115,21 @@ class HBasePlugin(Plugin):
     
 def groomHbaseRelay(model):
     if HBASE_RELAY in model[SRC]:
-        if not TOOLS_FOLDER in model[SRC][HBASE_RELAY]:
-            model[SRC][HBASE_RELAY][TOOLS_FOLDER] = DEFAULT_TOOLS_FOLDER
-        if PRINCIPAL in  model[SRC][HBASE_RELAY]:
-            if KEYTAB_PATH not in model[SRC][HBASE_RELAY]:
-                misc.ERROR("hbase_relay: Please provide a 'keytab_path' if you want to use a Kerberos 'principal'")
-            model[SRC][HBASE_RELAY][KERBEROS] = True
+        if (not HBASE_NAMESPACES in model[SRC] or len(model[SRC][HBASE_NAMESPACES]) == 0) and  (not HBASE_TABLES in model[SRC] or len(model[SRC][HBASE_TABLES]) == 0):
+            # Optimization on execution time
+            del(model[SRC][HBASE_RELAY])
         else:
-            if KEYTAB_PATH in model[SRC][HBASE_RELAY]:
-                misc.ERROR("hbase_relay: Please, provide a 'principal' if you need to use a keytab")
-            model[SRC][HBASE_RELAY][KERBEROS] = False
-        misc.setDefaultInMap(model[SRC][HBASE_RELAY], DEBUG, False)
+            if not TOOLS_FOLDER in model[SRC][HBASE_RELAY]:
+                model[SRC][HBASE_RELAY][TOOLS_FOLDER] = DEFAULT_TOOLS_FOLDER
+            if PRINCIPAL in  model[SRC][HBASE_RELAY]:
+                if KEYTAB_PATH not in model[SRC][HBASE_RELAY]:
+                    misc.ERROR("hbase_relay: Please provide a 'keytab_path' if you want to use a Kerberos 'principal'")
+                model[SRC][HBASE_RELAY][KERBEROS] = True
+            else:
+                if KEYTAB_PATH in model[SRC][HBASE_RELAY]:
+                    misc.ERROR("hbase_relay: Please, provide a 'principal' if you need to use a keytab")
+                model[SRC][HBASE_RELAY][KERBEROS] = False
+            misc.setDefaultInMap(model[SRC][HBASE_RELAY], DEBUG, False)
             
 def groomHBaseNamespaces(model):
     if HBASE_NAMESPACES in model[SRC] and len(model[SRC][HBASE_NAMESPACES]) > 0 :
@@ -170,10 +174,12 @@ def groomHBaseTables(model):
                 model[DATA][HBASE][NAMESPACE_BY_NAME] = {}
                 model[SRC][HBASE_NAMESPACES] = []
             if not table[NAMESPACE] in model[DATA][HBASE][NAMESPACE_BY_NAME]:
-                ns = { NAME: table[NAMESPACE], MANAGED: False, NO_REMOVE: True, TABLES: [] }
-                model[DATA][HBASE][NAMESPACE_BY_NAME][ns[NAME]] = ns
-                model[SRC][HBASE_NAMESPACES].append(ns)
-                # misc.ERROR('HBase table '{0}': Namespace '{1}' is not defined!'.format(table[NAME], table[NAMESPACE]))
+                if table[NAMESPACE] == "default":
+                    ns = { NAME: table[NAMESPACE], MANAGED: False, NO_REMOVE: True, TABLES: [] }
+                    model[DATA][HBASE][NAMESPACE_BY_NAME][ns[NAME]] = ns
+                    model[SRC][HBASE_NAMESPACES].append(ns)
+                else:
+                    misc.ERROR("HBase table '{0}': Namespace '{1}' is not defined!".format(table[NAME], table[NAMESPACE]))
             #print model[DATA][HBASE][NAMESPACE_BY_NAME]
                 
             myNamespace = model[DATA][HBASE][NAMESPACE_BY_NAME][table[NAMESPACE]]

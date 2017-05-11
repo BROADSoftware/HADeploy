@@ -89,25 +89,28 @@ class KafkaPlugin(Plugin):
 
 def groomKafkaRelay(model):
     if KAFKA_RELAY in model[SRC]:
-        hg = model[SRC][KAFKA_RELAY][ZK_HOST_GROUP]
-        if hg not in model[DATA][INVENTORY][HOST_GROUP_BY_NAME]:
-            misc.ERROR("kafka_relay: host_group '{0}' does not exists!".format(hg))
-        misc.setDefaultInMap(model[SRC][KAFKA_RELAY], ZK_PORT, 2181)
-        if BROKER_ID_MAP in model[SRC][KAFKA_RELAY]:
-            for brokerId in model[SRC][KAFKA_RELAY][BROKER_ID_MAP].itervalues():
-                if not isinstance(brokerId, int):
-                    misc.ERROR("kafka_relay: BrokerId ({0}) must be integer".format(brokerId))
-        misc.setDefaultInMap(model[SRC][KAFKA_RELAY], TOOLS_FOLDER, DEFAULT_TOOLS_FOLDER)
-        misc.setDefaultInMap(model[SRC][KAFKA_RELAY], ZK_PATH, '/')
-        if PRINCIPAL in  model[SRC][KAFKA_RELAY]:
-            if KEYTAB_PATH not in model[SRC][KAFKA_RELAY]:
-                misc.ERROR("kafka_relay: Please provide a 'keytab_path' if you want to use a Kerberos 'principal'")
-            model[SRC][KAFKA_RELAY][KERBEROS] = True
-            misc.setDefaultInMap(model[SRC][KAFKA_RELAY], KDEBUG, False)
+        if not KAFKA_TOPICS in model[SRC] or len(model[SRC][KAFKA_TOPICS]) == 0:
+            del(model[SRC][KAFKA_RELAY])
         else:
-            if KEYTAB_PATH in model[SRC][KAFKA_RELAY]:
-                misc.ERROR("kafka_relay: Please, provide a 'principal' if you need to use a keytab")
-            model[SRC][KAFKA_RELAY][KERBEROS] = False
+            hg = model[SRC][KAFKA_RELAY][ZK_HOST_GROUP]
+            if hg not in model[DATA][INVENTORY][HOST_GROUP_BY_NAME]:
+                misc.ERROR("kafka_relay: host_group '{0}' does not exists!".format(hg))
+            misc.setDefaultInMap(model[SRC][KAFKA_RELAY], ZK_PORT, 2181)
+            if BROKER_ID_MAP in model[SRC][KAFKA_RELAY]:
+                for brokerId in model[SRC][KAFKA_RELAY][BROKER_ID_MAP].itervalues():
+                    if not isinstance(brokerId, int):
+                        misc.ERROR("kafka_relay: BrokerId ({0}) must be integer".format(brokerId))
+            misc.setDefaultInMap(model[SRC][KAFKA_RELAY], TOOLS_FOLDER, DEFAULT_TOOLS_FOLDER)
+            misc.setDefaultInMap(model[SRC][KAFKA_RELAY], ZK_PATH, '/')
+            if PRINCIPAL in  model[SRC][KAFKA_RELAY]:
+                if KEYTAB_PATH not in model[SRC][KAFKA_RELAY]:
+                    misc.ERROR("kafka_relay: Please provide a 'keytab_path' if you want to use a Kerberos 'principal'")
+                model[SRC][KAFKA_RELAY][KERBEROS] = True
+                misc.setDefaultInMap(model[SRC][KAFKA_RELAY], KDEBUG, False)
+            else:
+                if KEYTAB_PATH in model[SRC][KAFKA_RELAY]:
+                    misc.ERROR("kafka_relay: Please, provide a 'principal' if you need to use a keytab")
+                model[SRC][KAFKA_RELAY][KERBEROS] = False
             
 def groomKafkaTopics(model):
     if KAFKA_TOPICS in model[SRC] and len(model[SRC][KAFKA_TOPICS]) > 0 :

@@ -20,7 +20,7 @@ pages:
     - hbase_datasets: plugins_reference/hbase/hbase_datasets.md
     - hbase_namespaces: plugins_reference/hbase/hbase_namespaces.md
     - hbase_relay: plugins_reference/hbase/hbase_relay.md
-    - hbase_tabless: plugins_reference/hbase/hbase_tables.md
+    - hbase_tables: plugins_reference/hbase/hbase_tables.md
   - Hdfs:
     - hdfs_relay: plugins_reference/hdfs/hdfs_relay.md
     - source_host_credentials: plugins_reference/hdfs/source_host_credentials.md

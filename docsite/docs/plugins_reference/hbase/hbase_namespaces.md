@@ -31,7 +31,7 @@ hbase_namespaces:
 ``` 
 In this case, you need to set no_remove: True, as the default namespace can't of course be removed. Otherwise, an error will be generated. And, of course managed: False.
 
-Note this is optional, as HADeploy internally create such definition for all namespace used but not declared.
+Note this is optional, as HADeploy internally create such definition in this case (Only for the default namespace)
 
 An example with a bound [Apache Ranger policy](../ranger/hbase_ranger_policies):
 ```yaml

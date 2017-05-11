@@ -101,19 +101,24 @@ class FilesPlugin(Plugin):
 
 
     def onGrooming(self):
-        misc.ensureObjectInMaps(self.context.model[DATA], [FILES, SCOPE_BY_NAME], {})
+        model = self.context.model
+        misc.ensureObjectInMaps(model[DATA], [FILES, SCOPE_BY_NAME], {})
         if HDFS in self.context.pluginByName:
             # We need to anticipate on works performed by hdfs plugin, as we need it right now
-            misc.ensureObjectInMaps(self.context.model[DATA], [HDFS, NODE_TO_HDFS_BY_NAME], {})
-            misc.ensureObjectInMaps(self.context.model[DATA], [HDFS, FILES], [] )
-            misc.ensureObjectInMaps(self.context.model[DATA], [HDFS, FOLDERS], [] )
-            misc.ensureObjectInMaps(self.context.model[DATA], [HDFS, TREES], [] )
-            misc.ensureObjectInMaps(self.context.model[DATA], [HDFS, CACHEFOLDERS], Set())
-        if HDFS_RELAY in self.context.model[SRC]:
-            misc.setDefaultInMap(self.context.model[SRC][HDFS_RELAY], CACHE_FOLDER, DEFAULT_HDFS_RELAY_CACHE_FOLDER)
+            misc.ensureObjectInMaps(model[DATA], [HDFS, NODE_TO_HDFS_BY_NAME], {})
+            misc.ensureObjectInMaps(model[DATA], [HDFS, FILES], [] )
+            misc.ensureObjectInMaps(model[DATA], [HDFS, FOLDERS], [] )
+            misc.ensureObjectInMaps(model[DATA], [HDFS, TREES], [] )
+            misc.ensureObjectInMaps(model[DATA], [HDFS, CACHEFOLDERS], Set())
+        if HDFS_RELAY in model[SRC]:
+            misc.setDefaultInMap(model[SRC][HDFS_RELAY], CACHE_FOLDER, DEFAULT_HDFS_RELAY_CACHE_FOLDER)
         groomFolders(self.context)
         groomFiles(self.context)
         groomTrees(self.context)
+        if len(model[DATA][HDFS][NODE_TO_HDFS_BY_NAME]) == 0 and len(model[DATA][HDFS][FILES]) == 0 and len(model[DATA][HDFS][FOLDERS]) == 0 and len(model[DATA][HDFS][TREES]) == 0:
+            # Optimization for execution time
+            del(model[SRC][HDFS_RELAY])
+        
     
 
 # ---------------------------------------------------- Static functions
