@@ -3,7 +3,19 @@
 databases:
 {{% for db in src.hive_databases %}}
 - name: {{{ db.name }}}
+{{% if db.location is defined %}}  location: "{{{db.location}}}"{{%endif%}}  
+{{% if db.owner is defined %}}  owner: "{{{db.owner}}}"{{%endif%}}  
+{{% if db.owner_type is defined %}}  owner_type: "{{{db.owner_type}}}"{{%endif%}}  
+{{% if db.comment is defined %}}  comment: "{{{db.comment}}}"{{%endif%}}
+{{% if db.properties is defined and db.properties|length > 0 %}}  
+  properties:
+{{% for k,v in db.properties.iteritems() %}}
+    {{{k}}}: {{{v}}}
+{{% endfor %}}
+{{% endif %}}
+{{% if not db.no_remove %}}
   state: absent
+{{% endif %}}
 
 {{% endfor %}}
 {{% endif %}}

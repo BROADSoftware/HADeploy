@@ -31,3 +31,84 @@ mapping:
         "properties": 
           type: map
           allowempty: True
+
+  "hive_tables":
+    type: "seq"
+    sequence:
+    - type: map
+      mapping:
+        "name": { type: str, required: true }
+        "database": { type: str, required: true }
+        "external": { type: bool, required: false }    # Default to false
+        "fields":
+          type: "seq"
+          sequence:
+          - type: map
+            mapping:
+              "name": { type: str, required: true }
+              "type": { type: str, required: true }
+              "comment": { type: str, required: false }
+        "comment": { type: str, required: false }
+        "location": { type: str, required: false }
+        "properties": 
+          type: map
+          allowempty: True
+        "stored_as": { type: str, required: false }
+        "input_format": { type: str, required: false }
+        "output_format": { type: str, required: false }
+        "delimited":
+          type: map
+          mapping:
+            "fields_terminated_by": { type: str, required: false }
+            "fields_escaped_by": { type: str, required: false }
+            "collection_items_terminated_by": { type: str, required: false }
+            "map_keys_terminated_by": { type: str, required: false }
+            "lines_terminated_by": { type: str, required: false }
+            "null_defined_as": { type: str, required: false }
+        "serde": { type: str, required: false }
+        "serde_properties": 
+          type: map
+          allowempty: True
+        "storage_handler": { type: str, required: false }
+        "partitions":
+          type: "seq"
+          sequence:
+          - type: map
+            mapping:
+              "name": { type: str, required: true }
+              "type": { type: str, required: true }
+              "comment": { type: str, required: false }
+        "clustered_by":
+          type: map
+          mapping:
+            "columns":
+              type: seq
+              sequence:
+              - type: str
+            "nbr_buckets": { type: int, required: true }
+            "sorted_by":
+              type: seq
+              sequence:
+              - type: map
+                mapping: 
+                  "column": { type: str, required: true }
+                  "direction": { type: str, required: false, enum: [ 'ASC', 'DESC' ] }  # Default to asc
+        "skewed_by":
+          type: map
+          mapping:
+            "columns":
+              type: seq
+              sequence:
+              - type: str
+            "values":
+              type: seq
+              sequence:
+              - type: seq
+                sequence:
+                - type: str
+            "stored_as_directories": { type: bool, required: false }    # Default to false
+        
+          
+        
+        
+        

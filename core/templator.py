@@ -35,7 +35,8 @@ def to_yaml(a, **kw):
     #transformed = yaml.dump(a, Dumper=AnsibleDumper, indent=4, allow_unicode=True, default_flow_style=False, **kw)
     #return to_unicode(transformed)
     #return yaml.dump(a, width=120, default_flow_style=False,  canonical=False, default_style='"', tags=False, **kw)
-    return yaml.dump(a, width=10240,  indent=2, allow_unicode=True, default_flow_style=True, **kw)
+    #return yaml.dump(a, width=10240,  indent=2, allow_unicode=True, default_flow_style=True, **kw)
+    return yaml.dump(a)
 
 
 

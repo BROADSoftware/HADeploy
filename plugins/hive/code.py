@@ -61,6 +61,7 @@ class HBasePlugin(Plugin):
         self.buildHelper()
         misc.ensureObjectInMaps(self.context.model[DATA], [HIVE], {})
         groomHiveRelay(self.context.model)
+        groomHiveDatabases(self.context.model)
         
     
     def onTemplateGeneration(self):

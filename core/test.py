@@ -1,37 +1,34 @@
 
 
-class Plugin:
-    def __init__(self):
-        self.name = None
-        self.path = None
-    
+import yaml    
+from StringIO import StringIO
 
-class Context:
-    def __init__(self):
-        pass
+def dumpObj(obj):
+    stream = StringIO()
+    dumpMap("  ", obj, stream)
+    return stream.getvalue()
+
+def dumpMap(prefix, obj, out):
+    for k, v in obj.iteritems():
+        if type(v) is int:
+            out.write("{0}{1}: {2}\n".format(prefix, k, v))
+        elif type(v) is str:
+            out.write("{0}{1}: \"{2}\"\n".format(prefix, k, v))
+        else:
+            pass
         
-        
-        
-    
 
 def main():
     print "Allo"
-    ctx = Context()
-    ctx.xxx = "xxx"
+    obj = yaml.load(open("../../workbench/jdchive/testtable1/initial.yml"))
     
-    print ctx.xxx
-    #print ctx.pluginByName['abc'].path
-
-    x = ( 1, 3, 9)
-    for a in x:
-        print a
+    obj1 =  obj['tables'][0]
     
-    y = [1, 2, 3]
-    #y = [1]
-    #y = [1,2]
-    print y[:-1]
-    print y[-1:]
-
+    print "-----------------------------------------------"
+    print yaml.dump(obj1)
+    print "-----------------------------------------------"
+    print dumpObj(obj1)
+    
 if __name__ == "__main__":
     main()
 
