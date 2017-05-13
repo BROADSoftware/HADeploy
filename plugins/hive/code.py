@@ -140,7 +140,7 @@ class HBasePlugin(Plugin):
         
 # ---------------------------------------------------- Static functions
 
-
+_USER_="_user_"
 
 def groomHiveRelay(model):
     if HIVE_RELAY in model[SRC]:
@@ -154,13 +154,17 @@ def groomHiveRelay(model):
                 if LOCAL_KEYTAB_PATH not in model[SRC][HIVE_RELAY] and RELAY_KEYTAB_PATH not in model[SRC][HIVE_RELAY]:
                     misc.ERROR("hive_relay: Please provide a 'keytab_path' if you want to use a Kerberos 'principal'")
                 model[SRC][HIVE_RELAY][KERBEROS] = True
-                misc.setDefaultInMap( model[SRC][HIVE_RELAY], RELAY_KEYTAB_PATH, os.path.join(model[SRC][HIVE_RELAY][TOOLS_FOLDER], os.path.basename(model[SRC][HIVE_RELAY][LOCAL_KEYTAB_PATH])))
+                misc.setDefaultInMap( model[SRC][HIVE_RELAY], RELAY_KEYTAB_PATH, os.path.join(os.path.join(model[SRC][HIVE_RELAY][TOOLS_FOLDER], "jdchive"), os.path.basename(model[SRC][HIVE_RELAY][LOCAL_KEYTAB_PATH])))
                 if USER in model[SRC][HIVE_RELAY]:
                     misc.ERROR("hive_relay: user and principal can't be defined both!")
             else:
                 if LOCAL_KEYTAB_PATH in model[SRC][HIVE_RELAY] or RELAY_KEYTAB_PATH in model[SRC][HIVE_RELAY]:
                     misc.ERROR("hive_relay: Please, provide a 'principal' if you need to use a keytab")
                 model[SRC][HIVE_RELAY][KERBEROS] = False
+            if USER in model[SRC][HIVE_RELAY]:
+                model[SRC][HIVE_RELAY][_USER_] = model[SRC][HIVE_RELAY][USER]
+            else:
+                model[SRC][HIVE_RELAY][_USER_] = "{{ansible_ssh_user}}"
             misc.setDefaultInMap( model[SRC][HIVE_RELAY], DEBUG, False)
                 
 def groomHiveDatabases(model):

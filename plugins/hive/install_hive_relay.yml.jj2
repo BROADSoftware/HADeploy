@@ -1,19 +1,22 @@
 
 # ------------------------------------------------------------------------------ Install Hive relay
 
+# NB: As we may execute jdchive under another account than ansible_ssh_user, we need to create a specific folder per account for log files to avoid permissions clashes.
+
 {{% if src.hive_relay is defined %}}
 
 - hosts: {{{ src.hive_relay.host }}}
   vars: 
     hive_relay_tools_folder: {{{ src.hive_relay.tools_folder }}}
     hive_relay_kerberos:  {{{ src.hive_relay.kerberos }}}
+    hive_relay_logs_dir: {{{ src.hive_relay.tools_folder}}}/jdchive/logs-{{{src.hive_relay._user_}}}
 {{% if  src.hive_relay.kerberos %}}
     hive_relay_principal: {{{ src.hive_relay.principal }}}
     hive_relay_keytab_path: {{{ src.hive_relay.relay_keytab_path }}}
 {{% endif %}}    
   tasks:
   - name: Setup hive_relay helper (1/4)
-    file: path={{{ src.hive_relay.tools_folder}}}/jdchive owner={{%if src.hive_relay.user is defined%}}{{{src.hive_relay.user}}}{{%else%}}{{ansible_ssh_user}}{{%endif%}}  mode="0755" state=directory
+    file: path={{{ src.hive_relay.tools_folder}}}/jdchive owner={{ansible_ssh_user}}  mode="0755" state=directory
 
   - name: Setup hive_relay helper (2/4)
     copy: src={{{helper.hive.dir}}}/jdchive/{{{helper.hive.jdchive_jar}}} dest={{{ src.hive_relay.tools_folder}}}/jdchive owner={{ansible_ssh_user}}  mode="0644"
@@ -27,9 +30,9 @@
     loop_control:
       label: "{{item.file}}"
 
-  # Ensure log file ownership
+  # Create a folder for log file
   - name: Setup hive_relay helper (4/4)  
-    file: path={{{ src.hive_relay.tools_folder}}}/jdchive/jdchive.log owner={{%if src.hive_relay.user is defined%}}{{{src.hive_relay.user}}}{{%else%}}{{ansible_ssh_user}}{{%endif%}} state=touch
+    file: path={{{ src.hive_relay.tools_folder}}}/jdchive/logs-{{{src.hive_relay._user_}}} owner={{{src.hive_relay._user_}}} state=directory
     changed_when: false
     
 {{% if  src.hive_relay.local_keytab_path is defined %}}
