@@ -38,6 +38,7 @@
   - name: "hive: Apply potential update"
     shell: {{{ src.hive_relay.tools_folder}}}/jdchive/jdchive --inputFile {{tmpInput.stdout}} {{% if src.hive_relay.report_file is defined %}} --reportFile {{tmpReport.stdout}}{{%endif%}} #
     register: jdch
+    failed_when: jdch.rc != 0 and jdch.rc != 1 
 {{% if src.hive_relay.user is defined %}}
     become: true
     become_user: {{{src.hive_relay.user}}}
@@ -61,7 +62,7 @@
 
   - fail:
       msg: "Unable to modify some table or databases: {{jdch.stdout}}."
-    when:  jdch.stdout.find(" 0 migration(s)") == -1
+    when:  jdch.rc != 0
 
 {{%endif%}}
 

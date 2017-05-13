@@ -8,16 +8,16 @@ Provide a list of HIVE databases required by the application. They will be creat
 
 Each item of the list has the following attributes:
 
-Name | req? | Default |	Description
---- | --- | --- | ---
- name |yes||The name of the HIVE database. 
- properties |no || A map of properties. Equivalent to WITH DBPROPERTIES Hive DDL clause
- location   |no || Equivalent to LOCATION Hive DDL clause
- owner      |no || The owner of the database. May be a user account or a group.
- owner_type |no || USER or ROLE. Specify what represent the owner attribute
- comment    |no || Equivalent to the COMMENT Hive DDL close
- no_remove|no|no|Boolean: Prevent this database to be removed when HADeploy will be used in REMOVE mode.
- ranger_policy|no||Definition of Apache Ranger policy bound to this database. TODO
+Name | req? |	Description
+--- | --- |  ---
+ name |yes|The name of the HIVE database. 
+ properties |no | A map of properties. Equivalent to WITH DBPROPERTIES Hive DDL clause
+ location   |no | Equivalent to LOCATION Hive DDL clause
+ owner      |no | The owner of the database. May be a user account or a group.
+ owner_type |no | USER or ROLE. Specify what represent the owner attribute
+ comment    |no | Equivalent to the COMMENT Hive DDL close
+ no_remove|no|Boolean: Prevent this database to be removed when HADeploy will be used in REMOVE mode.<br>Default: `no`
+ ranger_policy|no|Definition of Apache Ranger policy bound to this database. TODO
 
 ### Example:
 

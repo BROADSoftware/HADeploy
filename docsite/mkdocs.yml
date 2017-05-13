@@ -27,6 +27,7 @@ pages:
   - Hive:
     - hive_databases: plugins_reference/hive/hive_databases.md
     - hive_relay: plugins_reference/hive/hive_relay.md
+    - hive_tables: plugins_reference/hive/hive_tables.md
   - Inventory: 
     - hosts: plugins_reference/inventory/hosts.md
     - host_groups: plugins_reference/inventory/host_groups.md
@@ -45,7 +46,7 @@ pages:
     - "groups": plugins_reference/users/groups.md
 - More:
   - Architecture: more/architecture.md
-  - "Hive assets migration": more/hive_assets_migration.md
+  - Debugging: more/debugging.md
 
 #theme: readthedocs
 #theme: mkdocs
