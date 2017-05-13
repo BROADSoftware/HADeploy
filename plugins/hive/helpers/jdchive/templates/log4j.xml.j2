@@ -3,13 +3,13 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
    
 	<appender name="FILE" class="org.apache.log4j.RollingFileAppender">
-	   <param name="maxFileSize" value="100KB" />
+	   <param name="maxFileSize" value="1000KB" />
 	   <param name="maxBackupIndex" value="5" />
 	   <!-- For Tomcat -->
 	   <param name="file" value="{{hive_relay_tools_folder}}/jdchive/jdchive.log" />
 	   <layout class="org.apache.log4j.PatternLayout">
 		<param name="ConversionPattern" 
-			value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m %n" />
+			value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c:%L - %m %n" />
 	   </layout>
 	</appender>
 
@@ -24,6 +24,8 @@
  	<logger name="com.kappaware"><level value="info"/></logger>
   
  	<logger name="org.apache.zookeeper"><level value="warn"/></logger>
+ 	<logger name="org.apache.hadoop"><level value="warn"/></logger>
+ 	<logger name="hive.ql"><level value="warn"/></logger>
     
     <root>
         <level value="info" /> 

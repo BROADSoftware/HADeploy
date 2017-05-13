@@ -15,8 +15,14 @@
     shell: mktemp
     register: tmpReport
     changed_when: false
-{{% endif %}}  
-
+{{% if src.hive_relay.user is defined %}}
+    become: true
+    become_user: {{{src.hive_relay.user}}}
+{{% if src.hive_relay.become_method is defined %}}
+    become_method: {{{src.hive_relay.become_method}}}
+{{%endif%}}
+{{%endif%}}
+{{%endif%}}
 
   - name: "hive: Generate the description file"
     template: src=desc_hive.yml.j2 dest={{tmpInput.stdout}} mode=0644
@@ -42,7 +48,6 @@
 {{%endif%}}
     changed_when: jdch.stdout.find(" 0 modification(s)") == -1
 
-    
 
   - name: "hive: Cleanup temporary file"
     file: path={{tmpInput.stdout}} state=absent

@@ -3,7 +3,7 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
    
 	<appender name="FILE" class="org.apache.log4j.RollingFileAppender">
-	   <param name="maxFileSize" value="100KB" />
+	   <param name="maxFileSize" value="1000KB" />
 	   <param name="maxBackupIndex" value="5" />
 	   <!-- For Tomcat -->
 	   <param name="file" value="{{kafka_relay_tools_folder}}/jdctopic/jdctopic.log" />

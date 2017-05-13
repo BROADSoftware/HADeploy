@@ -9,7 +9,8 @@ mapping:
       "host": { type: str, required: true }                  
       "tools_folder": { type: str, required: false }
       "principal": { type: str, required: false }           # Kerberos principal
-      "keytab_path": { type: str, required: false }         # Path to a keytab file
+      "relay_keytab_path": { type: str, required: false }         # Path to a keytab file on relay host
+      "local_keytab_path": { type: str, required: false }         # Path to a keytab file on HADeploy node
       "debug": { type: bool, required: false }              # Display jdchive input file
       "user": { type: str, required: false }
       "become_method": { type: str, required: false }   
@@ -92,7 +93,7 @@ mapping:
               - type: map
                 mapping: 
                   "column": { type: str, required: true }
-                  "direction": { type: str, required: false, enum: [ 'ASC', 'DESC' ] }  # Default to asc
+                  "direction": { type: str, required: false, enum: [ 'ASC', 'DESC', 'asc', 'desc' ] }  # Default to asc
         "skewed_by":
           type: map
           mapping:
@@ -105,8 +106,11 @@ mapping:
               sequence:
               - type: seq
                 sequence:
-                - type: str
+                - type: any
             "stored_as_directories": { type: bool, required: false }    # Default to false
+        "alterable": { type: bool, required: false }    # Default to false
+        "droppable": { type: bool, required: false }    # Default to false
+        "no_remove": { type: bool, required: false }    # Default to false
         
           
         

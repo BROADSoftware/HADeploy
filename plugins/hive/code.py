@@ -19,7 +19,8 @@ import logging
 import misc
 import os
 import glob
-from templator import Templator
+import yaml
+import copy
 
 
 from plugin import Plugin
@@ -36,10 +37,29 @@ HELPER="helper"
 DIR="dir"
 JDCHIVE_JAR="jdchive_jar"
 PRINCIPAL="principal"
-KEYTAB_PATH="keytab_path"
 KERBEROS="kerberos"
+USER="user"
 DEBUG="debug"
+LOCAL_KEYTAB_PATH="local_keytab_path"
+RELAY_KEYTAB_PATH="relay_keytab_path"
 
+
+HIVE_DATABASES="hive_databases"
+NAME="name"
+NO_REMOVE="no_remove"
+
+    
+INPUT_FORMAT="input_format"
+OUTPUT_FORMAT="output_format"
+STORED_AS="stored_as"
+DELIMITED="delimited"
+SERDE="serde"
+
+LOCATION="location"
+DATABASE="database"
+OWNER="owner"
+OWNER_TYPE="owner_type"
+               
 
 HIVE_RELAY="hive_relay"
 TOOLS_FOLDER="tools_folder"
@@ -52,9 +72,13 @@ class HBasePlugin(Plugin):
 
     def onNewSnippet(self, snippetPath):
         model = self.context.model
-        if HIVE_RELAY in model[SRC] and REPORT_FILE in model[SRC][HIVE_RELAY]:
-            if not os.path.isabs( model[SRC][HIVE_RELAY][REPORT_FILE]):
-                model[SRC][HIVE_RELAY][REPORT_FILE] = os.path.normpath(os.path.join(snippetPath, model[SRC][HIVE_RELAY][REPORT_FILE]))                
+        if HIVE_RELAY in model[SRC]: 
+            if REPORT_FILE in model[SRC][HIVE_RELAY]:
+                if not os.path.isabs( model[SRC][HIVE_RELAY][REPORT_FILE]):
+                    model[SRC][HIVE_RELAY][REPORT_FILE] = os.path.normpath(os.path.join(snippetPath, model[SRC][HIVE_RELAY][REPORT_FILE]))
+            if LOCAL_KEYTAB_PATH in model[SRC][HIVE_RELAY]:
+                if not os.path.isabs(model[SRC][HIVE_RELAY][LOCAL_KEYTAB_PATH]):
+                    model[SRC][HIVE_RELAY][LOCAL_KEYTAB_PATH] = os.path.normpath(os.path.join(snippetPath, model[SRC][HIVE_RELAY][LOCAL_KEYTAB_PATH]))
             
             
     def onGrooming(self):
@@ -62,15 +86,41 @@ class HBasePlugin(Plugin):
         misc.ensureObjectInMaps(self.context.model[DATA], [HIVE], {})
         groomHiveRelay(self.context.model)
         groomHiveDatabases(self.context.model)
+        groomHiveTables(self.context.model)
         
     
     def onTemplateGeneration(self):
-        pass
-        if (HIVE_DATABASES in self.context.model[SRC] and len(self.context.model[SRC][HIVE_DATABASES]) > 0) or (HIVE_TABLES in self.context.model[SRC] and len(self.context.model[SRC][HIVE_TABLES]) > 0):
-            templator = Templator([os.path.join(self.path, './helpers/jdchive')], self.context.model)
-            templator.generate("desc_hive.yml.jj2", os.path.join(self.context.workingFolder, "desc_hive.yml.j2"))
-            templator.generate("desc_unhive.yml.jj2", os.path.join(self.context.workingFolder, "desc_unhive.yml.j2"))
-    
+        model = self.context.model
+        if HIVE_RELAY in model[SRC]:
+            # -------------------------------------------- For Deploy
+            tgt = { "databases": [], "tables": []}
+            if HIVE_DATABASES in model[SRC]:
+                for db in model[SRC][HIVE_DATABASES]:
+                    db2 = copy.deepcopy(db)
+                    del(db2[NO_REMOVE])
+                    tgt["databases"].append(db2)
+            if HIVE_TABLES in model[SRC]:
+                for tbl in model[SRC][HIVE_TABLES]:
+                    tbl2 = copy.deepcopy(tbl)
+                    del(tbl2[NO_REMOVE])
+                    tgt["tables"].append(tbl2)
+            f = open(os.path.join(self.context.workingFolder, "desc_hive.yml.j2"), "w")
+            yaml.dump(tgt, f)
+            f.close()
+            # -------------------------------------------- For REMOVE
+            tgt = { "databases": [], "tables": []}
+            if HIVE_DATABASES in model[SRC]:
+                for db in model[SRC][HIVE_DATABASES]:
+                    if not db[NO_REMOVE]:
+                        tgt["databases"].append({ NAME: db[NAME], "state": "absent" })
+            if HIVE_TABLES in model[SRC]:
+                for tbl in model[SRC][HIVE_TABLES]:
+                    if not tbl[NO_REMOVE]:
+                        tgt["tables"].append({ NAME: tbl[NAME], DATABASE: tbl[DATABASE], "state": "absent" })
+            f = open(os.path.join(self.context.workingFolder, "desc_unhive.yml.j2"), "w")
+            yaml.dump(tgt, f)
+            f.close()
+                
     def getInstallTemplates(self):
         return [os.path.join(self.path, "install_hive_relay.yml.jj2"), os.path.join(self.path, "install.yml.jj2")]
 
@@ -90,9 +140,7 @@ class HBasePlugin(Plugin):
         
 # ---------------------------------------------------- Static functions
 
-HIVE_DATABASES="hive_databases"
-NAME="name"
-NO_REMOVE="no_remove"
+
 
 def groomHiveRelay(model):
     if HIVE_RELAY in model[SRC]:
@@ -103,11 +151,14 @@ def groomHiveRelay(model):
             if not TOOLS_FOLDER in model[SRC][HIVE_RELAY]:
                 model[SRC][HIVE_RELAY][TOOLS_FOLDER] = DEFAULT_TOOLS_FOLDER
             if PRINCIPAL in  model[SRC][HIVE_RELAY]:
-                if KEYTAB_PATH not in model[SRC][HIVE_RELAY]:
+                if LOCAL_KEYTAB_PATH not in model[SRC][HIVE_RELAY] and RELAY_KEYTAB_PATH not in model[SRC][HIVE_RELAY]:
                     misc.ERROR("hive_relay: Please provide a 'keytab_path' if you want to use a Kerberos 'principal'")
                 model[SRC][HIVE_RELAY][KERBEROS] = True
+                misc.setDefaultInMap( model[SRC][HIVE_RELAY], RELAY_KEYTAB_PATH, os.path.join(model[SRC][HIVE_RELAY][TOOLS_FOLDER], os.path.basename(model[SRC][HIVE_RELAY][LOCAL_KEYTAB_PATH])))
+                if USER in model[SRC][HIVE_RELAY]:
+                    misc.ERROR("hive_relay: user and principal can't be defined both!")
             else:
-                if KEYTAB_PATH in model[SRC][HIVE_RELAY]:
+                if LOCAL_KEYTAB_PATH in model[SRC][HIVE_RELAY] or RELAY_KEYTAB_PATH in model[SRC][HIVE_RELAY]:
                     misc.ERROR("hive_relay: Please, provide a 'principal' if you need to use a keytab")
                 model[SRC][HIVE_RELAY][KERBEROS] = False
             misc.setDefaultInMap( model[SRC][HIVE_RELAY], DEBUG, False)
@@ -115,15 +166,30 @@ def groomHiveRelay(model):
 def groomHiveDatabases(model):
     if HIVE_DATABASES in model[SRC] and len(model[SRC][HIVE_DATABASES]) > 0 :
         if not HIVE_RELAY in model[SRC]:
-            misc.ERROR('A hive_relay must be defined if at least one hbase_namespace is defined')
-        #databaseByName = {}    
+            misc.ERROR('A hive_relay must be defined if at least one hive database is defined')
         for db in model[SRC][HIVE_DATABASES]:
             misc.setDefaultInMap(db, NO_REMOVE, False)
             if db[NAME] == 'default':
-                if not db[NO_REMOVE]:
-                    misc.ERROR("HIVE database 'default' can't be removed. Please set no_remove: True")
-            #databaseByName[db[NAME]] = db
-        #model[DATA][HIVE][DATABASE_BY_NAME] = databaseByName
-    
+                misc.ERROR("HIVE database 'default' can't be altered")
+            if (LOCATION in db) and (not db[LOCATION].startswith("/")):
+                misc.ERROR("Database '{0}': Location must be absolute!".format(db[NAME]))
+            if (OWNER in db) != (OWNER_TYPE in db):
+                misc.ERROR("Database '{0}': If an owner is defined, then owner_type (USER|GROUP|ROLE) must be also!".format(db[NAME]))
                     
-        
+def groomHiveTables(model):
+    if HIVE_TABLES in model[SRC] and len(model[SRC][HIVE_TABLES]) > 0 :
+        if not HIVE_RELAY in model[SRC]:
+            misc.ERROR('A hive_relay must be defined if at least one hive table is defined')
+        for tbl in model[SRC][HIVE_TABLES]:
+            misc.setDefaultInMap(tbl, NO_REMOVE, False)
+            # We detect some miss configuration at this level (Instead of letting jdchive failing), as user report will be far better
+            if (INPUT_FORMAT in tbl) != (OUTPUT_FORMAT in tbl):
+                misc.ERROR("HIVE table '{0}:{1}': Both 'input_format' and 'output_format' must be defined together!".format(tbl[DATABASE], tbl[NAME]))
+            if (STORED_AS in tbl) and (INPUT_FORMAT in tbl):
+                misc.ERROR("HIVE table '{0}:{1}': Both 'stored_as' and 'input/output_format' can't be defined together!".format(tbl[DATABASE], tbl[NAME]))
+            if (DELIMITED in tbl) and (SERDE in tbl):
+                misc.ERROR("HIVE table '{0}:{1}': Both 'delimited' and 'serde' can't be defined together!".format(tbl[DATABASE], tbl[NAME]))
+            if (LOCATION in tbl) and (not tbl[LOCATION].startswith("/")):
+                misc.ERROR("HIVE table '{0}:{1}': Location must be absolute!".format(tbl[DATABASE], tbl[NAME]))
+                
+            
