@@ -10,11 +10,11 @@ This is used by files or trees operation when the source is a cluster node (`src
 
 Each item of the list has the following attributes:
 
-Name | req?	| Default |	Description
---- | --- | --- | ---
-host|yes||The source host
-principal|yes||A Kerberos principal allowing all HDFS related operation to be performed. See below
-keytab_path|yes||A path to the associated keytab file on the relay host. See below
+Name | req?	| Description
+--- | --- | ---
+host|yes|The source host
+principal|yes|A Kerberos principal allowing all HDFS related operation to be performed. See below
+keytab_path|yes|A path to the associated keytab file on the relay host. See below
 
 ## Kerberos authentication
 When performing a copy operation (files or trees) from a cluster's host to HDFS, if a `principal` and `keytab_path` variables are defined for this host, Kerberos authentication will be activated before issuing the operation. 

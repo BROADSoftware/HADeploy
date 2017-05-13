@@ -8,15 +8,15 @@ Provide a list of Kafka topics, which will be managed by HADeploy
 
 Each item of the list has the following attributes:
 
-Name | req?	| Default |	Description
---- | --- | --- | ---
-name|yes||The name of the topic
-properties|no||A map of properties associated to the topic. Refer to the kafka documentation for a complete list of available properties.
-partition_factor|Yes if assignments is not defined||Specify the number of partition of the topic.
-replication_factor|Yes if assignments is not defined||Specify the number of replica for each partition.
-assignments|yes if rep/part factors are not specified||A Map where the key is the partition# and the value a list of `broker_id`.<br>This allow to manual definition of the distribution of partition's replica, with strict location rules.
-no_remove|no|no|Boolean: Prevent this group to be removed when HADeploy will be used in REMOVE mode.
-ranger_policy|no||Definition of Apache Ranger policy bound to this topic. Parameters are same as [`kafka_ranger_policy`](../ranger/kafka_ranger_policies) except than topics should not be defined.<br>The policy name can be explicitly defined. Otherwise, a name will be generated as "`_<topic>_`".<br>See example below for more information
+Name | req? |	Description
+--- | --- | ---
+name|yes|The name of the topic
+properties|no|A map of properties associated to the topic. Refer to the kafka documentation for a complete list of available properties.
+partition_factor|yes if assignments is not defined|Specify the number of partition of the topic.
+replication_factor|yes if assignments is not defined|Specify the number of replica for each partition.
+assignments|yes if rep/part factors are not specified|A Map where the key is the partition# and the value a list of `broker_id`.<br>This allow to manual definition of the distribution of partition's replica, with strict location rules.
+no_remove|no|Boolean: Prevent this group to be removed when HADeploy will be used in REMOVE mode.<br>Default: `no`
+ranger_policy|no|Definition of Apache Ranger policy bound to this topic. Parameters are same as [`kafka_ranger_policy`](../ranger/kafka_ranger_policies) except than topics should not be defined.<br>The policy name can be explicitly defined. Otherwise, a name will be generated as "`_<topic>_`".<br>See example below for more information
 
 ## Example
 

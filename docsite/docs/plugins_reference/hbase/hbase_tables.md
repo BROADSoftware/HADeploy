@@ -8,15 +8,15 @@ Provide a list of HBase tables required by the application
 
 Each item of the list has the following attributes:
 
-Name | req?	| Default |	Description
---- | --- | --- | ---
-namespace|yes||The HBase namespace hosting this table. May be defined in the hbase_namespaces list defined above, or will be assumed as already existing.
-name|yes||The name of this table
-properties|no||A list of properties, allowing definition of table properties.<br>You will find table properties definition is HBase documentation.<br>For a complete list, please refer to the Javadoc of the class `org.apache.hadoop.hbase.HTableDescriptor` of your HBase version.
-column_families|yes||Provide a list of one or several column families. See below
-presplit|no||Allow an initial region split schema to be defined. See below
-no_remove|no|no|Boolean: Prevent this table to be removed when HADeploy will be used in REMOVE mode.
-ranger_policy|no||Definition of Apache Ranger policy bound to this table. Parameters are same as [hbase_ranger_policies](../ranger/hbase_ranger_policies) except than tables, columns_families and columns should not be defined. The policy will apply on all column families and all column of the table.<br>The policy name can be explicitly defined. Otherwise, a name will be generated as "`_<namespace>:<table>_`".<br>See example below for more information
+Name | req? |	Description
+--- | ---  | ---
+namespace|yes|The HBase namespace hosting this table. May be defined in the hbase_namespaces list defined above, or will be assumed as already existing.
+name|yes|The name of this table
+properties|no|A list of properties, allowing definition of table properties.<br>You will find table properties definition is HBase documentation.<br>For a complete list, please refer to the Javadoc of the class `org.apache.hadoop.hbase.HTableDescriptor` of your HBase version.
+column_families|yes|Provide a list of one or several column families. See below
+presplit|no|Allow an initial region split schema to be defined. See below
+no_remove|no|Boolean: Prevent this table to be removed when HADeploy will be used in REMOVE mode.<br>Default: `no`
+ranger_policy|no|Definition of Apache Ranger policy bound to this table. Parameters are same as [hbase_ranger_policies](../ranger/hbase_ranger_policies) except than tables, columns_families and columns should not be defined. The policy will apply on all column families and all column of the table.<br>The policy name can be explicitly defined. Otherwise, a name will be generated as "`_<namespace>:<table>_`".<br>See example below for more information
 
 ## column_families
 

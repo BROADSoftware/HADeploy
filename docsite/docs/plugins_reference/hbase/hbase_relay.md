@@ -10,12 +10,12 @@ There should be only one entry of this type in the HADeploy definition file.
 
 `hbase_relay` is a map with the following attributes:
 
-Name | req?	| Default |	Description
---- | --- | --- | ---
-host|yes||The host on which all hbase commands will be pushed for execution. Must be fully configured as HBase client.
-tools_folder|no|/opt/hadeploy|Folder used by HADeploy to install some tools for HBase management.<br>If you intend to deploy with a non-root account, this value must be modified. Refer to specific chapter (LINK).
-principal|no||A Kerberos principal allowing all HBase related operation to be performed. See below
-keytab_path|no||A path to the associated keytab file on the relay host.
+Name | req? |	Description
+--- | --- | ---
+host|yes|The host on which all hbase commands will be pushed for execution. Must be fully configured as HBase client.
+tools_folder|no|Folder used by HADeploy to install some tools for HBase management.<br>If you intend to deploy with a non-root account, this value must be modified. Refer to specific chapter (LINK).<br>Default: `/opt/hadeploy`
+principal|no|A Kerberos principal allowing all HBase related operation to be performed. See below
+keytab_path|no|A path to the associated keytab file on the relay host.
 
 ## Kerberos authentication
 

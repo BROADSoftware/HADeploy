@@ -8,21 +8,21 @@ Provide a list of datasets to upload in HBase tables
 
 Each item of the list has the following attributes:
 
-Name | req?	| Default |	Description
---- | --- | --- | ---
-table|yes||The table to populate
-namespace|yes||The name of the HBase namespace where the table is.
-src|||The file containing the data to load in the table. May be in the form:<ul><li>`http://....` for fetching the file from a remote http server</li><li>`https://...` for fetching the file from a remote https server</li><li>`file://...` for fetching the file locally, from one of the folder provided by the [`local_files_folders:`](../files/local_files_folders) list</li><li>`file:///...` for fetching the file locally, with a absolute path on the HADeploy node.</li><li>`tmpl://...`  Source is a template, which will be processed by Ansible/Jinja2 mechanism. Template will be fetched locally, from one of the folders provided by the [`local_templates_folders:`](../files/local_templates_folders) list</li><li>`tmpl:///...` Same as above, except source template will be fetched from the HADeploy node with an absolute path.</li></ul>The file format is described below
-delRows|no|no|See below
-delValues|no|no|See below
-dontAddRow|no|no|See below
-dontAddValue|no|no|See below
-updValues|no|no|See below
-validate_certs|no|yes|Boolean; In case of src: `https://...` Setting to false, will disable strict certificate checking, thus allowing self-signed certificate.
-force_basic_auth|no||Boolean; In case of `src: http[s]://...` . The underlying module only sends authentication information when a webservice responds to an initial request with a 401 status. Since some basic auth services do not properly send a 401, logins will fail. This option forces the sending of the Basic authentication header upon initial request.
-url_username|no||String; In case of `src: http[s]://...`. The username for use in HTTP basic authentication. This parameter can be used without url_password for sites that allow empty passwords.
-url_password|no||String; In case of `src: http[s]://...`. The password for use in HTTP basic authentication
-no_remove|no|no|Boolean: Prevent this dataset to be deleted from the table when HADeploy will be used in REMOVE mode
+Name | req?	 |	Description
+--- | --- | ---
+table|yes|The table to populate
+namespace|yes|The name of the HBase namespace where the table is.
+src||The file containing the data to load in the table. May be in the form:<ul><li>`http://....` for fetching the file from a remote http server</li><li>`https://...` for fetching the file from a remote https server</li><li>`file://...` for fetching the file locally, from one of the folder provided by the [`local_files_folders:`](../files/local_files_folders) list</li><li>`file:///...` for fetching the file locally, with a absolute path on the HADeploy node.</li><li>`tmpl://...`  Source is a template, which will be processed by Ansible/Jinja2 mechanism. Template will be fetched locally, from one of the folders provided by the [`local_templates_folders:`](../files/local_templates_folders) list</li><li>`tmpl:///...` Same as above, except source template will be fetched from the HADeploy node with an absolute path.</li></ul>The file format is described below
+delRows|no|See below.<br>Default: `no`
+delValues|no|See below.<br>Default: `no`
+dontAddRow|no|See below.<br>Default: `no`
+dontAddValue|no|See below.<br>Default: `no`
+updValues|no|See below.<br>Default: `no`
+validate_certs|no|Boolean; In case of src: `https://...` Setting to false, will disable strict certificate checking, thus allowing self-signed certificate.<br>Default: `yes`
+force_basic_auth|no|Boolean; In case of `src: http[s]://...` . The underlying module only sends authentication information when a webservice responds to an initial request with a 401 status. Since some basic auth services do not properly send a 401, logins will fail. This option forces the sending of the Basic authentication header upon initial request.
+url_username|no|String; In case of `src: http[s]://...`. The username for use in HTTP basic authentication. This parameter can be used without url_password for sites that allow empty passwords.
+url_password|no|String; In case of `src: http[s]://...`. The password for use in HTTP basic authentication
+no_remove|no|Boolean: Prevent this dataset to be deleted from the table when HADeploy will be used in REMOVE mode.<br>Default: `no`
 
 ## Example
 ```yaml

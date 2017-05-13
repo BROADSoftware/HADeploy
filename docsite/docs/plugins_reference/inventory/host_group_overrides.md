@@ -10,11 +10,11 @@ Typically used to patch an Ansible inventory (see [`ansible_inventory_files`](..
 
 Each item of the list has the following attributes:
 
-Name|req?|Default|Description
----|---|---|---
-name|yes||The name of the host to patch. Must be an existing host. Also may be 'all' or '*' to patch all hosts.
-hosts|no||Allow to override the original hosts list
-force_setup|no||A common Ansible problem is when referencing host info for a host which has not being accessed, so there is no fact grabbed for it.<br>Setting this flag to `yes` will trigger an access to all hosts of this group at the begining of the play.
+Name|req?|Description
+---|---|---
+name|yes|The name of the host to patch. Must be an existing host. Also may be 'all' or '*' to patch all hosts.
+hosts|no|Allow to override the original hosts list
+force_setup|no|A common Ansible problem is when referencing host info for a host which has not being accessed, so there is no fact grabbed for it.<br>Setting this flag to `yes` will trigger an access to all hosts of this group at the begining of the play.
 
 
 

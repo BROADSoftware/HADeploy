@@ -10,15 +10,15 @@ There should be only one entry of this type in the HADeploy definition file.
 
 hdfs_relay is a map with the following attributes:
 
-Name | req?	| Default |	Description
---- | --- | --- | ---
-host|yes||The host on which all HDFS commands will be pushed for execution.
-cache_folder|no|/var/cache/hadeploy/files|A folder on this host, which will be used by HADeploy as cache storage. Mainly, all files targeted to HDFS will be first pushed in this cache. And will remains in it, to optimize idempotence.<br>Changing this value is required if you intend to deploy under non-root account.
-user|no|hdfs|The user account HADeploy will use to perform all HDFS related operation. Must have enough rights to do so.<br>Not to be defined when using Kerberos authentication.
-hadoop_conf_dir|no|/etc/hadoop/conf|Where HADeploy will lookup Hadoop configuration file.
-webhdfs_endpoint|no|`<hadoop_conf_dir>/hdfs-site.xml`|HADeploy will perform several actions through WebHDFS REST interface. You can specify corresponding endpoint, if it is not defined in the usual configuration way
-principal|no||A Kerberos principal allowing all HDFS related operation to be performed. See below
-keytab_path|no||A path to the associated keytab file on the relay host. See below
+Name | req? |	Description
+--- | --- | ---
+host|yes|The host on which all HDFS commands will be pushed for execution.
+cache_folder|no|A folder on this host, which will be used by HADeploy as cache storage. Mainly, all files targeted to HDFS will be first pushed in this cache. And will remains in it, to optimize idempotence.<br>Changing this value is required if you intend to deploy under non-root account.<br>Default: `/var/cache/hadeploy/files`
+user|no|The user account HADeploy will use to perform all HDFS related operation. Must have enough rights to do so.<br>Not to be defined when using Kerberos authentication.<br>Default: `hdfs`
+hadoop_conf_dir|no|Where HADeploy will lookup Hadoop configuration file.<br>Default: `/etc/hadoop/conf`
+webhdfs_endpoint|no|HADeploy will perform several actions through WebHDFS REST interface. You can specify corresponding endpoint, if it is not defined in the usual configuration way.<br>Default: The value found in `<hadoop_conf_dir>/hdfs-site.xml`
+principal|no|A Kerberos principal allowing all HDFS related operation to be performed. See below
+keytab_path|no|A path to the associated keytab file on the relay host. See below
 
 ## Kerberos authentication
 
