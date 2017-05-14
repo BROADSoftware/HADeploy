@@ -64,6 +64,7 @@ class Plugin:
         p = os.path.join(self.path, "roles")
         return [p] if os.path.isdir(p) else []
         
-        
+    def getGroomingDependencies(self):
+        return []
         
         

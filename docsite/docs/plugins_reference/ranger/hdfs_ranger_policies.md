@@ -25,7 +25,7 @@ Name | req?	| Description
 --- | ---  | ---
 users|yes if `groups` is undefined|A list of users this policy will apply on. May be empty if some groups are defined.
 groups|yes if `users` is undefined|A list of groups this policy will apply on. May be empty if some users are defined.
-accesses|yes|The list of rights granted by this policy. May include `Read`, `Write` and `Execute`.
+accesses|yes|The list of rights granted by this policy. May include `read`, `write` and `execute`.
 delegate_admin|no|When a policy is assigned to a user or a group of users those users become the delegated admin. The delegated admin can update and delete the policies.<br>Default: `no`
 
 ## Examples

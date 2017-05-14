@@ -20,7 +20,7 @@ mapping:
               "users": { type: seq, sequence: [ { type: str } ] }
               "groups": { type: seq, sequence: [ { type: str } ] }
               "ip_addresses": { type: seq, sequence: [ { type: str } ] }
-              "accesses": { type: seq, sequence: [ { type: str } ], required: true }
+              "accesses": { type: seq, sequence: [ { type: str, enum: [ 'publish', 'consume', 'configure', 'describe', 'create', 'delete', 'kafka_admin' ] } ], required: true }
               "delegate_admin": { type: bool, required: false }    # Default to False
         
           
@@ -43,7 +43,7 @@ mapping:
                   "users": { type: seq, sequence: [ { type: str } ] }
                   "groups": { type: seq, sequence: [ { type: str } ] }
                   "ip_addresses": { type: seq, sequence: [ { type: str } ] }
-                  "accesses": { type: seq, sequence: [ { type: str } ], required: true }
+                  "accesses": { type: seq, sequence: [ { type: str, enum: [ 'publish', 'consume', 'configure', 'describe', 'create', 'delete', 'kafka_admin' ] } ], required: true }
                   "delegate_admin": { type: bool, required: false }    # Default to False
         
 

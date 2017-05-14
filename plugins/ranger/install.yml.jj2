@@ -119,6 +119,46 @@
 {{%endif%}}
 
 
+{{% if src.hive_ranger_policies is defined and src.hive_ranger_policies|length > 0 %}}
+  - name: will set HIVE policies
+    ranger_hive_policies:
+      admin_url: "{{{ src.ranger_relay.ranger_url }}}"
+      admin_username: "{{{ src.ranger_relay.ranger_username }}}"
+      admin_password: "{{{ src.ranger_relay.ranger_password }}}"
+      validate_certs: "{{{ src.ranger_relay.validate_certs }}}"
+{{% if src.ranger_relay.hive_service_name is defined %}}
+      service_name: "{{{ src.ranger_relay.hive_service_name }}}"
+{{%endif%}}
+{{% if src.ranger_relay.ca_bundle_relay_file is defined %}}
+      ca_bundle_file: "{{{ src.ranger_relay.ca_bundle_relay_file }}}"
+{{%endif%}}
+      policies: 
+{{% for policy in src.hive_ranger_policies %}}
+      - name: "{{{policy.name}}}"
+        databases: [ {{% for db in policy.databases %}}{{% if not loop.first %}}, {{% endif %}}"{{{db}}}"{{%endfor%}} ]
+{{% if policy.udfs is defined %}}
+        udfs: [ {{% for u in policy.udfs %}}{{% if not loop.first %}}, {{% endif %}}"{{{u}}}"{{%endfor%}} ]
+{{% else %}}
+        tables: [ {{% for t in policy.tables %}}{{% if not loop.first %}}, {{% endif %}}"{{{t}}}"{{%endfor%}} ]
+        columns: [ {{% for c in policy.columns %}}{{% if not loop.first %}}, {{% endif %}}"{{{c}}}"{{%endfor%}} ]
+{{%endif%}}
+        audit: {{{policy.audit}}}
+        enabled: {{{policy.enabled}}}
+{{% if policy.permissions is not defined or policy.permissions|length == 0 %}}
+        permissions: []
+{{% else %}}
+        permissions:         
+{{% for perms in policy.permissions %}}
+        - accesses: [ {{% for acc in perms.accesses %}}{{% if not loop.first %}}, {{% endif %}}"{{{acc}}}"{{%endfor%}} ] 
+          users: [ {{% for user in perms.users %}}{{% if not loop.first %}}, {{% endif %}}"{{{user}}}"{{%endfor%}} ] 
+          groups: [ {{% for group in perms.groups %}}{{% if not loop.first %}}, {{% endif %}}"{{{group}}}"{{%endfor%}} ]
+          delegate_admin: {{{ perms.delegate_admin }}} 
+{{% endfor %}}
+{{%endif%}}
+{{% endfor %}}
+{{%endif%}}
+
+
 
   
 {{% if src.ranger_relay.ca_bundle_local_file is defined %}}

@@ -57,8 +57,11 @@ class FilesPlugin(Plugin):
     def __init__(self, name, path, context):
         Plugin.__init__(self, name, path, context)
 
+    def getGroomingDependencies(self):
+        return ['files']
+
     def onGrooming(self):
-        #misc.ensureObjectInMaps(self.context.model[DATA], [HDFS, SCOPE_BY_NAME], {})  # Also performed if file plugin if HDFS_RELAY is defined.
+        #misc.ensureObjectInMaps(self.context.model[DATA], [HDFS, SCOPE_BY_NAME], {})  # Also performed in file plugin if HDFS_RELAY is defined.
         groomHdfsRelay(self.context.model)
         groomSourceHostCredentials(self.context.model)
         

@@ -82,6 +82,7 @@ def main():
     # Now, build the schema for source validation, by merge of all schema plugin
     theSchema = context.getSchema()
     dump.dumpSchema(context, theSchema)
+    dump.dumpModel(context)
     # And validate against this schema
     schema.validate(context.model[SRC], theSchema)
 
@@ -92,7 +93,7 @@ def main():
     context.buildRemoveTemplate()
     context.builRolesPath()
 
-    dump.dumpModel(context)
+    #dump.dumpModel(context)
 
     context.generatePrivateTemplate()
 

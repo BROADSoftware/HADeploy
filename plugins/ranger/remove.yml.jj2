@@ -90,6 +90,37 @@
 {{% endfor %}}
 {{%endif%}}
 
+{{% if src.hive_ranger_policies is defined and data.hiveRangerPoliciesToRemove > 0 %}}
+  - name: will remove HIVE policies
+    ranger_hive_policies:
+      state: absent
+      admin_url: "{{{ src.ranger_relay.ranger_url }}}"
+      admin_username: "{{{ src.ranger_relay.ranger_username }}}"
+      admin_password: "{{{ src.ranger_relay.ranger_password }}}"
+      validate_certs: "{{{ src.ranger_relay.validate_certs }}}"
+{{% if src.ranger_relay.hive_service_name is defined %}}
+      service_name: "{{{ src.ranger_relay.hive_service_name }}}"
+{{%endif%}}
+{{% if src.ranger_relay.ca_bundle_relay_file is defined %}}
+      ca_bundle_file: "{{{ src.ranger_relay.ca_bundle_relay_file }}}"
+{{%endif%}}
+      policies: 
+{{% for policy in src.hive_ranger_policies %}}
+{{% if not policy.no_remove %}}
+      - name: "{{{policy.name}}}"
+        databases: [ {{% for db in policy.databases %}}{{% if not loop.first %}}, {{% endif %}}"{{{db}}}"{{%endfor%}} ]
+{{% if policy.udfs is defined %}}
+        udfs: [ {{% for u in policy.udfs %}}{{% if not loop.first %}}, {{% endif %}}"{{{u}}}"{{%endfor%}} ]
+{{% else %}}
+        tables: [ {{% for t in policy.tables %}}{{% if not loop.first %}}, {{% endif %}}"{{{t}}}"{{%endfor%}} ]
+        columns: [ {{% for c in policy.columns %}}{{% if not loop.first %}}, {{% endif %}}"{{{c}}}"{{%endfor%}} ]
+{{%endif%}}
+        permissions: []
+{{%endif%}}
+{{% endfor %}}
+{{%endif%}}
+
+
 
   
 {{% if src.ranger_relay.ca_bundle_local_file is defined %}}

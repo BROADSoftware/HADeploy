@@ -28,6 +28,8 @@ from const import SRC,DATA,DEFAULT_TOOLS_FOLDER
 
 logger = logging.getLogger("hadeploy.plugins.hive")
 
+RANGER_POLICY="ranger_policy"
+
 HIVE="hive"
 HIVE_DATABASES="hive_databases"
 
@@ -98,11 +100,15 @@ class HBasePlugin(Plugin):
                 for db in model[SRC][HIVE_DATABASES]:
                     db2 = copy.deepcopy(db)
                     del(db2[NO_REMOVE])
+                    if RANGER_POLICY in db2:
+                        del(db2[RANGER_POLICY])
                     tgt["databases"].append(db2)
             if HIVE_TABLES in model[SRC]:
                 for tbl in model[SRC][HIVE_TABLES]:
                     tbl2 = copy.deepcopy(tbl)
                     del(tbl2[NO_REMOVE])
+                    if RANGER_POLICY in tbl2:
+                        del(tbl2[RANGER_POLICY])
                     tgt["tables"].append(tbl2)
             f = open(os.path.join(self.context.workingFolder, "desc_hive.yml.j2"), "w")
             yaml.dump(tgt, f)

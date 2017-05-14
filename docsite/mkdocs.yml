@@ -39,6 +39,7 @@ pages:
   - Ranger:
     - hbase_ranger_policies: plugins_reference/ranger/hbase_ranger_policies.md
     - hdfs_ranger_policies: plugins_reference/ranger/hdfs_ranger_policies.md
+    - hive_ranger_policies: plugins_reference/ranger/hive_ranger_policies.md
     - kafka_ranger_policies: plugins_reference/ranger/kafka_ranger_policies.md
     - ranger_relay: plugins_reference/ranger/ranger_relay.md
   - Users:

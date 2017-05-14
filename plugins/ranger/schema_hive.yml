@@ -3,16 +3,16 @@
 type: map
 mapping:
 
-   
-  "hbase_ranger_policies":
+  "hive_ranger_policies":
     type: seq
     sequence:
     - type: map
       mapping:
         "name": { type: str, required: true }
-        "tables": { type: seq, sequence: [ { type: str } ], required: true }
-        "column_families": { type: seq, sequence: [ { type: str } ] }
+        "databases": { type: seq, sequence: [ { type: str } ], required: true }
+        "tables": { type: seq, sequence: [ { type: str } ] }
         "columns": { type: seq, sequence: [ { type: str } ] }
+        "udfs": { type: seq, sequence: [ { type: str } ] }
         "audit": { type: bool, required: false }    # Default to True
         "enabled": { type: bool, required: false }    # Default to True
         "no_remove": { type: bool, required: false }    # Default to false
@@ -23,12 +23,10 @@ mapping:
             mapping:
               "users": { type: seq, sequence: [ { type: str } ] }
               "groups": { type: seq, sequence: [ { type: str } ] }
-              "accesses": { type: seq, sequence: [ { type: str, enum: [ 'read', 'write', 'create', 'admin' ] } ], required: true }
+              "accesses": { type: seq, sequence: [ { type: str, enum: [ 'select', 'update', 'create', 'drop', 'alter', 'index', 'lock', 'all' ] } ], required: true }
               "delegate_admin": { type: bool, required: false }    # Default to False
-        
-        
 
-  "hbase_namespaces":        
+  "hive_databases":        
     type: "seq"
     sequence:
     - type: map
@@ -46,11 +44,11 @@ mapping:
                 mapping:
                   "users": { type: seq, sequence: [ { type: str } ] }
                   "groups": { type: seq, sequence: [ { type: str } ] }
-                  "accesses": { type: seq, sequence: [ { type: str, enum: [ 'read', 'write', 'create', 'admin' ] } ], required: true }
+                  "accesses": { type: seq, sequence: [ { type: str, enum: [ 'select', 'update', 'create', 'drop', 'alter', 'index', 'lock', 'all' ] } ], required: true }
                   "delegate_admin": { type: bool, required: false }    # Default to False
         
           
-  "hbase_tables":        
+  "hive_tables":        
     type: "seq"
     sequence:
     - type: map
@@ -68,7 +66,7 @@ mapping:
                 mapping:
                   "users": { type: seq, sequence: [ { type: str } ] }
                   "groups": { type: seq, sequence: [ { type: str } ] }
-                  "accesses": { type: seq, sequence: [ { type: str, enum: [ 'read', 'write', 'create', 'admin' ] } ], required: true }
+                  "accesses": { type: seq, sequence: [ { type: str, enum: [ 'select', 'update', 'create', 'drop', 'alter', 'index', 'lock', 'all' ] } ], required: true }
                   "delegate_admin": { type: bool, required: false }    # Default to False
         
       

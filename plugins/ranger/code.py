@@ -28,6 +28,7 @@ logger = logging.getLogger("hadeploy.plugins.ranger")
 
 DEFAULT_POLICY_NAME="_{0}_"
 DEFAULT_HBASE_TABLE_POLICY_NAME="_{0}:{1}_"
+DEFAULT_HIVE_TABLE_POLICY_NAME="_{0}:{1}_"
 
 
 RANGER_RELAY="ranger_relay"
@@ -81,6 +82,15 @@ KAFKA_RANGER_POLICIES="kafka_ranger_policies"
 IP_ADDRESSES="ip_addresses"
 KAFKA_RANGER_POLICIES_TO_REMOVE="kafkaRangerPoliciesToRemove"
 
+# ------------------------- hive
+
+HIVE_DATABASES="hive_databases"
+HIVE_TABLES="hive_tables"
+DATABASES="databases"
+DATABASE="database"
+HIVE_RANGER_POLICIES="hive_ranger_policies"
+HIVE_RANGER_POLICIES_TO_REMOVE="hiveRangerPoliciesToRemove"
+UDFS="udfs"
 
 class RangerPlugin(Plugin):
     
@@ -94,6 +104,8 @@ class RangerPlugin(Plugin):
                 if not os.path.isabs(self.context.model[SRC][RANGER_RELAY][CA_BUNDLE_LOCAL_FILE]):
                     self.context.model[SRC][RANGER_RELAY][CA_BUNDLE_LOCAL_FILE] = os.path.normpath(os.path.join(snippetPath, self.context.model[SRC][RANGER_RELAY][CA_BUNDLE_LOCAL_FILE]))
             
+    def getGroomingDependencies(self):
+        return ['hdfs', 'hbase', 'kafka', 'hive']
 
     def onGrooming(self):
         groomRangerRelay(self.context.model)
@@ -103,6 +115,8 @@ class RangerPlugin(Plugin):
             groomRangerHBasePolicies(self.context.model)
         if 'kafka' in self.context.pluginByName:
             groomRangerKafkaPolicies(self.context.model)
+        if 'hive' in self.context.pluginByName:
+            groomRangerHivePolicies(self.context.model)
 
     def getSchema(self):
         schemaFile = os.path.join(self.path, "schema_core.yml")
@@ -115,6 +129,9 @@ class RangerPlugin(Plugin):
             schema.schemaMerge(theSchema, yaml.load(open(schemaFile)))
         if 'kafka' in self.context.pluginByName:
             schemaFile = os.path.join(self.path, "schema_kafka.yml")
+            schema.schemaMerge(theSchema, yaml.load(open(schemaFile)))
+        if 'hive' in self.context.pluginByName:
+            schemaFile = os.path.join(self.path, "schema_hive.yml")
             schema.schemaMerge(theSchema, yaml.load(open(schemaFile)))
         return theSchema
 
@@ -160,7 +177,7 @@ def groomRangerHdfsPolicies(model):
                 misc.setDefaultInMap(perms, GROUPS, [])
                 misc.setDefaultInMap(perms, DELEGATE_ADMIN, False)
                 if len(perms[USERS]) == 0 and len(perms[GROUPS]) == 0:
-                    misc.ERROR("hdfs_ranger_policy.name: '{0}'. A permission has neither group or user defined.")
+                    misc.ERROR("hdfs_ranger_policy.name: '{0}'. A permission has neither group or user defined.".format(policy[NAME]))
             if not policy[NO_REMOVE]:
                 toRemoveCount = toRemoveCount + 1
         model[DATA][HDFS_RANGER_POLICIES_TO_REMOVE] = toRemoveCount
@@ -208,8 +225,6 @@ def grabHdfsRangerPoliciesFromFiles(model):
             
             
 # -------------------------------------------------------------- Hbase
-
-
 
 def grabHBaseRangerPoliciesFromNamespaces(model):
     if HBASE_NAMESPACES in model[SRC]:
@@ -261,14 +276,12 @@ def groomRangerHBasePolicies(model):
                 misc.setDefaultInMap(perms, GROUPS, [])
                 misc.setDefaultInMap(perms, DELEGATE_ADMIN, False)
                 if len(perms[USERS]) == 0 and len(perms[GROUPS]) == 0:
-                    misc.ERROR("hbase_ranger_policy.name: '{0}'. A permission has neither group or user defined.")
+                    misc.ERROR("hbase_ranger_policy.name: '{0}'. A permission has neither group or user defined.".format(policy[NAME]))
             if not policy[NO_REMOVE]:
                 toRemoveCount = toRemoveCount + 1
         model[DATA][HBASE_RANGER_POLICIES_TO_REMOVE] = toRemoveCount
             
-
 # -------------------------------------------------------------- Kafka
-
 
 def grabKafkaRangerPoliciesFromTopics(model):
     if KAFKA_TOPICS in model[SRC]:
@@ -303,10 +316,73 @@ def groomRangerKafkaPolicies(model):
                 misc.setDefaultInMap(perms, IP_ADDRESSES, [])
                 misc.setDefaultInMap(perms, DELEGATE_ADMIN, False)
                 if len(perms[USERS]) == 0 and len(perms[GROUPS]) == 0:
-                    misc.ERROR("kafka_ranger_policy.name: '{0}'. A permission has neither group or user defined.")
+                    misc.ERROR("kafka_ranger_policy.name: '{0}'. A permission has neither group or user defined.".format(policy[NAME]))
             if not policy[NO_REMOVE]:
                 toRemoveCount = toRemoveCount + 1
         model[DATA][KAFKA_RANGER_POLICIES_TO_REMOVE] = toRemoveCount
             
-                        
-                
+# -------------------------------------------------------------- Hive
+
+def grabHiveRangerPoliciesFromDatabase(model):
+    if HIVE_DATABASES in model[SRC]:
+        for database in model[SRC][HIVE_DATABASES]:
+            if RANGER_POLICY in database:
+                policy = database[RANGER_POLICY]
+                policy[DATABASES] = [ database[NAME] ]
+                policy[TABLES] = [ "*" ]
+                policy[COLUMNS] = [ "*" ]
+                misc.setDefaultInMap(policy, NAME, DEFAULT_POLICY_NAME.format(database[NAME]))
+                policy[NO_REMOVE] = database[NO_REMOVE]
+                misc.ensureObjectInMaps( model[SRC], [HIVE_RANGER_POLICIES], [])
+                model[SRC][HIVE_RANGER_POLICIES].append(policy)
+            
+
+def grabHiveRangerPoliciesFromTables(model):
+    if HIVE_TABLES in model[SRC]:
+        for table in model[SRC][HIVE_TABLES]:
+            if RANGER_POLICY in table:
+                policy = table[RANGER_POLICY]
+                policy[DATABASES] = [ table[DATABASE] ]
+                policy[TABLES] = [ table[NAME] ]
+                policy[COLUMNS] = [ "*" ]
+                misc.setDefaultInMap(policy, NAME, DEFAULT_HIVE_TABLE_POLICY_NAME.format(table[DATABASE], table[NAME]))
+                policy[NO_REMOVE] = table[NO_REMOVE]
+                misc.ensureObjectInMaps( model[SRC], [HIVE_RANGER_POLICIES], [])
+                model[SRC][HIVE_RANGER_POLICIES].append(policy)
+            
+def groomRangerHivePolicies(model):
+    grabHiveRangerPoliciesFromDatabase(model)
+    grabHiveRangerPoliciesFromTables(model)
+    if HIVE_RANGER_POLICIES in model[SRC]:
+        if RANGER_RELAY not in model[SRC]:
+            misc.ERROR("There is at least one 'hive_ranger_policies', but no 'ranger_relay' was defined!")
+        names = Set()
+        toRemoveCount = 0
+        for policy in model[SRC][HIVE_RANGER_POLICIES]:
+            policy[NAME] = model[SRC][RANGER_RELAY][POLICY_NAME_DECORATOR].format(policy[NAME])
+            if policy[NAME] in names:
+                misc.ERROR("hive_ranger_policy.name: '{0}' is defined twice".format(policy[NAME])) 
+            names.add(policy[NAME])
+            misc.setDefaultInMap(policy, AUDIT, True)
+            misc.setDefaultInMap(policy, ENABLED, True)
+            misc.setDefaultInMap(policy, NO_REMOVE, False)
+            if UDFS in policy:
+                if COLUMNS in policy or TABLES in policy:
+                    misc.ERROR("hive_ranger_policy.name: '{0}' 'udfs' and 'tables' or 'columns' are exclusive".format(policy[NAME]))
+            else:
+                if COLUMNS not in policy or len(policy[COLUMNS]) == 0:
+                    policy[COLUMNS] = [ '*' ]
+                if TABLES not in policy or len(policy[TABLES]) == 0:
+                    policy[TABLES] = [ '*' ]
+            misc.setDefaultInMap(policy, PERMISSIONS, [])
+            for perms in policy[PERMISSIONS]:
+                misc.setDefaultInMap(perms, USERS, [])
+                misc.setDefaultInMap(perms, GROUPS, [])
+                misc.setDefaultInMap(perms, DELEGATE_ADMIN, False)
+                if len(perms[USERS]) == 0 and len(perms[GROUPS]) == 0:
+                    misc.ERROR("hive_ranger_policy.name: '{0}'. A permission has neither group or user defined.".format(policy[NAME]))
+            if not policy[NO_REMOVE]:
+                toRemoveCount = toRemoveCount + 1
+        model[DATA][HIVE_RANGER_POLICIES_TO_REMOVE] = toRemoveCount
+            
+                    

@@ -117,7 +117,8 @@ class FilesPlugin(Plugin):
         groomTrees(self.context)
         if len(model[DATA][HDFS][NODE_TO_HDFS_BY_NAME]) == 0 and len(model[DATA][HDFS][FILES]) == 0 and len(model[DATA][HDFS][FOLDERS]) == 0 and len(model[DATA][HDFS][TREES]) == 0:
             # Optimization for execution time
-            del(model[SRC][HDFS_RELAY])
+            if HDFS_RELAY in model[SRC]:
+                del(model[SRC][HDFS_RELAY])
         
     
 

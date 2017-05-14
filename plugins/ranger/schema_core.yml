@@ -15,6 +15,8 @@ mapping:
       "hdfs_service_name": { type: str, required: false }
       "hbase_service_name": { type: str, required: false }
       "kafka_service_name": { type: str, required: false }
+      "hive_service_name": { type: str, required: false }
+      "yarn_service_name": { type: str, required: false }
       "policy_name_decorator": { type: str, required: false } # Default to "HAD[{0}]"
       
       

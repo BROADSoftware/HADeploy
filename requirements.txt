@@ -12,7 +12,7 @@ paramiko==2.0.2
 pyasn1==0.1.9
 pycparser==2.14
 pycrypto==2.6.1
-pykwalify==1.5.1
+pykwalify==1.6.0
 python-dateutil==2.4.2
 PyYAML==3.11
 six==1.10.0

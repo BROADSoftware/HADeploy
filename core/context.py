@@ -26,7 +26,7 @@ from plugin import Plugin
 import misc
 from const import DATA,ANSIBLE_ROLES_PATHS,HELPER
 import schema
-
+from sets import Set
         
 INVENTORY="inventory"
 HOST_BY_NAME="hostByName"        
@@ -34,6 +34,7 @@ HOST_GROUP_BY_NAME="hostGroupByName"
 
 
 logger = logging.getLogger("hadeploy.context")
+
 
 class Context:
     def __init__(self, workingFolder):
@@ -78,9 +79,27 @@ class Context:
         misc.ERROR("Unable to find a plugin of name '{0}' in plugin paths {1}".format(name, paths))
 
     def groom(self):
+        pluginList = []
+        pluginSet = Set()
         for plugin in self.plugins:
+            self.addToGroomList(plugin, pluginList, pluginSet, 0)
+        logger.debug("Grooming order:" + str(map(lambda x: x.name, pluginList)))
+        for plugin in pluginList:
             plugin.onGrooming()
-
+    
+    def addToGroomList(self, plugin, pluginList, pluginSet, deep):
+        if(deep > 10):
+            misc.ERROR("Loop in plugins grooming dependencies")
+        deps = plugin.getGroomingDependencies()
+        for dep in deps:
+            if dep in self.pluginByName:
+                self.addToGroomList(self.pluginByName[dep], pluginList, pluginSet, deep+1)
+        if plugin.name not in pluginSet:
+            logger.debug("Plugin '{0}' added to groomList".format(plugin.name))
+            pluginSet.add(plugin.name)
+            pluginList.append(plugin)
+        
+        
 
     def generatePrivateTemplate(self):
         for plugin in self.plugins:

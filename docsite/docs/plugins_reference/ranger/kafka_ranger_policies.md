@@ -26,7 +26,7 @@ Name | req?	| Description
 users|yes if `groups` is undefined|A list of users this policy will apply on. May be empty if some groups are defined.
 groups|yes if `users` is undefined|A list of groups this policy will apply on. May be empty if some users are defined.
 ip_addresses|no|A list of source IP addresses this policy will apply on.
-accesses|yes|The list of rights granted by this policy. May include `Publish`, `Consume`, `Configure`, `Describe`, `Create`, `Delete` and `Kafka_admin`.
+accesses|yes|The list of rights granted by this policy. May include `publish`, `consume`, `configure`, `describe`, `create`, `delete` and `kafka_admin`.
 delegate_admin|no|When a policy is assigned to a user or a group of users those users become the delegated admin. The delegated admin can update, delete the policies.<br>Default: `no`
 
 ##Examples
