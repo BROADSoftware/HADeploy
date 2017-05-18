@@ -42,6 +42,7 @@ pages:
     - hive_ranger_policies: plugins_reference/ranger/hive_ranger_policies.md
     - kafka_ranger_policies: plugins_reference/ranger/kafka_ranger_policies.md
     - ranger_relay: plugins_reference/ranger/ranger_relay.md
+    - yarn_ranger_policies: plugins_reference/ranger/yarn_ranger_policies.md
   - Users:
     - "groups": plugins_reference/users/groups.md
     - "users": plugins_reference/users/users.md

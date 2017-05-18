@@ -92,6 +92,11 @@ HIVE_RANGER_POLICIES="hive_ranger_policies"
 HIVE_RANGER_POLICIES_TO_REMOVE="hiveRangerPoliciesToRemove"
 UDFS="udfs"
 
+# -------------------------------------- Yarn
+
+YARN_RANGER_POLICIES="yarn_ranger_policies"
+YARN_RANGER_POLICIES_TO_REMOVE="yarnRangerPoliciesToRemove"
+
 class RangerPlugin(Plugin):
     
     def __init__(self, name, path, context):
@@ -117,6 +122,7 @@ class RangerPlugin(Plugin):
             groomRangerKafkaPolicies(self.context.model)
         if 'hive' in self.context.pluginByName:
             groomRangerHivePolicies(self.context.model)
+        groomRangerYarnPolicies(self.context.model)
 
     def getSchema(self):
         schemaFile = os.path.join(self.path, "schema_core.yml")
@@ -385,4 +391,33 @@ def groomRangerHivePolicies(model):
                 toRemoveCount = toRemoveCount + 1
         model[DATA][HIVE_RANGER_POLICIES_TO_REMOVE] = toRemoveCount
             
-                    
+              
+# -------------------------------------------------------------- Yarn
+            
+def groomRangerYarnPolicies(model):
+    if YARN_RANGER_POLICIES in model[SRC]:
+        if RANGER_RELAY not in model[SRC]:
+            misc.ERROR("There is at least one 'yarn_ranger_policies', but no 'ranger_relay' was defined!")
+        names = Set()
+        toRemoveCount = 0
+        for policy in model[SRC][YARN_RANGER_POLICIES]:
+            policy[NAME] = model[SRC][RANGER_RELAY][POLICY_NAME_DECORATOR].format(policy[NAME])
+            if policy[NAME] in names:
+                misc.ERROR("yarn_ranger_policy.name: '{0}' is defined twice".format(policy[NAME])) 
+            names.add(policy[NAME])
+            misc.setDefaultInMap(policy, AUDIT, True)
+            misc.setDefaultInMap(policy, ENABLED, True)
+            misc.setDefaultInMap(policy, RECURSIVE, True)
+            misc.setDefaultInMap(policy, NO_REMOVE, False)
+            misc.setDefaultInMap(policy, PERMISSIONS, [])
+            for perms in policy[PERMISSIONS]:
+                misc.setDefaultInMap(perms, USERS, [])
+                misc.setDefaultInMap(perms, GROUPS, [])
+                misc.setDefaultInMap(perms, DELEGATE_ADMIN, False)
+                if len(perms[USERS]) == 0 and len(perms[GROUPS]) == 0:
+                    misc.ERROR("yarn_ranger_policy.name: '{0}'. A permission has neither group or user defined.".format(policy[NAME]))
+            if not policy[NO_REMOVE]:
+                toRemoveCount = toRemoveCount + 1
+        model[DATA][YARN_RANGER_POLICIES_TO_REMOVE] = toRemoveCount
+            
+                 

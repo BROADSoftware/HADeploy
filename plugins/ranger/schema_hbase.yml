@@ -2,7 +2,6 @@
 
 type: map
 mapping:
-
    
   "hbase_ranger_policies":
     type: seq

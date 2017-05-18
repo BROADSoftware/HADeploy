@@ -160,6 +160,41 @@
 
 
 
+{{% if src.yarn_ranger_policies is defined and src.yarn_ranger_policies|length > 0 %}}
+  - name: will set Yarn policies
+    ranger_yarn_policies:
+      admin_url: "{{{ src.ranger_relay.ranger_url }}}"
+      admin_username: "{{{ src.ranger_relay.ranger_username }}}"
+      admin_password: "{{{ src.ranger_relay.ranger_password }}}"
+      validate_certs: "{{{ src.ranger_relay.validate_certs }}}"
+{{% if src.ranger_relay.yarn_service_name is defined %}}
+      service_name: "{{{ src.ranger_relay.yarn_service_name }}}"
+{{%endif%}}
+{{% if src.ranger_relay.ca_bundle_relay_file is defined %}}
+      ca_bundle_file: "{{{ src.ranger_relay.ca_bundle_relay_file }}}"
+{{%endif%}}
+      policies: 
+{{% for policy in src.yarn_ranger_policies %}}
+      - name: "{{{policy.name}}}"
+        queues: [ {{% for q in policy.queues %}}{{% if not loop.first %}}, {{% endif %}}"{{{q}}}"{{%endfor%}} ]
+        audit: {{{policy.audit}}}
+        enabled: {{{policy.enabled}}}
+        recursive: {{{policy.recursive}}}
+{{% if policy.permissions is not defined or policy.permissions|length == 0 %}}
+        permissions: []
+{{% else %}}
+        permissions:         
+{{% for perms in policy.permissions %}}
+        - accesses: [ {{% for acc in perms.accesses %}}{{% if not loop.first %}}, {{% endif %}}"{{{acc}}}"{{%endfor%}} ] 
+          users: [ {{% for user in perms.users %}}{{% if not loop.first %}}, {{% endif %}}"{{{user}}}"{{%endfor%}} ] 
+          groups: [ {{% for group in perms.groups %}}{{% if not loop.first %}}, {{% endif %}}"{{{group}}}"{{%endfor%}} ]
+          delegate_admin: {{{ perms.delegate_admin }}} 
+{{% endfor %}}
+{{%endif%}}
+{{% endfor %}}
+{{%endif%}}
+
+
   
 {{% if src.ranger_relay.ca_bundle_local_file is defined %}}
   - name: Remove CA_BUNDLE
