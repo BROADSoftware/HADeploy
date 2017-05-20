@@ -15,17 +15,17 @@
 # You should have received a copy of the GNU General Public License
 # along with HADeploy.  If not, see <http://www.gnu.org/licenses/>.
 
-HADEPLOY_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+MYDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/." && pwd )"
 
 
 function usage {
 	echo 'hadeploy --src <srcFile> [--src <srcFile>, ...] --action <CHECK|DEPLOY|PACKAGE|REMOVE|NONE> [--workingFolder <workingFolder>] [--loggingConf <loginConfFile>] '
 }
 
-
 SRC=""
 WF=""
 VAR=""
+LOGF=""
 
 while [[ $# > 0 ]]
 do
@@ -43,7 +43,7 @@ do
 			shift
 		;;
 		--loggingConf)
-			LOGCF=$2
+			LOGF=$2
 			shift
 		;;
 		--action)
@@ -61,7 +61,13 @@ done
 
 if [ "$SRC" = "" ]; then echo "At least one --src file must be defined"; usage; exit 1; fi
 if [ "$ACTION" = "" ]; then usage; exit 1; fi
-if [ "$LOGCF" = "" ]; then LOGCF="$HADEPLOY_HOME/logging.yml"; fi
+
+if [ "$LOGF" = "" ]
+then
+	LOGOPT="" 
+else
+	LOGOPT=" --yamlLoggingConf $LOGF"
+fi
 
 if [ "$WF" = "" ]
 then
@@ -72,10 +78,21 @@ else
 fi
 mkdir -p ${WF}
 
-echo "HADEPLOY_HOME: $HADEPLOY_HOME"
 echo "WORKING_FOLDER: $WF"
 
-python $HADEPLOY_HOME/core/main.py --workingFolder $WF --yamlLoggingConf $LOGCF --src HADEPLOY_HOME=$HADEPLOY_HOME $SRC 
+
+if [ -x "$MYDIR/hadeploy-main" ]
+then 
+	CMD="$MYDIR/hadeploy-main"				# We are in setup.py installed layout 
+elif [ -f $MYDIR/../lib/hadeploy/core/main.py ]
+then
+	export PYTHONPATH=$MYDIR/../lib/
+	CMD="python $MYDIR/../lib/hadeploy/core/main.py"	# We are in raw source layout
+else 
+	echo "Unable to find appropriate launcher"; exit 1
+fi
+
+$CMD --workingFolder $WF $LOGOPT --src $SRC 
 if [ $? -ne "0" ]
 then 
 	exit 1

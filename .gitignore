@@ -1,2 +1,5 @@
 /.settings/
 /**/*.pyc
+/dist/
+/HADeploy.egg-info/
+/build/
