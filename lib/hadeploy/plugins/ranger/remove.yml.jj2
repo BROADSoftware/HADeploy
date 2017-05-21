@@ -15,6 +15,7 @@
 
 {{% if src.hdfs_ranger_policies is defined and data.hdfsRangerPoliciesToRemove > 0 %}}
   - name: will remove HDFS policies
+    no_log: true
     ranger_hdfs_policies:
       state: absent
       admin_url: "{{{ src.ranger_relay.ranger_url }}}"
@@ -40,6 +41,7 @@
 
 {{% if src.hbase_ranger_policies is defined and data.hbaseRangerPoliciesToRemove > 0 %}}
   - name: will remove HBase policies
+    no_log: true
     ranger_hbase_policies:
       state: absent
       admin_url: "{{{ src.ranger_relay.ranger_url }}}"
@@ -68,6 +70,7 @@
 
 {{% if src.kafka_ranger_policies is defined and data.kafkaRangerPoliciesToRemove > 0 %}}
   - name: will remove Kafka policies
+    no_log: true
     ranger_kafka_policies:
       state: absent
       admin_url: "{{{ src.ranger_relay.ranger_url }}}"
@@ -92,6 +95,7 @@
 
 {{% if src.hive_ranger_policies is defined and data.hiveRangerPoliciesToRemove > 0 %}}
   - name: will remove HIVE policies
+    no_log: true
     ranger_hive_policies:
       state: absent
       admin_url: "{{{ src.ranger_relay.ranger_url }}}"
@@ -123,6 +127,7 @@
 
 {{% if src.yarn_ranger_policies is defined and data.yarnRangerPoliciesToRemove > 0 %}}
   - name: will remove Yarn policies
+    no_log: true
     ranger_yarn_policies:
       state: absent
       admin_url: "{{{ src.ranger_relay.ranger_url }}}"

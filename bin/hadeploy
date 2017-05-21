@@ -20,8 +20,11 @@ MYDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/." && pwd )"
 
 function usage {
 	echo 'hadeploy --src <srcFile> [--src <srcFile>, ...] --action <CHECK|DEPLOY|PACKAGE|REMOVE|NONE> [--workingFolder <workingFolder>] [--loggingConf <loginConfFile>] '
+	echo '  or'
+	echo 'hadeploy --version'
 }
 
+VERSION="0.3.0"
 SRC=""
 WF=""
 VAR=""
@@ -49,6 +52,10 @@ do
 		--action)
 			ACTION=$2
 			shift
+		;;
+		--version)
+			echo "HADeploy v$VERSION"
+			exit 0
 		;;
 		*)
 			echo "Unknown parameter $1"

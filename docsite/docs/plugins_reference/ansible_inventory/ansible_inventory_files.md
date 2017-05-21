@@ -22,3 +22,9 @@ ansible_inventory_files:
 - ".../some-ansible-folder/inventory"
 - ".../another-ansible-folder/inventory"
 ```
+## Inventory merging
+
+If a host with same name is defined both in [`hosts`](../inventory/hosts) and in an Ansible inventory, the one from the [`hosts`](../inventory/hosts) list will take precedence. 
+This is same for the [`host_groups`](../inventory/host_groups). 
+
+Note also a [`host_groups`](../inventory/host_groups)  can refer to a host in Ansible inventory.

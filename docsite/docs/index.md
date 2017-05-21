@@ -62,6 +62,10 @@ Such principle means HADeploy is a fully idempotent tools, as if expected state 
 
 A typical deployment pattern allowed by HADeploy is to define ‘Application Container’, or ‘Application Lane’. Then several instance (or version) of an application can be installed and run in parallel.
 
+### Kerberos support
+
+HADeploy is able to deploy application on a Hadoop cluster secured by Kerberos. 
+
 ### Rights management
 
 HADeploy will manage all permissions associated to the deployed components and resources.
@@ -70,7 +74,10 @@ HADeploy will manage all permissions associated to the deployed components and r
 
 HADeploy is designed with a higly modular plugin architecture, thus allowing easy third party extension.
 
+### Application Removal
+
+As HADeploy knows about all the components of your application, it provides a REMOVAL mode, which restores the target cluster in its initial state.
+
 ### Open Source
 
-HADeploy is a fully open source project, under GNU General Public License.
-
+HADeploy is a fully open source project, under GNU General Public License. [Hosted on Github](https://github.com/BROADSoftware/hadeploy).

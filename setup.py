@@ -17,12 +17,16 @@
 
 from setuptools import setup
 
+with open('README.md') as f:
+    readme = f.read()
+    
+    
 setup(
     name="HADeploy",
     description="An Hadoop Application deployment tool",
-    long_description="An Hadoop Application deployment tool with full support, for HDFS, Hive, HBase, Kafka, Yarn, Spark,... ",
+    long_description=readme,
     url="https://github.com/BROADSoftware/hadeploy",
-    version="0.3.0",
+    version="0.3.0rc1",
     license="GPLv3",
     author="BROADSoftware",
     author_email="info@hadeploy.com",

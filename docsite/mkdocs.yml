@@ -47,13 +47,16 @@ pages:
     - "groups": plugins_reference/users/groups.md
     - "users": plugins_reference/users/users.md
 - More:
-  - Architecture: more/architecture.md
-  - Debugging: more/debugging.md
+  - "Under the hood": more/under_the_hood.md
+  - "Execution order": more/execution_order.md
+  - "Secured cluster": more/secured_cluster.md
+  - "YAML tricks": more/yaml_tricks.md
 
 #theme: readthedocs
-#theme: mkdocs
-theme: 'material'
+theme: mkdocs
+#theme: 'material'
 #theme: yeti  # Bootswatch
+#theme: cosmo
 #theme: bootstrap
 
 unused:

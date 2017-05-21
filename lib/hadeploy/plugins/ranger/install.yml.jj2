@@ -15,6 +15,7 @@
 
 {{% if src.hdfs_ranger_policies is defined and src.hdfs_ranger_policies|length > 0 %}}
   - name: will set HDFS policies
+    no_log: true
     ranger_hdfs_policies:
       admin_url: "{{{ src.ranger_relay.ranger_url }}}"
       admin_username: "{{{ src.ranger_relay.ranger_username }}}"
@@ -50,6 +51,7 @@
 
 {{% if src.hbase_ranger_policies is defined and src.hbase_ranger_policies|length > 0 %}}
   - name: will set HBase policies
+    no_log: true
     ranger_hbase_policies:
       admin_url: "{{{ src.ranger_relay.ranger_url }}}"
       admin_username: "{{{ src.ranger_relay.ranger_username }}}"
@@ -86,6 +88,7 @@
 
 {{% if src.kafka_ranger_policies is defined and src.kafka_ranger_policies|length > 0 %}}
   - name: will set Kafka policies
+    no_log: true
     ranger_kafka_policies:
       admin_url: "{{{ src.ranger_relay.ranger_url }}}"
       admin_username: "{{{ src.ranger_relay.ranger_username }}}"
@@ -121,6 +124,7 @@
 
 {{% if src.hive_ranger_policies is defined and src.hive_ranger_policies|length > 0 %}}
   - name: will set HIVE policies
+    no_log: true
     ranger_hive_policies:
       admin_url: "{{{ src.ranger_relay.ranger_url }}}"
       admin_username: "{{{ src.ranger_relay.ranger_username }}}"
@@ -162,6 +166,7 @@
 
 {{% if src.yarn_ranger_policies is defined and src.yarn_ranger_policies|length > 0 %}}
   - name: will set Yarn policies
+    no_log: true
     ranger_yarn_policies:
       admin_url: "{{{ src.ranger_relay.ranger_url }}}"
       admin_username: "{{{ src.ranger_relay.ranger_username }}}"

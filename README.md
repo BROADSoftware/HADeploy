@@ -6,36 +6,51 @@ In such context, deploying an application is not only matter of deploying some j
 
 ## Documentation
 
-You will find documentation [at this location](https://github.com/BROADSoftware/hadeploy/blob/master/docs/hadeploy.pdf)
+You will find documentation [at this location](https://github.com/BROADSoftware/hadeploy/blob/master/docs/hadeploy.pdf) (TODO: Adjust link)
 
 ## Base principles
 
-###Reconciliation and idempotence
+### Application manifest
 
-HADeploy is a purely descriptive tool. As such usage will consist of defining the expected state of the
-deployed application and let the tool perform the reconciliation between expected and actual state.
-Such principle means HADeploy is a fully idempotent tools, as if expected state match the actual ones,
-the tool will not perform any further actions.
+An application can be fully described in one file, hosting all components and resources description.
 
-###Infrastructure independency.
+### Infrastructure independency
 
-Deploying an application not only need to be aware of all application components, but also of the
-target infrastructure.
-Such infrastructure may be described separately of the main application description, or its information
-could be extracted from other Infrastructure management tools (Such as Chef, Puppet, Ansible ...).
+Application file is independent of target physical infrastructure. This target is defined in another file and HADeploy will take care of the merge on deployment
 
-###Continuous delivery
+### Environment independency.
 
-As a reconciliation tool, HADeploy can be used not only for the initial deployment of the application,
-but also for all its lifecycle (update and removal).
+In the same way, the application file is independent of the environment (DEV, INT, PPRD, PROD,..). This ensure coherency and repeatable deployments among these contexts
 
-As such it will make its best effort to perform all non-destructive operation to modify actual resource's
-state to reach target configuration.
+### Declarative programming and reconciliation
 
-###Context management
-HADeploy allow name of all resources to include variables part, thus allowing several deployment of
-the same application to coexist on the same infrastructure.
+HADeploy is a purely descriptive tool. As such usage will consist of defining the expected state of the deployed application and let the tool perform the reconciliation between expected and actual state.
 
-###Application Removal
+### Idempotence
+
+Such principle means HADeploy is a fully idempotent tools, as if expected state match the actual ones, the tool will not perform any further actions.
+
+### Application instance isolation.
+
+A typical deployment pattern allowed by HADeploy is to define ‘Application Container’, or ‘Application Lane’. Then several instance (or version) of an application can be installed and run in parallel.
+
+### Kerberos support
+
+HADeploy is able to deploy application on a Hadoop cluster secured by Kerberos. 
+
+### Rights management
+
+HADeploy will manage all permissions associated to the deployed components and resources.
+
+### Plugins architecture
+
+HADeploy is designed with a highly modular plugins architecture, thus allowing easy third party extension.
+
+### Application Removal
 
 As HADeploy knows about all the components of your application, it provides a REMOVAL mode, which restores the target cluster in its initial state.
+
+### Open Source
+
+HADeploy is a fully open source project, under GNU General Public License.
+
