@@ -73,7 +73,7 @@ sudo yum install -y ansible python-pip
 ```
 Then, you will need to download a set of python packages from another (connected) computer: 
 
-* Download the latest `HADeploy` 'wheel' package (.whl file) from the [pypi site](https://testpypi.python.org/pypi/HADeploy/) (TODO: Fix the link)
+* Download the latest `HADeploy` 'wheel' package (.whl file) from the [pypi site](https://pypi.python.org/pypi/HADeploy) 
 * Download the latest `pykwalify` 'wheel' package (.whl file) from the [pypi site](https://pypi.python.org/pypi/pykwalify)
 * Download the latest `docopt package` (.tar.gz file) from the [pypi site](https://pypi.python.org/pypi/docopt)
 * Download the latest `PyYAML package` (.tar.gz file) from the [pypi site](https://pypi.python.org/pypi/PyYAML)

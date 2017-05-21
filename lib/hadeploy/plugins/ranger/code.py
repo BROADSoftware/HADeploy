@@ -28,7 +28,7 @@ logger = logging.getLogger("hadeploy.plugins.ranger")
 
 DEFAULT_POLICY_NAME="_{0}_"
 DEFAULT_HBASE_TABLE_POLICY_NAME="_{0}:{1}_"
-DEFAULT_HIVE_TABLE_POLICY_NAME="_{0}:{1}_"
+DEFAULT_HIVE_TABLE_POLICY_NAME="_{0}.{1}_"
 
 
 RANGER_RELAY="ranger_relay"

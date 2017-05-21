@@ -58,13 +58,3 @@ theme: mkdocs
 #theme: yeti  # Bootswatch
 #theme: cosmo
 #theme: bootstrap
-
-unused:
-- References:
-  - "Ansible_inventory: ansible_inventory_files": plugins_reference/ansible_inventory/ansible_inventory_files.md
-  - "Files: folders": plugins_reference/files/folders.md
-  - "Inventory: hosts": plugins_reference/inventory/hosts.md
-  - "Inventory: host_overrides": plugins_reference/inventory/host_overrides.md
-  - "Inventory: host_groups": plugins_reference/inventory/host_groups.md
-  - "Users: users": plugins_reference/users/users.md
-  - "Users: groups": plugins_reference/users/groups.md

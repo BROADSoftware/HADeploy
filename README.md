@@ -6,7 +6,7 @@ In such context, deploying an application is not only matter of deploying some j
 
 ## Documentation
 
-You will find documentation [at this location](https://github.com/BROADSoftware/hadeploy/blob/master/docs/hadeploy.pdf) (TODO: Adjust link)
+You will find documentation [at this location](http://www.hadeploy.com/)
 
 ## Base principles
 

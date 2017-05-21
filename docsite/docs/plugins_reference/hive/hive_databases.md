@@ -17,7 +17,7 @@ Name | req? |	Description
  owner_type |no | USER or ROLE. Specify what represent the owner attribute
  comment    |no | Equivalent to the COMMENT Hive DDL close
  no_remove|no|Boolean: Prevent this database to be removed when HADeploy will be used in REMOVE mode.<br>Default: `no`
- ranger_policy|no|Definition of Apache Ranger policy bound to this database. TODO
+ ranger_policy|no|Definition of Apache Ranger policy bound to this database.<br>Parameters are same as [hive_ranger_policies](../ranger/hive_ranger_policies) except than `databases`, `tables` and `columns` should not be defined. The policy will apply on all columns of all tables of this database.<br>The policy name can be explicitly defined. Otherwise, a name will be generated as "`_<database>_`".<br>See example below for more information
 
 ### Example:
 
@@ -46,6 +46,22 @@ Will internally generate the commands:
 CREATE DATABASE jdctest2 COMMENT 'For jdchive table testing' LOCATION 'hdfs://clusterid/user/apphive/db/testtables1'
 ALTER DATABASE jdctest2 SET OWNER USER apphive
 ```
+The following example illustrate the association with a Ranger policy, granting full rights on all table of this databases for the 'admin' user:
+
+```yaml
+hive_databases:
+- name: jdctest3
+  owner_type: USER
+  owner: apphive
+  ranger_policy:
+    permissions:
+    - users:
+      - admin
+      accesses:
+      - all
+      delegate_admin: yes
+```
+
 
 ### Database Ownership
 

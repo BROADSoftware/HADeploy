@@ -22,7 +22,7 @@ group|yes|The group of all the target files
 file_mode|yes|The permission of all the target files. Must be an octal representation embedded in a string (ie: "0644")
 folder_mode|yes|The permission of all the target folders. Must be an octal representation embedded in a string (ie: "0755")
 no_remove|no|Boolean: Prevent this folder to be removed from the target when HADeploy will be used in REMOVE mode.<br>Default: `no`
-ranger_policy|no|Definition of Apache Ranger policy bound to this tree. Parameters are same as [`hdfs_ranger_policies`](../ranger/hdfs_ranger_policies) excepts than paths should not be defined as is automatically set to the folder path. Scope must be `hdfs`.<br>The policy name can be explicitly defined. Otherwise, a name will be generated as `"_<dest_folder>_"`.<br>See example below for more information.
+ranger_policy|no|Definition of Apache Ranger policy bound to this tree. Parameters are same as [`hdfs_ranger_policies`](../ranger/hdfs_ranger_policies) excepts than `paths` should not be defined as is automatically set to the folder path. Scope must be `hdfs`.<br>The policy name can be explicitly defined. Otherwise, a name will be generated as `"_<dest_folder>_"`.<br>See example below for more information.
 
 > src: must reference a folder. To copy a single file, use the files definition.
 

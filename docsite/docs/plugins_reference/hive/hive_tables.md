@@ -30,8 +30,8 @@ skewed_by        |no |Allow definition of a SKEWED BY Hive DDL Clause. Refer to 
 alterable        |no |Boolean. Allow most of ALTER TABLE commands to be automatically issued for table modification. Refer to [Altering table](#altering-table) below.<br>Default: `no`.
 droppable        |no |Boolean. Allow this table to be dropped and recreated if definition is modified.<br>Default value is `yes` if the table is external, `no`for all other cases
 no_remove        |no |Boolean: Prevent this database to be removed when HADeploy will be used in REMOVE mode.<br>Default: `no`
+ranger_policy    |no |Definition of Apache Ranger policy bound to this table.<br>Parameters are same as [hive_ranger_policies](../ranger/hive_ranger_policies) except than `database`, `tables` and `columns` should not be defined. The policy will apply on all columns of this table.<br>The policy name can be explicitly defined. Otherwise, a name will be generated as "`_<database.table>_`".<br>See example below for more information
  
-
 [1]: Storage format can be defined using two methods:
 
 * Use `stored_by`. This will define implicitly `input_format`, `output_format` and, for some value the `serde`.
@@ -291,6 +291,36 @@ Will be interpreted, for creation as:
 ```sql
 CREATE  TABLE jdctest1.testSerde ( host STRING, identity STRING, theuser STRING) COMMENT 'Serde test' ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.RegexSerDe' WITH SERDEPROPERTIES ( 'input.regex'='([^ ]*) ([^ ]*) ([^ ]*)')
 ```
+
+Following is an illustration of Apache Ranger policy association: The table is created with select and update permissions for all users of the 'users' group. And user 'sa' can also create new indexes.
+
+```yaml
+hables_tables:
+- name: testranger
+  database: jdctest1
+  comment: "A first, simple test table"
+  location: "/tmp/xxx"
+  fields:
+  - name: fname
+    type: string
+    comment: "First name"
+  - name: lname
+    type: string
+    comment: "Last name"
+  ranger_policy:
+    permissions:
+    - groups:
+      - users
+      accesses: 
+      - select
+      - update
+    - users:
+      - sa
+      accesses:
+      - index
+```
+
+
 
 ## HBase table mapping
 

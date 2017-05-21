@@ -16,7 +16,7 @@ partition_factor|yes if assignments is not defined|Specify the number of partiti
 replication_factor|yes if assignments is not defined|Specify the number of replica for each partition.
 assignments|yes if rep/part factors are not specified|A Map where the key is the partition# and the value a list of `broker_id`.<br>This allow to manual definition of the distribution of partition's replica, with strict location rules.
 no_remove|no|Boolean: Prevent this group to be removed when HADeploy will be used in REMOVE mode.<br>Default: `no`
-ranger_policy|no|Definition of Apache Ranger policy bound to this topic. Parameters are same as [`kafka_ranger_policy`](../ranger/kafka_ranger_policies) except than topics should not be defined.<br>The policy name can be explicitly defined. Otherwise, a name will be generated as "`_<topic>_`".<br>See example below for more information
+ranger_policy|no|Definition of Apache Ranger policy bound to this topic. Parameters are same as [`kafka_ranger_policy`](../ranger/kafka_ranger_policies) except than `topics` should not be defined.<br>The policy name can be explicitly defined. Otherwise, a name will be generated as "`_<topic>_`".<br>See example below for more information
 
 ## Example
 
