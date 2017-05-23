@@ -13,3 +13,11 @@ rm -rf build/*
 
 # To install from test pip site
 # pip install -i https://testpypi.python.org/pypi HADeploy
+# (Does not works, due to dependencies version pb)
+
+ # To upload to pypi
+ #
+ # twine register dist/HADeploy-0.3.0rc1-py2-none-any.whl
+ # twine register dist/HADeploy-0.3.0rc1.tar.gz
+ # twine upload dist/*
+

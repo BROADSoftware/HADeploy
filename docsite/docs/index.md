@@ -12,17 +12,17 @@ An Hadoop application is composed of many independent components and resources:
 * Initial data sets.
 * …
 
-Current deployment tools does not provide plugins for Hadoop components. And each component has its own configuration and authorization  system, designed and implemented independently.
+Current deployment tools do not provide plugins for Hadoop components. And each component has its own configuration and authorization  system, designed and implemented independently.
 
-HADeploy is designed to resolve these issues. Thus allowing Continuous Integration and Continuous Deployment practices in the Hadoop world.
+HADeploy is designed to solve these issues. Thus facilitating the adoption of Continuous Integration and Continuous Deployment practices in the Hadoop world.
 
 ## How it works
 
 ![Screenshot](img/archi1.png)
 
-HADeploy is installed on a specific node, out of the cluster perimeter. It could be a user’s Linux workstation.
+A single HADeploy installation can deal with multiple clusters.
 
-Of course, a single HADeploy installation can address several clusters.
+It can be installed on an dedicated node, or on a user’s Linux workstation as long as it is provided with appropriate admin privileges.
 
 From this node, HADeploy will issue appropriate commands to be executed on the different nodes of the target cluster.
 
@@ -34,49 +34,54 @@ Issuing some commands to specifics subsystem, such as HDFS require a quite compl
 
 To avoid this, HADeploy will not issue such command directly, but push the command on one of the cluster node, called ’Relay node'.
 
-An edge node of the cluster typically assumes this function.
+An edge node of the cluster would typically assume this function.
 
 ## Base principles
 
 ### Application manifest
 
-An application can be fully described in one file, hosting all components and resources description.
+An application can be fully described in a single file, along with all their required components and resources.
 
-### Infrastructure independency
+### Infrastructure agnostic
 
-Application file is independent of target physical infrastructure. This target is defined in another file and HADeploy will take care of the merge on deployment
+The Application Manifest model is agnostic to the target physical infrastructure. 
+The target cluster is defined in a separate file that will be accessed at deployment time, and that can be used for all application deployments on this cluster.
 
-### Environment independency.
+### Environment agnostic.
 
-In the same way, the application file is independent of the environment (DEV, INT, PPRD, PROD,..). This ensure coherency and repeatable deployments among these contexts
-
-### Declarative programming and reconciliation
-
-HADeploy is a purely descriptive tool. As such usage will consist of defining the expected state of the deployed application and let the tool perform the reconciliation between expected and actual state.
+HADeploy can also take as input an environment description file that encourages re-use, consistency and repeatable deployments in different execution contexts 
+(e.g. Development vs Production environments…)
 
 ### Idempotence
 
-Such principle means HADeploy is a fully idempotent tools, as if expected state match the actual ones, the tool will not perform any further actions.
+HADeploy embeds the lightweight Ansible tool as its main execution engine. By doing so, it benefits from the idempotency principles at the core of Ansible design.
+As with Ansible, you will be able to run the same application deployment multiple times and expect the same result. If the application is in the expected state on the target cluster, 
+then HADeploy will not perform any actions, but simply display that it is satisfied with the current state.
+
+### Target State vs Programming
+
+HADeploy is a purely descriptive tool. No programming is required. Admins define the expected state of the application and let the tool perform 
+the reconciliation between expected and actual state.
 
 ### Application instance isolation.
 
-A typical deployment pattern allowed by HADeploy is to define ‘Application Container’, or ‘Application Lane’. Then several instance (or version) of an application can be installed and run in parallel.
+A typical deployment pattern allowed by HADeploy is to define ‘Application Container’, or ‘Application Lane’. Then several instances (or versions) of an application can be installed and run in parallel.
 
 ### Kerberos support
 
-HADeploy is able to deploy application on a Hadoop cluster secured by Kerberos. 
+HADeploy is Kerberos friendly and will happily deploy applications on your secured cluster. 
 
-### Rights management
+### Privilege management
 
-HADeploy will manage all permissions associated to the deployed components and resources.
+HADeploy will manage all permissions associated to the deployed components and resources
 
 ### Plugins architecture
 
-HADeploy is designed with a higly modular plugin architecture, thus allowing easy third party extension.
+HADeploy is designed with a modular plugin architecture, thus allowing easy third party extension.
 
 ### Application Removal
 
-As HADeploy knows about all the components of your application, it provides a REMOVAL mode, which restores the target cluster in its initial state.
+Since HADeploy knows about all the components of your application, it provides a REMOVAL mode that will restore the target cluster in its initial state. 
 
 ### Open Source
 

@@ -59,7 +59,7 @@ kafka_relay:
 ```
 ## Trick
 
-To find the `broker_ids` values, one may use the `kdescribe` tool:
+To find the `broker_ids` values, one may use the [`kdescribe`](https://github.com/Kappaware/kdescribe) tool:
 
-[https://github.com/Kappaware/kdescribe](https://github.com/Kappaware/kdescribe)
+
  
