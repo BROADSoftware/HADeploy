@@ -6,9 +6,9 @@ The lastest stable version of HADeploy is `0.3.0`.
 
 ## Prerequisite
 
-HADeploy node must be a Linux system.
+HADeploy can be installed on a Linux system, or on a MAC OS X workstation
 
-Current installation process has been tested on RHEL/CentOS7 (Python 2.7) and Mac OSX. Installation on other Linux Variant may works. All feedbacks are welcome.
+*Installation on Windows is not supported, but VirtualBox and Vagrant would be your best friends in this case.*
 
 ### Ansible
 
@@ -26,13 +26,15 @@ Installing inside virtual environement has several advantages:
 
 * Your installation will not interfere with others users. 
 
-One drawback is you will need to activate your virtual environnement on each login.
+One drawback is you will need to activate your virtual environnement on each login. But you can automate this in your `~/.profile`.
  
 Of course, if you want to share a single installation of HADeploy amongst all users of your system, you must install it globally.
 
-## Latest release via Pip
+## Latest release via `pip` (Linux)
 
-`Pip` is the Python package manager. If not already installed, you can easely install it. For example, on RHEL/CentOS7:
+Current installation process has been tested on RHEL/CentOS7 (Python 2.7). Installation on other Linux Variant may works. All feedbacks are welcome.
+
+`pip` is the Python package manager. If not already installed, you can easely install it. For example, on RHEL/CentOS7:
 
 ```bash
 sudo yum install -y python-pip
@@ -56,7 +58,90 @@ If you are in a virtual environment
 
 You are now ready to used HADeploy from this workstation.
 
-### No direct Internet access ?
+## Latest release via `pip` (Mac OS X)
+
+`pip` is the Python package manager. If not already installed, you can easely install it. 
+
+```bash
+sudo easy_install pip
+```
+
+Then, you can install HADeploy:
+
+```bash
+sudo pip install HADeploy
+```
+Or simply 
+```bash
+pip install HADeploy
+```
+If you are in a virtual environment
+
+You are now ready to used HADeploy from this workstation.
+
+> Do not use easy_install to install HADeploy directly.
+
+
+## Install from source GIT repository.
+
+HADeploy is easy to install directly from source. If you want to have the very latest versions, or a specific one, or intend to contribute, this is the method of choice.
+ 
+For Linux only, install several required package:
+
+```bash
+sudo yum install -y git python-pip python-devel openssl-devel
+```
+Then clone the HADeploy git repository:
+
+```bash
+git clone https://github.com/BROADSoftware/hadeploy.git
+```
+
+Move to the newly create directory: 
+
+```bash
+cd hadeploy
+```
+
+If you need, switch on a specific version.
+
+```bash
+git checkout v0.X.X
+```
+
+(Use `git tag` to have a list of all versions)
+
+And perform required python module installation using pip:
+
+```bash
+sudo pip install -r requirements.txt
+```
+or simply
+
+```bash
+pip install -r requirements.txt
+```
+If you are in a virtual environment
+
+To perform some Hive, Kafka and HBase configuration, HADeploy will use some specific modules. These need to be downloaded to complete the installation. For this:
+
+```bash
+chmod +x lib/hadeploy/plugins/setup.sh
+./lib/hadeploy/plugins/setup.sh
+```
+
+And, last but not least, add HADeploy to your path:
+
+```bash
+cd ../bin
+export PATH=$PATH:$(pwd)
+# or
+export PATH=$PATH:<whereHADeployWasCloned>/hadeploy/bin
+```
+
+You are now ready to used HADeploy from this workstation.
+
+## No direct Internet access ?
 
 If the computer on which you want to install HADeploy can access Internet using a proxy, you can configure `pip` to use it. If this is not possible, here is an alternate method:
 
@@ -94,59 +179,6 @@ Adjust the version number for the downloaded one. And remove the sudo if you ins
 You should be now ready to used HADeploy from this workstation.
 
 Note this procedure reflect the package dependencies at the time of this writing. This can evolve, but, applying the same principle, you should be able to adjust.
-
-## Install from source GIT repository.
-
-HADeploy is easy to install directly from source. If you want to have the very latest versions, or a specific one, or intend to contribute, this is the method of choice.
- 
-First, install several required package:
-
-```bash
-sudo yum install -y git python-pip python-devel openssl-devel
-```
-Then clone the HADeploy git repository:
-
-```bash
-git clone https://github.com/BROADSoftware/hadeploy.git
-```
-
-Move to the newly create directory: 
-
-```bash
-cd hadeploy
-```
-
-If you need, switch on a specific version.
-
-```bash
-git checkout v0.X.X
-```
-
-(Use `git tag` to have a list of all versions)
-
-And perform required python module installation using pip:
-
-```bash
-sudo pip install -r requirements.txt
-```
-
-To perform some Hive, Kafka and HBase configuration, HADeploy will use some specific modules. These need to be downloaded to complete the installation. For this:
-
-```bash
-chmod +x lib/hadeploy/plugins/setup.sh
-./lib/hadeploy/plugins/setup.sh
-```
-
-And, last but not least, add HADeploy to your path:
-
-```bash
-cd ../bin
-export PATH=$PATH:$(pwd)
-# or
-export PATH=$PATH:<whereHADeployWasCloned>/hadeploy/bin
-```
-
-You are now ready to used HADeploy from this workstation.
 
 
 
