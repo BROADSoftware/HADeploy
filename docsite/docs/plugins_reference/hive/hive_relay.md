@@ -2,7 +2,12 @@
 
 ## Synopsis
 
-Allow definition of how all HIVE commands will be performed.
+Issuing some commands to specifics subsystem, such as HIVE require a quite complex client configuration.
+
+To avoid this, HADeploy will not issue such command directly, but push the command on one of the cluster node, called ’Relay node'.
+An edge node of the cluster would typically assume this function.
+
+`hive_relay` will define which host will be used to relay operations for HIVE, and also how these operations will be performed.
 
 There should be only one entry of this type in the HADeploy definition file.
 

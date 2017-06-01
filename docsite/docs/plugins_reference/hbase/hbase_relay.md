@@ -2,7 +2,12 @@
 
 ## Synopsis
 
-Allow definition of how all HBase commands will be performed.
+Issuing some commands to specifics subsystem, such as HBase require a quite complex client configuration.
+
+To avoid this, HADeploy will not issue such command directly, but push the command on one of the cluster node, called ’Relay node'.
+An edge node of the cluster would typically assume this function.
+
+`hbase_relay` will define which host will be used to relay operations for HBase, and also how these operations will be performed.
 
 There should be only one entry of this type in the HADeploy definition file.
 

@@ -18,23 +18,14 @@ HADeploy is designed to solve these issues. Thus facilitating the adoption of Co
 
 ## How it works
 
-![Screenshot](img/archi1.png)
+![Screenshot](img/archi2.png)
 
-A single HADeploy installation can deal with multiple clusters.
-
-It can be installed on an dedicated node, or on a user’s Linux workstation as long as it is provided with appropriate admin privileges.
-
-From this node, HADeploy will issue appropriate commands to be executed on the different nodes of the target cluster.
+HADeploy can be installed on an dedicated node, or on a user’s workstation.
+From this node, it will issue appropriate commands to be executed on the different nodes of the target cluster.
 
 It will also push application artifact, or trigger artifact fetching from any repository server (Nexus, Artifactory, Jenkins, or a simple Http server).
 
-### Relaying
-
-Issuing some commands to specifics subsystem, such as HDFS require a quite complex client configuration.
-
-To avoid this, HADeploy will not issue such command directly, but push the command on one of the cluster node, called ’Relay node'.
-
-An edge node of the cluster would typically assume this function.
+A single HADeploy installation can deal with multiple clusters.
 
 ## Base principles
 
