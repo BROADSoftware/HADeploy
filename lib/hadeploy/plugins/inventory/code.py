@@ -39,6 +39,8 @@ FORCE_SETUP="force_setup"
 HOST_GROUP_BY_NAME="hostGroupByName"
 HOSTS_TO_SETUP="hostsToSetup"
 
+EXIT_ON_FAIL="exit_on_fail"
+
 class InventoryPlugin(Plugin):
     
     def __init__(self, name, path, context):
@@ -63,9 +65,7 @@ class InventoryPlugin(Plugin):
         handleHostOverrides(self.context.model)
         handleHostGroupOverrides(self.context.model)
         check(self.context.model)
-        
-
-        
+        misc.setDefaultInMap(self.context.model[SRC], EXIT_ON_FAIL, True)
 
 # ---------------------------------------------------- Static functions
 

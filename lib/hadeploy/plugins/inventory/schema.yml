@@ -1,6 +1,8 @@
 
 type: map
 mapping:
+  
+  "exit_on_fail": { type: bool, required: false }     # Default to true
 
   "hosts":
     type: "seq"

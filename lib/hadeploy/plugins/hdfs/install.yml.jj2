@@ -3,6 +3,7 @@
 
 {{% if src.hdfs_relay is defined %}}
 - hosts: {{{ src.hdfs_relay.host }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
   - name: Create hdfs relay cache
     file: path={{{ src.hdfs_relay.cache_folder }}} owner={{ansible_ssh_user}} mode="0755" state=directory
@@ -19,6 +20,7 @@
 
 {{% if src.hdfs_relay is defined %}}
 - hosts: {{{ src.hdfs_relay.host }}}   # This is the hdfs_relay
+  any_errors_fatal: {{{ src.exit_on_fail }}}
   roles:
   - hdfs_modules    
   tasks:
@@ -115,6 +117,7 @@
 {{% for scopeName, scope in data.hdfs.nodeToHdfsByName.iteritems() %}}
 {{% if scope.files|length > 0 or scope.trees|length %}}
 - hosts: {{{ scopeName }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
   roles:
   - hdfs_modules    
   tasks:

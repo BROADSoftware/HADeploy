@@ -3,6 +3,7 @@
 {{% for scopeName, scope in data.users.scopeByName.iteritems() %}}
 {{% if scope.users|length > 0 or scope.groups|length > 0 %}}
 - hosts: {{{ scopeName }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
 {{% for user in scope.users|reverse %}}
 {{% if not user.no_remove %}}
@@ -22,6 +23,17 @@
 {{% if user.managed and not user.no_remove %}}
   - name: Remove user '{{{user.login}}}'
     user: name={{{user.login}}} state=absent remove={{{user.create_home}}}
+    register: result
+    retries: 2
+    delay: 3
+    until: result|succeeded
+    ignore_errors: yes    
+
+  - name: report error
+    fail:
+      msg: Unable to create user '{{{user.login}}}'
+    when: not result|succeeded
+    
 {{% endif %}}
 {{% endfor %}}
 
@@ -29,6 +41,17 @@
 {{% if group.managed and not group.no_remove  %}}
   - name: Remove group '{{{group.name}}}'
     group: name={{{group.name}}} state=absent
+    register: result
+    retries: 2
+    delay: 3
+    until: result|succeeded
+    ignore_errors: yes    
+
+  - name: report error
+    fail:
+      msg: Unable to remove group '{{{group.name}}}'
+    when: not result|succeeded
+    
 {{% endif %}}
 {{% endfor %}}
 {{% endif %}}

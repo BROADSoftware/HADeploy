@@ -2,6 +2,7 @@
 {{% if src.kafka_topics is defined and  src.kafka_topics|length > 0 %}}
 
 - hosts: {{{ src.kafka_relay.host }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
 
 {{% if src.kafka_relay.kerberos %}}

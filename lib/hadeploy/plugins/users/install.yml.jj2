@@ -3,18 +3,40 @@
 {{% for scopeName, scope in data.users.scopeByName.iteritems() %}}
 {{% if scope.users|length > 0 or scope.groups|length > 0 %}}
 - hosts: {{{ scopeName }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
 {{% for group in scope.groups %}}
 {{% if group.managed %}}
   - name: Create group '{{{group.name}}}'
     group: name={{{group.name}}} system={{{group.system}}}
+    register: result
+    retries: 2
+    delay: 3
+    until: result|succeeded
+    ignore_errors: yes    
+
+  - name: report error
+    fail:
+      msg: Unable to create group '{{{group.name}}}'
+    when: not result|succeeded
+
 {{% endif %}}
 {{% endfor %}}
 
 {{% for user in scope.users %}}
 {{% if user.managed %}}
   - name: Create user '{{{user.login}}}'
-    user: name={{{user.login}}} system={{{user.system}}} createhome={{{user.create_home}}}{{% if user.comment is defined %}} comment="{{{user.comment}}}"{{%endif%}}{{% if user.group is defined %}} group="{{{user.group}}}"{{%endif%}}{{% if user.groups is defined %}} groups="{{{user.groups}}}"{{%endif%}}{{% if user.password is defined %}} password="{{{user.password}}}"{{%endif%}}
+    user: name={{{user.login}}} system={{{user.system}}} createhome={{{user.create_home}}}{{% if user.comment is defined %}} comment="{{{user.comment}}}"{{%endif%}}{{% if user.group is defined %}} group="{{{user.group}}}"{{%endif%}}{{% if user.groups is defined %}} groups="{{{user.groups}}}"{{%endif%}}{{% if user.password is defined %}} password="{{{user.password}}}"{{%endif%}} #
+    register: result
+    retries: 2
+    delay: 3
+    until: result|succeeded
+    ignore_errors: yes    
+
+  - name: report error
+    fail:
+      msg: Unable to create group '{{{user.login}}}'
+    when: not result|succeeded
 
 {{% endif %}}
 

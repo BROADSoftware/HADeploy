@@ -4,6 +4,7 @@
 {{% if src.hbase_namespaces is defined and  src.hbase_namespaces|length > 0 %}}
 
 - hosts: {{{ src.hbase_relay.host }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
   - name: "hbase: Create a temporary folder"
     shell: mktemp

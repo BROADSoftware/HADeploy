@@ -4,6 +4,7 @@
 {{% if src.hive_relay is defined %}}
 
 - hosts: {{{ src.hive_relay.host }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
   - name: "hive: Create a temporary file name for description file"
     shell: mktemp

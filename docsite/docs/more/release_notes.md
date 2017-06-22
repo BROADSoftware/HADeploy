@@ -9,5 +9,7 @@
 - `kafka_relay.tools_folder` default value is modified to be in `/tmp/hadeploy_{{ansible_ssh_user}}`
 - Local file definition now works with ~/xxx
 - `hdfs_relay.user` default value is now `hdfs` only if `ssh_user`is root. Otherwise, is `ssh_user`
+- Added global `exit_on_fail` flag.
+- Added some retry on user/groups creation/removal
 
 

@@ -4,6 +4,7 @@
 {{% for scopeName, scope in data.files.scopeByName.iteritems() %}}
 {{% if scope.folders|length > 0 %}}
 - hosts: {{{ scopeName }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
 {{% for folder in scope.folders %}}
   - name: Create folder '{{{folder.path}}}'
@@ -17,6 +18,7 @@
 {{% for scopeName, scope in data.files.scopeByName.iteritems() %}}
 {{% if scope.files|length > 0 or  scope.trees|length > 0 %}}
 - hosts: {{{ scopeName }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
 {{% for file in scope.files %}}
 {{% if file.src.startswith("file://") %}}

@@ -4,6 +4,7 @@
 {{% for scopeName, scope in data.hdfs.nodeToHdfsByName.iteritems() %}}
 {{% if scope.files|length > 0 or scope.files|length > 0 %}}
 - hosts: {{{ scopeName }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
   roles:
   - hdfs_modules    
   tasks:
@@ -50,6 +51,7 @@
 
 {{% if src.hdfs_relay is defined %}}
 - hosts: {{{ src.hdfs_relay.host }}}   # This is the hdfs_relay
+  any_errors_fatal: {{{ src.exit_on_fail }}}
   roles:
   - hdfs_modules    
   tasks:
@@ -116,6 +118,7 @@
 
 {{% if src.hdfs_relay is defined %}}
 - hosts: {{{ src.hdfs_relay.host }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
   - name: Cleanup HADeploy cache
     file: path={{{ src.hdfs_relay.cache_folder }}}  state=absent

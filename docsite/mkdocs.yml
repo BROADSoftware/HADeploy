@@ -29,6 +29,7 @@ pages:
     - hive_relay: plugins_reference/hive/hive_relay.md
     - hive_tables: plugins_reference/hive/hive_tables.md
   - Inventory: 
+    - "exit_on_fail": plugins_reference/inventory/exit_on_fail.md
     - hosts: plugins_reference/inventory/hosts.md
     - host_groups: plugins_reference/inventory/host_groups.md
     - host_group_overrides: plugins_reference/inventory/host_group_overrides.md

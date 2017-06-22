@@ -5,6 +5,7 @@
 {{% if src.hbase_namespaces is defined and  src.hbase_namespaces|length > 0 %}}
 
 - hosts: {{{ src.hbase_relay.host }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
   - name: "hbase: Create a temporary file name"
     shell: mktemp
@@ -38,6 +39,7 @@
 
 {{% if src.hbase_datasets is defined and  src.hbase_datasets|length > 0 %}}
 - hosts: {{{ src.hbase_relay.host }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
 {{% for dataset in src.hbase_datasets %}}
 
