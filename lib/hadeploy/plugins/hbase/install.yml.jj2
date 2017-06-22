@@ -23,7 +23,7 @@
 {{% endif %}}  
 
   - name: "hbase: Apply potential update"
-    shell: {{{ src.hbase_relay.tools_folder}}}/jdchtable/jdchtable --inputFile {{mktemp.stdout}} 
+    shell: "{{{ src.hbase_relay.tools_folder}}}/jdchtable/jdchtable --inputFile {{mktemp.stdout}}" 
     register: jdch
     changed_when: jdch.stdout.find(" 0 modification(s)") == -1
 
@@ -61,7 +61,7 @@
 {{% endif %}}
 
   - name: "hbase_datasets: Apply potential update"
-    shell: {{{ src.hbase_relay.tools_folder}}}/hbload/hbload --inputFile {{mktemp.stdout}} --namespace {{{dataset.namespace}}} --table {{{dataset.table}}} {{%if dataset.delRows%}} --delRows{{%endif%}}{{%if dataset.delValues%}} --delValues{{%endif%}}{{%if dataset.dontAddRow%}} --dontAddRow{{%endif%}}{{%if dataset.dontAddValue%}} --dontAddValue{{%endif%}}{{%if dataset.updValues%}} --updValues{{%endif%}}  # 
+    shell: "{{{ src.hbase_relay.tools_folder}}}/hbload/hbload --inputFile {{mktemp.stdout}} --namespace {{{dataset.namespace}}} --table {{{dataset.table}}} {{%if dataset.delRows%}} --delRows{{%endif%}}{{%if dataset.delValues%}} --delValues{{%endif%}}{{%if dataset.dontAddRow%}} --dontAddRow{{%endif%}}{{%if dataset.dontAddValue%}} --dontAddValue{{%endif%}}{{%if dataset.updValues%}} --updValues{{%endif%}}"  # 
     register: hbl
     changed_when: hbl.stdout.find(" 0 modification(s)") == -1
     

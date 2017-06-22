@@ -22,13 +22,13 @@ from sets import Set
 
 
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DATA
+from hadeploy.core.const import SRC,DATA,DEFAULT_HDFS_RELAY_CACHE_FOLDER
 
 """
     This plugin also prepare data for the HDFS plugin, conditioned by the fact an hdfs_relay is defined
 """
 
-DEFAULT_HDFS_RELAY_CACHE_FOLDER='/var/cache/hadeploy/files'
+#DEFAULT_HDFS_RELAY_CACHE_FOLDER='/var/cache/hadeploy/files'
 
 
 NO_REMOVE="no_remove"

@@ -24,7 +24,7 @@ function usage {
 	echo 'hadeploy --version'
 }
 
-VERSION="0.3.0"
+VERSION="0.3.1"
 SRC=""
 WF=""
 VAR=""

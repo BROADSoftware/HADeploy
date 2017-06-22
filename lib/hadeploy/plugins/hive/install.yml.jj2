@@ -36,7 +36,7 @@
 {{% endif %}}  
 
   - name: "hive: Apply potential update"
-    shell: {{{ src.hive_relay.tools_folder}}}/jdchive/jdchive --inputFile {{tmpInput.stdout}} {{% if src.hive_relay.report_file is defined %}} --reportFile {{tmpReport.stdout}}{{%endif%}} #
+    shell: "{{{ src.hive_relay.tools_folder}}}/jdchive/jdchive --inputFile {{tmpInput.stdout}} {{% if src.hive_relay.report_file is defined %}} --reportFile {{tmpReport.stdout}}{{%endif%}}" #
     register: jdch
     failed_when: jdch.rc != 0 and jdch.rc != 1 
 {{% if src.hive_relay.user is defined %}}

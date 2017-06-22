@@ -5,7 +5,7 @@
 
 - hosts: {{{ src.hbase_relay.host }}}
   vars: 
-    hbase_relay_tools_folder: {{{ src.hbase_relay.tools_folder }}}
+    hbase_relay_tools_folder: "{{{ src.hbase_relay.tools_folder }}}"
     hbase_relay_kerberos:  {{{ src.hbase_relay.kerberos }}}
 {{% if  src.hbase_relay.kerberos %}}
     hbase_relay_principal: {{{ src.hbase_relay.principal }}}

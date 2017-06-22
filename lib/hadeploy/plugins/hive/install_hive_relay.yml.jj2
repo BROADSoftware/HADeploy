@@ -7,12 +7,12 @@
 
 - hosts: {{{ src.hive_relay.host }}}
   vars: 
-    hive_relay_tools_folder: {{{ src.hive_relay.tools_folder }}}
+    hive_relay_tools_folder: "{{{ src.hive_relay.tools_folder }}}"
     hive_relay_kerberos:  {{{ src.hive_relay.kerberos }}}
-    hive_relay_logs_dir: {{{ src.hive_relay.tools_folder}}}/jdchive/logs-{{{src.hive_relay._user_}}}
+    hive_relay_logs_dir: "{{{ src.hive_relay.tools_folder}}}/jdchive/logs-{{{src.hive_relay._user_}}}"
 {{% if  src.hive_relay.kerberos %}}
-    hive_relay_principal: {{{ src.hive_relay.principal }}}
-    hive_relay_keytab_path: {{{ src.hive_relay.relay_keytab_path }}}
+    hive_relay_principal: "{{{ src.hive_relay.principal }}}"
+    hive_relay_keytab_path: "{{{ src.hive_relay.relay_keytab_path }}}"
 {{% endif %}}    
   tasks:
   - name: Setup hive_relay helper (1/4)

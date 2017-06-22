@@ -77,7 +77,7 @@
     file: path="{{item}}" state=directory
     with_items:
 {{% for dirname in tree._targetFolders_ %}}
-    - {{{ dirname }}}
+    - "{{{ dirname }}}"
 {{% endfor %}}
 {{% if tree._tmplList|length >0 %}}
   - name: Generate template tree '{{{tree._displaySrc_}}}' to '{{{tree._cacheTarget_}}}'
