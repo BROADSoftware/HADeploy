@@ -20,7 +20,7 @@ import hadeploy.core.misc as misc
 
 
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DATA
+from hadeploy.core.const import SRC,DATA,HOST_BY_NAME,INVENTORY,SSH_USER
 
 
 """
@@ -48,8 +48,6 @@ SCOPE_BY_NAME="scopeByName"
 
 
 HOST="host"
-HOST_BY_NAME="hostByName"
-INVENTORY="inventory"
 
 
 class FilesPlugin(Plugin):
@@ -85,7 +83,8 @@ def groomHdfsRelay(model):
                 misc.ERROR("hdfs_relay: Please, provide a 'principal' if you need to use a keytab")
             model[SRC][HDFS_RELAY][KERBEROS] = False
             model[SRC][HDFS_RELAY][KDEBUG] = False
-            misc.setDefaultInMap(model[SRC][HDFS_RELAY], USER,  "hdfs")
+            sshUser =  model[DATA][INVENTORY][HOST_BY_NAME][model[SRC][HDFS_RELAY][HOST]][SSH_USER]
+            misc.setDefaultInMap(model[SRC][HDFS_RELAY], USER,  "hdfs" if sshUser == "root" else sshUser)
 
 
 

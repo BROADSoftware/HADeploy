@@ -22,7 +22,7 @@ from sets import Set
 
 
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DATA,DEFAULT_HDFS_RELAY_CACHE_FOLDER
+from hadeploy.core.const import SRC,DATA,DEFAULT_HDFS_RELAY_CACHE_FOLDER,INVENTORY,HOST_BY_NAME
 
 """
     This plugin also prepare data for the HDFS plugin, conditioned by the fact an hdfs_relay is defined
@@ -44,11 +44,6 @@ HDFS_RELAY="hdfs_relay"
 CACHEFOLDERS="cacheFolders"
 LOCAL_FILES_FOLDERS="local_files_folders"
 LOCAL_TEMPLATES_FOLDERS="local_templates_folders"
-
-
-        
-INVENTORY="inventory"
-HOST_BY_NAME="hostByName"        
 
 # items attributes
 FSRC="src"

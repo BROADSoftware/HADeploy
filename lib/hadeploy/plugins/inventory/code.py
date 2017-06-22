@@ -17,14 +17,14 @@
 
 import logging
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC, DATA
+from hadeploy.core.const import SRC, DATA,HOST_BY_NAME, INVENTORY, SSH_USER
 import hadeploy.core.misc as misc
 import os
 from sets import Set
 
 logger = logging.getLogger("hadeploy.plugins.inventory")
 
-INVENTORY="inventory"
+
 HOSTS="hosts"
 SSH_PRIVATE_FILE_FILE="ssh_private_key_file"
 HOST_OVERRIDES="host_overrides"
@@ -32,13 +32,11 @@ HOST_GROUP_OVERRIDES="host_group_overrides"
 NAME="name"
 HOST_GROUPS="host_groups"
 SSH_HOST="ssh_host"
-SSH_USER="ssh_user"
 SSH_PASSWORD="ssh_password"
 SSH_EXTRA_ARGS="ssh_extra_args"
 FORCE_SETUP="force_setup"
 
 HOST_GROUP_BY_NAME="hostGroupByName"
-HOST_BY_NAME="hostByName"
 HOSTS_TO_SETUP="hostsToSetup"
 
 class InventoryPlugin(Plugin):

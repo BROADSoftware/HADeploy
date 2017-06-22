@@ -36,5 +36,10 @@ DEFAULT_HDFS_RELAY_CACHE_FOLDER="{{ansible_user_dir}}/.hadeploy/files"
 
 DEFAULT_TOOLS_FOLDER="/tmp/hadeploy_{{ansible_ssh_user}}"
 
+# -------------- Shared between plugins 
+
+INVENTORY="inventory"
+HOST_BY_NAME="hostByName"
+SSH_USER="ssh_user"
 
 

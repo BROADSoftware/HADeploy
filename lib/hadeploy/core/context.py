@@ -25,12 +25,10 @@ import logging
 from hadeploy.core.plugin import Plugin
 import misc
 
-from const import DATA,ANSIBLE_ROLES_PATHS,HELPER
+from const import DATA,ANSIBLE_ROLES_PATHS,HELPER,INVENTORY,HOST_BY_NAME
 import schema
 from sets import Set
         
-INVENTORY="inventory"
-HOST_BY_NAME="hostByName"        
 HOST_GROUP_BY_NAME="hostGroupByName"
 
 

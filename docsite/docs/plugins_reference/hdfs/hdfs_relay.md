@@ -18,8 +18,8 @@ hdfs_relay is a map with the following attributes:
 Name | req? |	Description
 --- | --- | ---
 host|yes|The host on which all HDFS commands will be pushed for execution.
-cache_folder|no|A folder on this host, which will be used by HADeploy as cache storage. Mainly, all files targeted to HDFS will be first pushed in this cache. And will remains in it, to optimize idempotence.<br>Default: `{{ansible_user_dir}}/.hadeploy/files`, where `{{ansible_user_dir}}` is substitued by the home folder of the [`ssh_user`](../inventory/hosts) acccessing this relay host.
-user|no|The user account HADeploy will use to perform all HDFS related operation. Must have enough rights to do so.<br>Not to be defined when using Kerberos authentication.<br>Default: `hdfs`
+cache_folder|no|A folder on this host, which will be used by HADeploy as cache storage. Mainly, all files targeted to HDFS will be first pushed in this cache. And will remains in it, to optimize idempotence.<br>Default: `{{ansible_user_dir}}/.hadeploy/files`, where `{{ansible_user_dir}}` is substitued by the home folder of the [`ssh_user`](../inventory/hosts) defined for this relay host.
+user|no|The user account HADeploy will use to perform all HDFS related operation. Must have enough rights to do so.<br>Not to be defined when using Kerberos authentication.<br>Default: The [`ssh_user`](../inventory/hosts) defined for this relay host or `hdfs` if this user is `root`.
 hadoop_conf_dir|no|Where HADeploy will lookup Hadoop configuration file.<br>Default: `/etc/hadoop/conf`
 webhdfs_endpoint|no|HADeploy will perform several actions through WebHDFS REST interface. You can specify corresponding endpoint, if it is not defined in the usual configuration way.<br>Default: The value found in `<hadoop_conf_dir>/hdfs-site.xml`
 principal|no|A Kerberos principal allowing all HDFS related operation to be performed. See below
