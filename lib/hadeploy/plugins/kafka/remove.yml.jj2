@@ -29,7 +29,7 @@
     changed_when: false
 
   - name: "kafka_topic: Apply potential update"
-    shell: {{{ src.kafka_relay.tools_folder}}}/jdctopic/jdctopic --inputFile {{mktemp.stdout}} 
+    shell: "{{{ src.kafka_relay.tools_folder}}}/jdctopic/jdctopic --inputFile {{mktemp.stdout}}" 
     register: jdct
     changed_when: jdct.stdout.find("0 modification(s)") == -1
 

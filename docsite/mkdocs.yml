@@ -51,6 +51,7 @@ pages:
   - "Execution order": more/execution_order.md
   - "Secured cluster": more/secured_cluster.md
   - "YAML tricks": more/yaml_tricks.md
+  - "Release notes": more/release_notes.md
 
 #theme: readthedocs
 theme: mkdocs

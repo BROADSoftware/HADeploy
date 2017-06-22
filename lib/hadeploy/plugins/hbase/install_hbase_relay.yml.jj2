@@ -8,8 +8,8 @@
     hbase_relay_tools_folder: "{{{ src.hbase_relay.tools_folder }}}"
     hbase_relay_kerberos:  {{{ src.hbase_relay.kerberos }}}
 {{% if  src.hbase_relay.kerberos %}}
-    hbase_relay_principal: {{{ src.hbase_relay.principal }}}
-    hbase_relay_keytab_path: {{{ src.hbase_relay.keytab_path }}}
+    hbase_relay_principal: "{{{ src.hbase_relay.principal }}}"
+    hbase_relay_keytab_path: "{{{ src.hbase_relay.keytab_path }}}"
 {{% endif %}}    
   tasks:
   - name: Setup hbase_relay helper (1/3)

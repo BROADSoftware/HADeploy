@@ -22,7 +22,7 @@
 {{% endif %}}  
 
   - name: "hbase: Apply potential update"
-    shell: {{{ src.hbase_relay.tools_folder}}}/jdchtable/jdchtable --inputFile {{mktemp.stdout}} 
+    shell: "{{{ src.hbase_relay.tools_folder}}}/jdchtable/jdchtable --inputFile {{mktemp.stdout}}"
     register: jdch
     changed_when: jdch.stdout.find("0 modification(s)") == -1
 

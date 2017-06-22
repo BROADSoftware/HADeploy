@@ -7,7 +7,7 @@
   tasks:
 {{% for folder in scope.folders %}}
   - name: Create folder '{{{folder.path}}}'
-    file: path="{{{folder.path}}}" owner="{{{folder.owner}}}" group="{{{folder.group}}}" mode="{{{folder.mode}}}" state=directory
+    file: path={{{folder.path}}} owner={{{folder.owner}}} group={{{folder.group}}} mode="{{{folder.mode}}}" state=directory
 {{% endfor %}}
 {{%endif %}}
 {{% endfor %}}
@@ -37,7 +37,7 @@
     file: path="{{item}}" owner={{{tree.owner}}} group={{{tree.group}}} mode="{{{tree.folder_mode}}}" state=directory
     with_items:
 {{% for dirname in tree._targetFolders_ %}}
-    - {{{ dirname }}}
+    - "{{{ dirname }}}"
 {{% endfor %}}
 {{% if tree.src.startswith("file://") %}}
   - name: Copy tree '{{{tree._displaySrc_}}}' to '{{{tree.dest_folder}}}'

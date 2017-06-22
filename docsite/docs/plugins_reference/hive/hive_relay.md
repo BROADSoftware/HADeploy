@@ -18,11 +18,11 @@ There should be only one entry of this type in the HADeploy definition file.
 Name | req?	| 	Description
 --- | --- | ---
 host|yes|The host on which all hive commands will be pushed for execution. Must be a fully configured as HIVE client.
-tools_folder|no|Folder used by HADeploy to install some tools for HIVE management.<br>If you intend to deploy with a non-root account, this value must be modified. Refer to specific chapter (LINK).<br>Default: `/opt/hadeploy`
+tools_folder|no|Folder used by HADeploy to install some tools for HIVE management.<br>Default: `/tmp/hadeploy_<user>/` where `user` is the [`ssh_user`](../inventory/hosts) acccessing this relay host.
 principal|no|A Kerberos principal allowing all HIVE related operations to be performed. See below
 local_keytab_path|no|A local path to the associated keytab file. This path is relative to the embeding file. See [below](#kerberos-authentication)
 relay_keytab_path|no|A path to the associated keytab file on the relay host. See [below](#kerberos-authentication)
-user|no|A user account under which all database and table operation will be performed. On non-Kerberos cluster this will determine table ownership.<br>Default:`ssh_user`
+user|no|A user account under which all database and table operation will be performed. On non-Kerberos cluster this will determine table ownership.<br>Default: The [`ssh_user`](../inventory/hosts) acccessing this relay host.
 become_method|no|The method used to swith to this user. Refer to the Ansible documentation on this parameter.<br>Default: `sudo` (Ansible default)
 report_file|no|Local path for a report file which will be (re)generated on each run.<br>This YAML file describe all performed operation and eventually un-achievable operation. It could be a starting point for a more sophisticated database migration processing.<br>Under the hood, all HIVE operation are performed by a special tools: [jdchive](https://github.com/BROADSoftware/jdchive). You will find more information about the schema of this report file [here](https://github.com/BROADSoftware/jdchive#report-file) 
 
