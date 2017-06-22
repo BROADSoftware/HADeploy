@@ -52,13 +52,11 @@ class InventoryPlugin(Plugin):
         if HOSTS in self.context.model[SRC]:
             for h in self.context.model[SRC][HOSTS]:
                 if SSH_PRIVATE_FILE_FILE in h and h[SSH_PRIVATE_FILE_FILE] != '':
-                    if not os.path.isabs(h[SSH_PRIVATE_FILE_FILE]):
-                        h[SSH_PRIVATE_FILE_FILE] = os.path.normpath(os.path.join(snippetPath, h[SSH_PRIVATE_FILE_FILE]))
+                    h[SSH_PRIVATE_FILE_FILE] = misc.snippetRelocate(snippetPath, h[SSH_PRIVATE_FILE_FILE])
         if HOST_OVERRIDES in self.context.model[SRC]:
             for h in self.context.model[SRC][HOST_OVERRIDES]:
                 if SSH_PRIVATE_FILE_FILE in h and h[SSH_PRIVATE_FILE_FILE] != '':
-                    if not os.path.isabs(h[SSH_PRIVATE_FILE_FILE]):
-                        h[SSH_PRIVATE_FILE_FILE] = os.path.normpath(os.path.join(snippetPath, h[SSH_PRIVATE_FILE_FILE]))
+                    h[SSH_PRIVATE_FILE_FILE] = misc.snippetRelocate(snippetPath, h[SSH_PRIVATE_FILE_FILE])
             
 
     def onGrooming(self):

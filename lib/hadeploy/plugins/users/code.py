@@ -48,10 +48,7 @@ class UsersPlugin(Plugin):
                 if AUTHORIZED_KEYS in u:
                     absKeys = []
                     for key in u[AUTHORIZED_KEYS]:
-                        if not os.path.isabs(key):
-                            absKeys.append(os.path.normpath(os.path.join(snippetPath, key)))
-                        else:
-                            absKeys.append(key)
+                        absKeys.append(misc.snippetRelocate(snippetPath, key))
                     u[AUTHORIZED_KEYS] = absKeys
 
 

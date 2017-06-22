@@ -85,18 +85,12 @@ class FilesPlugin(Plugin):
         if LOCAL_FILES_FOLDERS in model[SRC]:
             l2 = []
             for p in model[SRC][LOCAL_FILES_FOLDERS]:
-                if not os.path.isabs(p):
-                    l2.append(os.path.normpath(os.path.join(snippetPath, p)))
-                else:
-                    l2.append(p)
+                l2.append(misc.snippetRelocate(snippetPath, p))
             model[SRC][LOCAL_FILES_FOLDERS] = l2
         if LOCAL_TEMPLATES_FOLDERS in model[SRC]:
             l2 = []
             for p in model[SRC][LOCAL_TEMPLATES_FOLDERS]:
-                if not os.path.isabs(p):
-                    l2.append(os.path.normpath(os.path.join(snippetPath, p)))
-                else:
-                    l2.append(p)
+                l2.append(misc.snippetRelocate(snippetPath, p))
             model[SRC][LOCAL_TEMPLATES_FOLDERS] = l2
 
 

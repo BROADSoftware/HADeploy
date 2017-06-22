@@ -35,10 +35,7 @@ class MasterPlugin(Plugin):
         if PLUGINS_PATHS in self.context.model[SRC]:
             newList = []
             for p in self.context.model[SRC][PLUGINS_PATHS]:
-                if os.path.isabs(p):
-                    newList.append(p)
-                else:
-                    newList.append(os.path.normpath(os.path.join(snippetPath, p)))
+                newList.append(misc.snippetRelocate(snippetPath, p))
             self.context.model[SRC][PLUGINS_PATHS] = newList
 
 

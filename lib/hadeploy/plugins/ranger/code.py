@@ -106,8 +106,7 @@ class RangerPlugin(Plugin):
     def onNewSnippet(self, snippetPath):
         if RANGER_RELAY in self.context.model[SRC]:
             if CA_BUNDLE_LOCAL_FILE in self.context.model[SRC][RANGER_RELAY]:
-                if not os.path.isabs(self.context.model[SRC][RANGER_RELAY][CA_BUNDLE_LOCAL_FILE]):
-                    self.context.model[SRC][RANGER_RELAY][CA_BUNDLE_LOCAL_FILE] = os.path.normpath(os.path.join(snippetPath, self.context.model[SRC][RANGER_RELAY][CA_BUNDLE_LOCAL_FILE]))
+                self.context.model[SRC][RANGER_RELAY][CA_BUNDLE_LOCAL_FILE] = misc.snippetRelocate(snippetPath, self.context.model[SRC][RANGER_RELAY][CA_BUNDLE_LOCAL_FILE])
             
     def getGroomingDependencies(self):
         return ['hdfs', 'hbase', 'kafka', 'hive']

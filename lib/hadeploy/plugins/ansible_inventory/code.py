@@ -46,10 +46,7 @@ class AnsiblePlugin(Plugin):
         if ANSIBLE_INVENTORY_FILE in self.context.model[SRC]:
             l2 = []
             for p in self.context.model[SRC][ANSIBLE_INVENTORY_FILE]:
-                if not os.path.isabs(p):
-                    l2.append(os.path.normpath(os.path.join(snippetPath, p)))
-                else:
-                    l2.append(p)
+                l2.append(misc.snippetRelocate(snippetPath, p))
             self.context.model[SRC][ANSIBLE_INVENTORY_FILE] = l2
 
 

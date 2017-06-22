@@ -58,5 +58,12 @@ def ensureObjectInMaps(root, keys, defaultObj):
 def setDefaultInMap(root, key, defaultValue):
     if not key in root:
         root[key] = defaultValue
-                
-        
+         
+def snippetRelocate(snippetPath, varPath):
+    if os.path.isabs(varPath):
+        return varPath
+    elif varPath.startswith("~"):
+        return os.path.expanduser(varPath)
+    else:
+        return os.path.normpath(os.path.join(snippetPath,varPath))
+               

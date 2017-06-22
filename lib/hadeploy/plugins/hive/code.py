@@ -76,11 +76,9 @@ class HBasePlugin(Plugin):
         model = self.context.model
         if HIVE_RELAY in model[SRC]: 
             if REPORT_FILE in model[SRC][HIVE_RELAY]:
-                if not os.path.isabs( model[SRC][HIVE_RELAY][REPORT_FILE]):
-                    model[SRC][HIVE_RELAY][REPORT_FILE] = os.path.normpath(os.path.join(snippetPath, model[SRC][HIVE_RELAY][REPORT_FILE]))
+                model[SRC][HIVE_RELAY][REPORT_FILE] = misc.snippetRelocate(snippetPath, model[SRC][HIVE_RELAY][REPORT_FILE])
             if LOCAL_KEYTAB_PATH in model[SRC][HIVE_RELAY]:
-                if not os.path.isabs(model[SRC][HIVE_RELAY][LOCAL_KEYTAB_PATH]):
-                    model[SRC][HIVE_RELAY][LOCAL_KEYTAB_PATH] = os.path.normpath(os.path.join(snippetPath, model[SRC][HIVE_RELAY][LOCAL_KEYTAB_PATH]))
+                model[SRC][HIVE_RELAY][LOCAL_KEYTAB_PATH] = misc.snippetRelocate(snippetPath, model[SRC][HIVE_RELAY][LOCAL_KEYTAB_PATH])
             
             
     def onGrooming(self):
