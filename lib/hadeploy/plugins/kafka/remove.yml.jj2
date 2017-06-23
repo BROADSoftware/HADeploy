@@ -9,7 +9,7 @@
 
 {{% if src.kafka_relay.kerberos %}}
   - name: Perform kinit for Kafka access
-    shell: kinit -kt {{{ src.kafka_relay.keytab_path }}} {{{ src.kafka_relay.principal }}}
+    shell: kinit -kt {{{ src.kafka_relay.relay_keytab_path }}} {{{ src.kafka_relay.principal }}}
     changed_when: false
 {{% if src.kafka_relay.kdebug %}} 
   - name: Check kerberos ticket for Kafka access

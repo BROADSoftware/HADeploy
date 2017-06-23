@@ -14,7 +14,9 @@
 - INCOMPATIBILIY: `hive_relay.user` is renamed `hive_relay.become_user`.
 - Added `become_user/become_method` on `hbase_relay`
 - Added `become_user/become_method` on `kafka_relay`
-- INCOMPATIBILITY: `hbase_relay.kyytab_path`is renamed `hbase_relay.relay_keytab_path`
+- INCOMPATIBILITY: `hbase_relay.keytab_path`is renamed `hbase_relay.relay_keytab_path`
 - Added `hbase_relay.local_keytab_path`
+- INCOMPATIBILITY: `kafka_relay.keytab_path`is renamed `kafka_relay.relay_keytab_path`
+- Added `kafka_relay.local_keytab_path`
 
 

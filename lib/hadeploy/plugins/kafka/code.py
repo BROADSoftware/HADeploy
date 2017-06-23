@@ -40,8 +40,10 @@ TOOLS_FOLDER="tools_folder"
 ZK_PATH="zk_path"
 PRINCIPAL="principal"
 KDEBUG="kdebug"
-KEYTAB_PATH="keytab_path"
 KERBEROS="kerberos"
+LOCAL_KEYTAB_PATH="local_keytab_path"
+RELAY_KEYTAB_PATH="relay_keytab_path"
+_RELAY_KEYTAB_FOLDER_="_relayKeytabFolder_"        
 
         
 KAFKA_TOPICS="kafka_topics"
@@ -56,6 +58,14 @@ class KafkaPlugin(Plugin):
     
     def __init__(self, name, path, context):
         Plugin.__init__(self, name, path, context)
+
+
+    def onNewSnippet(self, snippetPath):
+        model = self.context.model
+        if KAFKA_RELAY in model[SRC]: 
+            if LOCAL_KEYTAB_PATH in model[SRC][KAFKA_RELAY]:
+                model[SRC][KAFKA_RELAY][LOCAL_KEYTAB_PATH] = misc.snippetRelocate(snippetPath, model[SRC][KAFKA_RELAY][LOCAL_KEYTAB_PATH])
+
 
     def onGrooming(self):
         self.buildHelper()
@@ -103,15 +113,21 @@ def groomKafkaRelay(model):
             misc.setDefaultInMap(model[SRC][KAFKA_RELAY], TOOLS_FOLDER, DEFAULT_TOOLS_FOLDER)
             misc.setDefaultInMap(model[SRC][KAFKA_RELAY], ZK_PATH, '/')
             if PRINCIPAL in  model[SRC][KAFKA_RELAY]:
-                if KEYTAB_PATH not in model[SRC][KAFKA_RELAY]:
-                    misc.ERROR("kafka_relay: Please provide a 'keytab_path' if you want to use a Kerberos 'principal'")
+                if LOCAL_KEYTAB_PATH not in model[SRC][KAFKA_RELAY] and  RELAY_KEYTAB_PATH not in model[SRC][KAFKA_RELAY]:
+                    misc.ERROR("kafka_relay: Please provide a 'local_keytab_path' and/or a 'relay_keytab_path' if you want to use a Kerberos 'principal'")
                 model[SRC][KAFKA_RELAY][KERBEROS] = True
+                if LOCAL_KEYTAB_PATH in model[SRC][KAFKA_RELAY]:
+                    if not os.path.exists(model[SRC][KAFKA_RELAY][LOCAL_KEYTAB_PATH]):
+                        misc.ERROR("kafka_relay: local_keytab_file '{0}' does not exists!".format(model[SRC][KAFKA_RELAY][LOCAL_KEYTAB_PATH]))
+                if RELAY_KEYTAB_PATH not in model[SRC][KAFKA_RELAY]:
+                    model[SRC][KAFKA_RELAY][_RELAY_KEYTAB_FOLDER_] = os.path.join(model[SRC][KAFKA_RELAY][TOOLS_FOLDER], "keytabs")
+                    model[SRC][KAFKA_RELAY][RELAY_KEYTAB_PATH] = os.path.join( model[SRC][KAFKA_RELAY][_RELAY_KEYTAB_FOLDER_], os.path.basename(model[SRC][KAFKA_RELAY][LOCAL_KEYTAB_PATH]))
                 misc.setDefaultInMap(model[SRC][KAFKA_RELAY], KDEBUG, False)
                 if BECOME_USER in model[SRC][KAFKA_RELAY]:
                     misc.ERROR("kafka_relay: become_user and principal can't be defined both!")
                 model[SRC][KAFKA_RELAY][LOGS_USER] = "{{ansible_ssh_user}}"
             else:
-                if KEYTAB_PATH in model[SRC][KAFKA_RELAY]:
+                if LOCAL_KEYTAB_PATH in model[SRC][KAFKA_RELAY] or RELAY_KEYTAB_PATH in model[SRC][KAFKA_RELAY]:
                     misc.ERROR("kafka_relay: Please, provide a 'principal' if you need to use a keytab")
                 model[SRC][KAFKA_RELAY][KERBEROS] = False
                 if BECOME_USER in model[SRC][KAFKA_RELAY]:
