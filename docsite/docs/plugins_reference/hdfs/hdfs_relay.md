@@ -23,28 +23,34 @@ user|no|The user account HADeploy will use to perform all HDFS related operation
 hadoop_conf_dir|no|Where HADeploy will lookup Hadoop configuration file.<br>Default: `/etc/hadoop/conf`
 webhdfs_endpoint|no|HADeploy will perform several actions through WebHDFS REST interface. You can specify corresponding endpoint, if it is not defined in the usual configuration way.<br>Default: The value found in `<hadoop_conf_dir>/hdfs-site.xml`
 principal|no|A Kerberos principal allowing all HDFS related operation to be performed. See below
-keytab_path|no|A path to the associated keytab file on the relay host. See below
+local_keytab_path|no|A local path to the associated keytab file. This path is relative to the embeding file. See [below](#kerberos-authentication)
+relay_keytab_path|no|A path to the associated keytab file on the relay host. See [below](#kerberos-authentication)
 
 ## Kerberos authentication
 
-When `principal` and `keytab_path` variables are defined, Kerberos authentication will be activated for all HDFS folders, files and trees operations. This means a `kinit` will be issued with provided values before any HDFS access, and a `kdestroy` issued after. This has the following consequences:
+When `principal` and `..._keytab_path` variables are defined, Kerberos authentication will be activated for all HDFS folders, files and trees operations. This means a `kinit` will be issued with provided values before any HDFS access, and a `kdestroy` issued after. This has the following consequences:
 
 * All HDFS operations will be performed on behalf of the user defined by the provided principal. The user parameter become irrelevant and providing it is an error.
 
-* The `kinit` will be issued under the relay host ssh_user account (`root` by default). This means any previous ticket own by this user on this node will be lost. 
+* The `kinit` will be issued under the relay host [`ssh_user`](../inventory/hosts) account. This means any previous ticket own by this user on this node will be lost. 
 
-* And `ssh_user` must have read access on the provided keytab file.
+Regarding the keytab file, two cases:
 
-Note also this keytab file must exists on the relay host. If it is not the case, one may copy it using file copy of HADeploy. This wills works as all file copy on the nodes are performed before any HDFS operation (See Execution order in Miscellaneous chapter) (LINK).
+* This keytab file already exists on the relay host. In such case, the `relay_keytab_path` must be set to the location of this file. And the relay host's [`ssh_user`](../inventory/hosts) must have read access on it.
+
+* This keytab file is not present on the relay host. In such case the `local_keytab_path` must be set to its local location. HADeploy will take care of copying it on the remote relay host, in a location under `tools_folder`. Note you can also modify this target location by setting also the `relay_keytab_path` parameter. In this case, 
+it must be the full path, including the keytab file name. And the containing folder must exists.
 
 ## Example
 
 The simplest case:
+
 ```yaml
 hdfs_relay:
   host: en1
 ```
 Same, with default value sets:
+
 ```yaml
 hdfs_relay:
   host: en1
@@ -53,9 +59,10 @@ hdfs_relay:
   webhdfs_endpoint: "namenode.mycluster.myinfra.com:50070"
 ```
 The simplest case with Kerberos activated:
+
 ```yaml
 hdfs_relay:
   host: en1
   principal: hdfs-mycluster
-  keytab_path: /etc/security/keytabs/hdfs.headless.keytab
+  relay_keytab_path: /etc/security/keytabs/hdfs.headless.keytab
 ```

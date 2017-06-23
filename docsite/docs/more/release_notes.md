@@ -18,5 +18,9 @@
 - Added `hbase_relay.local_keytab_path`
 - INCOMPATIBILITY: `kafka_relay.keytab_path`is renamed `kafka_relay.relay_keytab_path`
 - Added `kafka_relay.local_keytab_path`
+- INCOMPATIBILITY: `hdfs_relay.keytab_path`is renamed `hdfs_relay.relay_keytab_path`
+- Added `hdfs_relay.local_keytab_path`
+- INCOMPATIBILITY: `source_host_credential.keytab_path`is renamed `source_host_credential.relay_keytab_path`
+- Added `source_host_credential.local_keytab_path`
 
 

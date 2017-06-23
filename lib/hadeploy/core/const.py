@@ -34,6 +34,8 @@ DEFAULT_PLUGINS = [ 'header', 'ansible_inventory', 'inventory', 'users', 'ranger
 
 DEFAULT_HDFS_RELAY_CACHE_FOLDER="{{ansible_user_dir}}/.hadeploy/files"
 
+DEFAULT_HDFS_KEYTABS_FOLDER="{{ansible_user_dir}}/.hadeploy/keytabs"
+
 DEFAULT_TOOLS_FOLDER="/tmp/hadeploy_{{ansible_ssh_user}}"
 
 # -------------- Shared between plugins 

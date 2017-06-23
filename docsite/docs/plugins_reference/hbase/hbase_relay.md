@@ -30,12 +30,14 @@ become_method|no|The method used to swith to this user. Refer to the Ansible doc
 When `principal` and `..._keytab_path` variables are defined, Kerberos authentication will be activated for all HBase operations.
  
 * All HBase operations will be performed on behalf of the user defined by the provided principal. 
+
 * This principal must have enough rights to be able to create namespaces and HBase table. 
 
 Regarding the keytab file, two cases:
 
 * This keytab file already exists on the relay host. In such case, the `relay_keytab_path` must be set to the location of this file. And the relay host's [`ssh_user`](../inventory/hosts) must have read access on it.
 <br>Normally, for HBase, there should be at least one principal and keytab file created with full privileges by the system during Kerberos setup.
+
 * This keytab file is not present on the relay host. In such case the `local_keytab_path` must be set to its local location. HADeploy will take care of copying it on the remote relay host, 
 in a location under `tools_folder`. Note you can also modify this target location by setting also the `relay_keytab_path` parameter. In this case, 
 it must be the full path, including the keytab file name. And the containing folder must exists.

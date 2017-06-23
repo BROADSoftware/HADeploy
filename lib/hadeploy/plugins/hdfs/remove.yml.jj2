@@ -10,8 +10,16 @@
   tasks:
 
 {{% if data.hdfs.credentialByHost[scopeName] is defined %}}
+{{% if  data.hdfs.credentialByHost[scopeName]._nodeKeytabFolder_ is defined %}}
+  - name: Create keytabs location
+    file: path={{{ data.hdfs.credentialByHost[scopeName]._nodeKeytabFolder_}}} owner={{ansible_ssh_user}}  mode="0700" state=directory
+{{%endif%}}
+{{% if  data.hdfs.credentialByHost[scopeName].local_keytab_path is defined %}}
+  - name: Push keytab file
+    copy: src={{{data.hdfs.credentialByHost[scopeName].local_keytab_path }}} dest={{{data.hdfs.credentialByHost[scopeName].node_keytab_path }}} owner={{ansible_ssh_user}} mode="0400"
+{{%endif%}}
   - name: Perform kinit for HDFS access from {{{ scopeName }}}
-    shell: kinit -kt {{{ data.hdfs.credentialByHost[scopeName].keytab_path }}} {{{ data.hdfs.credentialByHost[scopeName].principal }}}
+    shell: kinit -kt {{{ data.hdfs.credentialByHost[scopeName].node_keytab_path }}} {{{ data.hdfs.credentialByHost[scopeName].principal }}}
     changed_when: false
 {{% if data.hdfs.credentialByHost[scopeName].kdebug %}} 
   - name: Check kerberos ticket for HDFS access
@@ -55,12 +63,22 @@
   roles:
   - hdfs_modules    
   tasks:
+{{% if  src.hdfs_relay._relayKeytabFolder_ is defined %}}
+  - name: Create keytabs location
+    file: path={{{ src.hdfs_relay._relayKeytabFolder_}}} owner={{ansible_ssh_user}}  mode="0700" state=directory
+{{%endif%}}
+
+{{% if  src.hdfs_relay.local_keytab_path is defined %}}
+  - name: Push keytab file
+    copy: src={{{src.hdfs_relay.local_keytab_path }}} dest={{{src.hdfs_relay.relay_keytab_path }}} owner={{ansible_ssh_user}} mode="0400"
+{{%endif%}}
+
 
 # ------------------------------------------------------------- Handle kerberos authentication for hdfs
 
 {{% if src.hdfs_relay.kerberos %}}
   - name: Perform kinit for HDFS access
-    shell: kinit -kt {{{ src.hdfs_relay.keytab_path }}} {{{ src.hdfs_relay.principal }}}
+    shell: kinit -kt {{{ src.hdfs_relay.relay_keytab_path }}} {{{ src.hdfs_relay.principal }}}
     changed_when: false
 {{% if src.hdfs_relay.kdebug %}} 
   - name: Check kerberos ticket for HDFS access

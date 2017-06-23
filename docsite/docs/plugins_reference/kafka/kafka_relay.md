@@ -33,12 +33,13 @@ become_method|no|The method used to swith to this user. Refer to the Ansible doc
 When `principal` and `..._keytab_path` variables are defined, Kerberos authentication will be activated for all Kafka operations. This means a `kinit` will be issued with provided values before any Kafka access, and a `kdestroy` issued after. This has the following consequences:
 
 * All Kafka operations will be performed on behalf of the user defined by the provided principal. 
-* The `kinit` will be issued on the relay host with the [`ssh_user`](../inventory/hosts) account. This means any previous ticket own by this user on this node will be lost. 
 
+* The `kinit` will be issued on the relay host with the [`ssh_user`](../inventory/hosts) account. This means any previous ticket own by this user on this node will be lost. 
 
 Regarding the keytab file, two cases:
 
 * This keytab file already exists on the relay host. In such case, the `relay_keytab_path` must be set to the location of this file. And the relay host's [`ssh_user`](../inventory/hosts) must have read access on it.
+
 * This keytab file is not present on the relay host. In such case the `local_keytab_path` must be set to its local location. HADeploy will take care of copying it on the remote relay host, 
 in a location under `tools_folder`. Note you can also modify this target location by setting also the `relay_keytab_path` parameter. In this case, 
 it must be the full path, including the keytab file name. And the containing folder must exists.

@@ -14,25 +14,31 @@ Name | req?	| Description
 --- | --- | ---
 host|yes|The source host
 principal|yes|A Kerberos principal allowing all HDFS related operation to be performed. See below
-keytab_path|yes|A path to the associated keytab file on the relay host. See below
+local_keytab_path|yes if<br>`node_keytab_path`<br>is not defined|A local path to the associated keytab file. This path is relative to the embeding file. See [below](#kerberos-authentication)
+node_keytab_path|yes if<br>`local_keytab_path`<br>is not defined|A path to the associated keytab file on the node. See [below](#kerberos-authentication)
 
 ## Kerberos authentication
-When performing a copy operation (files or trees) from a cluster's host to HDFS, if a `principal` and `keytab_path` variables are defined for this host, Kerberos authentication will be activated before issuing the operation. 
+When performing a copy operation (files or trees) from a cluster's host to HDFS, if a `principal` and `..._keytab_path` variables are defined for this host, Kerberos authentication will be activated before issuing the operation. 
 
 This means a `kinit` will be issued with provided values on this host before any HDFS access, and a kdestroy issued after. This has the following consequences:
 
 * All HDFS operations will be performed on behalf of the user defined by the provided principal. 
 
-* The kinit will be issued under the source host `ssh_user` account (`root` by default). This means any previous ticket own by this user on this node will be lost. 
+* The `kinit` will be issued under this host [`ssh_user`](../inventory/hosts) account. This means any previous ticket own by this user on this node will be lost. 
 
-* And `ssh_user` must have read access on the provided keytab file.
 
-Note also this keytab file must exists on the source host. If it is not the case, one may copy it using file copy of HADeploy. This wills works as, in default plugins ordering, all file copy on the nodes are performed before any HDFS operation (See Execution order in Miscellaneous chapter) (LINK).
+Regarding the keytab file, two cases:
+
+* This keytab file already exists on this host. In such case, the `node_keytab_path` must be set to the location of this file. And this host's [`ssh_user`](../inventory/hosts) must have read access on it.
+
+* This keytab file is not present on this host. In such case the `local_keytab_path` must be set to its local location. HADeploy will take care of copying it on the remote host, in a location under `tools_folder`. Note you can also modify this target location by setting also the `node_keytab_path` parameter. In this case, 
+it must be the full path, including the keytab file name. And the containing folder must exists.
 
 ## Example
+
 ```yaml
 source_host_credentials:
 - host: sr1
   principal: hdfs-mycluster
-  keytab_path: /etc/security/keytabs/hdfs.headless.keytab
+  node_keytab_path: /etc/security/keytabs/hdfs.headless.keytab
 ```
