@@ -26,7 +26,7 @@ setup(
     description="An Hadoop Application deployment tool",
     long_description=readme,
     url="https://github.com/BROADSoftware/hadeploy",
-    version="0.3.0rc1",
+    version="0.4.0rc1",
     license="GPLv3",
     author="BROADSoftware",
     author_email="info@hadeploy.com",

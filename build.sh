@@ -17,7 +17,7 @@ rm -rf build/*
 
  # To upload to pypi
  #
- # twine register dist/HADeploy-0.3.0rc1-py2-none-any.whl
- # twine register dist/HADeploy-0.3.0rc1.tar.gz
+ # twine register dist/HADeploy-0.4.0rc1-py2-none-any.whl
+ # twine register dist/HADeploy-0.4.0rc1.tar.gz
  # twine upload dist/*
 

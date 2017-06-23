@@ -1,6 +1,6 @@
 # Release notes
 
-## 0.3.1
+## 0.4.0
 
 - Some quotes was missing in plugin yaml files. This generated errors when a HADeploy variable was substitued with a string begining with {{some_ansible_variable}}. Fixed
 - `hdfs_relay.cache_folder` default value is modified, to be in the user home folder.
