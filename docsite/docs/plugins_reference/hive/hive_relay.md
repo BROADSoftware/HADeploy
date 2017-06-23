@@ -35,8 +35,10 @@ When `principal` and `..._keytab_path` variables are defined, Kerberos authentic
 
 Regarding the keytab file, two cases:
 
-* This keytab file already exists on the relay host. In such case, the `relay_keytab_path` must be set to the location of this file. And the relay host's `ssh_user` must have read access on it.
-* This keytab file is not present on the relay host. In such case the `local_keytab_path` must be set to its local location. HADeploy will take care of copying it on the remote relay host, in a location under `tools_folder`. Note you can also modify this target location by setting also the `relay_keytab_path` parameter.
+* This keytab file already exists on the relay host. In such case, the `relay_keytab_path` must be set to the location of this file. And the relay host's [`ssh_user`](../inventory/hosts) must have read access on it.
+* This keytab file is not present on the relay host. In such case the `local_keytab_path` must be set to its local location. HADeploy will take care of copying it on the remote relay host, 
+in a location under `tools_folder`. Note you can also modify this target location by setting also the `relay_keytab_path` parameter. In this case, 
+it must be the full path, including the keytab file name. And the containing folder must exists.
 
 ## Example
 ```yaml

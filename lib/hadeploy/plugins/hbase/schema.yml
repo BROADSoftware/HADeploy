@@ -10,7 +10,8 @@ mapping:
       "host": { type: str, required: true }                  
       "tools_folder": { type: str, required: false }
       "principal": { type: str, required: false }           # Kerberos principal
-      "keytab_path": { type: str, required: false }         # Path to a keytab file
+      "relay_keytab_path": { type: str, required: false }         # Path to a keytab file on relay host
+      "local_keytab_path": { type: str, required: false }         # Path to a keytab file on HADeploy node
       "debug": { type: bool, required: false }              # Display jdctopic input file
       "become_user": { type: str, required: false }
       "become_method": { type: str, required: false }   

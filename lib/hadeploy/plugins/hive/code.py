@@ -43,6 +43,7 @@ KERBEROS="kerberos"
 DEBUG="debug"
 LOCAL_KEYTAB_PATH="local_keytab_path"
 RELAY_KEYTAB_PATH="relay_keytab_path"
+_RELAY_KEYTAB_FOLDER_="_relayKeytabFolder_"        
 
 
 HIVE_DATABASES="hive_databases"
@@ -65,6 +66,10 @@ OWNER_TYPE="owner_type"
 HIVE_RELAY="hive_relay"
 TOOLS_FOLDER="tools_folder"
 REPORT_FILE="report_file"
+
+BECOME_USER="become_user"
+LOGS_USER="logsUser"
+
 
 class HBasePlugin(Plugin):
     
@@ -138,13 +143,8 @@ class HBasePlugin(Plugin):
             misc.ERROR("Unable to find helper for Hive.Please, refer to the documentation about Installation")
         helper[JDCHIVE_JAR] = os.path.basename(jdchivejars[0])
         misc.ensureObjectInMaps(self.context.model, [HELPER, HIVE], helper)
-        
-  
-        
-# ---------------------------------------------------- Static functions
 
-BECOME_USER="become_user"
-LOGS_USER="logsUser"
+# ---------------------------------------------------- Static functions
 
 def groomHiveRelay(model):
     if HIVE_RELAY in model[SRC]:
@@ -157,9 +157,14 @@ def groomHiveRelay(model):
             misc.setDefaultInMap( model[SRC][HIVE_RELAY], DEBUG, False)
             if PRINCIPAL in  model[SRC][HIVE_RELAY]:
                 if LOCAL_KEYTAB_PATH not in model[SRC][HIVE_RELAY] and RELAY_KEYTAB_PATH not in model[SRC][HIVE_RELAY]:
-                    misc.ERROR("hive_relay: Please provide a 'keytab_path' if you want to use a Kerberos 'principal'")
+                    misc.ERROR("hive_relay: Please provide a 'local_keytab_path' and/or a 'relay_keytab_path' if you want to use a Kerberos 'principal'")
                 model[SRC][HIVE_RELAY][KERBEROS] = True
-                misc.setDefaultInMap( model[SRC][HIVE_RELAY], RELAY_KEYTAB_PATH, os.path.join(os.path.join(model[SRC][HIVE_RELAY][TOOLS_FOLDER], "jdchive"), os.path.basename(model[SRC][HIVE_RELAY][LOCAL_KEYTAB_PATH])))
+                if LOCAL_KEYTAB_PATH in model[SRC][HIVE_RELAY]:
+                    if not os.path.exists(model[SRC][HIVE_RELAY][LOCAL_KEYTAB_PATH]):
+                        misc.ERROR("hive_relay: local_keytab_file '{0}' does not exists!".format(model[SRC][HIVE_RELAY][LOCAL_KEYTAB_PATH]))
+                if RELAY_KEYTAB_PATH not in model[SRC][HIVE_RELAY]:
+                    model[SRC][HIVE_RELAY][_RELAY_KEYTAB_FOLDER_] = os.path.join(model[SRC][HIVE_RELAY][TOOLS_FOLDER], "keytabs")
+                    model[SRC][HIVE_RELAY][RELAY_KEYTAB_PATH] = os.path.join( model[SRC][HIVE_RELAY][_RELAY_KEYTAB_FOLDER_], os.path.basename(model[SRC][HIVE_RELAY][LOCAL_KEYTAB_PATH]))
                 if BECOME_USER in model[SRC][HIVE_RELAY]:
                     misc.ERROR("hive_relay: become_user and principal can't be defined both!")
                 model[SRC][HIVE_RELAY][LOGS_USER] = "{{ansible_ssh_user}}"

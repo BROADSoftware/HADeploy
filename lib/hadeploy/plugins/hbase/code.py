@@ -32,13 +32,15 @@ HBASE="hbase"
 HBASE_RELAY="hbase_relay"
 TOOLS_FOLDER="tools_folder"
 PRINCIPAL="principal"
-KEYTAB_PATH="keytab_path"
 DEBUG="debug"
 HBASE_NAMESPACES="hbase_namespaces"
 NO_REMOVE="no_remove"
 MANAGED="managed"
 TABLES="tables"
 KERBEROS="kerberos"
+LOCAL_KEYTAB_PATH="local_keytab_path"
+RELAY_KEYTAB_PATH="relay_keytab_path"
+_RELAY_KEYTAB_FOLDER_="_relayKeytabFolder_"        
 
 HBASE_TABLES="hbase_tables"
 NAMESPACE_BY_NAME="namespaceByName"
@@ -72,6 +74,16 @@ class HBasePlugin(Plugin):
     
     def __init__(self, name, path, context):
         Plugin.__init__(self, name, path, context)
+
+
+    def onNewSnippet(self, snippetPath):
+        model = self.context.model
+        if HBASE_RELAY in model[SRC]: 
+            if LOCAL_KEYTAB_PATH in model[SRC][HBASE_RELAY]:
+                model[SRC][HBASE_RELAY][LOCAL_KEYTAB_PATH] = misc.snippetRelocate(snippetPath, model[SRC][HBASE_RELAY][LOCAL_KEYTAB_PATH])
+            
+
+
 
     def onGrooming(self):
         self.buildHelper()
@@ -113,8 +125,7 @@ class HBasePlugin(Plugin):
         
         
 # ---------------------------------------------------- Static functions
-
-    
+  
 def groomHbaseRelay(model):
     if HBASE_RELAY in model[SRC]:
         if (not HBASE_NAMESPACES in model[SRC] or len(model[SRC][HBASE_NAMESPACES]) == 0) and  (not HBASE_TABLES in model[SRC] or len(model[SRC][HBASE_TABLES]) == 0):
@@ -125,14 +136,20 @@ def groomHbaseRelay(model):
                 model[SRC][HBASE_RELAY][TOOLS_FOLDER] = DEFAULT_TOOLS_FOLDER
             misc.setDefaultInMap(model[SRC][HBASE_RELAY], DEBUG, False)
             if PRINCIPAL in  model[SRC][HBASE_RELAY]:
-                if KEYTAB_PATH not in model[SRC][HBASE_RELAY]:
-                    misc.ERROR("hbase_relay: Please provide a 'keytab_path' if you want to use a Kerberos 'principal'")
+                if LOCAL_KEYTAB_PATH not in model[SRC][HBASE_RELAY] and  RELAY_KEYTAB_PATH not in model[SRC][HBASE_RELAY]:
+                    misc.ERROR("hbase_relay: Please provide a 'local_keytab_path' and/or a 'relay_keytab_path' if you want to use a Kerberos 'principal'")
                 model[SRC][HBASE_RELAY][KERBEROS] = True
+                if LOCAL_KEYTAB_PATH in model[SRC][HBASE_RELAY]:
+                    if not os.path.exists(model[SRC][HBASE_RELAY][LOCAL_KEYTAB_PATH]):
+                        misc.ERROR("hbase_relay: local_keytab_file '{0}' does not exists!".format(model[SRC][HBASE_RELAY][LOCAL_KEYTAB_PATH]))
+                if RELAY_KEYTAB_PATH not in model[SRC][HBASE_RELAY]:
+                    model[SRC][HBASE_RELAY][_RELAY_KEYTAB_FOLDER_] = os.path.join(model[SRC][HBASE_RELAY][TOOLS_FOLDER], "keytabs")
+                    model[SRC][HBASE_RELAY][RELAY_KEYTAB_PATH] = os.path.join( model[SRC][HBASE_RELAY][_RELAY_KEYTAB_FOLDER_], os.path.basename(model[SRC][HBASE_RELAY][LOCAL_KEYTAB_PATH]))
                 if BECOME_USER in model[SRC][HBASE_RELAY]:
                     misc.ERROR("hbase_relay: become_user and principal can't be defined both!")
                 model[SRC][HBASE_RELAY][LOGS_USER] = "{{ansible_ssh_user}}"
             else:
-                if KEYTAB_PATH in model[SRC][HBASE_RELAY]:
+                if LOCAL_KEYTAB_PATH in model[SRC][HBASE_RELAY] or RELAY_KEYTAB_PATH in model[SRC][HBASE_RELAY]:
                     misc.ERROR("hbase_relay: Please, provide a 'principal' if you need to use a keytab")
                 model[SRC][HBASE_RELAY][KERBEROS] = False
                 if BECOME_USER in model[SRC][HBASE_RELAY]:
