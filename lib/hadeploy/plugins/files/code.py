@@ -158,8 +158,10 @@ def groomFiles(context):
                 groomHttpFiles(f, model)
             elif f[FSRC].startswith('tmpl://'):
                 groomTmplFiles(f, model)
-            else:
+            elif f[FSRC].startswith('node://'):
                 groomNodeToHdfsFiles(f, model)
+            else:
+                misc.ERROR("Files: {0} is not a valid form for 'src' attribute. Unknown scheme".format(f[FSRC]))
             if f[SCOPE] == HDFS:
                 if not HDFS_RELAY in model[SRC]:
                     misc.ERROR("Scope of file '{0}' is 'hdfs' while no hdfs_relay was defined!".format(f[SRC]))
@@ -186,16 +188,17 @@ def groomNodeToHdfsFiles(f, model):
 
 # Simpler to handle this here than in hdfs plugin
 def groomNodeToHdfsFilesOrTrees(f, model):
-    p = f[FSRC].find("://")
+    src = f[FSRC][len("node://"):]
+    p = src.find("/")
     if p != -1:
-        node = f[FSRC][:p]
+        node = src[:p]
         if not node in model[DATA][INVENTORY][HOST_BY_NAME]:
             misc.ERROR("Files: {0} is not a valid form for 'src' attribute: Node '{1}' does not exists".format(f[FSRC], node))
         else:
             if f[SCOPE] != HDFS:
                 misc.ERROR("Files: {0} is not a valid form for 'src' attribute: Copying from node is only valid for 'hdfs' scope".format(f[FSRC]))
             else:
-                path = f[FSRC][(p + len("://")):]
+                path = src[p:]
                 if not path.startswith("/"):
                     misc.ERROR("Files: {0} is not a valid form for 'src' attribute: Copying from node require an absolute path".format(f[FSRC]))
                 f[_SRC_] = path
@@ -268,8 +271,10 @@ def groomTrees(context):
                 groomFileTrees(t, model)
             elif t[FSRC].startswith('tmpl://'):
                 groomTmplTrees(t, model)
-            else:
+            elif t[FSRC].startswith('node://'):
                 groomNodeToHdfsTrees(t, model)
+            else:
+                misc.ERROR("Tree: {0} is not a valid form for 'src' attribute. Unknown scheme".format(t[FSRC]))
             if t[SCOPE] == HDFS:
                 model[DATA][HDFS][TREES].append(t)
             else:

@@ -11,16 +11,21 @@
 - `hdfs_relay.user` default value is now `hdfs` only if `ssh_user`is root. Otherwise, is `ssh_user`
 - Added global `exit_on_fail` flag.
 - Added some retry on user/groups creation/removal
-- INCOMPATIBILIY: `hive_relay.user` is renamed `hive_relay.become_user`.
 - Added `become_user/become_method` on `hbase_relay`
 - Added `become_user/become_method` on `kafka_relay`
-- INCOMPATIBILITY: `hbase_relay.keytab_path`is renamed `hbase_relay.relay_keytab_path`
 - Added `hbase_relay.local_keytab_path`
-- INCOMPATIBILITY: `kafka_relay.keytab_path`is renamed `kafka_relay.relay_keytab_path`
 - Added `kafka_relay.local_keytab_path`
-- INCOMPATIBILITY: `hdfs_relay.keytab_path`is renamed `hdfs_relay.relay_keytab_path`
 - Added `hdfs_relay.local_keytab_path`
-- INCOMPATIBILITY: `source_host_credential.keytab_path`is renamed `source_host_credential.relay_keytab_path`
 - Added `source_host_credential.local_keytab_path`
 
+#### INCOMPATIBILITY
+
+There is some incompatible change with previous version. You may need to modify your source files:
+
+* `hive_relay.user` is renamed `hive_relay.become_user`.
+* `hbase_relay.keytab_path`is renamed `hbase_relay.relay_keytab_path`
+* `kafka_relay.keytab_path`is renamed `kafka_relay.relay_keytab_path`
+* `hdfs_relay.keytab_path`is renamed `hdfs_relay.relay_keytab_path`
+* `source_host_credential.keytab_path`is renamed `source_host_credential.relay_keytab_path`
+* For `files` and `trees`, `<node>:///` is replaced by `node://<node>/...` notation
 
