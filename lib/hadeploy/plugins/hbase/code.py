@@ -123,21 +123,22 @@ def groomHbaseRelay(model):
         else:
             if not TOOLS_FOLDER in model[SRC][HBASE_RELAY]:
                 model[SRC][HBASE_RELAY][TOOLS_FOLDER] = DEFAULT_TOOLS_FOLDER
+            misc.setDefaultInMap(model[SRC][HBASE_RELAY], DEBUG, False)
             if PRINCIPAL in  model[SRC][HBASE_RELAY]:
                 if KEYTAB_PATH not in model[SRC][HBASE_RELAY]:
                     misc.ERROR("hbase_relay: Please provide a 'keytab_path' if you want to use a Kerberos 'principal'")
                 model[SRC][HBASE_RELAY][KERBEROS] = True
                 if BECOME_USER in model[SRC][HBASE_RELAY]:
                     misc.ERROR("hbase_relay: become_user and principal can't be defined both!")
+                model[SRC][HBASE_RELAY][LOGS_USER] = "{{ansible_ssh_user}}"
             else:
                 if KEYTAB_PATH in model[SRC][HBASE_RELAY]:
                     misc.ERROR("hbase_relay: Please, provide a 'principal' if you need to use a keytab")
                 model[SRC][HBASE_RELAY][KERBEROS] = False
-            if BECOME_USER in model[SRC][HBASE_RELAY]:
-                model[SRC][HBASE_RELAY][LOGS_USER] = model[SRC][HBASE_RELAY][BECOME_USER]
-            else:
-                model[SRC][HBASE_RELAY][LOGS_USER] = "{{ansible_ssh_user}}"
-            misc.setDefaultInMap(model[SRC][HBASE_RELAY], DEBUG, False)
+                if BECOME_USER in model[SRC][HBASE_RELAY]:
+                    model[SRC][HBASE_RELAY][LOGS_USER] = model[SRC][HBASE_RELAY][BECOME_USER]
+                else:
+                    model[SRC][HBASE_RELAY][LOGS_USER] = "{{ansible_ssh_user}}"
             
 def groomHBaseNamespaces(model):
     if HBASE_NAMESPACES in model[SRC] and len(model[SRC][HBASE_NAMESPACES]) > 0 :

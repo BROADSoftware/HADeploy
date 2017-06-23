@@ -13,6 +13,7 @@
 - Added some retry on user/groups creation/removal
 - INCOMPATIBILIY: `hive_relay.user` is renamed `hive_relay.become_user`.
 - Added `become_user/become_method` on `hbase_relay`
+- Added `become_user/become_method` on `kafka_relay`
 
 
 

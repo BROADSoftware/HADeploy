@@ -20,6 +20,8 @@ mapping:
       "principal": { type: str, required: false }           # Kerberos principal
       "keytab_path": { type: str, required: false }         # Path to a keytab file
       "kdebug": { type: bool, required: false }             # Display klist result            
+      "become_user": { type: str, required: false }
+      "become_method": { type: str, required: false }   
      
           
   "kafka_topics":        

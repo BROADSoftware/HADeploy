@@ -30,6 +30,13 @@
   - name: "kafka_topic: Apply potential update"
     shell: "{{{ src.kafka_relay.tools_folder}}}/jdctopic/jdctopic --inputFile {{mktemp.stdout}}"
     register: jdct
+{{% if src.kafka_relay.become_user is defined %}}
+    become: true
+    become_user: "{{{src.kafka_relay.become_user}}}"
+{{% if src.kafka_relay.become_method is defined %}}
+    become_method: "{{{src.kafka_relay.become_method}}}"
+{{%endif%}}
+{{%endif%}}
     changed_when: jdct.stdout.find(" 0 modification(s)") == -1
 
   - name: "kafka_topic: Cleanup temporary file"

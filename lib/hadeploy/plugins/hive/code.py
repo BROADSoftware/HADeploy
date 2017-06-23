@@ -143,8 +143,6 @@ class HBasePlugin(Plugin):
         
 # ---------------------------------------------------- Static functions
 
-#_USER_="_user_"
-
 BECOME_USER="become_user"
 LOGS_USER="logsUser"
 
@@ -156,6 +154,7 @@ def groomHiveRelay(model):
         else:
             if not TOOLS_FOLDER in model[SRC][HIVE_RELAY]:
                 model[SRC][HIVE_RELAY][TOOLS_FOLDER] = DEFAULT_TOOLS_FOLDER
+            misc.setDefaultInMap( model[SRC][HIVE_RELAY], DEBUG, False)
             if PRINCIPAL in  model[SRC][HIVE_RELAY]:
                 if LOCAL_KEYTAB_PATH not in model[SRC][HIVE_RELAY] and RELAY_KEYTAB_PATH not in model[SRC][HIVE_RELAY]:
                     misc.ERROR("hive_relay: Please provide a 'keytab_path' if you want to use a Kerberos 'principal'")
@@ -163,15 +162,15 @@ def groomHiveRelay(model):
                 misc.setDefaultInMap( model[SRC][HIVE_RELAY], RELAY_KEYTAB_PATH, os.path.join(os.path.join(model[SRC][HIVE_RELAY][TOOLS_FOLDER], "jdchive"), os.path.basename(model[SRC][HIVE_RELAY][LOCAL_KEYTAB_PATH])))
                 if BECOME_USER in model[SRC][HIVE_RELAY]:
                     misc.ERROR("hive_relay: become_user and principal can't be defined both!")
+                model[SRC][HIVE_RELAY][LOGS_USER] = "{{ansible_ssh_user}}"
             else:
                 if LOCAL_KEYTAB_PATH in model[SRC][HIVE_RELAY] or RELAY_KEYTAB_PATH in model[SRC][HIVE_RELAY]:
                     misc.ERROR("hive_relay: Please, provide a 'principal' if you need to use a keytab")
                 model[SRC][HIVE_RELAY][KERBEROS] = False
-            if BECOME_USER in model[SRC][HIVE_RELAY]:
-                model[SRC][HIVE_RELAY][LOGS_USER] = model[SRC][HIVE_RELAY][BECOME_USER]
-            else:
-                model[SRC][HIVE_RELAY][LOGS_USER] = "{{ansible_ssh_user}}"
-            misc.setDefaultInMap( model[SRC][HIVE_RELAY], DEBUG, False)
+                if BECOME_USER in model[SRC][HIVE_RELAY]:
+                    model[SRC][HIVE_RELAY][LOGS_USER] = model[SRC][HIVE_RELAY][BECOME_USER]
+                else:
+                    model[SRC][HIVE_RELAY][LOGS_USER] = "{{ansible_ssh_user}}"
                 
 def groomHiveDatabases(model):
     if HIVE_DATABASES in model[SRC] and len(model[SRC][HIVE_DATABASES]) > 0 :

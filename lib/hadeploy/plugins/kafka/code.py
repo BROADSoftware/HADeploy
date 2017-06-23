@@ -49,6 +49,8 @@ ASSIGNMENTS="assignments"
 PROPERTIES="properties"
 NO_REMOVE="no_remove"
 
+BECOME_USER="become_user"
+LOGS_USER="logsUser"
 
 class KafkaPlugin(Plugin):
     
@@ -105,10 +107,18 @@ def groomKafkaRelay(model):
                     misc.ERROR("kafka_relay: Please provide a 'keytab_path' if you want to use a Kerberos 'principal'")
                 model[SRC][KAFKA_RELAY][KERBEROS] = True
                 misc.setDefaultInMap(model[SRC][KAFKA_RELAY], KDEBUG, False)
+                if BECOME_USER in model[SRC][KAFKA_RELAY]:
+                    misc.ERROR("kafka_relay: become_user and principal can't be defined both!")
+                model[SRC][KAFKA_RELAY][LOGS_USER] = "{{ansible_ssh_user}}"
             else:
                 if KEYTAB_PATH in model[SRC][KAFKA_RELAY]:
                     misc.ERROR("kafka_relay: Please, provide a 'principal' if you need to use a keytab")
                 model[SRC][KAFKA_RELAY][KERBEROS] = False
+                if BECOME_USER in model[SRC][KAFKA_RELAY]:
+                    model[SRC][KAFKA_RELAY][LOGS_USER] = model[SRC][KAFKA_RELAY][BECOME_USER]
+                else:
+                    model[SRC][KAFKA_RELAY][LOGS_USER] = "{{ansible_ssh_user}}"
+
             
 def groomKafkaTopics(model):
     if KAFKA_TOPICS in model[SRC] and len(model[SRC][KAFKA_TOPICS]) > 0 :
