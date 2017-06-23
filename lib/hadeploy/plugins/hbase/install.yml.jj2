@@ -26,6 +26,13 @@
   - name: "hbase: Apply potential update"
     shell: "{{{ src.hbase_relay.tools_folder}}}/jdchtable/jdchtable --inputFile {{mktemp.stdout}}" 
     register: jdch
+{{% if src.hbase_relay.become_user is defined %}}
+    become: true
+    become_user: "{{{src.hbase_relay.become_user}}}"
+{{% if src.hbase_relay.become_method is defined %}}
+    become_method: "{{{src.hbase_relay.become_method}}}"
+{{%endif%}}
+{{%endif%}}
     changed_when: jdch.stdout.find(" 0 modification(s)") == -1
 
   - name: "hbase: Cleanup temporary file"
@@ -54,7 +61,7 @@
     changed_when: false
 {{% elif dataset.src.startswith("http://") or dataset.src.startswith("https://") %}}
   - name: Download '{{{dataset.src}}}' to temporary file
-    get_url: url={{{dataset.src}}} dest={{mktemp.stdout}} force=yes validate_certs={{{dataset.validate_certs}}} force_basic_auth={{{dataset.force_basic_auth }}} {{% if dataset.url_username is defined %}}url_username={{{dataset.url_username}}}{{%endif%}} {{% if dataset.url_password is defined %}}url_password={{{dataset.url_password}}}{{%endif%}} #
+    get_url: url={{{dataset.src}}} dest={{mktemp.stdout}} mode=0644 force=yes validate_certs={{{dataset.validate_certs}}} force_basic_auth={{{dataset.force_basic_auth }}} {{% if dataset.url_username is defined %}}url_username={{{dataset.url_username}}}{{%endif%}} {{% if dataset.url_password is defined %}}url_password={{{dataset.url_password}}}{{%endif%}} #
     changed_when: false
 {{% elif dataset.src.startswith("tmpl://")  %}}
   - name: Copy template file '{{{dataset._displaySrc_}}}' to temporary file
@@ -65,6 +72,13 @@
   - name: "hbase_datasets: Apply potential update"
     shell: "{{{ src.hbase_relay.tools_folder}}}/hbload/hbload --inputFile {{mktemp.stdout}} --namespace {{{dataset.namespace}}} --table {{{dataset.table}}} {{%if dataset.delRows%}} --delRows{{%endif%}}{{%if dataset.delValues%}} --delValues{{%endif%}}{{%if dataset.dontAddRow%}} --dontAddRow{{%endif%}}{{%if dataset.dontAddValue%}} --dontAddValue{{%endif%}}{{%if dataset.updValues%}} --updValues{{%endif%}}"  # 
     register: hbl
+{{% if src.hbase_relay.become_user is defined %}}
+    become: true
+    become_user: "{{{src.hbase_relay.become_user}}}"
+{{% if src.hbase_relay.become_method is defined %}}
+    become_method: "{{{src.hbase_relay.become_method}}}"
+{{%endif%}}
+{{%endif%}}
     changed_when: hbl.stdout.find(" 0 modification(s)") == -1
     
   - name: "hbase_datasets: Cleanup temporary file"

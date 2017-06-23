@@ -40,7 +40,6 @@ DIR="dir"
 JDCHIVE_JAR="jdchive_jar"
 PRINCIPAL="principal"
 KERBEROS="kerberos"
-USER="user"
 DEBUG="debug"
 LOCAL_KEYTAB_PATH="local_keytab_path"
 RELAY_KEYTAB_PATH="relay_keytab_path"
@@ -144,7 +143,10 @@ class HBasePlugin(Plugin):
         
 # ---------------------------------------------------- Static functions
 
-_USER_="_user_"
+#_USER_="_user_"
+
+BECOME_USER="become_user"
+LOGS_USER="logsUser"
 
 def groomHiveRelay(model):
     if HIVE_RELAY in model[SRC]:
@@ -159,16 +161,16 @@ def groomHiveRelay(model):
                     misc.ERROR("hive_relay: Please provide a 'keytab_path' if you want to use a Kerberos 'principal'")
                 model[SRC][HIVE_RELAY][KERBEROS] = True
                 misc.setDefaultInMap( model[SRC][HIVE_RELAY], RELAY_KEYTAB_PATH, os.path.join(os.path.join(model[SRC][HIVE_RELAY][TOOLS_FOLDER], "jdchive"), os.path.basename(model[SRC][HIVE_RELAY][LOCAL_KEYTAB_PATH])))
-                if USER in model[SRC][HIVE_RELAY]:
-                    misc.ERROR("hive_relay: user and principal can't be defined both!")
+                if BECOME_USER in model[SRC][HIVE_RELAY]:
+                    misc.ERROR("hive_relay: become_user and principal can't be defined both!")
             else:
                 if LOCAL_KEYTAB_PATH in model[SRC][HIVE_RELAY] or RELAY_KEYTAB_PATH in model[SRC][HIVE_RELAY]:
                     misc.ERROR("hive_relay: Please, provide a 'principal' if you need to use a keytab")
                 model[SRC][HIVE_RELAY][KERBEROS] = False
-            if USER in model[SRC][HIVE_RELAY]:
-                model[SRC][HIVE_RELAY][_USER_] = model[SRC][HIVE_RELAY][USER]
+            if BECOME_USER in model[SRC][HIVE_RELAY]:
+                model[SRC][HIVE_RELAY][LOGS_USER] = model[SRC][HIVE_RELAY][BECOME_USER]
             else:
-                model[SRC][HIVE_RELAY][_USER_] = "{{ansible_ssh_user}}"
+                model[SRC][HIVE_RELAY][LOGS_USER] = "{{ansible_ssh_user}}"
             misc.setDefaultInMap( model[SRC][HIVE_RELAY], DEBUG, False)
                 
 def groomHiveDatabases(model):

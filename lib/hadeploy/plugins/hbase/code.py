@@ -64,6 +64,8 @@ DIR="dir"
 JDCHTABLE_JAR="jdchtable_jar"
 HBLOAD_JAR="hbload_jar"
 
+BECOME_USER="become_user"
+LOGS_USER="logsUser"
 
 
 class HBasePlugin(Plugin):
@@ -125,10 +127,16 @@ def groomHbaseRelay(model):
                 if KEYTAB_PATH not in model[SRC][HBASE_RELAY]:
                     misc.ERROR("hbase_relay: Please provide a 'keytab_path' if you want to use a Kerberos 'principal'")
                 model[SRC][HBASE_RELAY][KERBEROS] = True
+                if BECOME_USER in model[SRC][HBASE_RELAY]:
+                    misc.ERROR("hbase_relay: become_user and principal can't be defined both!")
             else:
                 if KEYTAB_PATH in model[SRC][HBASE_RELAY]:
                     misc.ERROR("hbase_relay: Please, provide a 'principal' if you need to use a keytab")
                 model[SRC][HBASE_RELAY][KERBEROS] = False
+            if BECOME_USER in model[SRC][HBASE_RELAY]:
+                model[SRC][HBASE_RELAY][LOGS_USER] = model[SRC][HBASE_RELAY][BECOME_USER]
+            else:
+                model[SRC][HBASE_RELAY][LOGS_USER] = "{{ansible_ssh_user}}"
             misc.setDefaultInMap(model[SRC][HBASE_RELAY], DEBUG, False)
             
 def groomHBaseNamespaces(model):

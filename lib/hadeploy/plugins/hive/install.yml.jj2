@@ -16,9 +16,9 @@
     shell: mktemp
     register: tmpReport
     changed_when: false
-{{% if src.hive_relay.user is defined %}}
+{{% if src.hive_relay.become_user is defined %}}
     become: true
-    become_user: "{{{src.hive_relay.user}}}"
+    become_user: "{{{src.hive_relay.become_user}}}"
 {{% if src.hive_relay.become_method is defined %}}
     become_method: "{{{src.hive_relay.become_method}}}"
 {{%endif%}}
@@ -40,9 +40,9 @@
     shell: "{{{ src.hive_relay.tools_folder}}}/jdchive/jdchive --inputFile {{tmpInput.stdout}} {{% if src.hive_relay.report_file is defined %}} --reportFile {{tmpReport.stdout}}{{%endif%}}" #
     register: jdch
     failed_when: jdch.rc != 0 and jdch.rc != 1 
-{{% if src.hive_relay.user is defined %}}
+{{% if src.hive_relay.become_user is defined %}}
     become: true
-    become_user: "{{{src.hive_relay.user}}}"
+    become_user: "{{{src.hive_relay.become_user}}}"
 {{% if src.hive_relay.become_method is defined %}}
     become_method: "{{{src.hive_relay.become_method}}}"
 {{%endif%}}

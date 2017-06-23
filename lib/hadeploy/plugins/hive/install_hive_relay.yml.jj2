@@ -10,7 +10,7 @@
   vars: 
     hive_relay_tools_folder: "{{{ src.hive_relay.tools_folder }}}"
     hive_relay_kerberos:  {{{ src.hive_relay.kerberos }}}
-    hive_relay_logs_dir: "{{{ src.hive_relay.tools_folder}}}/jdchive/logs-{{{src.hive_relay._user_}}}"
+    hive_relay_logs_dir: "{{{ src.hive_relay.tools_folder}}}/jdchive/logs-{{{src.hive_relay.logsUser}}}"
 {{% if  src.hive_relay.kerberos %}}
     hive_relay_principal: "{{{ src.hive_relay.principal }}}"
     hive_relay_keytab_path: "{{{ src.hive_relay.relay_keytab_path }}}"
@@ -33,7 +33,7 @@
 
   # Create a folder for log file
   - name: Setup hive_relay helper (4/4)  
-    file: path={{{ src.hive_relay.tools_folder}}}/jdchive/logs-{{{src.hive_relay._user_}}} owner={{{src.hive_relay._user_}}} state=directory
+    file: path={{{ src.hive_relay.tools_folder}}}/jdchive/logs-{{{src.hive_relay.logsUser}}} owner={{{src.hive_relay.logsUser}}} state=directory
     changed_when: false
     
 {{% if  src.hive_relay.local_keytab_path is defined %}}

@@ -25,6 +25,13 @@
   - name: "hbase: Apply potential update"
     shell: "{{{ src.hbase_relay.tools_folder}}}/jdchtable/jdchtable --inputFile {{mktemp.stdout}}"
     register: jdch
+{{% if src.hbase_relay.become_user is defined %}}
+    become: true
+    become_user: "{{{src.hbase_relay.become_user}}}"
+{{% if src.hbase_relay.become_method is defined %}}
+    become_method: "{{{src.hbase_relay.become_method}}}"
+{{%endif%}}
+{{%endif%}}
     changed_when: jdch.stdout.find("0 modification(s)") == -1
 
   - name: "hbase: Cleanup temporary file"

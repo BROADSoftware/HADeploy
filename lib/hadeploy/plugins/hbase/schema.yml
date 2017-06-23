@@ -12,6 +12,8 @@ mapping:
       "principal": { type: str, required: false }           # Kerberos principal
       "keytab_path": { type: str, required: false }         # Path to a keytab file
       "debug": { type: bool, required: false }              # Display jdctopic input file
+      "become_user": { type: str, required: false }
+      "become_method": { type: str, required: false }   
 
 
 

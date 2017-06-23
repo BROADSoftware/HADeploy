@@ -21,6 +21,8 @@ host|yes|The host on which all hbase commands will be pushed for execution. Must
 tools_folder|no|Folder used by HADeploy to install some tools for HBase management.<br>Default: `/tmp/hadeploy_<user>/` where `user` is the [`ssh_user`](../inventory/hosts) defined for this relay host.
 principal|no|A Kerberos principal allowing all HBase related operation to be performed. See below
 keytab_path|no|A path to the associated keytab file on the relay host.
+become_user|no|A user account under which all namespace and table operation will be performed. Only used on non-Kerberos cluster. It will determine table ownership.<br>Note: The [`ssh_user`](../inventory/hosts) defined for this relay host must have enough priviledges to switch to this `become_user` using the `become_method` below.<br>Default: No user switch, so the [`ssh_user`](../inventory/hosts) defined for this relay host will be used.
+become_method|no|The method used to swith to this user. Refer to the Ansible documentation on this parameter.<br>Default: Ansible default (`sudo`).
 
 ## Kerberos authentication
 
