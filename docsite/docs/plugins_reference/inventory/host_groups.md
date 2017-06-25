@@ -12,7 +12,8 @@ Each item of the list has the following attributes:
 Name|req?|Description
 ---|---|---
 name|yes|The name of the host group
-hosts|yes|The list of the hosts for this group. Each host must be defined in the hosts: part (Or the associated Ansible inventory).
+hosts|no|A list of hosts included in this group. Each host must be defined in the [`hosts:`](./hosts) part (Or the associated Ansible inventory).
+groups|no|A list of `host_group` from wich all hosts will be included in this group. Allow group composition, and also group renaming.
 force_setup|no|A common Ansible problem is when referencing host info for a host which has not being accessed, so there is no fact grabbed for it.<br>Setting this flag to `yes` will trigger an access to all hosts of this group at the begining of the play.<br>Default: `no`
 
 Note than same host can belong to several groups.
@@ -32,6 +33,11 @@ host_groups:
   hosts: [ "sr", "en", "nn1", "nn2" ]	# And these in YAML 'flow style
 
 - name: empty_group
-  hosts: []
- 
+
+# Group renaming
+- name: brokers
+  groups:
+  - kafka_brokers
+  
+   
 ```

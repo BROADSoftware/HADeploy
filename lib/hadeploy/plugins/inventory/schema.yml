@@ -16,7 +16,6 @@ mapping:
         "ssh_password": { type: str, required: false }
         "ssh_extra_args": { type: str, required: false }
         "force_setup": { type: bool, required: false }     # Default to false
-        
 
   "host_overrides":
     type: "seq"
@@ -31,7 +30,6 @@ mapping:
         "ssh_extra_args": { type: str, required: false }
         "force_setup": { type: bool, required: false }     # Default to false
         
-        
   "host_groups":
     type: "seq"
     sequence:
@@ -40,7 +38,10 @@ mapping:
         "name": { type: str, required: true }        
         "hosts": 
           type: seq
-          required: true
+          sequence:
+          - type: str
+        "groups": 
+          type: seq
           sequence:
           - type: str
         "force_setup": { type: bool, required: false }     # Default to false

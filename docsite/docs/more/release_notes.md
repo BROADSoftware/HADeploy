@@ -17,6 +17,7 @@
 - Added `kafka_relay.local_keytab_path`
 - Added `hdfs_relay.local_keytab_path`
 - Added `source_host_credential.local_keytab_path`
+- Added `groups` in `host_groups`
 
 #### INCOMPATIBILITY
 

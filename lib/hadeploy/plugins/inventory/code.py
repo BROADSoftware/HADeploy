@@ -31,6 +31,7 @@ HOST_OVERRIDES="host_overrides"
 HOST_GROUP_OVERRIDES="host_group_overrides"
 NAME="name"
 HOST_GROUPS="host_groups"
+GROUPS="groups"
 SSH_HOST="ssh_host"
 SSH_PASSWORD="ssh_password"
 SSH_EXTRA_ARGS="ssh_extra_args"
@@ -62,6 +63,7 @@ class InventoryPlugin(Plugin):
     def onGrooming(self):
         self.context.model[DATA][INVENTORY] = {}
         buildHostDicts(self.context.model)
+        flattenGroups(self.context.model)
         handleHostOverrides(self.context.model)
         handleHostGroupOverrides(self.context.model)
         check(self.context.model)
@@ -77,12 +79,37 @@ def buildHostDicts(model):
             hostByName[host[NAME]] = host
     model[DATA][INVENTORY][HOST_BY_NAME] = hostByName
     hostGroupByName = {}
-    if HOST_GROUPS in model[SRC]:
+    if HOST_GROUPS in model[SRC]:        
         for hg in model[SRC][HOST_GROUPS]:
+            if HOSTS not in hg:
+                hg[HOSTS] = []
+            if GROUPS not in hg:
+                hg[GROUPS] = []
             hostGroupByName[hg[NAME]] = hg
     model[DATA][INVENTORY][HOST_GROUP_BY_NAME] = hostGroupByName
 
-   
+def flattenGroups(model):
+    if HOST_GROUPS in model[SRC]:
+        for hg in model[SRC][HOST_GROUPS]:
+            flattenGroup(model[DATA][INVENTORY][HOST_GROUP_BY_NAME], hg, 0, hg[NAME])
+    
+    
+    
+def flattenGroup(hostGroupByName, hg, loopCount, outerGroupName):
+    if(loopCount > 50):
+        misc.ERROR("Infinite loop on host_groups '{0}' recursion".format(outerGroupName))
+    if GROUPS in hg:
+        for childGroupName in hg[GROUPS]:
+            if not childGroupName in hostGroupByName:
+                misc.ERROR("Group '{0}': Inner group '{1}' does not exists!")
+            else:
+                childGroup =  hostGroupByName[childGroupName]
+                flattenGroup(hostGroupByName, childGroup, loopCount + 1, outerGroupName)
+                for h in childGroup[HOSTS]:
+                    if not h in hg[HOSTS]:
+                        hg[HOSTS].append(h)
+        del(hg[GROUPS]) # Mark it as flattened
+           
     
 def check(model):
     hostsToSetup = Set()
