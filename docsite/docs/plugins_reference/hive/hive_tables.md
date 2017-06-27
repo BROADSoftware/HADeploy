@@ -209,7 +209,7 @@ Once the table is created, there is no way to change this table ownership.
 ## Example:
 
 ```yaml
-hables_tables:
+hive_tables:
 - name: testSimple
   database: jdctest1
   comment: "A first, simple test table"
@@ -237,7 +237,7 @@ CREATE  TABLE jdctest1.testRcFile ( fname string COMMENT 'The first name', lname
 And:
 
 ```yaml
-hables_tables:
+hive_tables:
 - name: testPartitions
   database: jdctest1
   comment: "A table with partitions"
@@ -271,7 +271,7 @@ CREATE  TABLE jdctest1.testPartitions ( viewTime INT, userid BIGINT, page_url ST
 And:
 
 ```yaml
-hables_tables:
+hive_tables:
 - name: testSerde
   database: jdctest1
   comment: "Serde test"
@@ -295,7 +295,7 @@ CREATE  TABLE jdctest1.testSerde ( host STRING, identity STRING, theuser STRING)
 Following is an illustration of Apache Ranger policy association: The table is created with select and update permissions for all users of the 'users' group. And user 'sa' can also create new indexes.
 
 ```yaml
-hables_tables:
+hive_tables:
 - name: testranger
   database: jdctest1
   comment: "A first, simple test table"
@@ -346,7 +346,7 @@ hbase_tables:
 One can easely map an external HIVE table: 
 
 ```yaml
-hables_tables
+hive_tables
 - name: testHBase
   database: jdctest1
   fields:
