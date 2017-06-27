@@ -33,6 +33,7 @@ NAME="name"
 SSH_PRIVATE_FILE_FILE="ssh_private_key_file"
 GROUPS="groups"
 ANSIBLE_INVENTORY_FILE="ansible_inventory_files"
+VAULT_PASSWORD_FILE="ansible_vault_password_file"
 
 logger = logging.getLogger("hadeploy.plugins.ansible")
 
@@ -48,6 +49,8 @@ class AnsiblePlugin(Plugin):
             for p in self.context.model[SRC][ANSIBLE_INVENTORY_FILE]:
                 l2.append(misc.snippetRelocate(snippetPath, p))
             self.context.model[SRC][ANSIBLE_INVENTORY_FILE] = l2
+            if VAULT_PASSWORD_FILE in self.context.model[SRC]:
+                self.context.model[SRC][VAULT_PASSWORD_FILE] = misc.snippetRelocate(snippetPath, self.context.model[SRC][VAULT_PASSWORD_FILE])
 
 
     def onGrooming(self):
@@ -61,6 +64,15 @@ class AnsiblePlugin(Plugin):
 
 def populateModelFromInventory(model, inventoryFile):
     loader = DataLoader()
+    if VAULT_PASSWORD_FILE in model:
+        vpf = model[VAULT_PASSWORD_FILE]
+        if not os.path.exists(vpf):
+            misc.ERROR("Ansible vault password file '{0}' does not exists!".format(vpf))
+        with open(vpf) as f:
+            content = f.readlines()
+        if len(content) == 0 or len(content[0].strip()) == 0:
+            misc.ERROR("Invalid Ansible vault password file '{0}' content!".format(vpf))
+        loader.set_vault_password(content[0].strip())
     variable_manager = VariableManager()
     
     if HOSTS not in model:
@@ -68,7 +80,11 @@ def populateModelFromInventory(model, inventoryFile):
     if HOST_GROUPS not in model:
         model[HOST_GROUPS] = []
     
-    inventory = Inventory(loader=loader, variable_manager=variable_manager, host_list=inventoryFile)
+    try:
+        inventory = Inventory(loader=loader, variable_manager=variable_manager, host_list=inventoryFile)
+    except Exception as e:
+        misc.ERROR(str(e))
+    
     variable_manager.set_inventory(inventory)
     
     hosts = inventory.get_hosts()

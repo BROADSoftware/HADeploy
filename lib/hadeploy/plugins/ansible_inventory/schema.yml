@@ -5,3 +5,6 @@ mapping:
     type: "seq"
     sequence:
     - type: str
+  "ansible_vault_password_file":
+    type: str
+    
