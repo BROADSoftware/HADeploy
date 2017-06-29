@@ -18,6 +18,7 @@
 import logging
 import hadeploy.core.misc as misc
 import os
+import getpass
 
 from ansible.inventory import Inventory
 from ansible.parsing.dataloader import DataLoader
@@ -26,13 +27,18 @@ from ansible.vars import VariableManager
 from hadeploy.core.plugin import Plugin
 from hadeploy.core.const import SRC
 
+
 HOSTS="hosts"
 HOST_GROUPS="host_groups"
 NAME="name"
 SSH_PRIVATE_FILE_FILE="ssh_private_key_file"
 GROUPS="groups"
-ANSIBLE_INVENTORY_FILE="ansible_inventory_files"
-VAULT_PASSWORD_FILE="ansible_vault_password_file"
+
+ANSIBLE_INVENTORIES="ansible_inventories"
+FILE="file"
+NAME="name"
+VAULT_PASSWORD_FILE="vault_password_file"
+ASK_VAULT_PASSWORD="ask_vault_password"
 
 logger = logging.getLogger("hadeploy.plugins.ansible")
 
@@ -43,29 +49,26 @@ class AnsiblePlugin(Plugin):
 
 
     def onNewSnippet(self, snippetPath):
-        if ANSIBLE_INVENTORY_FILE in self.context.model[SRC]:
-            l2 = []
-            for p in self.context.model[SRC][ANSIBLE_INVENTORY_FILE]:
-                l2.append(misc.snippetRelocate(snippetPath, p))
-            self.context.model[SRC][ANSIBLE_INVENTORY_FILE] = l2
-            if VAULT_PASSWORD_FILE in self.context.model[SRC]:
-                self.context.model[SRC][VAULT_PASSWORD_FILE] = misc.snippetRelocate(snippetPath, self.context.model[SRC][VAULT_PASSWORD_FILE])
+        if ANSIBLE_INVENTORIES in self.context.model[SRC]:
+            for inventory in self.context.model[SRC][ANSIBLE_INVENTORIES]:
+                inventory[FILE] = misc.snippetRelocate(snippetPath, inventory[FILE])
+                if VAULT_PASSWORD_FILE in inventory:
+                    inventory[VAULT_PASSWORD_FILE] = misc.snippetRelocate(snippetPath, inventory[VAULT_PASSWORD_FILE])
 
 
     def onGrooming(self):
-        if ANSIBLE_INVENTORY_FILE in self.context.model[SRC]:
-            print "\n****** WARNING: The definition 'ansible_inventory_files' is deprecated. Please use 'ansible_inventories' instead\n"
-            for inventoryFile in self.context.model[SRC][ANSIBLE_INVENTORY_FILE]:
-                if not os.path.exists(inventoryFile):
-                    misc.ERROR("Ansible inventory file '{0}' does not exists!".format(inventoryFile))
+        if ANSIBLE_INVENTORIES in self.context.model[SRC]:
+            for inventory in self.context.model[SRC][ANSIBLE_INVENTORIES]:
+                if not os.path.exists(inventory[FILE]):
+                    misc.ERROR("Ansible inventory file '{0}' does not exists!".format(inventory[FILE]))
                 else:
-                    populateModelFromInventory(self.context.model[SRC], inventoryFile)
+                    populateModelFromInventory(self.context.model[SRC], inventory)
 
 
-def populateModelFromInventory(model, inventoryFile):
+def populateModelFromInventory(model, inventory):
     loader = DataLoader()
-    if VAULT_PASSWORD_FILE in model:
-        vpf = model[VAULT_PASSWORD_FILE]
+    if VAULT_PASSWORD_FILE in inventory:
+        vpf = inventory[VAULT_PASSWORD_FILE]
         if not os.path.exists(vpf):
             misc.ERROR("Ansible vault password file '{0}' does not exists!".format(vpf))
         with open(vpf) as f:
@@ -73,6 +76,10 @@ def populateModelFromInventory(model, inventoryFile):
         if len(content) == 0 or len(content[0].strip()) == 0:
             misc.ERROR("Invalid Ansible vault password file '{0}' content!".format(vpf))
         loader.set_vault_password(content[0].strip())
+    elif ASK_VAULT_PASSWORD in inventory and inventory[ASK_VAULT_PASSWORD]:
+        prompt = "Password for Ansible inventory{0}: ".format(" '" + inventory[NAME] + "'" if NAME in inventory else "")
+        content = getpass.getpass(prompt)
+        loader.set_vault_password(content.strip())
     variable_manager = VariableManager()
     
     if HOSTS not in model:
@@ -81,7 +88,7 @@ def populateModelFromInventory(model, inventoryFile):
         model[HOST_GROUPS] = []
     
     try:
-        inventory = Inventory(loader=loader, variable_manager=variable_manager, host_list=inventoryFile)
+        inventory = Inventory(loader=loader, variable_manager=variable_manager, host_list=inventory[FILE])
     except Exception as e:
         misc.ERROR(str(e))
     
@@ -103,7 +110,7 @@ def populateModelFromInventory(model, inventoryFile):
                     if key2 == SSH_PRIVATE_FILE_FILE:
                         p = h[key2]
                         if not os.path.isabs(p):
-                            h[key2] = os.path.normpath(os.path.join(os.path.dirname(inventoryFile), p))
+                            h[key2] = os.path.normpath(os.path.join(os.path.dirname(inventory[FILE]), p))
             model[HOSTS].append(h)
 
     existingHostGroups = set(map(lambda x : x[NAME], model[HOST_GROUPS]))

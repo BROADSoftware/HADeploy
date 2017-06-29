@@ -1,0 +1,14 @@
+
+type: map
+mapping:
+  "ansible_inventories":
+    type: "seq"
+    sequence:
+    - type: map
+      mapping:
+        "name": { type: str, required: false }
+        "file": { type: str, required: true }
+        "vault_password_file": { type: str, required: false }
+        "ask_vault_password": { type: bool, required: false }
+                        
+  

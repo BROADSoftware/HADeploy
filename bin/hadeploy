@@ -31,6 +31,7 @@ WF=""
 VAR=""
 LOGF=""
 VAULT_PASSWORD=""
+VERBOSE=""
 
 while [[ $# > 0 ]]
 do
@@ -61,6 +62,15 @@ do
 		--vaultPasswordFile)
 			VAULT_PASSWORD="--vault-password-file ${CWD}/$2"
 			shift
+		;;
+		--v)
+			VERBOSE="-v"
+		;;
+		--vv)
+			VERBOSE="-vv"
+		;;
+		--vvv)
+			VERBOSE="-vvv"
 		;;
 		--help)
 			usage
@@ -121,13 +131,13 @@ fi
 
 case $ACTION in
 	CHECK)
-		bash -c "cd $WF; ansible-playbook ${VAULT_PASSWORD} --check install.yml"
+		bash -c "cd $WF; ansible-playbook ${VAULT_PASSWORD} ${VERBOSE} --check install.yml"
 	;;
 	DEPLOY)
-		bash -c "cd $WF; ansible-playbook ${VAULT_PASSWORD} install.yml"
+		bash -c "cd $WF; ansible-playbook ${VAULT_PASSWORD} ${VERBOSE} install.yml"
 	;;
 	REMOVE)
-		bash -c "cd $WF; ansible-playbook ${VAULT_PASSWORD} remove.yml"
+		bash -c "cd $WF; ansible-playbook ${VAULT_PASSWORD} ${VERBOSE} remove.yml"
 	;;
 	PACKAGE)
 		echo "Not yet implemented"
