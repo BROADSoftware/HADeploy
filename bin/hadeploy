@@ -16,10 +16,11 @@
 # along with HADeploy.  If not, see <http://www.gnu.org/licenses/>.
 
 MYDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/." && pwd )"
+CWD=$(pwd)
 
 
 function usage {
-	echo 'hadeploy --src <srcFile> [--src <srcFile>, ...] --action <CHECK|DEPLOY|PACKAGE|REMOVE|NONE> [--workingFolder <workingFolder>] [--loggingConf <loginConfFile>] '
+	echo 'hadeploy --src <srcFile> [--src <srcFile>, ...] [--askVaultPassword] [--vaultPasswordFile <vaultPasswordFile>] --action <CHECK|DEPLOY|PACKAGE|REMOVE|NONE> [--workingFolder <workingFolder>] [--loggingConf <loginConfFile>] '
 	echo '  or'
 	echo 'hadeploy --version'
 }
@@ -29,6 +30,7 @@ SRC=""
 WF=""
 VAR=""
 LOGF=""
+VAULT_PASSWORD=""
 
 while [[ $# > 0 ]]
 do
@@ -53,8 +55,20 @@ do
 			ACTION=$2
 			shift
 		;;
+		--askVaultPassword)
+			VAULT_PASSWORD="--ask-vault-pass"
+		;;
+		--vaultPasswordFile)
+			VAULT_PASSWORD="--vault-password-file ${CWD}/$2"
+			shift
+		;;
+		--help)
+			usage
+			exit 0
+		;;
 		--version)
 			echo "HADeploy v$VERSION"
+			echo "Location:${MYDIR}"
 			exit 0
 		;;
 		*)
@@ -107,13 +121,13 @@ fi
 
 case $ACTION in
 	CHECK)
-		bash -c "cd $WF; ansible-playbook --check install.yml"
+		bash -c "cd $WF; ansible-playbook ${VAULT_PASSWORD} --check install.yml"
 	;;
 	DEPLOY)
-		bash -c "cd $WF; ansible-playbook install.yml"
+		bash -c "cd $WF; ansible-playbook ${VAULT_PASSWORD} install.yml"
 	;;
 	REMOVE)
-		bash -c "cd $WF; ansible-playbook remove.yml"
+		bash -c "cd $WF; ansible-playbook ${VAULT_PASSWORD} remove.yml"
 	;;
 	PACKAGE)
 		echo "Not yet implemented"

@@ -57,7 +57,7 @@ setup(
         ]
     },
     install_requires=[
-        'ansible >= 2.2.0.0', 
+        'ansible >= 2.3.0.0', 
         'pykwalify >= 1.6.0' 
     ],
     scripts=[ 'bin/hadeploy' ],
