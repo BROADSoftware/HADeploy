@@ -13,12 +13,12 @@ There should be only one entry of this type in the HADeploy definition file.
 
 ## Attributes
 
-kafka_relay is a map with the following attributes:
+`kafka_relay` is a map with the following attributes:
 
 Name | req?	 |	Description
 --- | --- | ---
 host|yes|The host on which all Kafka commands will be pushed for execution. THIS HOST MUST HAVE KAFKA INSTALLED ON. Specifically, HADeploy must be able to access the Kafka installation jar files.
-zk_host_group|yes|The `host_group` representing the zookeeper quorum. This group must contain the hosts acting as zookeeper servers.
+zk_host_group|yes|The [`host_group`](../inventory/host_groups) representing the zookeeper quorum. This group must contain the hosts acting as zookeeper servers.<br>This group should have the `force_setup`flag set to `yes
 zk_port|no|The zookeeper client port.<br>Default: `2181`
 broker_id_map|no|With Kafka, each broker is identified with an id. When creating a Topic, one can let Kafka distribute partition's replica across the cluster. But, we may also need to specify explicitly the distribution of replica, with strict location rules.<br>In such case, we need to specify brokers at topic creation, using `broker_id`. As these `broker_id` are infrastructure dependent, our application deployment description would be tightly coupled to the target infrastructure.<br>To prevent, this, we introduce here a level of indirection, by a map where each key is a virtual `broker_id` (used in `assignment` in topic definition) and the value is the effective one.<br>If this map is not defined, then the virtual `broker_id` are same as the effective ones.
 tools_folder|no|Folder used by HADeploy to install some tools for Kafka management.<br>Default: `/tmp/hadeploy_<user>/` where `user` is the [`ssh_user`](../inventory/hosts) defined for this relay host.
@@ -71,9 +71,14 @@ kafka_relay:
     2: 1002
     3: 1003
 ```
-## Trick
+## Tricks
 
 To find the `broker_ids` values, one may use the [`kdescribe`](https://github.com/Kappaware/kdescribe) tool:
 
+If, when running HADeploy you encounter error like:
 
- 
+```bash
+fatal: [dn1]: FAILED! => {"changed": false, "failed": true, "msg": "AnsibleUndefinedVariable: 'dict object' has no attribute 'ansible_fqdn'"}
+```
+
+it is most likely that you have not set `force_setup` on the `zk_host_group` group  

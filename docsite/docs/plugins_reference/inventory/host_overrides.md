@@ -35,3 +35,13 @@ host_overrides:
   ssh_private_key_file: ''
 ```
 
+
+## Tricks
+
+If, when running HADeploy you encounter error like:
+
+```bash
+fatal: [dn1]: FAILED! => {"changed": false, "failed": true, "msg": "AnsibleUndefinedVariable: 'dict object' has no attribute 'ansible_fqdn'"}
+```
+
+it is most likely that you need to set `force_setup` on some host_group or host.  
