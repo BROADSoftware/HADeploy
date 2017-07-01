@@ -1,7 +1,11 @@
-# ansible_inventory_files
+# <s>ansible_inventory_files</s>
 
+> **This feature is DEPRECATED. Please use [ansible_inventories](../ansible_inventories/ansible_inventories) instead.** 
+
+> It will be removed in a next release.
+
+<strike>
 ## Synopsis
-
 Define a list of Ansible Inventory files.
 
 These files will be parsed, eventually merged with locally defined hosts and host_groups and will allow target Ansible inventory file generation
@@ -28,3 +32,4 @@ If a host with same name is defined both in [`hosts`](../inventory/hosts) and in
 This is same for the [`host_groups`](../inventory/host_groups). 
 
 Note also a [`host_groups`](../inventory/host_groups)  can refer to a host in Ansible inventory.
+</strike>

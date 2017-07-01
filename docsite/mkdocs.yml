@@ -10,6 +10,8 @@ pages:
     - vars: plugins_reference/core/vars.md
   - Ansible_inventory:
     - ansible_inventory_files: plugins_reference/ansible_inventory/ansible_inventory_files.md
+  - Ansible_inventories:
+    - ansible_inventories: plugins_reference/ansible_inventories/ansible_inventories.md
   - Files:
     - files: plugins_reference/files/files.md
     - folders: plugins_reference/files/folders.md
@@ -52,6 +54,7 @@ pages:
   - "Execution order": more/execution_order.md
   - "Secured cluster": more/secured_cluster.md
   - "YAML tricks": more/yaml_tricks.md
+  - "Encrypted values": more/encrypted_values.md
   - "Release notes": more/release_notes.md
 
 #theme: readthedocs

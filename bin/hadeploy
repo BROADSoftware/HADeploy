@@ -20,7 +20,7 @@ CWD=$(pwd)
 
 
 function usage {
-	echo 'hadeploy --src <srcFile> [--src <srcFile>, ...] [--askVaultPassword] [--vaultPasswordFile <vaultPasswordFile>] --action <CHECK|DEPLOY|PACKAGE|REMOVE|NONE> [--workingFolder <workingFolder>] [--loggingConf <loginConfFile>] '
+	echo 'hadeploy --src <srcFile> [--src <srcFile>, ...] [--askVaultPassword] [--vaultPasswordFile <vaultPasswordFile>] [--workingFolder <workingFolder>] [--loggingConf <loginConfFile>]  --action <DEPLOY|REMOVE|NONE>'
 	echo '  or'
 	echo 'hadeploy --version'
 }

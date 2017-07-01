@@ -85,8 +85,8 @@ In such case, the infrastructure part of the file will look like:
 ```yaml
 # ------------------------------------- Infrastructure part
 
-ansible_inventory_files:
-- ".../some-ansible-build/inventory"
+ansible_inventories:
+- file: ".../some-ansible-build/inventory"
 
 host_groups:
 - name: control_nodes
@@ -442,4 +442,10 @@ hadeploy --var app_version=0.1.2 --src app.yml --src infra.yml --action DEPLOY
 Note in this case, the value will be overwritten by the one provided in app.yml. So you will have to remove from the definition file a variable you intend to specify on the command line.
 
 The general rule is than variable definitions are evaluated/overridden in order of which they appears. So the order of --var and --src on the command line is significant.
+
+Some other option of the HADeploy command are described in other chapters:
+
+* `--workingFolder`: Refer to [`Under_the_hood`](./more/under_the_hood) chapter.
+
+* `--askVaultPassword` and `--vaultPasswordFile`: Refer to [encrypted values](../../more/encrypted_values)
 

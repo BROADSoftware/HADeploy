@@ -9,7 +9,7 @@
 - `kafka_relay.tools_folder` default value is modified to be in `/tmp/hadeploy_{{ansible_ssh_user}}`
 - Local file definition now works with ~/xxx
 - `hdfs_relay.user` default value is now `hdfs` only if `ssh_user`is root. Otherwise, is `ssh_user`
-- Added global `exit_on_fail` flag.
+- Added global [`exit_on_fail`](../plugins_reference/inventory/exit_on_fail) flag.
 - Added some retry on user/groups creation/removal
 - Added `become_user/become_method` on `hbase_relay`
 - Added `become_user/become_method` on `kafka_relay`
@@ -18,6 +18,13 @@
 - Added `hdfs_relay.local_keytab_path`
 - Added `source_host_credential.local_keytab_path`
 - Added `groups` in `host_groups`
+- Previous version was unable to fetch an existing Ansible inventory when it contains some encrypted file(s). 
+The Description of Ansible inventory has been modified (now `ansible_inventories`) to include a password file or user password request.
+- Added a method to encrypt password in ranger_relay.admin_password.   
+
+#### DEPRECATION
+
+`ansible_inventory_files` has been marked deprecated. Replaced by `ansible_inventories`.
 
 #### INCOMPATIBILITY
 
