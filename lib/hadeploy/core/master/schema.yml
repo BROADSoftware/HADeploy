@@ -25,4 +25,10 @@ mapping:
     type: "seq"
     sequence:
     - type: str
+
+  # Will be merged with the definition proviced on command line (--excludeScope xxxx)
+  "excluded_scopes":
+    type: "seq"
+    sequence:
+    - type: str
   

@@ -161,8 +161,11 @@ class Context:
         self.model[HELPER][ANSIBLE_ROLES_PATHS] = rolesPaths
         
     def toExclude(self, candidate):
-        if(len(self.includedScopes) == 0) or "all" in self.includedScopes:
-            return False
+        if candidate in self.excludedScopes:
+            return True
         else:
-            return not candidate in self.includedScopes
+            if(len(self.includedScopes) == 0) or "all" in self.includedScopes:
+                return False
+            else:
+                return not candidate in self.includedScopes
             

@@ -33,6 +33,7 @@ from templator import Templator
 logger = logging.getLogger("hadeploy.main")
 
 INCLUDED_SCOPES="included_scopes"
+EXCLUDED_SCOPES="excluded_scopes"
 
 
 def handleSourceFiles(srcFileList, context):
@@ -41,7 +42,7 @@ def handleSourceFiles(srcFileList, context):
         parser.parse(src)
 
 # We allow both --scope sc1 --scope sc2,sc3
-def handleClScopes(scopeList):
+def handleCliScopes(scopeList):
     scp = []
     if scopeList != None:
         for sc in scopeList:
@@ -53,6 +54,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--src', nargs='*', required=True)
     parser.add_argument('--scope', nargs='*', required=False)
+    parser.add_argument('--noScope', nargs='*', required=False)
     parser.add_argument('--yamlLoggingConf', help="Logging configuration as a yaml file", required=False)
     parser.add_argument('--workingFolder', help="Where to store working context", required=True)
 
@@ -84,17 +86,19 @@ def main():
     handleSourceFiles(param.src, context)
     context.groom()
     
-    cliScopes = handleClScopes(param.scope)
-    if len(cliScopes) == 0:
-        if INCLUDED_SCOPES in context.model[SRC]:
-            context.includedScopes = set(context.model[SRC][INCLUDED_SCOPES])
-        else:
-            context.includedScopes = set()
-    else:
-        context.includedScopes = cliScopes
+    # --------------------------------------------- included scope handling
+    context.includedScopes = handleCliScopes(param.scope)
+    if len(context.includedScopes) == 0 and INCLUDED_SCOPES in context.model[SRC]:
+        context.includedScopes = set(context.model[SRC][INCLUDED_SCOPES])
     if len(context.includedScopes) > 0:
         print("Scope limited to  {0}".format(str(list(context.includedScopes))))
-
+    # -------------------------------------------- Excluded scope handling
+    context.excludedScopes = handleCliScopes(param.noScope)
+    if EXCLUDED_SCOPES in context.model[SRC]:
+        context.excludedScopes = context.excludedScopes.union(context.model[SRC][EXCLUDED_SCOPES])
+    if len(context.excludedScopes) > 0:
+        print("Scope excluded: {0}".format(str(list(context.excludedScopes))))
+    
     # Now, we must have the effective PLUGINS list and PLUGINS_PATHS in the context. We can load all plugins
     for plName in context.model[SRC][PLUGINS]:
             context.loadPlugin(plName, context.model[SRC][PLUGINS_PATHS])
