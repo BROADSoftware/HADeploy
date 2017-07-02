@@ -68,23 +68,33 @@ class KafkaPlugin(Plugin):
 
 
     def onGrooming(self):
+        if self.context.toExclude("kafka"):
+            return
         self.buildHelper()
         misc.ensureObjectInMaps(self.context.model[DATA], [KAFKA], {})
         groomKafkaRelay(self.context.model)
         groomKafkaTopics(self.context.model)
     
     def onTemplateGeneration(self):
+        if self.context.toExclude("kafka"):
+            return
         if KAFKA_TOPICS in self.context.model[SRC] and len(self.context.model[SRC][KAFKA_TOPICS]) > 0 :
             templator = Templator([os.path.join(self.path, './helpers/jdctopic')], self.context.model)
             templator.generate("desc_topics.yml.jj2", os.path.join(self.context.workingFolder, "desc_topics.yml.j2"))
             templator.generate("desc_untopics.yml.jj2", os.path.join(self.context.workingFolder, "desc_untopics.yml.j2"))
     
     def getInstallTemplates(self):
-        return [os.path.join(self.path, "install_kafka_relay.yml.jj2"), os.path.join(self.path, "install.yml.jj2")]
+        if self.context.toExclude("kafka"):
+            return []
+        else:
+            return [os.path.join(self.path, "install_kafka_relay.yml.jj2"), os.path.join(self.path, "install.yml.jj2")]
 
     def getRemoveTemplates(self):
-        return [os.path.join(self.path, "install_kafka_relay.yml.jj2"), os.path.join(self.path, "remove.yml.jj2")]
-
+        if self.context.toExclude("kafka"):
+            return []
+        else:
+            return [os.path.join(self.path, "install_kafka_relay.yml.jj2"), os.path.join(self.path, "remove.yml.jj2")]
+    
     def buildHelper(self):
         helper = {}
         helper[DIR] = os.path.normpath(os.path.join(self.path, "helpers"))

@@ -20,24 +20,29 @@ CWD=$(pwd)
 
 
 function usage {
-	echo 'hadeploy --src <srcFile> [--src <srcFile>, ...] [--askVaultPassword] [--vaultPasswordFile <vaultPasswordFile>] [--workingFolder <workingFolder>] [--loggingConf <loginConfFile>]  --action <DEPLOY|REMOVE|NONE>'
+	echo 'hadeploy --src <srcFile> [--src <srcFile>, ...] [--scope <scope> [--scope <scope>]]  [--askVaultPassword] [--vaultPasswordFile <vaultPasswordFile>] [--workingFolder <workingFolder>] [--loggingConf <loginConfFile>]  --action <DEPLOY|REMOVE|NONE>'
 	echo '  or'
 	echo 'hadeploy --version'
 }
 
-VERSION="0.4.0"
+VERSION="0.4.1"
 SRC=""
 WF=""
 VAR=""
 LOGF=""
 VAULT_PASSWORD=""
 VERBOSE=""
+SCOPE=""
 
 while [[ $# > 0 ]]
 do
 	case $1 in
 		--src)
 			SRC="$SRC $2"
+			shift
+		;;
+		--scope)
+			SCOPE="$SCOPE $2"
 			shift
 		;;
 		--var)
@@ -123,7 +128,13 @@ else
 	echo "Unable to find appropriate launcher"; exit 1
 fi
 
-$CMD --workingFolder $WF $LOGOPT --src $SRC 
+if [ "$SCOPE" != "" ]
+then
+	SCOPE="--scope $SCOPE"
+fi
+
+
+$CMD --workingFolder $WF $LOGOPT --src $SRC $SCOPE 
 if [ $? -ne "0" ]
 then 
 	exit 1

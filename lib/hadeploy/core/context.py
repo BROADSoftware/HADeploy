@@ -159,4 +159,10 @@ class Context:
             for p in paths:
                 rolesPaths.append(p)
         self.model[HELPER][ANSIBLE_ROLES_PATHS] = rolesPaths
+        
+    def toExclude(self, candidate):
+        if(len(self.includedScopes) == 0) or "all" in self.includedScopes:
+            return False
+        else:
+            return not candidate in self.includedScopes
             

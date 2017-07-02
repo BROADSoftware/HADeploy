@@ -104,6 +104,21 @@ class FilesPlugin(Plugin):
         groomFolders(self.context)
         groomFiles(self.context)
         groomTrees(self.context)
+        
+        # Handle scope exclusion        
+        if self.context.toExclude("files"):
+            scopeToRemove = []
+            for scope in model[DATA][FILES][SCOPE_BY_NAME]:
+                if(self.context.toExclude(scope)):
+                    scopeToRemove.append(scope)
+            for scope in scopeToRemove:
+                del(model[DATA][FILES][SCOPE_BY_NAME][scope])
+        if(self.context.toExclude("hdfs")):
+            model[DATA][HDFS][FILES] = []
+            model[DATA][HDFS][FOLDERS] = []
+            model[DATA][HDFS][TREES] = []
+            model[DATA][HDFS][NODE_TO_HDFS_BY_NAME] = {}
+        
         if len(model[DATA][HDFS][NODE_TO_HDFS_BY_NAME]) == 0 and len(model[DATA][HDFS][FILES]) == 0 and len(model[DATA][HDFS][FOLDERS]) == 0 and len(model[DATA][HDFS][TREES]) == 0:
             # Optimization for execution time
             if HDFS_RELAY in model[SRC]:

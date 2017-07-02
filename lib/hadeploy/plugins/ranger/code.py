@@ -112,6 +112,8 @@ class RangerPlugin(Plugin):
         return ['hdfs', 'hbase', 'kafka', 'hive']
 
     def onGrooming(self):
+        if self.context.toExclude("ranger"):
+            return
         groomRangerRelay(self.context.model)
         if 'hdfs' in self.context.pluginByName:
             groomRangerHdfsPolicies(self.context.model)
@@ -139,6 +141,18 @@ class RangerPlugin(Plugin):
             schemaFile = os.path.join(self.path, "schema_hive.yml")
             schema.schemaMerge(theSchema, yaml.load(open(schemaFile)))
         return theSchema
+
+    def getInstallTemplates(self):
+        if self.context.toExclude("ranger"):
+            return []
+        else:
+            return [os.path.join(self.path, "install.yml.jj2")]
+
+    def getRemoveTemplates(self):
+        if self.context.toExclude("ranger"):
+            return []
+        else:
+            return [os.path.join(self.path, "remove.yml.jj2")]
 
 # ---------------------------------------------------------------------------- Static function    
 

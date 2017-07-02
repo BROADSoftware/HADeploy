@@ -86,25 +86,33 @@ class HBasePlugin(Plugin):
 
 
     def onGrooming(self):
-        self.buildHelper()
-        misc.ensureObjectInMaps(self.context.model[DATA], [HBASE], {})
-        groomHbaseRelay(self.context.model)
-        groomHBaseNamespaces(self.context.model)
-        groomHBaseTables(self.context.model)
-        groomHBaseDatasets(self.context.model)
+        if not self.context.toExclude("hbase"):
+            self.buildHelper()
+            misc.ensureObjectInMaps(self.context.model[DATA], [HBASE], {})
+            groomHbaseRelay(self.context.model)
+            groomHBaseNamespaces(self.context.model)
+            groomHBaseTables(self.context.model)
+            groomHBaseDatasets(self.context.model)
 
     
     def onTemplateGeneration(self):
-        if HBASE_NAMESPACES in self.context.model[SRC] and len(self.context.model[SRC][HBASE_NAMESPACES]) > 0:
-            templator = Templator([os.path.join(self.path, './helpers/jdchtable')], self.context.model)
-            templator.generate("desc_htables.yml.jj2", os.path.join(self.context.workingFolder, "desc_htables.yml.j2"))
-            templator.generate("desc_unhtables.yml.jj2", os.path.join(self.context.workingFolder, "desc_unhtables.yml.j2"))
+        if not self.context.toExclude("hbase"):
+            if HBASE_NAMESPACES in self.context.model[SRC] and len(self.context.model[SRC][HBASE_NAMESPACES]) > 0:
+                templator = Templator([os.path.join(self.path, './helpers/jdchtable')], self.context.model)
+                templator.generate("desc_htables.yml.jj2", os.path.join(self.context.workingFolder, "desc_htables.yml.j2"))
+                templator.generate("desc_unhtables.yml.jj2", os.path.join(self.context.workingFolder, "desc_unhtables.yml.j2"))
     
     def getInstallTemplates(self):
-        return [os.path.join(self.path, "install_hbase_relay.yml.jj2"), os.path.join(self.path, "install.yml.jj2")]
+        if self.context.toExclude("hbase"):
+            return []
+        else:
+            return [os.path.join(self.path, "install_hbase_relay.yml.jj2"), os.path.join(self.path, "install.yml.jj2")]
 
     def getRemoveTemplates(self):
-        return [os.path.join(self.path, "install_hbase_relay.yml.jj2"), os.path.join(self.path, "remove.yml.jj2")]
+        if self.context.toExclude("hbase"):
+            return []
+        else:
+            return [os.path.join(self.path, "install_hbase_relay.yml.jj2"), os.path.join(self.path, "remove.yml.jj2")]
 
     def buildHelper(self):
         helper = {}

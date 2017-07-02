@@ -32,18 +32,27 @@ from templator import Templator
 
 logger = logging.getLogger("hadeploy.main")
 
+INCLUDED_SCOPES="included_scopes"
+
 
 def handleSourceFiles(srcFileList, context):
     parser = Parser(context)
     for src in srcFileList:
         parser.parse(src)
 
-
-
+# We allow both --scope sc1 --scope sc2,sc3
+def handleClScopes(scopeList):
+    scp = []
+    if scopeList != None:
+        for sc in scopeList:
+            scp.extend(sc.split(","))
+    return set(scp)   # A set will be more efficient
+        
 def main():
     mydir =  os.path.dirname(os.path.realpath(__file__)) 
     parser = argparse.ArgumentParser()
     parser.add_argument('--src', nargs='*', required=True)
+    parser.add_argument('--scope', nargs='*', required=False)
     parser.add_argument('--yamlLoggingConf', help="Logging configuration as a yaml file", required=False)
     parser.add_argument('--workingFolder', help="Where to store working context", required=True)
 
@@ -74,6 +83,17 @@ def main():
     context.loadPlugin("master", [masterPluginPath])
     handleSourceFiles(param.src, context)
     context.groom()
+    
+    cliScopes = handleClScopes(param.scope)
+    if len(cliScopes) == 0:
+        if INCLUDED_SCOPES in context.model[SRC]:
+            context.includedScopes = set(context.model[SRC][INCLUDED_SCOPES])
+        else:
+            context.includedScopes = set()
+    else:
+        context.includedScopes = cliScopes
+    if len(context.includedScopes) > 0:
+        print("Scope limited to  {0}".format(str(list(context.includedScopes))))
 
     # Now, we must have the effective PLUGINS list and PLUGINS_PATHS in the context. We can load all plugins
     for plName in context.model[SRC][PLUGINS]:

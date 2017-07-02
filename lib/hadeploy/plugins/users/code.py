@@ -21,7 +21,6 @@ from hadeploy.core.const import SRC,DATA
 import hadeploy.core.misc as misc
 import os
 
-
 logger = logging.getLogger("hadeploy.plugins.users")
 
 USERS="users"
@@ -53,10 +52,23 @@ class UsersPlugin(Plugin):
 
 
     def onGrooming(self):
+        if self.context.toExclude("users"):
+            return
         misc.ensureObjectInMaps(self.context.model[DATA], [USERS, SCOPE_BY_NAME], {})
         groomUsers(self.context)
         groomGroups(self.context)
 
+    def getInstallTemplates(self):
+        if self.context.toExclude("users"):
+            return []
+        else:
+            return [os.path.join(self.path, "install.yml.jj2")]
+
+    def getRemoveTemplates(self):
+        if self.context.toExclude("users"):
+            return []
+        else:
+            return [os.path.join(self.path, "remove.yml.jj2")]
 
 # ---------------------------------------------------- Static functions
 

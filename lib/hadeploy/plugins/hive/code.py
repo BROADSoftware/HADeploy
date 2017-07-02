@@ -86,6 +86,8 @@ class HBasePlugin(Plugin):
             
             
     def onGrooming(self):
+        if self.context.toExclude("hive"):
+            return
         self.buildHelper()
         misc.ensureObjectInMaps(self.context.model[DATA], [HIVE], {})
         groomHiveRelay(self.context.model)
@@ -94,6 +96,8 @@ class HBasePlugin(Plugin):
         
     
     def onTemplateGeneration(self):
+        if self.context.toExclude("hive"):
+            return
         model = self.context.model
         if HIVE_RELAY in model[SRC]:
             # -------------------------------------------- For Deploy
@@ -130,11 +134,17 @@ class HBasePlugin(Plugin):
             f.close()
                 
     def getInstallTemplates(self):
-        return [os.path.join(self.path, "install_hive_relay.yml.jj2"), os.path.join(self.path, "install.yml.jj2")]
+        if self.context.toExclude("hive"):
+            return []
+        else:
+            return [os.path.join(self.path, "install_hive_relay.yml.jj2"), os.path.join(self.path, "install.yml.jj2")]
 
     def getRemoveTemplates(self):
-        return [os.path.join(self.path, "install_hive_relay.yml.jj2"), os.path.join(self.path, "remove.yml.jj2")]
-
+        if self.context.toExclude("hive"):
+            return []
+        else:
+            return [os.path.join(self.path, "install_hive_relay.yml.jj2"), os.path.join(self.path, "remove.yml.jj2")]
+    
     def buildHelper(self):
         helper = {}
         helper[DIR] = os.path.normpath(os.path.join(self.path, "helpers"))

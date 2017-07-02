@@ -19,4 +19,10 @@ mapping:
     type: "seq"
     sequence:
     - type: str
-        
+
+  # This may be overiden by the definition provided on command line (--scope wwww)        
+  "included_scopes":
+    type: "seq"
+    sequence:
+    - type: str
+  
