@@ -46,7 +46,10 @@ class AnsiblePlugin(Plugin):
         if ANSIBLE_INVENTORY_FILE in self.context.model[SRC]:
             l2 = []
             for p in self.context.model[SRC][ANSIBLE_INVENTORY_FILE]:
-                l2.append(misc.snippetRelocate(snippetPath, p))
+                if isinstance(p, basestring):
+                    l2.append(misc.snippetRelocate(snippetPath, p))
+                else:
+                    misc.ERROR("ansible_inventory_files must be a list of string!")
             self.context.model[SRC][ANSIBLE_INVENTORY_FILE] = l2
             if VAULT_PASSWORD_FILE in self.context.model[SRC]:
                 self.context.model[SRC][VAULT_PASSWORD_FILE] = misc.snippetRelocate(snippetPath, self.context.model[SRC][VAULT_PASSWORD_FILE])

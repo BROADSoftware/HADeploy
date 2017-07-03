@@ -51,7 +51,8 @@ class AnsiblePlugin(Plugin):
     def onNewSnippet(self, snippetPath):
         if ANSIBLE_INVENTORIES in self.context.model[SRC]:
             for inventory in self.context.model[SRC][ANSIBLE_INVENTORIES]:
-                inventory[FILE] = misc.snippetRelocate(snippetPath, inventory[FILE])
+                if FILE in inventory:
+                    inventory[FILE] = misc.snippetRelocate(snippetPath, inventory[FILE])
                 if VAULT_PASSWORD_FILE in inventory:
                     inventory[VAULT_PASSWORD_FILE] = misc.snippetRelocate(snippetPath, inventory[VAULT_PASSWORD_FILE])
 

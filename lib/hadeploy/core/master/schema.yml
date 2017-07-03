@@ -5,12 +5,7 @@ mapping:
   "vars":
     type: any
   
-  "plugins_install_order":
-    type: "seq"
-    sequence:
-    - type: str
-
-  "plugins_remove_order":
+  "plugins":
     type: "seq"
     sequence:
     - type: str
