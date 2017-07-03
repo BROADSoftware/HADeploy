@@ -419,7 +419,7 @@ vars:
 
 ## Launching HADeploy
 
-Let's say we have installed HADeploy (LINK) and have arranged to have the `....../hadeploy/bin` folder in our PATH (See Installation above), and we are in our project directory.
+Let's assume we have [installed HADeploy](./installation) and have arranged to have the `....../hadeploy/bin` folder in our PATH (See Installation above), and we are in our project directory.
  
 To launch the deployment, just type:
 
@@ -447,5 +447,6 @@ Some other option of the HADeploy command are described in other chapters:
 
 * `--workingFolder`: Refer to [`Under_the_hood`](./more/under_the_hood) chapter.
 
-* `--askVaultPassword` and `--vaultPasswordFile`: Refer to [encrypted values](../../more/encrypted_values)
+* `--askVaultPassword` and `--vaultPasswordFile`: Refer to [Encrypted values](../../more/encrypted_values)
 
+* `--scope` and `--noScope`: Refer to [Altering scope](../../more/altering_scope)

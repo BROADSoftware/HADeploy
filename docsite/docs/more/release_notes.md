@@ -2,9 +2,11 @@
 
 ## 0.4.1
 
+- Added [scope limitation](./altering_scope) mechanism on performed operation
+
 ## 0.4.0
 
-- Some quotes was missing in plugin yaml files. This generated errors when a HADeploy variable was substitued with a string begining with {{some_ansible_variable}}. Fixed
+- Some quotes was missing in plugin yaml files. This generated errors when a HADeploy variable was substituted with a string begining with {{some_ansible_variable}}. Fixed
 - `hdfs_relay.cache_folder` default value is modified, to be in the user home folder.
 - `hbase_relay.tools_folder` default value is modified to be in `/tmp/hadeploy_{{ansible_ssh_user}}`
 - `hive_relay.tools_folder` default value is modified to be in `/tmp/hadeploy_{{ansible_ssh_user}}`

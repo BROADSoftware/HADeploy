@@ -56,7 +56,7 @@ the reconciliation between expected and actual state.
 
 ### Application instance isolation.
 
-A typical deployment pattern allowed by HADeploy is to define ‘Application Container’, or ‘Application Lane’. Then several instances (or versions) of an application can be installed and run in parallel.
+A typical deployment pattern allowed by HADeploy is to define ‘Application Container’, or ‘Application Corridor’. Then several instances (or versions) of an application can be installed and run in parallel.
 
 ### Kerberos support
 

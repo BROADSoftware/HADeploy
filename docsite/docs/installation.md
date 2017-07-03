@@ -81,7 +81,6 @@ You are now ready to used HADeploy from this workstation.
 
 > Do not use easy_install to install HADeploy directly.
 
-
 ## Install from source GIT repository.
 
 HADeploy is easy to install directly from source. If you want to have the very latest versions, or a specific one, or intend to contribute, this is the method of choice.
@@ -140,6 +139,16 @@ export PATH=$PATH:<whereHADeployWasCloned>/hadeploy/bin
 ```
 
 You are now ready to used HADeploy from this workstation.
+
+### Using ZIP archive
+
+If, for any reason, you are unable to clone from Github, you can download the source code:
+
+![Screenshot](img/download-zip.png)
+
+Before downloading, you may take care of selecting the appropriate version (`Tag:`, on the left).
+
+All other installation steps described above remains unchanged.
 
 ## No direct Internet access ?
 
