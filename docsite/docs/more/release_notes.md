@@ -3,6 +3,8 @@
 ## 0.4.1
 
 - Added [scope limitation](./altering_scope) mechanism on performed operation
+- Default HDFS relay cache is now /tmp/hadeploy_{{ansible_ssh_user}}/files
+- Added `remote_tmp = /tmp/.ansible-${USER}/tmp` in generated ansible.cfg
 
 ## 0.4.0
 

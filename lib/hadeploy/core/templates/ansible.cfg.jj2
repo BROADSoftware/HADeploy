@@ -8,3 +8,4 @@ roles_path=
 inventory = inventory
 host_key_checking = False
 retry_files_enabled = False 
+remote_tmp = /tmp/.ansible-${USER}/tmp

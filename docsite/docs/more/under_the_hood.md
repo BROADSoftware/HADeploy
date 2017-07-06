@@ -65,7 +65,7 @@ All theses are optional. A plugin can also host:
 
 Currently, HADeploy is provided with the following internal plugin:
 
-* `ìnventory` for target hosts management.
+* `inventory` for target hosts management.
 * `ansible_inventories` for direct integration of an Ansible inventories.
 * `users` for management of local users and groups. 
 * `files` for base file management.
