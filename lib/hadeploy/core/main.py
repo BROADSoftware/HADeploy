@@ -53,6 +53,7 @@ def main():
     mydir =  os.path.dirname(os.path.realpath(__file__)) 
     parser = argparse.ArgumentParser()
     parser.add_argument('--src', nargs='*', required=True)
+    parser.add_argument('--action', required=True)
     parser.add_argument('--scope', nargs='*', required=False)
     parser.add_argument('--noScope', nargs='*', required=False)
     parser.add_argument('--yamlLoggingConf', help="Logging configuration as a yaml file", required=False)
@@ -117,19 +118,28 @@ def main():
     # And groom all plugins
     context.groom()
 
-    context.buildInstallTemplate()
-    context.buildRemoveTemplate()
-    context.builRolesPath()
+    templator = Templator([os.path.join(mydir, './templates'), context.workingFolder], context.model)
+    actions = context.getAllSupportedActions()
+    action = param.action
+    if action == "none":
+        for action in action:
+            pluginExts = context.getPluginsForActions(action)
+            context.buildTemplate(action, pluginExts)
+            context.builRolesPath(action, pluginExts)
+            templator.generate("{0}.yml.jj2".format(action), os.path.join(context.workingFolder, "{0}.yml".format(action)))
+    else: 
+        if not action in actions:
+            misc.ERROR("Action {0} not supported. Current configuration only supports {1}".format(action, str(actions)))
+        pluginExts = context.getPluginsForActions(action)
+        context.buildTemplate(action, pluginExts)
+        context.builRolesPath(action, pluginExts)
+        templator.generate("{0}.yml.jj2".format(action), os.path.join(context.workingFolder, "{0}.yml".format(action)))
+        
 
     dump.dumpModel(context)
 
-    context.generatePrivateTemplate()
-
-    templator = Templator([os.path.join(mydir, './templates'), context.workingFolder], context.model)
     templator.generate("inventory.jj2", os.path.join(context.workingFolder, "inventory"))
     templator.generate("ansible.cfg.jj2", os.path.join(context.workingFolder, "ansible.cfg"))
-    templator.generate("install.yml.jj2", os.path.join(context.workingFolder, "install.yml"))
-    templator.generate("remove.yml.jj2", os.path.join(context.workingFolder, "remove.yml"))
     misc.ensureFolder(os.path.join(context.workingFolder, "group_vars"))
     templator.generate("group_vars_all.jj2", os.path.join(context.workingFolder, "group_vars/all"))
     

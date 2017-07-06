@@ -17,7 +17,7 @@
 
 import logging
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DATA
+from hadeploy.core.const import SRC,DATA, DEPLOY_ACTION, REMOVE_ACTION
 import hadeploy.core.misc as misc
 import os
 
@@ -50,7 +50,15 @@ class UsersPlugin(Plugin):
                         absKeys.append(misc.snippetRelocate(snippetPath, key))
                     u[AUTHORIZED_KEYS] = absKeys
 
+    def getGroomingPriority(self):
+        return 2000
 
+    def getSupportedActions(self):
+        return [DEPLOY_ACTION, REMOVE_ACTION]
+
+    def getPriority(self, action):
+        return 2000 if action == DEPLOY_ACTION else 9000 if action == REMOVE_ACTION else misc.ERROR("Plugin Users called with invalid action: '{0}'".format(action))
+    
     def onGrooming(self):
         if self.context.toExclude("users"):
             return
@@ -58,17 +66,11 @@ class UsersPlugin(Plugin):
         groomUsers(self.context)
         groomGroups(self.context)
 
-    def getInstallTemplates(self):
+    def getTemplates(self, action, priority):
         if self.context.toExclude("users"):
             return []
         else:
-            return [os.path.join(self.path, "install.yml.jj2")]
-
-    def getRemoveTemplates(self):
-        if self.context.toExclude("users"):
-            return []
-        else:
-            return [os.path.join(self.path, "remove.yml.jj2")]
+            return [os.path.join(self.path, "{0}.yml.jj2".format(action))]
 
 # ---------------------------------------------------- Static functions
 

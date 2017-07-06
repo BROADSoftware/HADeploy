@@ -29,8 +29,6 @@ ANSIBLE_ROLES_PATHS = "ansible_roles_paths"
 
 # ------------------------------------------------ Default values
 
-# default plugins list
-DEFAULT_PLUGINS = [ 'header', 'ansible_inventory', 'ansible_inventories', 'inventory', 'users', 'ranger', 'files', 'hdfs', 'hbase', 'hive', 'kafka', 'footer']
 
 DEFAULT_HDFS_KEYTABS_FOLDER="{{ansible_user_dir}}/.hadeploy/keytabs"
 
@@ -44,4 +42,16 @@ INVENTORY="inventory"
 HOST_BY_NAME="hostByName"
 SSH_USER="ssh_user"
 
+# default plugins list
+#DEFAULT_PLUGINS = [ 'header', 'ansible_inventories', 'inventory', 'users', 'ranger', 'files', 'hdfs', 'hbase', 'hive', 'kafka']
+DEFAULT_PLUGINS = [ 'header', 'inventory', 'users']
+
+# Actions: deploy, remove, halt, launch, reset, report.
+# To other pseudo/internal action:
+# - groom: for grooming 
+# - none: Do nothing, but build all templates, to check errors
+#
+DEPLOY_ACTION="deploy"
+REMOVE_ACTION="remove"
+NONE_ACTION="none"
 

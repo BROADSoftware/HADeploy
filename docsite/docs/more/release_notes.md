@@ -1,5 +1,9 @@
 # Release notes
 
+## 0.5.0
+
+- Plugins architecture refactoring
+
 ## 0.4.1
 
 - Added [scope limitation](./altering_scope) mechanism on performed operation

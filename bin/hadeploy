@@ -28,12 +28,12 @@ function usage {
 	echo '     [--askVaultPassword] [--vaultPasswordFile <vaultPasswordFile>]'
 	echo '     [--workingFolder <workingFolder>]'
 	echo '     [--loggingConf <loginConfFile>]'
-	echo '     --action <DEPLOY|REMOVE|NONE>'
+	echo '     --action <deploy|remove|none>'
 	echo '  or'
 	echo 'hadeploy --version'
 }
 
-VERSION="0.4.1"
+VERSION="0.5.0"
 SRC=""
 WF=""
 VAR=""
@@ -71,7 +71,7 @@ do
 			shift
 		;;
 		--action)
-			ACTION=$2
+			ACTION=$(echo "$2" | tr '[:upper:]' '[:lower:]') 
 			shift
 		;;
 		--askVaultPassword)
@@ -150,31 +150,17 @@ then
 	NO_SCOPE="--noScope $NO_SCOPE"
 fi
 
-$CMD --workingFolder $WF $LOGOPT --src $SRC $SCOPE $NO_SCOPE
+$CMD --workingFolder $WF $LOGOPT --src $SRC $SCOPE $NO_SCOPE --action $ACTION
 if [ $? -ne "0" ]
 then 
 	exit 1
 fi
 
 case $ACTION in
-	CHECK)
-		bash -c "cd $WF; ansible-playbook ${VAULT_PASSWORD} ${VERBOSE} --check install.yml"
-	;;
-	DEPLOY)
-		bash -c "cd $WF; ansible-playbook ${VAULT_PASSWORD} ${VERBOSE} install.yml"
-	;;
-	REMOVE)
-		bash -c "cd $WF; ansible-playbook ${VAULT_PASSWORD} ${VERBOSE} remove.yml"
-	;;
-	PACKAGE)
-		echo "Not yet implemented"
-	;;
-	NONE)
+	none)
 	;;
 	*)
-		echo "Unknown action $1"
-		usage
-		exit 1
+		bash -c "cd $WF; ansible-playbook ${VAULT_PASSWORD} ${VERBOSE} ${ACTION}.yml"
 	;;
 esac
 		

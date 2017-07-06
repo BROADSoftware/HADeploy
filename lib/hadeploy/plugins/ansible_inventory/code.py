@@ -54,7 +54,9 @@ class AnsiblePlugin(Plugin):
             if VAULT_PASSWORD_FILE in self.context.model[SRC]:
                 self.context.model[SRC][VAULT_PASSWORD_FILE] = misc.snippetRelocate(snippetPath, self.context.model[SRC][VAULT_PASSWORD_FILE])
 
-
+    def getGroomingPriority(self):
+        return 1300
+    
     def onGrooming(self):
         if ANSIBLE_INVENTORY_FILE in self.context.model[SRC]:
             print "\n****** WARNING: The definition 'ansible_inventory_files' is deprecated. Please use 'ansible_inventories' instead\n"

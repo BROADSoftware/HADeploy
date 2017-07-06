@@ -27,12 +27,17 @@ import misc
 
 from const import DATA,ANSIBLE_ROLES_PATHS,HELPER,INVENTORY,HOST_BY_NAME
 import schema
-from sets import Set
+import collections
+from hadeploy.core import plugin
         
 HOST_GROUP_BY_NAME="hostGroupByName"
 
-
 logger = logging.getLogger("hadeploy.context")
+
+class PluginExt:
+    def __init__(self, plugin, priority):
+        self.plugin = plugin
+        self.priority = priority
 
 
 class Context:
@@ -78,34 +83,13 @@ class Context:
         misc.ERROR("Unable to find a plugin of name '{0}' in plugin paths {1}".format(name, paths))
 
     def groom(self):
-        pluginList = []
-        pluginSet = Set()
-        for plugin in self.plugins:
-            self.addToGroomList(plugin, pluginList, pluginSet, 0)
-        logger.debug("Grooming order:" + str(map(lambda x: x.name, pluginList)))
-        for plugin in pluginList:
+        pl = sorted(self.plugins, key=lambda plugin: plugin.getGroomingPriority())
+        logger.debug("Plugin grooming order:{0}".format(str(pl)))
+        for plugin in pl:
             plugin.onGrooming()
     
-    def addToGroomList(self, plugin, pluginList, pluginSet, deep):
-        if(deep > 10):
-            misc.ERROR("Loop in plugins grooming dependencies")
-        deps = plugin.getGroomingDependencies()
-        for dep in deps:
-            if dep in self.pluginByName:
-                self.addToGroomList(self.pluginByName[dep], pluginList, pluginSet, deep+1)
-        if plugin.name not in pluginSet:
-            logger.debug("Plugin '{0}' added to groomList".format(plugin.name))
-            pluginSet.add(plugin.name)
-            pluginList.append(plugin)
-        
-        
 
-    def generatePrivateTemplate(self):
-        for plugin in self.plugins:
-            plugin.onTemplateGeneration()
-        
-
-    # Build the schema for source validation, by merge of all schema plugin
+    # Build the schema for source validation, by merging of all schema plugins
     def getSchema(self):
         theSchema = {}
         for plugin in self.plugins:
@@ -113,6 +97,49 @@ class Context:
             if schema2 != None:
                 schema.schemaMerge(theSchema, schema2)
         return theSchema
+
+    def getAllSupportedAction(self):
+        actions = set()
+        for plugin in self.plugins:
+            actions.update(plugin.getSupportedActions())
+        return actions; 
+        
+    def getPluginListForActions(self, action):
+        """Retrieve list of plugins for a given action, ordered by priority"""
+        pl = []
+        for plugin in self.plugins:
+            if len(action.getSupportedActions()) == 0 or action in plugin.getSupportedActions():
+                p = plugin.getPriority()
+                if isinstance(p, collections.Iterable):
+                    for p2 in p:
+                        pl.append(PluginExt(plugin, p2))
+                else:
+                    pl.append(PluginExt(plugin, p))
+        return sorted(pl, key= lambda pluginExt: pluginExt.priority)
+        
+    def buildTemplate(self, action, pluginExts):
+        output = file(os.path.normpath(os.path.join(self.workingFolder, "{0}.yml.jj2".format(action))), 'w')
+        for pluginExt in pluginExts:
+            tmpls = pluginExt.plugin.getTemplates(action, pluginExt.priority)
+            if len(tmpls) > 0:
+                output.write("\n# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = PLUGIN {0}:\n\n".format(plugin.name))
+                for tmpl in tmpls:
+                    f = open(tmpl, 'r')
+                    output.write(f.read())
+                    f.close()
+        output.close()
+        
+    def builRolesPath(self, action, pluginsExts):
+        """Act as an additive way for 'none/all' mode."""
+        if ANSIBLE_ROLES_PATHS in self.model[HELPER]:
+            rolesPaths = self.model[HELPER][ANSIBLE_ROLES_PATHS]
+        else:
+            rolesPaths = set()
+        for pluginExt in pluginsExts:
+            paths = pluginExt.plugin.getRolesPaths()
+            for p in paths:
+                rolesPaths.update(p)
+        self.model[HELPER][ANSIBLE_ROLES_PATHS] = rolesPaths
 
            
     def checkScope(self, scope):
@@ -127,38 +154,6 @@ class Context:
             print("Unknown host or host_group: '{0}'".format(h))
             return False
 
-    def buildInstallTemplate(self):
-        output = file(os.path.normpath(os.path.join(self.workingFolder, "install.yml.jj2")), 'w')
-        for plugin in self.plugins:
-            tmpls = plugin.getInstallTemplates()
-            if len(tmpls) > 0:
-                output.write("\n# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = PLUGIN {0}:\n\n".format(plugin.name))
-                for tmpl in tmpls:
-                    f = open(tmpl, 'r')
-                    output.write(f.read())
-                    f.close()
-        output.close()
-        
-        
-    def buildRemoveTemplate(self):
-        output = file(os.path.normpath(os.path.join(self.workingFolder, "remove.yml.jj2")), 'w')
-        for plugin in reversed(self.plugins):
-            tmpls = plugin.getRemoveTemplates()
-            if len(tmpls) > 0:
-                output.write("\n# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = PLUGIN {0}:\n\n".format(plugin.name))
-                for tmpl in tmpls:
-                    f = open(tmpl, 'r')
-                    output.write(f.read())
-                    f.close()
-        output.close()
-        
-    def builRolesPath(self):
-        rolesPaths = []
-        for plugin in self.plugins:
-            paths = plugin.getRolesPaths()
-            for p in paths:
-                rolesPaths.append(p)
-        self.model[HELPER][ANSIBLE_ROLES_PATHS] = rolesPaths
         
     def toExclude(self, candidate):
         if candidate in self.excludedScopes:

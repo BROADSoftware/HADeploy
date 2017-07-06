@@ -18,7 +18,8 @@
 import logging
 from hadeploy.core.plugin import Plugin
 import os
-from hadeploy.core.const import PLUGINS_PATHS, SRC, PLUGINS, DEFAULT_PLUGINS
+from hadeploy.core.const import PLUGINS_PATHS, SRC, PLUGINS
+from hadeploy.core.plugin import DEFAULT_PLUGINS
 import hadeploy.core.misc as misc
 
 logger = logging.getLogger("hadeploy.plugins.master")
