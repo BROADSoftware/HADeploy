@@ -126,13 +126,20 @@ class Context:
     def buildTemplate(self, action, pluginExts):
         output = file(os.path.normpath(os.path.join(self.workingFolder, "{0}.yml.jj2".format(action))), 'w')
         for pluginExt in pluginExts:
-            tmpls = pluginExt.plugin.getTemplates(action, pluginExt.priority)
-            if len(tmpls) > 0:
+            tmplAsFiles = pluginExt.plugin.getTemplateAsFile(action, pluginExt.priority)
+            if not isinstance(tmplAsFiles, collections.Iterable):
+                tmplAsFiles = [tmplAsFiles]
+            tmplAsStrings = pluginExt.plugin.getTemplateAsString(action, pluginExt.priority)
+            if not isinstance(tmplAsStrings, collections.Iterable):
+                tmplAsStrings = [tmplAsStrings]
+            if len(tmplAsFiles) > 0 or len(tmplAsStrings):
                 output.write("\n# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = PLUGIN {0}:\n\n".format(pluginExt.plugin.name))
-                for tmpl in tmpls:
-                    f = open(tmpl, 'r')
-                    output.write(f.read())
-                    f.close()
+            for tmpl in tmplAsFiles:
+                f = open(tmpl, 'r')
+                output.write(f.read())
+                f.close()
+            for tmpl in tmplAsStrings:
+                output.write(tmpl)
         output.close()
         
     def builRolesPath(self, action, pluginsExts):

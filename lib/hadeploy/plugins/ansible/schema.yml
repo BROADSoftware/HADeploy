@@ -19,6 +19,17 @@ mapping:
     - type: map
       mapping:
         "playbook": { type: str, required: true }   
-        "action": { type: str, required: true }
+        "for_action": { type: str, required: true }
         "priority": { type: int, required: true }
+        
+  "ansible_roles":
+    type: "seq"
+    sequence:
+    - type: map
+      mapping:
+        "role": { type: str, required: true }   
+        "for_action": { type: str, required: true }
+        "scope": { type: str, required: true }
+        "priority": { type: int, required: true }
+        
         

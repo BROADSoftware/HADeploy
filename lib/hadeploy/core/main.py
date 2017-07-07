@@ -118,6 +118,8 @@ def main():
     # And groom all plugins
     context.groom()
 
+    dump.dumpModel(context)
+
     templator = Templator([os.path.join(mydir, './templates'), context.workingFolder], context.model)
     actions = context.getAllSupportedActions()
     logger.debug("Supported actions: {0}".format(actions))
@@ -138,8 +140,6 @@ def main():
         context.builRolesPath(action, pluginExts)
         templator.generate("{0}.yml.jj2".format(action), os.path.join(context.workingFolder, "{0}.yml".format(action)))
         
-
-    dump.dumpModel(context)
 
     templator.generate("inventory.jj2", os.path.join(context.workingFolder, "inventory"))
     templator.generate("ansible.cfg.jj2", os.path.join(context.workingFolder, "ansible.cfg"))

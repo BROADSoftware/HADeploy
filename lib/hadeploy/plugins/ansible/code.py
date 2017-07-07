@@ -21,14 +21,33 @@ from hadeploy.core.const import SRC,DATA,SCOPE_ANSIBLE
 
 
 ANSIBLE_PLAYBOOKS="ansible_playbooks"
+ANSIBLE_ROLES="ansible_roles"
 PLAYBOOK="playbook"
-ACTION="action"
+ROLE="role"
+SCOPE="scope"
+FOR_ACTION="for_action"
 PRIORITY="priority"
+
+PLAYBOOKS="playbooks"
+ROLES="roles"
 
 PLAYBOOKS_FOLDERS="playbooks_folders"
 ROLES_FOLDERS="roles_folders"
 
 PLAYBOOKS_BY_ACTION_BY_PRIORITY="playbooksByActionByPriority"
+
+ROLE_TMPL = """
+
+{{% for rl in data.playbooksByActionByPriority.__ACTION__.__PRIORITY__.roles %}}
+- hosts: {{{rl.scope}}}
+  roles:
+  - {{{rl.role}}}
+  
+{{% endfor %}}    
+
+"""
+
+
 
 class AnsiblePlugin(Plugin):
     
@@ -72,12 +91,23 @@ class AnsiblePlugin(Plugin):
             src = self.context.model[SRC]
             if ANSIBLE_PLAYBOOKS in src:
                 for pl in src[ANSIBLE_PLAYBOOKS]:
-                    action = pl[ACTION]
+                    action = pl[FOR_ACTION]
                     priority = pl[PRIORITY]
                     playbook = self.lookupPathInFolderList(pl[PLAYBOOK], PLAYBOOKS_FOLDERS, "playbook")
                     misc.ensureObjectInMaps(playbooksByActionByPriority, [action], {})
-                    misc.ensureObjectInMaps(playbooksByActionByPriority[action], [priority], [])
-                    playbooksByActionByPriority[action][priority].append(playbook)
+                    misc.ensureObjectInMaps(playbooksByActionByPriority[action], [priority], {})
+                    misc.ensureObjectInMaps(playbooksByActionByPriority[action][priority], [PLAYBOOKS], [])
+                    playbooksByActionByPriority[action][priority][PLAYBOOKS].append(playbook)
+            if ANSIBLE_ROLES in src:
+                for rl in src[ANSIBLE_ROLES]:
+                    if not self.context.checkScope(rl[SCOPE]):
+                        misc.ERROR("Invalid scope '{0}' in ansible role '{1}'".format(rl[SCOPE], rl[ROLE]))
+                    action = rl[FOR_ACTION]
+                    priority = rl[PRIORITY]
+                    misc.ensureObjectInMaps(playbooksByActionByPriority, [action], {})
+                    misc.ensureObjectInMaps(playbooksByActionByPriority[action], [priority], {})
+                    misc.ensureObjectInMaps(playbooksByActionByPriority[action][priority], [ROLES], [])
+                    playbooksByActionByPriority[action][priority][ROLES].append( { ROLE: rl[ROLE], SCOPE: rl[SCOPE] } )
         self.referential = playbooksByActionByPriority
         # We don't need to expose this to template, but this can be usefull for debugging
         self.context.model[DATA][PLAYBOOKS_BY_ACTION_BY_PRIORITY] = playbooksByActionByPriority
@@ -89,8 +119,17 @@ class AnsiblePlugin(Plugin):
     def getPriority(self, action):
         return self.referential[action].keys()
 
-    def getTemplates(self, action, priority):
-        return self.referential[action][priority]
+    def getTemplateAsFile(self, action, priority):
+        if action in self.referential and priority in self.referential[action] and PLAYBOOKS in self.referential[action][priority]:
+            return self.referential[action][priority][PLAYBOOKS]
+        else:
+            return []
+    
+    def getTemplateAsString(self, action, priority):
+        if action in self.referential and priority in self.referential[action] and ROLES in self.referential[action][priority]:
+            return ROLE_TMPL.replace("__ACTION__", action).replace("__PRIORITY__", str(priority))
+        else:
+            return []
 
     def getRolesPaths(self, action, priority):
         if ROLES_FOLDERS in self.context.model[SRC]:

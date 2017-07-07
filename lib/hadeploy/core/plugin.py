@@ -57,10 +57,16 @@ class Plugin:
         Return an integer or a list of integer providing the calling priority for a action.
         Returning a list means this plugin wants to be called several times
 
-    getTemplates()
-       Get the ansible playbook template.
+    getTemplateAsFile()
+       Get the ansible playbook template, as a file name
        This snippet will be inserted in the overall playbook built for the action.
+       Can return a single file name, a list of file name, or [] for nothing
        This function can also be overwritten to handle generation of secondary template. See hive, kafka or hbase plugin for example.
+
+    getTemplateAsString()
+       Get the ansible playbook template, as a string
+       This snippet will be inserted in the overall playbook built for the action.
+       Can return a single string, a list of string, or [] for nothing
 
     getRolesPaths():
         Allow to add roles path for Ansible run
@@ -103,9 +109,12 @@ class Plugin:
         else:
             return None
     
-    def getTemplates(self, action, priority):
+    def getTemplateAsFile(self, action, priority):    
         f = os.path.join(self.path, "{0}.yml.jj2".format(action))
-        return [f] if os.path.isfile(f) else []
+        return f if os.path.isfile(f) else []
+
+    def getTemplateAsString(self, action, priority):    
+        return []
 
         
     def getRolesPaths(self, action, priority):

@@ -69,7 +69,7 @@ class UsersPlugin(Plugin):
         groomUsers(self.context)
         groomGroups(self.context)
 
-    def getTemplates(self, action, priority):
+    def getTemplateAsFile(self, action, priority):
         if self.context.toExclude("users"):
             return []
         else:
