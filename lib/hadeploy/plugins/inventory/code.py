@@ -64,8 +64,8 @@ class InventoryPlugin(Plugin):
 
     
     def getSupportedActions(self):
-        """Return list of supported actions. [] means we will be involved in all action. (But do not add anything to an eventual action list)"""
-        return []
+        """Return list of supported actions. ["*"] means we will be involved in all action. (But do not add anything to an eventual action list)"""
+        return ["*"]
 
     def getPriority(self, action):
         return 1300

@@ -104,14 +104,17 @@ class Context:
     def getAllSupportedActions(self):
         actions = set()
         for plugin in self.plugins:
-            actions.update(plugin.getSupportedActions())
+            sas = plugin.getSupportedActions()
+            if len(sas) > 0 and sas[0] != "*":
+                actions.update(sas)
         return actions; 
         
     def getPluginExtForAction(self, action):
         """Retrieve list of plugins for a given action, ordered by priority"""
         pl = []
         for plugin in self.plugins:
-            if len(plugin.getSupportedActions()) == 0 or action in plugin.getSupportedActions():
+            sas = plugin.getSupportedActions()
+            if len(sas) > 0 and sas[0]  == "*" or action in sas:
                 p = plugin.getPriority(action)
                 if isinstance(p, collections.Iterable):
                     for p2 in p:
@@ -140,8 +143,7 @@ class Context:
             rolesPaths = set()
         for pluginExt in pluginsExts:
             paths = pluginExt.plugin.getRolesPaths(action, pluginExt.priority)
-            for p in paths:
-                rolesPaths.update(p)
+            rolesPaths.update(paths)
         self.model[HELPER][ANSIBLE_ROLES_PATHS] = list(rolesPaths)
 
            

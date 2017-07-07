@@ -1,0 +1,24 @@
+
+type: map
+mapping:
+
+  "playbooks_folders":
+    type: "seq"
+    sequence:
+    - type: str
+
+  "roles_folders":
+    type: "seq"
+    sequence:
+    - type: str
+
+        
+  "ansible_playbooks":
+    type: "seq"
+    sequence:
+    - type: map
+      mapping:
+        "playbook": { type: str, required: true }   
+        "action": { type: str, required: true }
+        "priority": { type: int, required: true }
+        

@@ -43,8 +43,8 @@ HOST_BY_NAME="hostByName"
 SSH_USER="ssh_user"
 
 # default plugins list
-#DEFAULT_PLUGINS = [ 'header', 'ansible_inventories', 'inventory', 'users', 'ranger', 'files', 'hdfs', 'hbase', 'hive', 'kafka']
-DEFAULT_PLUGINS = [ 'header', 'inventory', 'users']
+#DEFAULT_PLUGINS = [ 'header', 'ansible_inventories', 'inventory', 'users', 'ranger', 'files', 'hdfs', 'hbase', 'hive', 'kafka', 'playbooks']
+DEFAULT_PLUGINS = [ 'header', 'inventory', 'users', 'playbooks']
 
 # Actions: deploy, remove, halt, launch, reset, report.
 # To other pseudo/internal action:
