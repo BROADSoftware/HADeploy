@@ -1,6 +1,0 @@
-# ----------------------------------------------------------------------------- Grab info for hosts to setup
-
-{{% if data.inventory.hostsToSetup|length > 0 %}}
-- hosts: {{% for h in data.inventory.hostsToSetup%}}{{% if not loop.first %}}:{{% endif %}}{{{h}}}{{%endfor%}} #
-  any_errors_fatal: {{{ src.exit_on_fail }}}
-{{%endif%}}

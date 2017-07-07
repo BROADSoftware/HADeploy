@@ -30,6 +30,10 @@ class Plugin:
         self.context = context
         #logger.debug("Plugin '{0}':  type:'{1}' path:'{2}'".format(name, str(self.__class__), path))
 
+    def __str__(self):
+        return self.name
+    def __repr__(self):
+        return self.name
         
     def onNewSnippet(self, snippetPath):
         """Allow path adjustment
@@ -85,7 +89,7 @@ class Plugin:
         else:
             return None
     
-    def getTemplate(self, action, priority):
+    def getTemplates(self, action, priority):
         """ Get the ansible playbook template.
         
         This snippet will be inserted in the overall playbook built for the action.

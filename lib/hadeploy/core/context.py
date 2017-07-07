@@ -38,6 +38,9 @@ class PluginExt:
     def __init__(self, plugin, priority):
         self.plugin = plugin
         self.priority = priority
+        
+    def __repr__(self):
+        return "{0}({1})".format(self.plugin.name, self.priority)
 
 
 class Context:
@@ -57,12 +60,12 @@ class Context:
             if os.path.isdir(path):
                 codeFile = os.path.join(path, "code.py")
                 if os.path.isfile(codeFile):
-                    logger.debug("Plugin '{0}': Will load code from '{1}'".format(name, codeFile))
+                    ##logger.debug("Plugin '{0}': Will load code from '{1}'".format(name, codeFile))
                     module = imp.load_source(name, codeFile)
                     pluginClass = None
                     for _, obj in inspect.getmembers(module):
                         if inspect.isclass(obj):
-                            logger.debug("Name: {0}  Obj:{1}".format('className', obj))
+                            #logger.debug("Name: {0}  Obj:{1}".format('className', obj))
                             bases =  obj.__bases__
                             for base in bases:
                                 if base == Plugin:
@@ -74,7 +77,7 @@ class Context:
                         plugin = pluginClass(name, path, self)
                         logger.debug("Loaded plugin '{0}' with 'code.py' module  (path:'{1}')".format(name, path))    
                 else:
-                    # Plugin without code
+                    # Plugin without code (Impossible since plugin refactoring. Kept in cases)
                     logger.debug("Loaded plugin '{0}' without 'code.py' module  (path:'{1}')".format(name, path))    
                     plugin = Plugin(name, path, self)    
                 self.plugins.append(plugin)
@@ -84,7 +87,7 @@ class Context:
 
     def groom(self):
         pl = sorted(self.plugins, key=lambda plugin: plugin.getGroomingPriority())
-        logger.debug("Plugin grooming order:{0}".format(str(pl)))
+        logger.debug("Plugin grooming order:{0}".format(pl))
         for plugin in pl:
             plugin.onGrooming()
     
@@ -98,18 +101,18 @@ class Context:
                 schema.schemaMerge(theSchema, schema2)
         return theSchema
 
-    def getAllSupportedAction(self):
+    def getAllSupportedActions(self):
         actions = set()
         for plugin in self.plugins:
             actions.update(plugin.getSupportedActions())
         return actions; 
         
-    def getPluginListForActions(self, action):
+    def getPluginExtForAction(self, action):
         """Retrieve list of plugins for a given action, ordered by priority"""
         pl = []
         for plugin in self.plugins:
-            if len(action.getSupportedActions()) == 0 or action in plugin.getSupportedActions():
-                p = plugin.getPriority()
+            if len(plugin.getSupportedActions()) == 0 or action in plugin.getSupportedActions():
+                p = plugin.getPriority(action)
                 if isinstance(p, collections.Iterable):
                     for p2 in p:
                         pl.append(PluginExt(plugin, p2))
@@ -122,7 +125,7 @@ class Context:
         for pluginExt in pluginExts:
             tmpls = pluginExt.plugin.getTemplates(action, pluginExt.priority)
             if len(tmpls) > 0:
-                output.write("\n# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = PLUGIN {0}:\n\n".format(plugin.name))
+                output.write("\n# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = PLUGIN {0}:\n\n".format(pluginExt.plugin.name))
                 for tmpl in tmpls:
                     f = open(tmpl, 'r')
                     output.write(f.read())
@@ -132,14 +135,14 @@ class Context:
     def builRolesPath(self, action, pluginsExts):
         """Act as an additive way for 'none/all' mode."""
         if ANSIBLE_ROLES_PATHS in self.model[HELPER]:
-            rolesPaths = self.model[HELPER][ANSIBLE_ROLES_PATHS]
+            rolesPaths = set(self.model[HELPER][ANSIBLE_ROLES_PATHS])
         else:
             rolesPaths = set()
         for pluginExt in pluginsExts:
-            paths = pluginExt.plugin.getRolesPaths()
+            paths = pluginExt.plugin.getRolesPaths(action, pluginExt.priority)
             for p in paths:
                 rolesPaths.update(p)
-        self.model[HELPER][ANSIBLE_ROLES_PATHS] = rolesPaths
+        self.model[HELPER][ANSIBLE_ROLES_PATHS] = list(rolesPaths)
 
            
     def checkScope(self, scope):

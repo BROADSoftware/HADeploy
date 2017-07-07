@@ -18,8 +18,7 @@
 import logging
 from hadeploy.core.plugin import Plugin
 import os
-from hadeploy.core.const import PLUGINS_PATHS, SRC, PLUGINS
-from hadeploy.core.plugin import DEFAULT_PLUGINS
+from hadeploy.core.const import PLUGINS_PATHS, SRC, PLUGINS, DEFAULT_PLUGINS
 import hadeploy.core.misc as misc
 
 logger = logging.getLogger("hadeploy.plugins.master")
@@ -39,6 +38,8 @@ class MasterPlugin(Plugin):
                 newList.append(misc.snippetRelocate(snippetPath, p))
             self.context.model[SRC][PLUGINS_PATHS] = newList
 
+    def getPriority(self, action):
+        return 0
 
     # This should be idempotent, as called twice (One on bootstrap, and on on regular case)
     def onGrooming(self):

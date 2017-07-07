@@ -120,17 +120,20 @@ def main():
 
     templator = Templator([os.path.join(mydir, './templates'), context.workingFolder], context.model)
     actions = context.getAllSupportedActions()
+    logger.debug("Supported actions: {0}".format(actions))
     action = param.action
     if action == "none":
-        for action in action:
-            pluginExts = context.getPluginsForActions(action)
+        for action in actions:
+            pluginExts = context.getPluginExtForAction(action)
+            logger.debug("Action: {0} -> plugins: {1}".format(action, pluginExts))
             context.buildTemplate(action, pluginExts)
             context.builRolesPath(action, pluginExts)
             templator.generate("{0}.yml.jj2".format(action), os.path.join(context.workingFolder, "{0}.yml".format(action)))
     else: 
         if not action in actions:
             misc.ERROR("Action {0} not supported. Current configuration only supports {1}".format(action, str(actions)))
-        pluginExts = context.getPluginsForActions(action)
+        pluginExts = context.getPluginExtForAction(action)
+        logger.debug("Action: {0} -> plugins: {1}".format(action, pluginExts))
         context.buildTemplate(action, pluginExts)
         context.builRolesPath(action, pluginExts)
         templator.generate("{0}.yml.jj2".format(action), os.path.join(context.workingFolder, "{0}.yml".format(action)))

@@ -30,7 +30,7 @@ class HeaderPlugin(Plugin):
     def getPriority(self, action):
         return 1100
     
-    def getTemplate(self, action, priority):
+    def getTemplates(self, action, priority):
         """ Get the ansible playbook template. Always the same whatever action is"""
         f = os.path.join(self.path, "common.yml.jj2")
         return [f]
