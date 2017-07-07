@@ -23,8 +23,6 @@ import misc
 logger = logging.getLogger("hadeploy.plugin")
 
 
-
-
 class Plugin:
     """" Plugin base interface
     
@@ -111,6 +109,7 @@ class Plugin:
     
     def getTemplateAsFile(self, action, priority):    
         f = os.path.join(self.path, "{0}.yml.jj2".format(action))
+        logger.debug("Plugin:'{0}'  action:'{1}' => file:'{2}'".format(self.name, action, f))
         return f if os.path.isfile(f) else []
 
     def getTemplateAsString(self, action, priority):    

@@ -22,7 +22,7 @@ from sets import Set
 
 
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DATA,DEFAULT_HDFS_RELAY_CACHE_FOLDER,INVENTORY,HOST_BY_NAME,SCOPE_FILES,SCOPE_HDFS
+from hadeploy.core.const import SRC,DATA,DEFAULT_HDFS_RELAY_CACHE_FOLDER,INVENTORY,HOST_BY_NAME,SCOPE_FILES,SCOPE_HDFS,ACTION_DEPLOY,ACTION_REMOVE
 
 """
     This plugin also prepare data for the HDFS plugin, conditioned by the fact an hdfs_relay is defined
@@ -88,6 +88,15 @@ class FilesPlugin(Plugin):
                 l2.append(misc.snippetRelocate(snippetPath, p))
             model[SRC][LOCAL_TEMPLATES_FOLDERS] = l2
 
+           
+    def getGroomingPriority(self):
+        return 3000     
+ 
+    def getSupportedActions(self):
+        return [ACTION_DEPLOY, ACTION_REMOVE]
+
+    def getPriority(self, action):
+        return 3000 if action == ACTION_DEPLOY else 4000 if action == ACTION_REMOVE else misc.ERROR("Plugin 'Files' called with invalid action: '{0}'".format(action))
 
     def onGrooming(self):
         model = self.context.model
@@ -113,13 +122,13 @@ class FilesPlugin(Plugin):
                     scopeToRemove.append(scope)
             for scope in scopeToRemove:
                 del(model[DATA][FILES][SCOPE_BY_NAME][scope])
-        if(self.context.toExclude(SCOPE_HDFS)):
+        if(self.context.toExclude(SCOPE_HDFS) and HDFS in model[DATA]):
             model[DATA][HDFS][FILES] = []
             model[DATA][HDFS][FOLDERS] = []
             model[DATA][HDFS][TREES] = []
             model[DATA][HDFS][NODE_TO_HDFS_BY_NAME] = {}
         
-        if len(model[DATA][HDFS][NODE_TO_HDFS_BY_NAME]) == 0 and len(model[DATA][HDFS][FILES]) == 0 and len(model[DATA][HDFS][FOLDERS]) == 0 and len(model[DATA][HDFS][TREES]) == 0:
+        if HDFS in model[DATA] and len(model[DATA][HDFS][NODE_TO_HDFS_BY_NAME]) == 0 and len(model[DATA][HDFS][FILES]) == 0 and len(model[DATA][HDFS][FOLDERS]) == 0 and len(model[DATA][HDFS][TREES]) == 0:
             # Optimization for execution time
             if HDFS_RELAY in model[SRC]:
                 del(model[SRC][HDFS_RELAY])

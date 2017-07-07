@@ -17,7 +17,7 @@
 
 import logging
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DATA, DEPLOY_ACTION, REMOVE_ACTION
+from hadeploy.core.const import SRC,DATA, ACTION_DEPLOY, ACTION_REMOVE
 import hadeploy.core.misc as misc
 import os
 
@@ -57,10 +57,10 @@ class UsersPlugin(Plugin):
         if self.context.toExclude("users"):
             return []
         else:
-            return [DEPLOY_ACTION, REMOVE_ACTION]
+            return [ACTION_DEPLOY, ACTION_REMOVE]
 
     def getPriority(self, action):
-        return 2000 if action == DEPLOY_ACTION else 7000 if action == REMOVE_ACTION else misc.ERROR("Plugin Users called with invalid action: '{0}'".format(action))
+        return 2000 if action == ACTION_DEPLOY else 7000 if action == ACTION_REMOVE else misc.ERROR("Plugin 'users' called with invalid action: '{0}'".format(action))
     
     def onGrooming(self):
         if self.context.toExclude("users"):
@@ -73,7 +73,7 @@ class UsersPlugin(Plugin):
         if self.context.toExclude("users"):
             return []
         else:
-            return [os.path.join(self.path, "{0}.yml.jj2".format(action))]
+            return os.path.join(self.path, "{0}.yml.jj2".format(action))
 
 # ---------------------------------------------------- Static functions
 

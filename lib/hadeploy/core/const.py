@@ -44,16 +44,16 @@ SSH_USER="ssh_user"
 
 # default plugins list
 #DEFAULT_PLUGINS = [ 'header', 'ansible_inventories', 'inventory', 'users', 'ranger', 'files', 'hdfs', 'hbase', 'hive', 'kafka', 'ansible']
-DEFAULT_PLUGINS = [ 'header', 'inventory', 'users', 'ansible']
+DEFAULT_PLUGINS = [ 'header', 'inventory', 'ansible_inventories', 'users', 'ansible', 'files', 'hdfs']
 
 # Actions: deploy, remove, halt, launch, reset, report.
 # To other pseudo/internal action:
 # - groom: for grooming 
 # - none: Do nothing, but build all templates, to check errors
 #
-DEPLOY_ACTION="deploy"
-REMOVE_ACTION="remove"
-NONE_ACTION="none"
+ACTION_DEPLOY="deploy"
+ACTION_REMOVE="remove"
+ACTION_NONE="none"
 
 
 SCOPE_ALL="all"

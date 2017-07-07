@@ -21,7 +21,7 @@ import hadeploy.core.misc as misc
 
 
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DATA,HOST_BY_NAME,INVENTORY,SSH_USER,DEFAULT_HDFS_KEYTABS_FOLDER
+from hadeploy.core.const import SRC,DATA,HOST_BY_NAME,INVENTORY,SSH_USER,DEFAULT_HDFS_KEYTABS_FOLDER,ACTION_DEPLOY,ACTION_REMOVE
 
 
 """
@@ -51,9 +51,7 @@ _RELAY_KEYTAB_FOLDER_="_relayKeytabFolder_"
 NODE_KEYTAB_PATH="node_keytab_path"
 _NODE_KEYTAB_FOLDER_="_nodeKeytabFolder_"        
 
-
 HOST="host"
-
 
 class FilesPlugin(Plugin):
     
@@ -72,8 +70,16 @@ class FilesPlugin(Plugin):
                     h[LOCAL_KEYTAB_PATH] = misc.snippetRelocate(snippetPath, h[LOCAL_KEYTAB_PATH])
                 
 
-    def getGroomingDependencies(self):
-        return ['files']
+         
+    def getGroomingPriority(self):
+        return 3500     
+ 
+    def getSupportedActions(self):
+        return [ACTION_DEPLOY, ACTION_REMOVE]
+
+    def getPriority(self, action):
+        return 3500 if action == ACTION_DEPLOY else 3500 if action == ACTION_REMOVE else misc.ERROR("Plugin 'hdfs' called with invalid action: '{0}'".format(action))
+
 
     def onGrooming(self):
         #misc.ensureObjectInMaps(self.context.model[DATA], [HDFS, SCOPE_BY_NAME], {})  # Also performed in file plugin if HDFS_RELAY is defined.

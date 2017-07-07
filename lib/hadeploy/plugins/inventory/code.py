@@ -60,7 +60,7 @@ class InventoryPlugin(Plugin):
                     h[SSH_PRIVATE_FILE_FILE] = misc.snippetRelocate(snippetPath, h[SSH_PRIVATE_FILE_FILE])
             
     def getGroomingPriority(self):
-        return 1300     # We don't care. Will be called before all others
+        return 1300     
 
     
     def getSupportedActions(self):
@@ -70,10 +70,6 @@ class InventoryPlugin(Plugin):
     def getPriority(self, action):
         return 1300
     
-    def getTemplate(self, action, priority):
-        """ No template for this plugin"""
-        return []
-
 
     def onGrooming(self):
         self.context.model[DATA][INVENTORY] = {}

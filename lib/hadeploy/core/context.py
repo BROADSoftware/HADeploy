@@ -127,14 +127,15 @@ class Context:
         output = file(os.path.normpath(os.path.join(self.workingFolder, "{0}.yml.jj2".format(action))), 'w')
         for pluginExt in pluginExts:
             tmplAsFiles = pluginExt.plugin.getTemplateAsFile(action, pluginExt.priority)
-            if not isinstance(tmplAsFiles, collections.Iterable):
+            if isinstance(tmplAsFiles, basestring):
                 tmplAsFiles = [tmplAsFiles]
             tmplAsStrings = pluginExt.plugin.getTemplateAsString(action, pluginExt.priority)
-            if not isinstance(tmplAsStrings, collections.Iterable):
+            if isinstance(tmplAsStrings, basestring):
                 tmplAsStrings = [tmplAsStrings]
             if len(tmplAsFiles) > 0 or len(tmplAsStrings):
                 output.write("\n# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = PLUGIN {0}:\n\n".format(pluginExt.plugin.name))
             for tmpl in tmplAsFiles:
+                #logger.debug("Plugin:'{0}'  action:'{1}' => file:'{2}'".format(pluginExt.plugin.name, action, tmpl))
                 f = open(tmpl, 'r')
                 output.write(f.read())
                 f.close()

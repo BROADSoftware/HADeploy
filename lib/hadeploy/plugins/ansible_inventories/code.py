@@ -56,7 +56,16 @@ class AnsiblePlugin(Plugin):
                 if VAULT_PASSWORD_FILE in inventory:
                     inventory[VAULT_PASSWORD_FILE] = misc.snippetRelocate(snippetPath, inventory[VAULT_PASSWORD_FILE])
 
+    def getGroomingPriority(self):
+        return 1200     # We don't care. Will be called before all others
 
+    def getSupportedActions(self):
+        """Return list of supported actions. ["*"] means we will be involved in all action. (But do not add anything to an eventual action list)"""
+        return ["*"]
+
+    def getPriority(self, action):
+        return 1200
+        
     def onGrooming(self):
         if ANSIBLE_INVENTORIES in self.context.model[SRC]:
             for inventory in self.context.model[SRC][ANSIBLE_INVENTORIES]:
