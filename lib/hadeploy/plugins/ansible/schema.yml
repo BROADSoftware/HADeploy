@@ -18,7 +18,8 @@ mapping:
     sequence:
     - type: map
       mapping:
-        "playbook": { type: str, required: true }   
+        "playbook_file": { type: str, required: false }   
+        "playbook_text": { type: str, required: false }   
         "for_action": { type: str, required: true }
         "priority": { type: int, required: true }
         

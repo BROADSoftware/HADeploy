@@ -22,13 +22,16 @@ from hadeploy.core.const import SRC,DATA,SCOPE_ANSIBLE
 
 ANSIBLE_PLAYBOOKS="ansible_playbooks"
 ANSIBLE_ROLES="ansible_roles"
-PLAYBOOK="playbook"
+PLAYBOOK_FILE="playbook_file"
+PLAYBOOK_TEXT="playbook_text"
 ROLE="role"
 SCOPE="scope"
 FOR_ACTION="for_action"
 PRIORITY="priority"
 
-PLAYBOOKS="playbooks"
+PLAYBOOK_FILES="playbookFiles"
+PLAYBOOK_TEXTS="playbookTexts"
+
 ROLES="roles"
 
 PLAYBOOKS_FOLDERS="playbooks_folders"
@@ -93,11 +96,17 @@ class AnsiblePlugin(Plugin):
                 for pl in src[ANSIBLE_PLAYBOOKS]:
                     action = pl[FOR_ACTION]
                     priority = pl[PRIORITY]
-                    playbook = self.lookupPathInFolderList(pl[PLAYBOOK], PLAYBOOKS_FOLDERS, "playbook")
                     misc.ensureObjectInMaps(playbooksByActionByPriority, [action], {})
                     misc.ensureObjectInMaps(playbooksByActionByPriority[action], [priority], {})
-                    misc.ensureObjectInMaps(playbooksByActionByPriority[action][priority], [PLAYBOOKS], [])
-                    playbooksByActionByPriority[action][priority][PLAYBOOKS].append(playbook)
+                    if PLAYBOOK_FILE in pl:
+                        playbookFile = self.lookupPathInFolderList(pl[PLAYBOOK_FILE], PLAYBOOKS_FOLDERS, "playbook")
+                        misc.ensureObjectInMaps(playbooksByActionByPriority[action][priority], [PLAYBOOK_FILES], [])
+                        playbooksByActionByPriority[action][priority][PLAYBOOK_FILES].append(playbookFile)
+                    elif PLAYBOOK_TEXT in pl:
+                        misc.ensureObjectInMaps(playbooksByActionByPriority[action][priority], [PLAYBOOK_TEXTS], [])
+                        playbooksByActionByPriority[action][priority][PLAYBOOK_TEXTS].append(pl[PLAYBOOK_TEXT])
+                    else:
+                        misc.ERROR("There is at least one ansible_playbook whith neither playbook_text not playbook_file. (action:'{0}', priority:'{1}'".format(action, priority))
             if ANSIBLE_ROLES in src:
                 for rl in src[ANSIBLE_ROLES]:
                     if not self.context.checkScope(rl[SCOPE]):
@@ -120,14 +129,20 @@ class AnsiblePlugin(Plugin):
         return self.referential[action].keys()
 
     def getTemplateAsFile(self, action, priority):
-        if action in self.referential and priority in self.referential[action] and PLAYBOOKS in self.referential[action][priority]:
-            return self.referential[action][priority][PLAYBOOKS]
+        if action in self.referential and priority in self.referential[action] and PLAYBOOK_FILES in self.referential[action][priority]:
+            return self.referential[action][priority][PLAYBOOK_FILES]
         else:
             return []
     
     def getTemplateAsString(self, action, priority):
-        if action in self.referential and priority in self.referential[action] and ROLES in self.referential[action][priority]:
-            return ROLE_TMPL.replace("__ACTION__", action).replace("__PRIORITY__", str(priority))
+        if action in self.referential and priority in self.referential[action]:
+            if PLAYBOOK_TEXTS in self.referential[action][priority]:
+                l = self.referential[action][priority][PLAYBOOK_TEXTS]
+            else:
+                l = []
+            if ROLES in self.referential[action][priority]:
+                l.append(ROLE_TMPL.replace("__ACTION__", action).replace("__PRIORITY__", str(priority)))
+            return l
         else:
             return []
 
