@@ -160,12 +160,12 @@ class Context:
             return False
 
         
-    def toExclude(self, candidate):
-        if candidate in self.excludedScopes:
+    def toExclude(self, scope):
+        if scope in self.excludedScopes:
             return True
         else:
             if(len(self.includedScopes) == 0) or "all" in self.includedScopes:
                 return False
             else:
-                return not candidate in self.includedScopes
+                return not scope in self.includedScopes
             

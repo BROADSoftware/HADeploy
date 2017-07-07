@@ -21,7 +21,7 @@ import os
 import glob
 from hadeploy.core.templator import Templator
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DATA,DEFAULT_TOOLS_FOLDER
+from hadeploy.core.const import SRC,DATA,DEFAULT_TOOLS_FOLDER,SCOPE_KAFKA
 
 logger = logging.getLogger("hadeploy.plugins.kafka")
 
@@ -68,7 +68,7 @@ class KafkaPlugin(Plugin):
 
 
     def onGrooming(self):
-        if self.context.toExclude("kafka"):
+        if self.context.toExclude(SCOPE_KAFKA):
             return
         self.buildHelper()
         misc.ensureObjectInMaps(self.context.model[DATA], [KAFKA], {})
@@ -76,7 +76,7 @@ class KafkaPlugin(Plugin):
         groomKafkaTopics(self.context.model)
     
     def onTemplateGeneration(self):
-        if self.context.toExclude("kafka"):
+        if self.context.toExclude(SCOPE_KAFKA):
             return
         if KAFKA_TOPICS in self.context.model[SRC] and len(self.context.model[SRC][KAFKA_TOPICS]) > 0 :
             templator = Templator([os.path.join(self.path, './helpers/jdctopic')], self.context.model)
@@ -84,13 +84,13 @@ class KafkaPlugin(Plugin):
             templator.generate("desc_untopics.yml.jj2", os.path.join(self.context.workingFolder, "desc_untopics.yml.j2"))
     
     def getInstallTemplates(self):
-        if self.context.toExclude("kafka"):
+        if self.context.toExclude(SCOPE_KAFKA):
             return []
         else:
             return [os.path.join(self.path, "install_kafka_relay.yml.jj2"), os.path.join(self.path, "install.yml.jj2")]
 
     def getRemoveTemplates(self):
-        if self.context.toExclude("kafka"):
+        if self.context.toExclude(SCOPE_KAFKA):
             return []
         else:
             return [os.path.join(self.path, "install_kafka_relay.yml.jj2"), os.path.join(self.path, "remove.yml.jj2")]

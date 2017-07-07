@@ -24,7 +24,7 @@ import copy
 
 
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DATA,DEFAULT_TOOLS_FOLDER
+from hadeploy.core.const import SRC,DATA,DEFAULT_TOOLS_FOLDER,SCOPE_HIVE
 
 logger = logging.getLogger("hadeploy.plugins.hive")
 
@@ -86,7 +86,7 @@ class HBasePlugin(Plugin):
             
             
     def onGrooming(self):
-        if self.context.toExclude("hive"):
+        if self.context.toExclude(SCOPE_HIVE):
             return
         self.buildHelper()
         misc.ensureObjectInMaps(self.context.model[DATA], [HIVE], {})
@@ -96,7 +96,7 @@ class HBasePlugin(Plugin):
         
     
     def onTemplateGeneration(self):
-        if self.context.toExclude("hive"):
+        if self.context.toExclude(SCOPE_HIVE):
             return
         model = self.context.model
         if HIVE_RELAY in model[SRC]:
@@ -134,13 +134,13 @@ class HBasePlugin(Plugin):
             f.close()
                 
     def getInstallTemplates(self):
-        if self.context.toExclude("hive"):
+        if self.context.toExclude(SCOPE_HIVE):
             return []
         else:
             return [os.path.join(self.path, "install_hive_relay.yml.jj2"), os.path.join(self.path, "install.yml.jj2")]
 
     def getRemoveTemplates(self):
-        if self.context.toExclude("hive"):
+        if self.context.toExclude(SCOPE_HIVE):
             return []
         else:
             return [os.path.join(self.path, "install_hive_relay.yml.jj2"), os.path.join(self.path, "remove.yml.jj2")]

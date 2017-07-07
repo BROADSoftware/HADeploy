@@ -22,7 +22,7 @@ from sets import Set
 
 
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DATA,DEFAULT_HDFS_RELAY_CACHE_FOLDER,INVENTORY,HOST_BY_NAME
+from hadeploy.core.const import SRC,DATA,DEFAULT_HDFS_RELAY_CACHE_FOLDER,INVENTORY,HOST_BY_NAME,SCOPE_FILES,SCOPE_HDFS
 
 """
     This plugin also prepare data for the HDFS plugin, conditioned by the fact an hdfs_relay is defined
@@ -106,14 +106,14 @@ class FilesPlugin(Plugin):
         groomTrees(self.context)
         
         # Handle scope exclusion        
-        if self.context.toExclude("files"):
+        if self.context.toExclude(SCOPE_FILES):
             scopeToRemove = []
             for scope in model[DATA][FILES][SCOPE_BY_NAME]:
                 if(self.context.toExclude(scope)):
                     scopeToRemove.append(scope)
             for scope in scopeToRemove:
                 del(model[DATA][FILES][SCOPE_BY_NAME][scope])
-        if(self.context.toExclude("hdfs")):
+        if(self.context.toExclude(SCOPE_HDFS)):
             model[DATA][HDFS][FILES] = []
             model[DATA][HDFS][FOLDERS] = []
             model[DATA][HDFS][TREES] = []

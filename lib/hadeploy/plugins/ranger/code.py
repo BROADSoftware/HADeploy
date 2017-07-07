@@ -17,7 +17,7 @@
 
 import logging
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DATA
+from hadeploy.core.const import SRC,DATA,SCOPE_RANGER
 import hadeploy.core.misc as misc
 import os
 from sets import Set
@@ -112,7 +112,7 @@ class RangerPlugin(Plugin):
         return ['hdfs', 'hbase', 'kafka', 'hive']
 
     def onGrooming(self):
-        if self.context.toExclude("ranger"):
+        if self.context.toExclude(SCOPE_RANGER):
             return
         groomRangerRelay(self.context.model)
         if 'hdfs' in self.context.pluginByName:
@@ -143,13 +143,13 @@ class RangerPlugin(Plugin):
         return theSchema
 
     def getInstallTemplates(self):
-        if self.context.toExclude("ranger"):
+        if self.context.toExclude(SCOPE_RANGER):
             return []
         else:
             return [os.path.join(self.path, "install.yml.jj2")]
 
     def getRemoveTemplates(self):
-        if self.context.toExclude("ranger"):
+        if self.context.toExclude(SCOPE_RANGER):
             return []
         else:
             return [os.path.join(self.path, "remove.yml.jj2")]

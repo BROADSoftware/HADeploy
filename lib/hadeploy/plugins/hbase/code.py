@@ -23,7 +23,7 @@ from hadeploy.core.templator import Templator
 
 
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DATA,DEFAULT_TOOLS_FOLDER
+from hadeploy.core.const import SRC,DATA,DEFAULT_TOOLS_FOLDER,SCOPE_HBASE
 
 logger = logging.getLogger("hadeploy.plugins.hbase")
 
@@ -86,30 +86,31 @@ class HBasePlugin(Plugin):
 
 
     def onGrooming(self):
-        if not self.context.toExclude("hbase"):
-            self.buildHelper()
-            misc.ensureObjectInMaps(self.context.model[DATA], [HBASE], {})
-            groomHbaseRelay(self.context.model)
-            groomHBaseNamespaces(self.context.model)
-            groomHBaseTables(self.context.model)
-            groomHBaseDatasets(self.context.model)
+        if self.context.toExclude(SCOPE_HBASE):
+            return
+        self.buildHelper()
+        misc.ensureObjectInMaps(self.context.model[DATA], [HBASE], {})
+        groomHbaseRelay(self.context.model)
+        groomHBaseNamespaces(self.context.model)
+        groomHBaseTables(self.context.model)
+        groomHBaseDatasets(self.context.model)
 
     
     def onTemplateGeneration(self):
-        if not self.context.toExclude("hbase"):
+        if not self.context.toExclude(SCOPE_HBASE):
             if HBASE_NAMESPACES in self.context.model[SRC] and len(self.context.model[SRC][HBASE_NAMESPACES]) > 0:
                 templator = Templator([os.path.join(self.path, './helpers/jdchtable')], self.context.model)
                 templator.generate("desc_htables.yml.jj2", os.path.join(self.context.workingFolder, "desc_htables.yml.j2"))
                 templator.generate("desc_unhtables.yml.jj2", os.path.join(self.context.workingFolder, "desc_unhtables.yml.j2"))
     
     def getInstallTemplates(self):
-        if self.context.toExclude("hbase"):
+        if self.context.toExclude(SCOPE_HBASE):
             return []
         else:
             return [os.path.join(self.path, "install_hbase_relay.yml.jj2"), os.path.join(self.path, "install.yml.jj2")]
 
     def getRemoveTemplates(self):
-        if self.context.toExclude("hbase"):
+        if self.context.toExclude(SCOPE_HBASE):
             return []
         else:
             return [os.path.join(self.path, "install_hbase_relay.yml.jj2"), os.path.join(self.path, "remove.yml.jj2")]

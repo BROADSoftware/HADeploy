@@ -54,7 +54,10 @@ class UsersPlugin(Plugin):
         return 2000
 
     def getSupportedActions(self):
-        return [DEPLOY_ACTION, REMOVE_ACTION]
+        if self.context.toExclude("users"):
+            return []
+        else:
+            return [DEPLOY_ACTION, REMOVE_ACTION]
 
     def getPriority(self, action):
         return 2000 if action == DEPLOY_ACTION else 7000 if action == REMOVE_ACTION else misc.ERROR("Plugin Users called with invalid action: '{0}'".format(action))

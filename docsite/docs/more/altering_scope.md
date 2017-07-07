@@ -25,6 +25,7 @@ hdfs|Files, Folders and Tree on HDFS.
 hbase|All HBase releted operations (Including Datasets).
 kafka|All Kafka related operations.
 hive|All Hive related operations.
+ansible|All ansible plugin related operation
 ranger|All Ranger related operations.
 
 Plus all the values provided as 'scope' attribute for the [`files`](../plugins_reference/files/files),

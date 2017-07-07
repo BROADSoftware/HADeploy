@@ -17,7 +17,7 @@
 import os
 import hadeploy.core.misc as misc
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DATA
+from hadeploy.core.const import SRC,DATA,SCOPE_ANSIBLE
 
 
 ANSIBLE_PLAYBOOKS="ansible_playbooks"
@@ -30,7 +30,7 @@ ROLES_FOLDERS="roles_folders"
 
 PLAYBOOKS_BY_ACTION_BY_PRIORITY="playbooksByActionByPriority"
 
-class PlaybooksPlugin(Plugin):
+class AnsiblePlugin(Plugin):
     
     def __init__(self, name, path, context):
         Plugin.__init__(self, name, path, context)
@@ -68,15 +68,16 @@ class PlaybooksPlugin(Plugin):
     def onGrooming(self):
         """ Main job is to build a referencial playbookByActionByPriority"""
         playbooksByActionByPriority = {}
-        src = self.context.model[SRC]
-        if ANSIBLE_PLAYBOOKS in src:
-            for pl in src[ANSIBLE_PLAYBOOKS]:
-                action = pl[ACTION]
-                priority = pl[PRIORITY]
-                playbook = self.lookupPathInFolderList(pl[PLAYBOOK], PLAYBOOKS_FOLDERS, "playbook")
-                misc.ensureObjectInMaps(playbooksByActionByPriority, [action], {})
-                misc.ensureObjectInMaps(playbooksByActionByPriority[action], [priority], [])
-                playbooksByActionByPriority[action][priority].append(playbook)
+        if not self.context.toExclude(SCOPE_ANSIBLE):
+            src = self.context.model[SRC]
+            if ANSIBLE_PLAYBOOKS in src:
+                for pl in src[ANSIBLE_PLAYBOOKS]:
+                    action = pl[ACTION]
+                    priority = pl[PRIORITY]
+                    playbook = self.lookupPathInFolderList(pl[PLAYBOOK], PLAYBOOKS_FOLDERS, "playbook")
+                    misc.ensureObjectInMaps(playbooksByActionByPriority, [action], {})
+                    misc.ensureObjectInMaps(playbooksByActionByPriority[action], [priority], [])
+                    playbooksByActionByPriority[action][priority].append(playbook)
         self.referential = playbooksByActionByPriority
         # We don't need to expose this to template, but this can be usefull for debugging
         self.context.model[DATA][PLAYBOOKS_BY_ACTION_BY_PRIORITY] = playbooksByActionByPriority
