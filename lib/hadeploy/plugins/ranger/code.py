@@ -17,7 +17,7 @@
 
 import logging
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DATA,SCOPE_RANGER
+from hadeploy.core.const import SRC,DATA,SCOPE_RANGER,ACTION_DEPLOY,ACTION_REMOVE
 import hadeploy.core.misc as misc
 import os
 from sets import Set
@@ -108,8 +108,21 @@ class RangerPlugin(Plugin):
             if CA_BUNDLE_LOCAL_FILE in self.context.model[SRC][RANGER_RELAY]:
                 self.context.model[SRC][RANGER_RELAY][CA_BUNDLE_LOCAL_FILE] = misc.snippetRelocate(snippetPath, self.context.model[SRC][RANGER_RELAY][CA_BUNDLE_LOCAL_FILE])
             
-    def getGroomingDependencies(self):
-        return ['hdfs', 'hbase', 'kafka', 'hive']
+
+    def getGroomingPriority(self):
+        return 8000
+
+    def getSupportedScopes(self):
+        return [SCOPE_RANGER]        
+
+    def getSupportedActions(self):
+        if self.context.toExclude(SCOPE_RANGER):
+            return []
+        else:
+            return [ACTION_DEPLOY, ACTION_REMOVE]
+
+    def getPriority(self, action):
+        return 2500 if action == ACTION_DEPLOY else 6000 if action == ACTION_REMOVE else misc.ERROR("Plugin 'ranger' called with invalid action: '{0}'".format(action))
 
     def onGrooming(self):
         if self.context.toExclude(SCOPE_RANGER):
@@ -142,17 +155,11 @@ class RangerPlugin(Plugin):
             schema.schemaMerge(theSchema, yaml.load(open(schemaFile)))
         return theSchema
 
-    def getInstallTemplates(self):
+    def getTemplateAsFile(self, action, priority):
         if self.context.toExclude(SCOPE_RANGER):
             return []
         else:
-            return [os.path.join(self.path, "install.yml.jj2")]
-
-    def getRemoveTemplates(self):
-        if self.context.toExclude(SCOPE_RANGER):
-            return []
-        else:
-            return [os.path.join(self.path, "remove.yml.jj2")]
+            return [os.path.join(self.path, "{0}.yml.jj2".format(action))]
 
 # ---------------------------------------------------------------------------- Static function    
 

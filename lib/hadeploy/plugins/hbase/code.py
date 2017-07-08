@@ -23,7 +23,7 @@ from hadeploy.core.templator import Templator
 
 
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DATA,DEFAULT_TOOLS_FOLDER,SCOPE_HBASE
+from hadeploy.core.const import SRC,DATA,DEFAULT_TOOLS_FOLDER,SCOPE_HBASE,ACTION_DEPLOY,ACTION_REMOVE
 
 logger = logging.getLogger("hadeploy.plugins.hbase")
 
@@ -83,7 +83,20 @@ class HBasePlugin(Plugin):
                 model[SRC][HBASE_RELAY][LOCAL_KEYTAB_PATH] = misc.snippetRelocate(snippetPath, model[SRC][HBASE_RELAY][LOCAL_KEYTAB_PATH])
             
 
+    def getGroomingPriority(self):
+        return 4000
 
+    def getSupportedScopes(self):
+        return [SCOPE_HBASE]        
+
+    def getSupportedActions(self):
+        if self.context.toExclude(SCOPE_HBASE):
+            return []
+        else:
+            return [ACTION_DEPLOY, ACTION_REMOVE]
+
+    def getPriority(self, action):
+        return 4000 if action == ACTION_DEPLOY else 3000 if action == ACTION_REMOVE else misc.ERROR("Plugin 'hbase' called with invalid action: '{0}'".format(action))
 
     def onGrooming(self):
         if self.context.toExclude(SCOPE_HBASE):
@@ -96,24 +109,23 @@ class HBasePlugin(Plugin):
         groomHBaseDatasets(self.context.model)
 
     
-    def onTemplateGeneration(self):
+    def buildAuxTemplates(self, action, priority):
         if not self.context.toExclude(SCOPE_HBASE):
             if HBASE_NAMESPACES in self.context.model[SRC] and len(self.context.model[SRC][HBASE_NAMESPACES]) > 0:
                 templator = Templator([os.path.join(self.path, './helpers/jdchtable')], self.context.model)
-                templator.generate("desc_htables.yml.jj2", os.path.join(self.context.workingFolder, "desc_htables.yml.j2"))
-                templator.generate("desc_unhtables.yml.jj2", os.path.join(self.context.workingFolder, "desc_unhtables.yml.j2"))
+                if action == ACTION_DEPLOY:
+                    templator.generate("desc_htables.yml.jj2", os.path.join(self.context.workingFolder, "desc_htables.yml.j2"))
+                elif action == ACTION_REMOVE:
+                    templator.generate("desc_unhtables.yml.jj2", os.path.join(self.context.workingFolder, "desc_unhtables.yml.j2"))
+                else:
+                    pass
     
-    def getInstallTemplates(self):
-        if self.context.toExclude(SCOPE_HBASE):
-            return []
-        else:
-            return [os.path.join(self.path, "install_hbase_relay.yml.jj2"), os.path.join(self.path, "install.yml.jj2")]
 
-    def getRemoveTemplates(self):
+    def getTemplateAsFile(self, action, priority):
         if self.context.toExclude(SCOPE_HBASE):
             return []
         else:
-            return [os.path.join(self.path, "install_hbase_relay.yml.jj2"), os.path.join(self.path, "remove.yml.jj2")]
+            return [os.path.join(self.path, "install_hbase_relay.yml.jj2"), os.path.join(self.path, "{0}.yml.jj2".format(action))]
 
     def buildHelper(self):
         helper = {}
@@ -129,8 +141,6 @@ class HBasePlugin(Plugin):
         helper[HBLOAD_JAR] = os.path.basename(hbloadjars[0])
         misc.ensureObjectInMaps(self.context.model, [HELPER, HBASE], helper)
         
-         
-    
         
         
 # ---------------------------------------------------- Static functions

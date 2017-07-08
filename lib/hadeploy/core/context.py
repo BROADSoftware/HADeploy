@@ -161,6 +161,10 @@ class Context:
             rolesPaths.update(paths)
         self.model[HELPER][ANSIBLE_ROLES_PATHS] = list(rolesPaths)
 
+    def generateAuxTemplates(self, action, pluginExts):
+        for pluginExt in pluginExts:
+            pluginExt.plugin.buildAuxTemplates(action, pluginExt.priority)
+
            
     def checkScope(self, scope):
         l = scope.split(":")

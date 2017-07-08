@@ -138,6 +138,7 @@ def main():
             logger.debug("Action: {0} -> plugins: {1}".format(action, pluginExts))
             context.buildTemplate(action, pluginExts)
             context.builRolesPath(action, pluginExts)
+            context.generateAuxTemplates(action, pluginExts)
             templator.generate("{0}.yml.jj2".format(action), os.path.join(context.workingFolder, "{0}.yml".format(action)))
     else: 
         if not action in actions:
@@ -146,6 +147,7 @@ def main():
         logger.debug("Action: {0} -> plugins: {1}".format(action, pluginExts))
         context.buildTemplate(action, pluginExts)
         context.builRolesPath(action, pluginExts)
+        context.generateAuxTemplates(action, pluginExts)
         templator.generate("{0}.yml.jj2".format(action), os.path.join(context.workingFolder, "{0}.yml".format(action)))
         
 

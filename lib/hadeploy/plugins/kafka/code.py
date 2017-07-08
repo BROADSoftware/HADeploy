@@ -21,7 +21,7 @@ import os
 import glob
 from hadeploy.core.templator import Templator
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DATA,DEFAULT_TOOLS_FOLDER,SCOPE_KAFKA
+from hadeploy.core.const import SRC,DATA,DEFAULT_TOOLS_FOLDER,SCOPE_KAFKA,ACTION_DEPLOY,ACTION_REMOVE
 
 logger = logging.getLogger("hadeploy.plugins.kafka")
 
@@ -66,6 +66,20 @@ class KafkaPlugin(Plugin):
             if LOCAL_KEYTAB_PATH in model[SRC][KAFKA_RELAY]:
                 model[SRC][KAFKA_RELAY][LOCAL_KEYTAB_PATH] = misc.snippetRelocate(snippetPath, model[SRC][KAFKA_RELAY][LOCAL_KEYTAB_PATH])
 
+    def getGroomingPriority(self):
+        return 5000
+
+    def getSupportedScopes(self):
+        return [SCOPE_KAFKA]        
+
+    def getSupportedActions(self):
+        if self.context.toExclude(SCOPE_KAFKA):
+            return []
+        else:
+            return [ACTION_DEPLOY, ACTION_REMOVE]
+
+    def getPriority(self, action):
+        return 5000 if action == ACTION_DEPLOY else 2000 if action == ACTION_REMOVE else misc.ERROR("Plugin 'kafka' called with invalid action: '{0}'".format(action))
 
     def onGrooming(self):
         if self.context.toExclude(SCOPE_KAFKA):
@@ -75,25 +89,23 @@ class KafkaPlugin(Plugin):
         groomKafkaRelay(self.context.model)
         groomKafkaTopics(self.context.model)
     
-    def onTemplateGeneration(self):
+    def buildAuxTemplates(self, action, priority):
         if self.context.toExclude(SCOPE_KAFKA):
             return
         if KAFKA_TOPICS in self.context.model[SRC] and len(self.context.model[SRC][KAFKA_TOPICS]) > 0 :
             templator = Templator([os.path.join(self.path, './helpers/jdctopic')], self.context.model)
-            templator.generate("desc_topics.yml.jj2", os.path.join(self.context.workingFolder, "desc_topics.yml.j2"))
-            templator.generate("desc_untopics.yml.jj2", os.path.join(self.context.workingFolder, "desc_untopics.yml.j2"))
+            if action == ACTION_DEPLOY:
+                templator.generate("desc_topics.yml.jj2", os.path.join(self.context.workingFolder, "desc_topics.yml.j2"))
+            elif action == ACTION_REMOVE:
+                templator.generate("desc_untopics.yml.jj2", os.path.join(self.context.workingFolder, "desc_untopics.yml.j2"))
+            else:
+                pass
     
-    def getInstallTemplates(self):
+    def getTemplateAsFile(self, action, priority):
         if self.context.toExclude(SCOPE_KAFKA):
             return []
         else:
-            return [os.path.join(self.path, "install_kafka_relay.yml.jj2"), os.path.join(self.path, "install.yml.jj2")]
-
-    def getRemoveTemplates(self):
-        if self.context.toExclude(SCOPE_KAFKA):
-            return []
-        else:
-            return [os.path.join(self.path, "install_kafka_relay.yml.jj2"), os.path.join(self.path, "remove.yml.jj2")]
+            return [os.path.join(self.path, "install_kafka_relay.yml.jj2"), os.path.join(self.path, "{0}.yml.jj2".format(action))]
     
     def buildHelper(self):
         helper = {}

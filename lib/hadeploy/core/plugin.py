@@ -72,6 +72,10 @@ class Plugin:
     getRolesPaths():
         Allow to add roles path for Ansible run
         To override if roles path depends on the action, or are outside of the plugins
+        
+    buildAuxTemplates()
+        All auxiliary, private template to be built
+        
     """
 
     def __init__(self, name, path, context):
@@ -120,11 +124,11 @@ class Plugin:
 
     def getTemplateAsString(self, action, priority):    
         return []
-
         
     def getRolesPaths(self, action, priority):
         p = os.path.join(self.path, "roles")
         return [p] if os.path.isdir(p) else []
         
-
+    def buildAuxTemplates(self, action, priority):
+        pass
         

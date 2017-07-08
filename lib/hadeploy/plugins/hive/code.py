@@ -24,7 +24,7 @@ import copy
 
 
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DATA,DEFAULT_TOOLS_FOLDER,SCOPE_HIVE
+from hadeploy.core.const import SRC,DATA,DEFAULT_TOOLS_FOLDER,SCOPE_HIVE,ACTION_DEPLOY,ACTION_REMOVE
 
 logger = logging.getLogger("hadeploy.plugins.hive")
 
@@ -84,6 +84,22 @@ class HBasePlugin(Plugin):
             if LOCAL_KEYTAB_PATH in model[SRC][HIVE_RELAY]:
                 model[SRC][HIVE_RELAY][LOCAL_KEYTAB_PATH] = misc.snippetRelocate(snippetPath, model[SRC][HIVE_RELAY][LOCAL_KEYTAB_PATH])
             
+
+    def getGroomingPriority(self):
+        return 4500
+
+    def getSupportedScopes(self):
+        return [SCOPE_HIVE]        
+
+    def getSupportedActions(self):
+        if self.context.toExclude(SCOPE_HIVE):
+            return []
+        else:
+            return [ACTION_DEPLOY, ACTION_REMOVE]
+
+    def getPriority(self, action):
+        return 4500 if action == ACTION_DEPLOY else 2500 if action == ACTION_REMOVE else misc.ERROR("Plugin 'hive' called with invalid action: '{0}'".format(action))
+
             
     def onGrooming(self):
         if self.context.toExclude(SCOPE_HIVE):
@@ -95,55 +111,53 @@ class HBasePlugin(Plugin):
         groomHiveTables(self.context.model)
         
     
-    def onTemplateGeneration(self):
+    def buildAuxTemplates(self, action, priority):
         if self.context.toExclude(SCOPE_HIVE):
             return
         model = self.context.model
         if HIVE_RELAY in model[SRC]:
-            # -------------------------------------------- For Deploy
-            tgt = { "databases": [], "tables": []}
-            if HIVE_DATABASES in model[SRC]:
-                for db in model[SRC][HIVE_DATABASES]:
-                    db2 = copy.deepcopy(db)
-                    del(db2[NO_REMOVE])
-                    if RANGER_POLICY in db2:
-                        del(db2[RANGER_POLICY])
-                    tgt["databases"].append(db2)
-            if HIVE_TABLES in model[SRC]:
-                for tbl in model[SRC][HIVE_TABLES]:
-                    tbl2 = copy.deepcopy(tbl)
-                    del(tbl2[NO_REMOVE])
-                    if RANGER_POLICY in tbl2:
-                        del(tbl2[RANGER_POLICY])
-                    tgt["tables"].append(tbl2)
-            f = open(os.path.join(self.context.workingFolder, "desc_hive.yml.j2"), "w")
-            yaml.dump(tgt, f)
-            f.close()
-            # -------------------------------------------- For REMOVE
-            tgt = { "databases": [], "tables": []}
-            if HIVE_DATABASES in model[SRC]:
-                for db in model[SRC][HIVE_DATABASES]:
-                    if not db[NO_REMOVE]:
-                        tgt["databases"].append({ NAME: db[NAME], "state": "absent" })
-            if HIVE_TABLES in model[SRC]:
-                for tbl in model[SRC][HIVE_TABLES]:
-                    if not tbl[NO_REMOVE]:
-                        tgt["tables"].append({ NAME: tbl[NAME], DATABASE: tbl[DATABASE], "state": "absent" })
-            f = open(os.path.join(self.context.workingFolder, "desc_unhive.yml.j2"), "w")
-            yaml.dump(tgt, f)
-            f.close()
+            if action == ACTION_DEPLOY:
+                # -------------------------------------------- For Deploy
+                tgt = { "databases": [], "tables": []}
+                if HIVE_DATABASES in model[SRC]:
+                    for db in model[SRC][HIVE_DATABASES]:
+                        db2 = copy.deepcopy(db)
+                        del(db2[NO_REMOVE])
+                        if RANGER_POLICY in db2:
+                            del(db2[RANGER_POLICY])
+                        tgt["databases"].append(db2)
+                if HIVE_TABLES in model[SRC]:
+                    for tbl in model[SRC][HIVE_TABLES]:
+                        tbl2 = copy.deepcopy(tbl)
+                        del(tbl2[NO_REMOVE])
+                        if RANGER_POLICY in tbl2:
+                            del(tbl2[RANGER_POLICY])
+                        tgt["tables"].append(tbl2)
+                f = open(os.path.join(self.context.workingFolder, "desc_hive.yml.j2"), "w")
+                yaml.dump(tgt, f)
+                f.close()
+            elif action == ACTION_REMOVE:
+                # -------------------------------------------- For REMOVE
+                tgt = { "databases": [], "tables": []}
+                if HIVE_DATABASES in model[SRC]:
+                    for db in model[SRC][HIVE_DATABASES]:
+                        if not db[NO_REMOVE]:
+                            tgt["databases"].append({ NAME: db[NAME], "state": "absent" })
+                if HIVE_TABLES in model[SRC]:
+                    for tbl in model[SRC][HIVE_TABLES]:
+                        if not tbl[NO_REMOVE]:
+                            tgt["tables"].append({ NAME: tbl[NAME], DATABASE: tbl[DATABASE], "state": "absent" })
+                f = open(os.path.join(self.context.workingFolder, "desc_unhive.yml.j2"), "w")
+                yaml.dump(tgt, f)
+                f.close()
+            else:
+                pass
                 
-    def getInstallTemplates(self):
+    def getTemplateAsFile(self, action, priority):
         if self.context.toExclude(SCOPE_HIVE):
             return []
         else:
-            return [os.path.join(self.path, "install_hive_relay.yml.jj2"), os.path.join(self.path, "install.yml.jj2")]
-
-    def getRemoveTemplates(self):
-        if self.context.toExclude(SCOPE_HIVE):
-            return []
-        else:
-            return [os.path.join(self.path, "install_hive_relay.yml.jj2"), os.path.join(self.path, "remove.yml.jj2")]
+            return [os.path.join(self.path, "install_hive_relay.yml.jj2"), os.path.join(self.path, "{0}.yml.jj2".format(action))]
     
     def buildHelper(self):
         helper = {}
