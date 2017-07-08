@@ -45,6 +45,9 @@ class Plugin:
         - ...
         If a plugin is dependant of another, It could ensure this later is loaded by checking context.TOBEDEFINED()
 
+    getSupportedScopes()
+        Return list of supported scope.
+
     getSupportedActions()
         Return list of supported actions
         ['*'] means will be involved in all action. (But do not add anything to an eventual action list)
@@ -91,6 +94,9 @@ class Plugin:
     def onGrooming(self):
         pass
 
+    def getSupportedScopes(self):
+        return []        
+
     def getSupportedActions(self):
         return []
 
@@ -120,5 +126,5 @@ class Plugin:
         p = os.path.join(self.path, "roles")
         return [p] if os.path.isdir(p) else []
         
-        
+
         

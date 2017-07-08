@@ -91,6 +91,9 @@ class FilesPlugin(Plugin):
            
     def getGroomingPriority(self):
         return 3000     
+
+    def getSupportedScopes(self):
+        return [SCOPE_FILES,SCOPE_HDFS]        
  
     def getSupportedActions(self):
         return [ACTION_DEPLOY, ACTION_REMOVE]

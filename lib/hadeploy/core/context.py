@@ -108,6 +108,13 @@ class Context:
             if len(sas) > 0 and sas[0] != "*":
                 actions.update(sas)
         return actions; 
+
+    def getAllSupportedScopes(self):
+        scopes = set()
+        for plugin in self.plugins:
+            sss = plugin.getSupportedScopes()
+            scopes.update(sss)
+        return scopes; 
         
     def getPluginExtForAction(self, action):
         """Retrieve list of plugins for a given action, ordered by priority"""
@@ -164,7 +171,7 @@ class Context:
                 return True
             if INVENTORY in self.model[DATA] and HOST_GROUP_BY_NAME in self.model[DATA][INVENTORY] and h in self.model[DATA][INVENTORY][HOST_GROUP_BY_NAME]:
                 return True
-            print("Unknown host or host_group: '{0}'".format(h))
+            #print("Unknown host or host_group: '{0}'".format(h))
             return False
 
         

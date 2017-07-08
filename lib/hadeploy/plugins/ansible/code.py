@@ -74,6 +74,8 @@ class AnsiblePlugin(Plugin):
     def getGroomingPriority(self):
         return 1400     # We don't care. Will be called before all others
 
+    def getSupportedScopes(self):
+        return [SCOPE_ANSIBLE]        
 
     def lookupPathInFolderList(self, path, folderListId, kind):
         if path.startswith("/"):

@@ -17,7 +17,7 @@
 
 import logging
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DATA, ACTION_DEPLOY, ACTION_REMOVE
+from hadeploy.core.const import SRC,DATA, ACTION_DEPLOY, ACTION_REMOVE,SCOPE_USERS
 import hadeploy.core.misc as misc
 import os
 
@@ -53,8 +53,11 @@ class UsersPlugin(Plugin):
     def getGroomingPriority(self):
         return 2000
 
+    def getSupportedScopes(self):
+        return [SCOPE_USERS]        
+
     def getSupportedActions(self):
-        if self.context.toExclude("users"):
+        if self.context.toExclude(SCOPE_USERS):
             return []
         else:
             return [ACTION_DEPLOY, ACTION_REMOVE]
@@ -63,14 +66,14 @@ class UsersPlugin(Plugin):
         return 2000 if action == ACTION_DEPLOY else 7000 if action == ACTION_REMOVE else misc.ERROR("Plugin 'users' called with invalid action: '{0}'".format(action))
     
     def onGrooming(self):
-        if self.context.toExclude("users"):
+        if self.context.toExclude(SCOPE_USERS):
             return
         misc.ensureObjectInMaps(self.context.model[DATA], [USERS, SCOPE_BY_NAME], {})
         groomUsers(self.context)
         groomGroups(self.context)
 
     def getTemplateAsFile(self, action, priority):
-        if self.context.toExclude("users"):
+        if self.context.toExclude(SCOPE_USERS):
             return []
         else:
             return os.path.join(self.path, "{0}.yml.jj2".format(action))

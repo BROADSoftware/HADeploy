@@ -120,6 +120,14 @@ def main():
 
     dump.dumpModel(context)
 
+    # Check scopes validity
+    # NB: We perform this after grooming, even if grooming can rely on scope. Aims is only to detect scopes with typo. 
+    supportedScopes = context.getAllSupportedScopes()
+    scopesToTest = context.excludedScopes.union(context.includedScopes)
+    for scope in scopesToTest:
+        if scope != "all" and scope != "none" and not context.checkScope(scope) and scope not in supportedScopes:   # checkScope(): Scope for target file/folders (hosts and hostgroups)
+            misc.ERROR("Scope '{0}' is not supported!".format(scope))
+    
     templator = Templator([os.path.join(mydir, './templates'), context.workingFolder], context.model)
     actions = context.getAllSupportedActions()
     logger.debug("Supported actions: {0}".format(actions))
