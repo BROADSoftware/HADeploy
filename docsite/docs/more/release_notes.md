@@ -5,6 +5,11 @@
 - Plugins architecture refactoring
 - New plugin: `ansible`, to insert raw Ansible playbook or role in the deployment.
 - scope value are now checked.
+- Every string value can now be encrypted.
+
+#### INCOMPATIBILITY
+
+- The `ranger_relay.admin_password` encrypted with 0.4.0 method must be modified to comply to new, generic syntax.
 
 ## 0.4.1
 
@@ -32,7 +37,7 @@
 - Added `groups` in `host_groups`
 - Previous version was unable to fetch an existing Ansible inventory when it contains some encrypted file(s). 
 The Description of Ansible inventory has been modified (now `ansible_inventories`) to include a password file or user password request.
-- Added a method to encrypt password in ranger_relay.admin_password.   
+- Added a method to encrypt password in `ranger_relay.admin_password`.   
 
 #### DEPRECATION
 

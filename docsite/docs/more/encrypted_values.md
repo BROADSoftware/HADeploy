@@ -1,26 +1,35 @@
 # Encrypted values
 
-Obviously, some value needs to be hidden. This is the case for the ranger admin password.
+Obviously, some value needs to be hidden. This is for example the case for the ranger admin password.
 
 HADeploy will allow such value to be encrypted. This can be achived by provided the values as in the following sample:
 
 ```yaml
-ranger_relay:
-  host: en1
-  ranger_url:  https://ranger.mycluster.mycompany.com:6182
-  ranger_username: admin
-  ranger_password: | 
+vars:
+  ranger_password: |
     $ANSIBLE_VAULT;1.1;AES256
     34396662613462623565323936616330623661623065343033646136643635653430636238613962
     3537343131346462343138343064313937646366363435340a633532366162623838376436366362
     61393033343932303636653066336130616132383463373934396265306364363562613565613165
     6163613739303430650a356136353865623534643237646166393230613933396166663963633538
     3664
+
+ranger_relay:
+  host: en1
+  ranger_url:  https://ranger.mycluster.mycompany.com:6182
+  ranger_username: admin
+  ranger_password: "{{ranger_password}}"  
   ca_bundle_local_file: cert/ranger_mycluster_cert.pem
   ca_bundle_relay_file: /etc/security/certs/ranger_mycluster_cert.pem
 ```
+The encrypted value (See below how to generate it) must be stored to a variable. HADeploy will detect such value and will provide them to Ansible in the appropriate format.
 
-NB: On this version of HADeploy, only the `ranger_password` attribut of [`ranger_relay`](../plugins_reference/ranger/ranger_relay) support this feature.
+Note the way the variable is provided to the ranger_password attribute: `"{{ranger_password}}"` (And not the usual `${ranger_password}`). This form is mandatory, 
+as the variable resolution must be performed by Ansible, not by HADeploy. See [Variables](./under_the_hood/#variables) for more info.
+
+NB: As the encrypted value is directly provided to Ansible, which will decrypt it in memory, HADeploy itself does not perform any decryption. So, there is no risk to have a decrypted, clear value in some intermediate file.
+
+Using this pattern, any value of type string can be encrypted in the depployement file.
 
 ## Encrypting a value
 
@@ -77,8 +86,6 @@ And, of course, don't forget to cleanup the file which contains the password in 
 ```
 rm /tmp/data.txt
 ```
-
-NB: The encrypted value is directly provided to Ansible, which will decrypt it in memory, at run time. In other word, HADeploy itself does not perform decryption. So, there is no risk to have a clear password in some intermediate file.
 
 ## Launching HADeploy with encrypted values
 

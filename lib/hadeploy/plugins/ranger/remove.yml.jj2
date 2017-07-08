@@ -4,18 +4,8 @@
 {{% if src.ranger_relay is defined %}}
 - hosts: {{{ src.ranger_relay.host }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
-
-  vars:
-{{% if src.ranger_relay.ranger_password.startswith("$ANSIBLE_VAULT") %}}
-      rangerPassword: !vault |
-        {{{ src.ranger_relay.ranger_password|indent(8) }}}
-{{% else %}}
-      rangerPassword: "{{{ src.ranger_relay.ranger_password }}}"
-{{% endif %}}
-
   roles:
   - ranger_modules
- 
   tasks:
 
 {{% if src.ranger_relay.ca_bundle_local_file is defined %}}
@@ -31,7 +21,7 @@
       state: absent
       admin_url: "{{{ src.ranger_relay.ranger_url }}}"
       admin_username: "{{{ src.ranger_relay.ranger_username }}}"
-      admin_password: "{{ rangerPassword }}"
+      admin_password: "{{{ src.ranger_relay.ranger_password }}}"
       validate_certs: "{{{ src.ranger_relay.validate_certs }}}"
 {{% if src.ranger_relay.hdfs_service_name is defined %}}
       service_name: "{{{ src.ranger_relay.hdfs_service_name }}}"
@@ -57,7 +47,7 @@
       state: absent
       admin_url: "{{{ src.ranger_relay.ranger_url }}}"
       admin_username: "{{{ src.ranger_relay.ranger_username }}}"
-      admin_password: "{{ rangerPassword }}"
+      admin_password: "{{{ src.ranger_relay.ranger_password }}}"
       validate_certs: "{{{ src.ranger_relay.validate_certs }}}"
 {{% if src.ranger_relay.hbase_service_name is defined %}}
       service_name: "{{{ src.ranger_relay.hbase_service_name }}}"
@@ -86,7 +76,7 @@
       state: absent
       admin_url: "{{{ src.ranger_relay.ranger_url }}}"
       admin_username: "{{{ src.ranger_relay.ranger_username }}}"
-      admin_password: "{{ rangerPassword }}"
+      admin_password: "{{{ src.ranger_relay.ranger_password }}}"
       validate_certs: "{{{ src.ranger_relay.validate_certs }}}"
 {{% if src.ranger_relay.kafka_service_name is defined %}}
       service_name: "{{{ src.ranger_relay.kafka_service_name }}}"
@@ -111,7 +101,7 @@
       state: absent
       admin_url: "{{{ src.ranger_relay.ranger_url }}}"
       admin_username: "{{{ src.ranger_relay.ranger_username }}}"
-      admin_password: "{{ rangerPassword }}"
+      admin_password: "{{{ src.ranger_relay.ranger_password }}}"
       validate_certs: "{{{ src.ranger_relay.validate_certs }}}"
 {{% if src.ranger_relay.hive_service_name is defined %}}
       service_name: "{{{ src.ranger_relay.hive_service_name }}}"
@@ -143,7 +133,7 @@
       state: absent
       admin_url: "{{{ src.ranger_relay.ranger_url }}}"
       admin_username: "{{{ src.ranger_relay.ranger_username }}}"
-      admin_password: "{{ rangerPassword }}"
+      admin_password: "{{{ src.ranger_relay.ranger_password }}}"
       validate_certs: "{{{ src.ranger_relay.validate_certs }}}"
 {{% if src.ranger_relay.yarn_service_name is defined %}}
       service_name: "{{{ src.ranger_relay.yarn_service_name }}}"
