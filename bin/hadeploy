@@ -71,7 +71,8 @@ do
 			shift
 		;;
 		--action)
-			ACTION=$(echo "$2" | tr '[:upper:]' '[:lower:]') 
+			#ACTION=$(echo "$2" | tr '[:upper:]' '[:lower:]')
+			ACTION=$2 
 			shift
 		;;
 		--askVaultPassword)
@@ -110,6 +111,13 @@ done
 
 if [ "$SRC" = "" ]; then echo "At least one --src file must be defined"; usage; exit 1; fi
 if [ "$ACTION" = "" ]; then usage; exit 1; fi
+
+# Patch for compatibility
+if [ "$ACTION" = "DEPLOY" ]; then ACTION=deploy; fi
+if [ "$ACTION" = "REMOVE" ]; then ACTION=remove; fi
+if [ "$ACTION" = "NONE" ]; then ACTION=none; fi
+
+
 
 if [ "$LOGF" = "" ]
 then

@@ -3,6 +3,8 @@
 ## 0.5.0
 
 - Plugins architecture refactoring
+- New plugin: `ansible`, to insert raw Ansible playbook or role in the deployment.
+- scope value are now checked.
 
 ## 0.4.1
 

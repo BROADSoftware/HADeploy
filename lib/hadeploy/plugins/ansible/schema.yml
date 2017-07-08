@@ -23,6 +23,8 @@ mapping:
         "for_action": { type: str, required: true }
         "priority": { type: int, required: true }
         
+  # Note ansible_roles is useless, as playbook_text achieve the same task in a more flexible way.
+  # So, we kept it for now, but will never document it. May be removed in a futur release        
   "ansible_roles":
     type: "seq"
     sequence:

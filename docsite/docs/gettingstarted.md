@@ -424,19 +424,19 @@ Let's assume we have [installed HADeploy](./installation) and have arranged to h
 To launch the deployment, just type:
 
 ```bash
-hadeploy --src app.yml --src infra.yml --action DEPLOY
+hadeploy --src app.yml --src infra.yml --action deploy
 ```
 
 And to perform the reverse action (Fully remove all application from target cluster):
 
 ```bash
-hadeploy --src app.yml --src infra.yml --action REMOVE
+hadeploy --src app.yml --src infra.yml --action remove
 ```
 
 HADeploy command line also allow direct variable definition, with the form --var name=value. For example:
 
 ```bash
-hadeploy --var app_version=0.1.2 --src app.yml --src infra.yml --action DEPLOY
+hadeploy --var app_version=0.1.2 --src app.yml --src infra.yml --action deploy
 ```
 
 Note in this case, the value will be overwritten by the one provided in app.yml. So you will have to remove from the definition file a variable you intend to specify on the command line.

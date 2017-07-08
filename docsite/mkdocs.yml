@@ -10,8 +10,11 @@ pages:
     - include: plugins_reference/core/include.md
     - included_scopes: plugins_reference/core/included_scopes.md
     - vars: plugins_reference/core/vars.md
-  - Ansible_inventory:
-    - ansible_inventory_files: plugins_reference/ansible_inventory/ansible_inventory_files.md
+  - Ansible:
+    - Overview:  plugins_reference/ansible/ansible_overview.md
+    - ansible_playbooks: plugins_reference/ansible/ansible_playbooks.md
+    - playbooks_folders: plugins_reference/ansible/playbooks_folders.md
+    - roles_folders: plugins_reference/ansible/roles_folders.md
   - Ansible_inventories:
     - ansible_inventories: plugins_reference/ansible_inventories/ansible_inventories.md
   - Files:
