@@ -447,6 +447,6 @@ Some other option of the HADeploy command are described in other chapters:
 
 * `--workingFolder`: Refer to [`Under_the_hood`](./more/under_the_hood) chapter.
 
-* `--askVaultPassword` and `--vaultPasswordFile`: Refer to [Encrypted values](../../more/encrypted_values)
+* `--askVaultPassword` and `--vaultPasswordFile`: Refer to [Encrypted variables](./plugins_reference/core/encrypted_vars)
 
 * `--scope` and `--noScope`: Refer to [Altering scope](../../more/altering_scope)

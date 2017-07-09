@@ -1,11 +1,21 @@
-# Encrypted values
+# encrypted_vars
 
-Obviously, some value needs to be hidden. This is for example the case for the ranger admin password.
+## Synopsis
 
-HADeploy will allow such value to be encrypted. This can be achived by provided the values as in the following sample:
+HAdeploy allow most of the variable to be encrypted. This feature rely on the [Ansible Vault](http://docs.ansible.com/ansible/playbooks_vault.html) mechanism.
+
+All encrypted values must be set under one or several `encrypted_vars` token, and their usage must follow a specific pattern. See the example below.
+
+## Attributes
+
+Attributes are variables name.
+
+## Example
+
+A typical use case of encryption is to protect the ranger admin password. Encryption can be achived by provided the values as in the following sample:
 
 ```yaml
-vars:
+encrypted_vars:
   ranger_password: |
     $ANSIBLE_VAULT;1.1;AES256
     34396662613462623565323936616330623661623065343033646136643635653430636238613962
@@ -22,14 +32,13 @@ ranger_relay:
   ca_bundle_local_file: cert/ranger_mycluster_cert.pem
   ca_bundle_relay_file: /etc/security/certs/ranger_mycluster_cert.pem
 ```
-The encrypted value (See below how to generate it) must be stored to a variable. HADeploy will detect such value and will provide them to Ansible in the appropriate format.
 
 Note the way the variable is provided to the ranger_password attribute: `"{{ranger_password}}"` (And not the usual `${ranger_password}`). This form is mandatory, 
-as the variable resolution must be performed by Ansible, not by HADeploy. See [Variables](./under_the_hood/#variables) for more info.
+as the variable resolution must be performed by Ansible, not by HADeploy. See [Variables](../../more/under_the_hood/#variables) for more info.
 
 NB: As the encrypted value is directly provided to Ansible, which will decrypt it in memory, HADeploy itself does not perform any decryption. So, there is no risk to have a decrypted, clear value in some intermediate file.
 
-Using this pattern, any value of type string can be encrypted in the depployement file.
+Using this pattern, most of the values of type string can be encrypted in the depployement file.
 
 ## Encrypting a value
 
@@ -69,7 +78,7 @@ Encryption successful
 
 You will need to provide a Vault password. This is the password you will have to provided later, on each launch of HADeploy.
 
-Now, you may cut and paste the result as your `ranger_relay.ranger_password` value, as shown on the top of this page. And be sure:
+Now, you may cut and paste the result as your `encrypted_vars.ranger_password` value, as shown on the top of this page. And be sure:
 
 * Indentation is the same for all lines.
 * Indentation is only made of space (No tab).

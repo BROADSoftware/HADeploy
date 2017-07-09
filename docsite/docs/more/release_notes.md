@@ -5,7 +5,7 @@
 - Plugins architecture refactoring
 - New plugin: `ansible`, to insert raw Ansible playbook or role in the deployment.
 - scope value are now checked.
-- Every string value can now be encrypted.
+- Added an `encrypted_vars` block to have a more generic encryption capability.
 
 #### INCOMPATIBILITY
 

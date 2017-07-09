@@ -4,6 +4,9 @@ type: map
 mapping:
   "vars":
     type: any
+
+  "encrypted_vars":
+    type: any
   
   "plugins":
     type: "seq"

@@ -6,6 +6,7 @@ pages:
 - "Getting started": gettingstarted.md
 - "Plugins reference":
   - Core:
+    - encrypted_vars: plugins_reference/core/encrypted_vars.md
     - excluded_scopes: plugins_reference/core/excluded_scopes.md
     - include: plugins_reference/core/include.md
     - included_scopes: plugins_reference/core/included_scopes.md
@@ -60,7 +61,6 @@ pages:
   - "Altering scope": more/altering_scope.md
   - "Secured cluster": more/secured_cluster.md
   - "YAML tricks": more/yaml_tricks.md
-  - "Encrypted values": more/encrypted_values.md
   - "Release notes": more/release_notes.md
 
 #theme: readthedocs

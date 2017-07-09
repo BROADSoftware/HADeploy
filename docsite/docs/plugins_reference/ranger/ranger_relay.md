@@ -14,7 +14,7 @@ Name | req? |	Description
 host|yes|From which host these commands will be launched. Typically, an edge node in the cluster. But may be a host outside the cluster.
 ranger_url|yes|The Ranger base URL to access Ranger API. Same host:port as the Ranger Admin GUI. Typically: <br>`http://myranger.server.com:6080`<br>or<br>`https://myranger.server.com:6182`
 ranger_username|yes|The user name to log on the Ranger Admin. Must have enough rights to manage policies
-ranger_password|yes|The password associated with the admin_username. May be encrypted. Refer to [encrypted values](../../more/encrypted_values)
+ranger_password|yes|The password associated with the admin_username. May be encrypted. Refer to [encrypted variables](../core/encrypted_vars)
 validate_certs|no|Useful if Ranger Admin connection is using SSL. If no, SSL certificates will not be validated. This should only be used on personally controlled sites using self-signed certificates.<br>Default: `yes`
 ca_bundle_relay_file|no|Useful if Ranger Admin connection is using SSL. Allow to specify a CA_BUNDLE file, a file that contains root and intermediate certificates to validate the Ranger Admin certificate.<br>In its simplest case, it could be a file containing the server certificate in .pem format. This file will be looked up on the relay host system, on which this module will be executed.
 ca_bundle_local_file|no|Same as above, except this file will be looked up locally, relative to the main file. It will be copied on the relay host at the location defined by ca_bundle_relay_file
@@ -35,17 +35,20 @@ ranger_relay:
 ```
 A more secure configuration, with https, certificate validation and encrypted password.
 ```yaml
-ranger_relay:
-  host: en1
-  ranger_url:  https://ranger.mycluster.mycompany.com:6182
-  ranger_username: admin
-  ranger_password: | 
+encrypted_vars:
+  ranger_password: |
     $ANSIBLE_VAULT;1.1;AES256
     34396662613462623565323936616330623661623065343033646136643635653430636238613962
     3537343131346462343138343064313937646366363435340a633532366162623838376436366362
     61393033343932303636653066336130616132383463373934396265306364363562613565613165
     6163613739303430650a356136353865623534643237646166393230613933396166663963633538
     3664
+
+ranger_relay:
+  host: en1
+  ranger_url:  https://ranger.mycluster.mycompany.com:6182
+  ranger_username: admin
+  ranger_password: "{{ranger_password}}"  
   ca_bundle_local_file: cert/ranger_mycluster_cert.pem
   ca_bundle_relay_file: /etc/security/certs/ranger_mycluster_cert.pem
 ```
@@ -61,7 +64,7 @@ The offending line appears to be:
 ```
 
 
-More detail on how to encrypt a value and providing a password on executuion at [encrypted values](../../more/encrypted_values)
+More detail on how to encrypt a value and providing a password on executuion at [encrypted variables](../core/encrypted_vars)
 
 ## Simple CA_BUNDLE
  

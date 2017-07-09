@@ -18,14 +18,15 @@
 import logging
 from hadeploy.core.plugin import Plugin
 import os
-from hadeploy.core.const import PLUGINS_PATHS, SRC, PLUGINS, DEFAULT_PLUGINS,VARS,ENCRYPTED_VARS,DATA
+from hadeploy.core.const import PLUGINS_PATHS, SRC, PLUGINS, DEFAULT_PLUGINS
 import hadeploy.core.misc as misc
 
 logger = logging.getLogger("hadeploy.plugins.master")
 
+ENCRYPTED_VARS="encrypted_vars"
+
 class MasterPlugin(Plugin):
   
-    
     def __init__(self, name, path, context):
         Plugin.__init__(self, name, path, context)
 
@@ -50,15 +51,11 @@ class MasterPlugin(Plugin):
         model[SRC][PLUGINS_PATHS].append(os.path.normpath(os.path.join(os.path.dirname(__file__), "../../plugins")))
         if not PLUGINS in model[SRC]:
             model[SRC][PLUGINS] = DEFAULT_PLUGINS
-        # ---------------------------- Put encrypted vars aside
-        misc.ensureObjectInMaps(model[DATA], [ENCRYPTED_VARS], {})
-        toDel = []
-        for k, v in model[SRC][VARS].iteritems():
-            if isinstance(v, basestring)  and  v.startswith("$ANSIBLE_VAULT"):
-                model[DATA][ENCRYPTED_VARS][k] = v
-                toDel.append(k)
-        for k in toDel:
-            del(model[SRC][VARS][k])
+        # ---------------------------- Check encrypted vars
+        if ENCRYPTED_VARS in model[SRC]:
+            for k, v in model[SRC][ENCRYPTED_VARS].iteritems():
+                if not (isinstance(v, basestring)  and  v.startswith("$ANSIBLE_VAULT")):
+                    misc.ERROR("Encrypted variable '{0}' does not seems to provide a valid encrypted value".format(k))                
             
 
 

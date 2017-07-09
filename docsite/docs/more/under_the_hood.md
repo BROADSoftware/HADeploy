@@ -39,7 +39,7 @@ This is the variable notation used during the rendering of step 6. This will all
 
 This is the standard variable notation used by Ansible. HADeploy will not resolve such variables, passing them as is to Ansible playbook. So they will be resolved by Ansible in step 7.
 
-This form need generaly to be quoted (`"{{my_variable}}"`). It must also be used for [encrypted values](./encrypted_values)
+This form need generaly to be quoted (`"{{my_variable}}"`). It must also be used for [encrypted values](../plugins_reference/core/encrypted_vars)
 
 ### Variable relationship
 
