@@ -1,8 +1,9 @@
-{{% for k, v in src.vars.iteritems() %}}
-{{% if v is string and v.startswith("$ANSIBLE_VAULT") %}}
+
+{{{ src.vars | to_nice_yaml }}}
+
+{{% for k, v in data.encryptedVars.iteritems() %}}
 {{{k}}}: !vault |
     {{{ v|indent(4) }}}
 {{% else %}}
 {{{k}}}: {{{ v }}}
-{{% endif %}}
 {{% endfor %}}

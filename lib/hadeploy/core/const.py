@@ -21,6 +21,7 @@ DATA = "data"
 HELPER = "helper"
 
 VARS = "vars"
+ENCRYPTED_VARS="encryptedVars"
 
 PLUGINS_PATHS = "plugins_paths"
 PLUGINS = "plugins"
