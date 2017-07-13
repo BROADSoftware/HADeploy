@@ -2,7 +2,7 @@
 
 ## Version
 
-The lastest stable version of HADeploy is `0.5.1`.
+The lastest stable version of HADeploy is **`0.5.1`**.
 
 ## Prerequisite
 
@@ -13,6 +13,8 @@ HADeploy can be installed on a Linux system, or on a MAC OS X workstation
 ### Ansible
 
 HADeploy internally use [Ansible](http://docs.ansible.com/ansible/). If it is not already installed, you can install it independantly, or let HADeploy install it automatically.
+
+NB: HADeploy require at least **Ansible version 2.3.0** 
 
 ### Virtual environnement
  
@@ -43,8 +45,15 @@ sudo yum install -y python-pip
 If Ansible is not already installed, you must ensure several required package are present. For example, on RHEL/CentOS7:
 
 ```bash
-sudo yum install -y python-devel openssl-devel
+sudo yum install -y python-devel openssl-devel gcc
 ```
+
+We strongly adivise you to ensure you have the latest `pip` version:
+
+```bash
+pip install --upgrade pip
+```
+
 Then, you can install HADeploy:
 
 ```bash
@@ -55,6 +64,8 @@ Or simply
 pip install HADeploy
 ```
 If you are in a virtual environment
+
+> If you encounter any trouble during these last steps, again, be sure you have the latest pip version, as stated above. 
 
 You are now ready to used HADeploy from this workstation.
 
@@ -79,7 +90,7 @@ If you are in a virtual environment
 
 You are now ready to used HADeploy from this workstation.
 
-> Do not use easy_install to install HADeploy directly.
+> Do NOT use `easy_install` to install HADeploy directly.
 
 ## Install from source GIT repository.
 
