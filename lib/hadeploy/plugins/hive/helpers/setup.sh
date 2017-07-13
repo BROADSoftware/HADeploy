@@ -23,6 +23,11 @@ JDCHIVE_VERSION="0.1.1"
 
 if [ ! -f $MYDIR/jdchive/jdchive_uber-${JDCHIVE_VERSION}.jar ]
 then
+	echo 
+	echo "******************** Will download jdchive_uber-${JDCHIVE_VERSION}.jar"
+	echo 
 	curl -L https://github.com/BROADSoftware/jdchive/releases/download/v${JDCHIVE_VERSION}/jdchive_uber-${JDCHIVE_VERSION}.jar -o $MYDIR/jdchive/jdchive_uber-${JDCHIVE_VERSION}.jar
+else
+	echo "-------------------- jdchive_uber-${JDCHIVE_VERSION}.jar already downloaded"
 fi
 

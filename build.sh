@@ -15,9 +15,8 @@ rm -rf build/*
 # pip install -i https://testpypi.python.org/pypi HADeploy
 # (Does not works, due to dependencies version pb)
 
- # To upload to pypi
- #
- # twine register dist/HADeploy-0.5.0rc1-py2-none-any.whl
- # twine register dist/HADeploy-0.5.0rc1.tar.gz
- # twine upload dist/*
-
+#
+# To upload to pypi
+# twine upload dist/*
+ 
+# Ref: https://packaging.python.org/tutorials/distributing-packages/#uploading-your-project-to-pypi

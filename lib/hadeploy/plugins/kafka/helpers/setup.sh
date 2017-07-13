@@ -23,7 +23,12 @@ JDCTOPIC_VERSION="0.2.0"
 
 if [ ! -f $MYDIR/jdctopic/jdctopic_uber-${JDCTOPIC_VERSION}.jar ]
 then
+	echo 
+	echo "******************** Will download jdctopic_uber-${JDCTOPIC_VERSION}.jar"
+	echo 
 	curl -L https://github.com/Kappaware/jdctopic/releases/download/v${JDCTOPIC_VERSION}/jdctopic_uber-${JDCTOPIC_VERSION}.jar -o $MYDIR/jdctopic/jdctopic_uber-${JDCTOPIC_VERSION}.jar
+else
+	echo "-------------------- jdctopic_uber-${JDCTOPIC_VERSION}.jar already downloaded"
 fi
 
 

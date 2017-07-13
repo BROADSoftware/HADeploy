@@ -21,6 +21,7 @@ MYDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 for stp in $MYDIR/*/helpers/setup.sh
 do
+	#echo "$stp:"
 	. $stp
 done
 

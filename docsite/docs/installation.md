@@ -2,7 +2,7 @@
 
 ## Version
 
-The lastest stable version of HADeploy is `0.5.0`.
+The lastest stable version of HADeploy is `0.5.1`.
 
 ## Prerequisite
 
