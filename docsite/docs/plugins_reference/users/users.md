@@ -17,7 +17,7 @@ group|no|Set the user primary group.
 groups|no|Puts the user in this comma-delimited list of groups..
 system|no|Is this a System user.  (Note this can't be changed after user creation).<br>Default: `no`
 managed|no|Boolean: Does HADeploy manage this user?<br>If `false`, no action will be performed on it (except `authorized_keys` and `can_sudo_to` handling), but a failure will the triggered if it does not exists.<br>Default: `yes` 
-scope|no|al|On which host does this group be created? May be:<ul><li>A single host name</li><li>A single host_group name</li><li>Several hosts or host_groups, separated by the character ':'</li></ul>Default: `all`
+scope|no|On which host does this user will be created? May be:<ul><li>A single host name</li><li>A single host_group name</li><li>Several hosts or host_groups, separated by the character ':'</li></ul>Default: `all`
 can\_sudo_to|no|A comma separated list of account this user will be able to 'sudo' into. May also be 'ALL'. Note this will be applied even if `managed == no`.
 create_home|no|Unless set to no, a home directory will be made for the user when the account is created or if the home directory does not exist.<br>Default: `yes`
 password|no|Set the user's password to this crypted value.

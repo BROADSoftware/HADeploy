@@ -26,12 +26,12 @@ The infrastructure is described in a file with the following content:
 # ------------------------------------- Infrastructure part
 
 hosts:
-# A first host expressed the standart yaml style
+# A first host expressed the standard yaml style
 - name: sr
   ssh_host: sr.cluster1.mydomain.com
   ssh_user: root
   ssh_private_key_file: "keys/build_key" 
-# And this others using more consise yaml 'flow style'
+# And these others using more consise yaml 'flow style'
 - { name: en, ssh_host: en.cluster1.mydomain.com, ssh_user: root, ssh_private_key_file: "keys/build_key" }
 - { name: nn1, ssh_host: nn1.cluster1.mydomain.com, ssh_user: root, ssh_private_key_file: "keys/build_key" }
 - { name: nn2, ssh_host: nn2.cluster1.mydomain.com, ssh_user: root, ssh_private_key_file: "keys/build_key" }
@@ -382,7 +382,7 @@ Now, let's dig inside this file. Here is what it could look like:
 ```
 zookeeper.connect={% for host in groups['zookeepers'] %}{% if not loop.first %},{% endif %}{{  hostvars[host]['ansible_fqdn'] }}:2181{% endfor %}${zookeeper.zkpath}
 
-zookeeper.connection.timeout.ms=${ zookeeper.connection_timeout }
+zookeeper.connection.timeout.ms={{ zookeeper.connection_timeout }}
 ```
 
 Here we see how we can refer to the `zookeeper.connection_timeout` variable we defined in a previous `vars:` block.

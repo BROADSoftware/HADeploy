@@ -66,7 +66,7 @@ But an Ansible playbook also allow definition of individual task. For example, t
 
 ## Action and priority
 
-As we wan see, playbook is associated to an action. For example, the first example playbook will be involved only when HADeploy will be launched  with `--action deploy`, as stated by the `for_action` attribute.
+As we can see, a playbook is associated to an action. For example, the first example playbook will be involved only when HADeploy will be launched  with `--action deploy`, as stated by the `for_action` attribute.
 
 Also, for this action, a `priority` is defined. This will allow to control when the playbook will be executed, regarding other plugins. More information on this in [Execution order](../../more/execution_order/#plugin-priority)
 
