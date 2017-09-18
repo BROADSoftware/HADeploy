@@ -42,6 +42,8 @@ HOSTS_TO_SETUP="hostsToSetup"
 
 EXIT_ON_FAIL="exit_on_fail"
 
+ANSIBLE_MODEL="ansible_model"
+
 class InventoryPlugin(Plugin):
     
     def __init__(self, name, path, context):
@@ -78,9 +80,37 @@ class InventoryPlugin(Plugin):
         handleHostOverrides(self.context.model)
         handleHostGroupOverrides(self.context.model)
         check(self.context.model)
+        prepareAnsibleModel(self.context.model)
         misc.setDefaultInMap(self.context.model[SRC], EXIT_ON_FAIL, True)
+        
 
 # ---------------------------------------------------- Static functions
+
+def prepareAnsibleModel(model):
+    if HOSTS in model[SRC]:
+        for host in model[SRC][HOSTS]:
+            ansibleModel = {}
+            for key in host:
+                # Handle name change in Ansible 2.0
+                if key == "ssh_host" or key == "host":
+                    ansibleModel["ansible_host"] = host[key]
+                elif key == "ssh_port" or key == "port":
+                    ansibleModel["ansible_port"] = host[key]
+                elif key == "ssh_user" or key == "user":
+                    ansibleModel["ansible_user"] = host[key]
+                # Fix a delta between HADeploy and Ansible attributes
+                elif key == "ssh_password":
+                    ansibleModel["ansible_ssh_pass"] = host[key]
+                # Skip attributes not intended to Ansible
+                elif key == "name" or key == "force_setup":
+                    pass 
+                else:
+                    ansibleModel["ansible_" + key] = host[key]
+                # Force become if needed
+                if "ansible_become_user" in ansibleModel or "ansible_become_pass" in ansibleModel or "ansible_become_method" in ansibleModel or "ansible_become_exe" in ansibleModel:
+                    ansibleModel["ansible_become"] = True
+            host[ANSIBLE_MODEL] = ansibleModel
+                    
 
 def buildHostDicts(model):
     # logger.debug("Build host dicts")
@@ -159,18 +189,21 @@ def handleHostOverrides(model):
                     misc.ERROR("Trying to override unexisting host: '{0}'".format(hover[NAME]))
                                 
 def handleHostOverride(host, overrider):
-    if SSH_HOST in overrider:
-        host[SSH_HOST] = overrider[SSH_HOST]
-    if SSH_USER in overrider:
-        host[SSH_USER] = overrider[SSH_USER]
-    if SSH_PRIVATE_FILE_FILE in overrider:
-        host[SSH_PRIVATE_FILE_FILE] = overrider[SSH_PRIVATE_FILE_FILE]
-    if SSH_PASSWORD in overrider:
-        host[SSH_PASSWORD] = overrider[SSH_PASSWORD]
-    if SSH_EXTRA_ARGS in overrider:
-        host[SSH_EXTRA_ARGS] = overrider[SSH_EXTRA_ARGS]
-    if FORCE_SETUP in overrider:
-        host[FORCE_SETUP] = overrider[FORCE_SETUP]
+    for key in overrider:
+        if key != "name":
+            host[key] = overrider[key]
+#    if SSH_HOST in overrider:
+#        host[SSH_HOST] = overrider[SSH_HOST]
+#    if SSH_USER in overrider:
+#        host[SSH_USER] = overrider[SSH_USER]
+#    if SSH_PRIVATE_FILE_FILE in overrider:
+#        host[SSH_PRIVATE_FILE_FILE] = overrider[SSH_PRIVATE_FILE_FILE]
+#    if SSH_PASSWORD in overrider:
+#        host[SSH_PASSWORD] = overrider[SSH_PASSWORD]
+#    if SSH_EXTRA_ARGS in overrider:
+#        host[SSH_EXTRA_ARGS] = overrider[SSH_EXTRA_ARGS]
+#    if FORCE_SETUP in overrider:
+#        host[FORCE_SETUP] = overrider[FORCE_SETUP]        
     # A loop to detect and delete empty elements
     todel = []
     for k in host:

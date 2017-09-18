@@ -2,6 +2,7 @@
 
 ## 0.5.1
 
+- Added almost all Ansible configuration variables for `hosts` and `host_override` in inventory.
 
 ## 0.5.0
 

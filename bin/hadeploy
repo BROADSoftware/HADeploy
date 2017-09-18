@@ -79,7 +79,12 @@ do
 			VAULT_PASSWORD="--ask-vault-pass"
 		;;
 		--vaultPasswordFile)
-			VAULT_PASSWORD="--vault-password-file ${CWD}/$2"
+			if [[ "${2:0:1}" == / || "${2:0:2}" == ~[/a-z] ]]
+			then
+				VAULT_PASSWORD="--vault-password-file $2"
+			else
+    			VAULT_PASSWORD="--vault-password-file ${CWD}/$2"
+			fi
 			shift
 		;;
 		--v)

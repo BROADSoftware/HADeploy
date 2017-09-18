@@ -12,8 +12,33 @@ Attributes are variables name.
 
 ## Example
 
-A typical use case of encryption is to protect the ranger admin password. Encryption can be achived by provided the values as in the following sample:
+A typical use case of encryption is to protect the`ssh_password` in a host definition. Encryption can be achived by provided the values as in the following sample:
 
+```yaml
+
+encrypted_vars:
+  john_password: |
+    $ANSIBLE_VAULT;1.1;AES256
+    65626166653134326137613232323336373139393036383532333863623630363662303531306539
+    6637306363343836376633353439656634613638643031660a636238323663353337313333663438
+    30306234306463626338663637623563393735653237323833323064316561653237393538303762
+    6363326232656461310a656631386135663764386565366566633537633665646562626236393462
+    6231
+
+- name: sr
+  ssh_host: sr.cluster1.mydomain.com
+  ssh_user: root
+  ssh_password: "{{john_password}}"
+
+```
+Note the way the variable is provided to the ranger_password attribute: `"{{john_password}}"` (And not the usual `${john_password}`). This form is mandatory, 
+as the variable resolution must be performed by Ansible, not by HADeploy. See [Variables](../../more/under_the_hood/#variables) for more info.
+
+NB: As the encrypted value is directly provided to Ansible, which will decrypt it in memory, HADeploy itself does not perform any decryption. So, there is no risk to have a decrypted, clear value in some intermediate file.
+
+Using this pattern, most of the values of type string can be encrypted in the depployement file.
+
+Another use case of encryption is to protect the ranger admin password in the `ranger_relay` definition:
 ```yaml
 encrypted_vars:
   ranger_password: |
@@ -33,12 +58,6 @@ ranger_relay:
   ca_bundle_relay_file: /etc/security/certs/ranger_mycluster_cert.pem
 ```
 
-Note the way the variable is provided to the ranger_password attribute: `"{{ranger_password}}"` (And not the usual `${ranger_password}`). This form is mandatory, 
-as the variable resolution must be performed by Ansible, not by HADeploy. See [Variables](../../more/under_the_hood/#variables) for more info.
-
-NB: As the encrypted value is directly provided to Ansible, which will decrypt it in memory, HADeploy itself does not perform any decryption. So, there is no risk to have a decrypted, clear value in some intermediate file.
-
-Using this pattern, most of the values of type string can be encrypted in the depployement file.
 
 ## Encrypting a value
 

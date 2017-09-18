@@ -115,7 +115,10 @@ def populateModelFromInventory(model, inventory):
             for key in host.vars:
                 if key.startswith('ansible_'):
                     key2 = key[len('ansible_'):].encode('utf8')
-                    h[key2] = host.vars[key].encode('utf8')
+                    if isinstance(host.vars[key], basestring):
+                        h[key2] = host.vars[key].encode('utf8')
+                    else:
+                        h[key2] = host.vars[key]
                     # ssh_private_key_file may be relative to source inventory file. Set it absolute
                     if key2 == SSH_PRIVATE_FILE_FILE:
                         p = h[key2]
