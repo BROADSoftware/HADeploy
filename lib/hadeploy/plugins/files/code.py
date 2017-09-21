@@ -67,6 +67,21 @@ _TSRC_="_tsrc_"
 
 NODE_TO_HDFS_FLAG="_nodeToHdfs_"
 
+
+MAVEN_REPOSITORIES="maven_repositories"
+
+MAVEN_REPO_BY_NAME="mavenRepoByName"
+
+_REPO_ = "_repo_"
+_GROUP_ID_ = "_groupId_"
+_ARTIFACT_ID_ = "_artifactId_"
+_VERSION_ = "_version_"
+TIMEOUT="timeout"
+_EXTENSION_="_extension_"
+WILL_USER_MAVEN_REPO = "willUseMavenRepo"    
+_CLASSIFIER_="_classifier_"    
+
+
 logger = logging.getLogger("hadeploy.plugins.files")
 
 class FilesPlugin(Plugin):
@@ -113,6 +128,7 @@ class FilesPlugin(Plugin):
             misc.ensureObjectInMaps(model[DATA], [HDFS, CACHEFOLDERS], Set())
         if HDFS_RELAY in model[SRC]:
             misc.setDefaultInMap(model[SRC][HDFS_RELAY], CACHE_FOLDER, DEFAULT_HDFS_RELAY_CACHE_FOLDER)
+        groomMavenRepositories(self.context)
         groomFolders(self.context)
         groomFiles(self.context)
         groomTrees(self.context)
@@ -135,10 +151,27 @@ class FilesPlugin(Plugin):
             # Optimization for execution time
             if HDFS_RELAY in model[SRC]:
                 del(model[SRC][HDFS_RELAY])
+        setWillUseMavenRepo(model)
         
-    
-
+        
+            
 # ---------------------------------------------------- Static functions
+
+        
+def setWillUseMavenRepo(model):        
+    # Set a flag for scope including maven_repository, as we will need specific lxml package.
+    for _, scope in (model[DATA][FILES][SCOPE_BY_NAME]).iteritems():
+        scope[WILL_USER_MAVEN_REPO] = False
+        for f in scope[FILES]:
+            if _REPO_ in f:
+                scope[WILL_USER_MAVEN_REPO] = True
+    model[DATA][HDFS][WILL_USER_MAVEN_REPO] = False
+    for f in model[DATA][HDFS][FILES]:
+        if _REPO_ in f:
+            model[DATA][HDFS][WILL_USER_MAVEN_REPO] = True
+        
+        
+            
 
 def ensureScope(model, scope):
     root = model[DATA][FILES][SCOPE_BY_NAME]
@@ -152,8 +185,6 @@ def ensureHdfsScope(model, scope):
     if not scope in root:
         misc.ensureObjectInMaps(root, [scope, FILES], [])
         misc.ensureObjectInMaps(root, [scope, TREES], [])
-
-
 
 def groomFolders(context):
     model = context.model
@@ -177,8 +208,6 @@ def groomFiles(context):
     if FILES in model[SRC]:
         for f in model[SRC][FILES]:
             misc.setDefaultInMap(f, NO_REMOVE, False)
-            misc.setDefaultInMap(f, DEST_NAME,  os.path.basename(f[FSRC]))
-            f[_TARGET_] = os.path.normpath(os.path.join(f[DEST_FOLDER], f[DEST_NAME]))
             if f[FSRC].startswith('file://'):
                 groomFileFiles(f, model)
             elif f[FSRC].startswith('http://') or  f[FSRC].startswith('https://'):
@@ -187,6 +216,8 @@ def groomFiles(context):
                 groomTmplFiles(f, model)
             elif f[FSRC].startswith('node://'):
                 groomNodeToHdfsFiles(f, model)
+            elif f[FSRC].startswith('mvn://'):
+                groomMavenFiles(f, model)
             else:
                 misc.ERROR("Files: {0} is not a valid form for 'src' attribute. Unknown scheme".format(f[FSRC]))
             if f[SCOPE] == HDFS:
@@ -215,6 +246,8 @@ def groomNodeToHdfsFiles(f, model):
 
 # Simpler to handle this here than in hdfs plugin
 def groomNodeToHdfsFilesOrTrees(f, model):
+    misc.setDefaultInMap(f, DEST_NAME,  os.path.basename(f[FSRC]))
+    f[_TARGET_] = os.path.normpath(os.path.join(f[DEST_FOLDER], f[DEST_NAME]))
     src = f[FSRC][len("node://"):]
     p = src.find("/")
     if p != -1:
@@ -241,6 +274,8 @@ def manglePath(folder):
 
 
 def groomFileFiles(f, model):
+    misc.setDefaultInMap(f, DEST_NAME,  os.path.basename(f[FSRC]))
+    f[_TARGET_] = os.path.normpath(os.path.join(f[DEST_FOLDER], f[DEST_NAME]))
     path = f[FSRC][len('file://'):] 
     f[_DISPLAY_SRC_] = path
     if not path.startswith("/"):
@@ -250,10 +285,14 @@ def groomFileFiles(f, model):
     f[_SRC_] = path
 
 def groomHttpFiles(f, model):
+    misc.setDefaultInMap(f, DEST_NAME,  os.path.basename(f[FSRC]))
+    f[_TARGET_] = os.path.normpath(os.path.join(f[DEST_FOLDER], f[DEST_NAME]))
     misc.setDefaultInMap(f, VALIDATE_CERTS, True)
     misc.setDefaultInMap(f, FORCE_BASIC_AUTH, False)
 
 def groomTmplFiles(f, model):
+    misc.setDefaultInMap(f, DEST_NAME,  os.path.basename(f[FSRC]))
+    f[_TARGET_] = os.path.normpath(os.path.join(f[DEST_FOLDER], f[DEST_NAME]))
     path = f[FSRC][len('tmpl://'):] 
     f[_DISPLAY_SRC_] = path
     if not path.startswith("/"):
@@ -385,6 +424,44 @@ def groomNodeToHdfsTrees(tree, model):
         tree[_TSRC_] = tree[_TSRC_][:-1]
     if not tree[_SRC_].endswith("/"):
         tree[_SRC_] = tree[_SRC_] + "/"
+
+
+# --------------------------------- Maven stuff    
+
+def groomMavenRepositories(context):
+    model = context.model
+    misc.ensureObjectInMaps(model[DATA], [MAVEN_REPO_BY_NAME], {} )
+    if MAVEN_REPOSITORIES in model[SRC]:
+        for repo in model[SRC][MAVEN_REPOSITORIES]:
+            model[DATA][MAVEN_REPO_BY_NAME][repo["name"]] = repo
+            misc.setDefaultInMap(repo, VALIDATE_CERTS, True)
+            misc.setDefaultInMap(repo, TIMEOUT, 10)
+            
+
+def groomMavenFiles(f, model):
+    path = f[FSRC][len('mvn://'):]
+    src = path.split("/")
+    if len(src) < 4 or len(src) > 6:
+        misc.ERROR("'{0}' is not a valid maven path. Must be in the form mvn://maven_repo/group_id/artifact_id/version[classifier[/extension]]".format(f[SRC]))
+    if src[0] not in model[DATA][MAVEN_REPO_BY_NAME]:
+        misc.ERROR("'{0}' is not a defined maven repository".format(src[0]))
+    f[_REPO_] = src[0]
+    f[_GROUP_ID_] = src[1]
+    f[_ARTIFACT_ID_] = src[2]
+    f[_VERSION_] = src[3]
+    if len(src) >= 5:
+        if len(src[4]) > 0:
+            f[_CLASSIFIER_] = src[4]
+        if len(src) >= 6:
+            f[_EXTENSION_] = src[5]
+        else:
+            f[_EXTENSION_] = "jar"
+    else:
+        f[_EXTENSION_] = "jar"
+    misc.setDefaultInMap(f, DEST_NAME, "{0}-{1}{2}.{3}".format(f[_ARTIFACT_ID_], f[_VERSION_], ("-" + f[_CLASSIFIER_]) if _CLASSIFIER_ in f else "", f[_EXTENSION_]))
+    f[_TARGET_] = os.path.normpath(os.path.join(f[DEST_FOLDER], f[DEST_NAME]))
+
     
+
 
     

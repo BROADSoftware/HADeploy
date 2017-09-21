@@ -76,4 +76,17 @@ mapping:
         "file_mode": { type: str, required: true }
         "folder_mode": { type: str, required: true }
         "no_remove": { type: bool, required: false }    # Default to false
+
+
+  "maven_repositories":
+    type: "seq"
+    sequence:
+    - type: map
+      mapping:
+        "name": { type: str, required: true }
+        "url": { type: str, required: true }
+        "username": { type: str, required: false }
+        "password": { type: str, required: false }
+        "timeout": { type: int, required: false } # Default to 10
+        "validate_certs": { type: bool, required: false }   # For https:// Default to true 
         

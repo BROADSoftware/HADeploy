@@ -19,6 +19,10 @@
 {{% if scope.files|length > 0 or  scope.trees|length > 0 %}}
 - hosts: {{{ scopeName }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
+{{% if scope.willUseMavenRepo %}}
+  roles:
+    - lxml
+{{% endif %}}
   tasks:
 {{% for file in scope.files %}}
 {{% if file.src.startswith("file://") %}}
@@ -30,6 +34,28 @@
 {{% elif file.src.startswith("tmpl://")  %}}
   - name: Copy template file '{{{file._displaySrc_}}}' to '{{{file._target_}}}'
     template: src={{{file._src_}}} dest={{{file._target_}}} owner={{{file.owner}}} group={{{file.group}}} mode="{{{file.mode}}}" 
+{{% elif file.src.startswith("mvn://")  %}}
+  - name: Fetch artifact '{{{file._groupId_}}}:{{{file._artifactId_}}}:{{{file._version_}}}' '(classifier:{{{file._classifier_|default("none")}}}  extension:{{{file._extension_}}}) from repository '{{{file._repo_}}}'
+    maven_artifact:
+      repository_url: "{{{ data.mavenRepoByName[file._repo_].url }}}"
+      group_id:  "{{{ file._groupId_ }}}"
+      artifact_id: "{{{ file._artifactId_ }}}" 
+      version:  "{{{ file._version_ }}}"
+      extension:  "{{{ file._extension_ }}}"
+{{% if file._classifier_ is defined %}}
+      classifier: "{{{ file._classifier_ }}}"
+{{% endif %}}      
+      dest: "{{{ file._target_ }}}"
+      timeout: "{{{ data.mavenRepoByName[file._repo_].timeout }}}"
+      validate_certs: {{{ data.mavenRepoByName[file._repo_].validate_certs }}}
+{{% if data.mavenRepoByName[file._repo_].username is defined %}}
+      username: "{{{data.mavenRepoByName[file._repo_].username}}}"      
+{{% endif %}}      
+{{% if data.mavenRepoByName[file._repo_].password is defined %}}
+      password: "{{{data.mavenRepoByName[file._repo_].password}}}"      
+{{% endif %}}      
+  - name: Adjust rights on "{{{ file._target_ }}}"
+    file: path="{{{ file._target_ }}}" owner={{{file.owner}}} group={{{file.group}}} mode="{{{file.mode}}}" 
 {{% endif %}}
 
 {{% endfor %}}

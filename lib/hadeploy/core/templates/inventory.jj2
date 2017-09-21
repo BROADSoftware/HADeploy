@@ -1,6 +1,6 @@
 {{% if src.hosts is defined %}}
 {{% for host in src.hosts -%}}
-	{{{ host.name }}}{{% for key in host.ansible_model %}}   {{{key}}}={{{host.ansible_model[key]}}}{{% endfor %}}
+	{{{ host.name }}}{{% for key in host._ansible_model_ %}}   {{{key}}}={{{host._ansible_model_[key]}}}{{% endfor %}}
 	{{{""}}}
 {{% endfor %}}
 {{%endif%}}

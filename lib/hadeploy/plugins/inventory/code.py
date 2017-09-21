@@ -42,7 +42,7 @@ HOSTS_TO_SETUP="hostsToSetup"
 
 EXIT_ON_FAIL="exit_on_fail"
 
-ANSIBLE_MODEL="ansible_model"
+ANSIBLE_MODEL="_ansible_model_"
 
 class InventoryPlugin(Plugin):
     
