@@ -21,6 +21,7 @@ pages:
   - Files:
     - files: plugins_reference/files/files.md
     - folders: plugins_reference/files/folders.md
+    - maven_repositories: plugins_reference/files/maven_repositories.md
     - local_files_folders: plugins_reference/files/local_files_folders.md
     - local_templates_folders: plugins_reference/files/local_templates_folders.md
     - trees: plugins_reference/files/trees.md

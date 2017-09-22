@@ -2,14 +2,15 @@
 
 ## 0.5.1
 
-- Added almost all Ansible configuration variables for `hosts` and `host_override` in inventory.
+- Added almost all existing Ansible configuration variables for `hosts` and `host_override` in inventory.
+- Added maven artifact download, using ['maven_repositories`](../plugins_reference/files/maven_repositories) definition.
 
 ## 0.5.0
 
 - Plugins architecture refactoring
-- New plugin: `ansible`, to insert raw Ansible playbook or role in the deployment.
+- New plugin: [`ansible`](../plugins_reference/ansible/ansible_overview), to insert raw Ansible playbook or role in the deployment.
 - scope value are now checked.
-- Added an `encrypted_vars` block to have a more generic encryption capability.
+- Added an [`encrypted_vars`](../plugins_reference/core/encrypted_vars) block to have a more generic encryption capability.
 
 #### INCOMPATIBILITY
 

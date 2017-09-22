@@ -70,7 +70,7 @@ host_overrides:
   ssh_password: "{{deployer_password}}"
   ssh_private_key_file: ''
 ```
-Refer to [encrypted variables](../core/encrypted_vars)
+Refer to [encrypted variables](../core/encrypted_vars) for more information.
 
 ## Tricks
 

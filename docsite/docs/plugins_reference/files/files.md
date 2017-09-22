@@ -10,7 +10,7 @@ Each item of the list has the following attributes:
 
 Name | req? | 	Description
 --- | ---  | ---
-src|yes|Source file. May be in the form:<ul><li>`http://...` for fetching the file from a remote http server</li><li>`https://...` for fetching the file from a remote https server</li><li>`file://...` for fetching the file locally, from one of the folder provided by the [`local_files_folders:`](./local_files_folders) list</li><li>`file:///...` for fetching the file locally, with a absolute path on the HADeploy node.</li><li>`tmpl://...`  Source is a template, which will be processed by Ansible/Jinja2 mechanism. Template will be fetched locally, from one of the folders provided by the [`local_templates_folders:`](./local_templates_folders) list</li><li>`tmpl:///...` Same as above, except source template will be fetched from the HADeploy node with an absolute path.</li><li>`node://<node>/...` This mode is only relevant when scope is hdfs. It allows grabbing a file from one node of the cluster and pushes it to HDFS. Useful when, for example, some application require configuration files from client nodes to be pushed on HDFS. Path must be absolute.</li></ul>Note that in this last case, if kerberos is enabled on the cluster, one must provide credential for the operation to be successful. See [`source_host_credentials`](../hdfs/source_host_credentials) definition is this reference part.
+src|yes|Source file, in the form `<scheme>://....`. See below for the possible `scheme` values.
 scope|yes|On which target does this file be deployed? May be:<ul><li>A single `host` name</li><li>A single `host_group` name</li><li>Several `hosts` or `host_groups`, separated by the character ':'</li><li>the `hdfs` token</li></ul>
 dest_folder|yes|Target folder. Must exists
 dest_name|no|The target file name.<br>Default: The basename of src
@@ -22,15 +22,28 @@ force_basic_auth|no|Boolean; In case of `src: http://...` or `src: https://...`.
 url_username|no|String; In case of `src: http://...` or `src: https://...`. The username for use in HTTP basic authentication. This parameter can be used without url_password for sites that allow empty passwords.
 url_password|no|String; In case of `src: http://...` or `src: https://...`. The password for use in HTTP basic authentication
 no_remove|no|Boolean: Prevent this file to be removed when HADeploy will be used in REMOVE mode.<br>Default: `no`
-ranger_policy|no|Definition of Apache Ranger policy bound to this file. <br>Parameters are same as [`hdfs_ranger_policies`](../ranger/hdfs_ranger_policies) items, excepts than `paths` should not be defined as automatically set to the file path, and the policy is not recursive by default.<br>Scope must be hdfs.<br>The policy name can be explicitly defined. Otherwise, a name will be generated as `"_<targetPath>_"`.<br>See example below for more information.
+ranger\_policy|no|Definition of Apache Ranger policy bound to this file. <br>Parameters are same as [`hdfs_ranger_policies`](../ranger/hdfs_ranger_policies) items, excepts than `paths` should not be defined as automatically set to the file path, and the policy is not recursive by default.<br>Scope must be hdfs.<br>The policy name can be explicitly defined. Otherwise, a name will be generated as `"_<targetPath>_"`.<br>See example below for more information.
 
 > NB: `src:` must not reference a folder. To create a folder, use the `folders` definition and to copy a folder content, use the `trees` definition.
+
+## Schemes
+
+Name | Description
+--- |--- 
+`file://...` |For fetching the file locally, from one of the folder provided by the [`local_files_folders:`](./local_files_folders) list.
+`file:///...` |For fetching the file locally, with a absolute path on the HADeploy node.
+`tmpl://...` |Source is a template, which will be processed by Ansible/Jinja2 mechanism. Template will be fetched locally, from one of the folders provided by the [`local_templates_folders:`](./local_templates_folders) list.
+`tmpl:///...` |Same as above, except source template will be fetched from the HADeploy node with an absolute path.
+`http://...` |For fetching the file from a remote http server.
+`https://...` |For fetching the file from a remote https server.
+`node://<node>/...` |This mode is only relevant when scope is hdfs. It allows grabbing a file from one node of the cluster and pushes it to HDFS. Useful when, for example, some application require configuration files from client nodes to be pushed on HDFS.<br>Path must be absolute.<br>If kerberos is enabled on the cluster, a source host credential must be provide for the operation to be successful. See [`source_host_credentials`](../hdfs/source_host_credentials) definition is this reference part.
+`mvn://...` |For fetching file from a maven artifact repository. Must be in the form:<br>`mvn://<mavenRepositoryName>/<groupId>/<artifactId>/<version>[/<classifier>[/<extension>]]`, where:<ul><li>`mavenRepositoryName` is the name of the repository definition in the [`maven_repositories`](./maven_repositories) list</li><li>`<groupId>` is the artifact's group id.</li><li>`<artifactId>` is the artifact id.</li><li>`<version>` is the artifact version. Or `latest`.</li><li>`<classifier>` is an optional classifier, such as `docs`, `sources`, ... Default: empty (`//`)</li><li>`<extension>` is an optionnal extention. Default to `jar`</li></ul>  
 
 ## Example
 
 ```yaml
 files:
-- src: https://my.repository.server/repo/myapp/myapp-0.2.2.jar
+- src: https://my.download.server/repo/myapp/myapp-0.2.2.jar
   scope: egde_nodes
   dest_folder: /opt/myapp
   owner: root
@@ -51,4 +64,22 @@ files:
       - read
       - write
 ```
+
+Fectching from a public maven repository:
+
+```yaml
+maven_repositories:
+- name: maven2
+  url: "http://repo1.maven.org/maven2/"
+  
+files:  
+- scope: egde_nodes
+  src: "mvn://maven2/org.slf4j/slf4j-api/1.7.21"
+  dest_folder: "/opt/myapp/lib" 
+  owner: root
+  group: root
+  mode: "0644" 
+  
+```
+
 
