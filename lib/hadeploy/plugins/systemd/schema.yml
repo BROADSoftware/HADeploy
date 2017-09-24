@@ -12,10 +12,11 @@ mapping:
         "name": { type: str, required: true }        
         "scope": { type: str, required: true }
         "unit_file": { type: str, required: true }
-        "managers": 
-          type: "seq"
-          sequence:
-          - type: str
+        "user": { type: str, required: false }
+        "no_remove": { type: bool, required: false }    # Default to false
+        "enabled": { type: bool, required: false } # Start on boot ? Default true
+        "state": { type: str, required: false } # started/stopped/current . Default: current
+        "action_on_notify": { type: str, required: false } # restart/reload/none. Default restart
         
         
         

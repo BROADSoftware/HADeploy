@@ -1,0 +1,23 @@
+
+
+
+# ------------------------------------------------------------------------------ Handle systemd stuff
+
+{{% for scopeName, scope in data.systemd.scopeByName.iteritems() %}}
+- hosts: {{{ scopeName }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
+  tasks:
+{{% for unit in scope %}}
+  - name: stop {{{unit.name}}} service
+    systemd: name={{{ unit.name }}}.service state=stopped enabled=false
+    failed_when: false
+  - name: Remove file '/usr/lib/systemd/system/{{{unit.name}}}.service'
+    file: path=/usr/lib/systemd/system/{{{unit.name}}}.service state=absent 
+    notify: 
+    - reload service file
+{{% endfor %}}
+  handlers:
+  - name: reload service file
+    command: "systemctl daemon-reload"
+{{% endfor %}}
+

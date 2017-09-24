@@ -14,6 +14,3 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with HADeploy.  If not, see <http://www.gnu.org/licenses/>.
-
-
-# This file to allow others modules (systemd) to import some stuff

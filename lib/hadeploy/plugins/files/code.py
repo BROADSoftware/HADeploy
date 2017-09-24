@@ -80,7 +80,12 @@ TIMEOUT="timeout"
 _EXTENSION_="_extension_"
 WILL_USER_MAVEN_REPO = "willUseMavenRepo"    
 _CLASSIFIER_="_classifier_"    
+SYSTEMD_NOTIFICATIONS="systemdNotifications"
 
+
+NOTIFY="notify"
+SYSTEMD_UNITS="systemd_units"
+NAME="name"
 
 logger = logging.getLogger("hadeploy.plugins.files")
 
@@ -152,7 +157,7 @@ class FilesPlugin(Plugin):
             if HDFS_RELAY in model[SRC]:
                 del(model[SRC][HDFS_RELAY])
         setWillUseMavenRepo(model)
-        
+        setServiceNotifications(model)        
         
             
 # ---------------------------------------------------- Static functions
@@ -169,9 +174,28 @@ def setWillUseMavenRepo(model):
     for f in model[DATA][HDFS][FILES]:
         if _REPO_ in f:
             model[DATA][HDFS][WILL_USER_MAVEN_REPO] = True
+
+
+
+def lookupSystemdUnit(model, unitName):
+    if SYSTEMD_UNITS in model[SRC]:
+        for unit in model[SRC][SYSTEMD_UNITS]:
+            if unit[NAME] == unitName:
+                return unit
+    else:
+        return None
+
         
-        
-            
+def setServiceNotifications(model):
+    # Set a list of notification handler to setup per scope
+    for _, scope in (model[DATA][FILES][SCOPE_BY_NAME]).iteritems():
+        misc.ensureObjectInMaps(scope, [SYSTEMD_NOTIFICATIONS], {})
+        for f in scope[FILES]:
+            if NOTIFY in f:
+                unit = lookupSystemdUnit(model, f[NOTIFY])
+                if unit == None:
+                    misc.ERROR("Files: '{0}': There is no systemd service named '{1}'".format(f[FSRC], f[NOTIFY]))
+                scope[SYSTEMD_NOTIFICATIONS][f[NOTIFY]] = unit
 
 def ensureScope(model, scope):
     root = model[DATA][FILES][SCOPE_BY_NAME]
@@ -280,8 +304,11 @@ def groomFileFiles(f, model):
     f[_DISPLAY_SRC_] = path
     if not path.startswith("/"):
         path = lookupInLocalFiles(path, model)
+    else:
+        if not os.path.exists(path):
+            misc.ERROR("'{0}' does not exists".format(path))
     if os.path.isdir(path):
-        misc.ERROR("{0} is a folder. Use 'trees' block to copy a folder in a recursive way".format(f[FSRC]))
+        misc.ERROR("File '{0}' is a folder. Use 'trees' block to copy a folder in a recursive way".format(f[FSRC]))
     f[_SRC_] = path
 
 def groomHttpFiles(f, model):
@@ -297,13 +324,16 @@ def groomTmplFiles(f, model):
     f[_DISPLAY_SRC_] = path
     if not path.startswith("/"):
         path = lookupInLocalTemplates(path, model)
+    else:
+        if not os.path.exists(path):
+            misc.ERROR("'{0}' does not exists".format(path))
     if os.path.isdir(path):
-        misc.ERROR("Files: {0} is is a folder. Can't be a template source. Use 'trees' block to copy a folder in a recursive way".format(f[FSRC]))
+        misc.ERROR("Files: '{0}' is is a folder. Can't be a template source. Use 'trees' block to copy a folder in a recursive way".format(f[FSRC]))
     f[_SRC_] = path
 
 def lookupInLocalFiles(path, model):
     if LOCAL_FILES_FOLDERS not in model[SRC]:
-        misc.ERROR("Missing 'local_files_folders' definition while some files.src are not absolute")
+        misc.ERROR("Missing 'local_files_folders' definition while some files://... definition are not absolute")
     for ff in model[SRC][LOCAL_FILES_FOLDERS]:
         p = os.path.normpath(os.path.join(ff, path))
         if os.path.exists(p):
@@ -313,7 +343,7 @@ def lookupInLocalFiles(path, model):
 
 def lookupInLocalTemplates(path, model):
     if LOCAL_TEMPLATES_FOLDERS not in model[SRC]:
-        misc.ERROR("Missing 'local_templates_folders' definition while some templates are not absolute")
+        misc.ERROR("Missing 'local_templates_folders' definition while some tmpl://... definition are not absolute")
     for ff in model[SRC][LOCAL_TEMPLATES_FOLDERS]:
         p = os.path.normpath(os.path.join(ff, path))
         if os.path.exists(p):

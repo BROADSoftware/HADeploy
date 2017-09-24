@@ -28,12 +28,21 @@
 {{% if file.src.startswith("file://") %}}
   - name: Copy file '{{{file._displaySrc_}}}' to '{{{file._target_}}}'
     copy: src={{{file._src_}}} dest={{{file._target_}}} owner={{{file.owner}}} group={{{file.group}}} mode="{{{file.mode}}}" 
+{{% if file.notify is defined %}}
+    notify: reload_unit_{{{file.notify}}}
+{{% endif %}}     
 {{% elif file.src.startswith("http://") or file.src.startswith("https://") %}}
   - name: Download '{{{file.src}}}' to '{{{file._target_}}}'
     get_url: url={{{file.src}}} dest={{{file._target_}}} owner={{{file.owner}}} group={{{file.group}}} mode="{{{file.mode}}}" validate_certs={{{file.validate_certs}}} force_basic_auth={{{file.force_basic_auth }}} {{% if file.url_username is defined %}}url_username={{{file.url_username}}}{{%endif%}} {{% if file.url_password is defined %}}url_password={{{file.url_password}}}{{%endif%}}
+{{% if file.notify is defined %}}
+    notify: reload_unit_{{{file.notify}}}
+{{% endif %}}     
 {{% elif file.src.startswith("tmpl://")  %}}
   - name: Copy template file '{{{file._displaySrc_}}}' to '{{{file._target_}}}'
     template: src={{{file._src_}}} dest={{{file._target_}}} owner={{{file.owner}}} group={{{file.group}}} mode="{{{file.mode}}}" 
+{{% if file.notify is defined %}}
+    notify: reload_unit_{{{file.notify}}}
+{{% endif %}}     
 {{% elif file.src.startswith("mvn://")  %}}
   - name: Fetch artifact '{{{file._groupId_}}}:{{{file._artifactId_}}}:{{{file._version_}}}' '(classifier:{{{file._classifier_|default("none")}}}  extension:{{{file._extension_}}}) from repository '{{{file._repo_}}}'
     maven_artifact:
@@ -53,7 +62,10 @@
 {{% endif %}}      
 {{% if data.mavenRepoByName[file._repo_].password is defined %}}
       password: "{{{data.mavenRepoByName[file._repo_].password}}}"      
-{{% endif %}}      
+{{% endif %}}     
+{{% if file.notify is defined %}}
+    notify: reload_unit_{{{file.notify}}}
+{{% endif %}}     
   - name: Adjust rights on "{{{ file._target_ }}}"
     file: path="{{{ file._target_ }}}" owner={{{file.owner}}} group={{{file.group}}} mode="{{{file.mode}}}" 
 {{% endif %}}
@@ -83,6 +95,33 @@
 {{% endif %}}
 {{% endif %}}
 {{% endfor %}}
+
+{{% if scope.systemdNotifications|length > 0 %}}
+{{% for unitName, unit in scope.systemdNotifications.iteritems() %}}
+  - name: Get current state for '{{{ unit.name }}}
+    command: systemctl is-active {{{ unit.name }}}.service
+    register: unit_{{{ unit.name }}}
+    changed_when: false
+    failed_when: false
+{{% endfor %}}
+  handlers:
+{{% for unitName, unit in scope.systemdNotifications.iteritems() %}}
+{{% if unit.action_on_notify == "restart" %}}
+  - name: Restart {{{unit.name}}} service
+    systemd: name={{{ unit.name }}}.service state=restarted
+{{% elif unit.action_on_notify == "reload" %}}
+  - name: Reload {{{unit.name}}} service
+    systemd: name={{{ unit.name }}}.service state=reloaded
+{{% else %}}
+  - name: Notify {{{unit.name}}} service
+    debug: 
+      msg="Service {{{unit.name}}} may need a restart as some configuration has changed."
+{{% endif %}}
+    listen: "reload_unit_{{{unit.name}}}"
+    when: unit_{{{ unit.name }}}.rc == 0
+{{% endfor %}}
+{{% endif %}}
+
 
 {{%endif%}}
 {{% endfor %}}

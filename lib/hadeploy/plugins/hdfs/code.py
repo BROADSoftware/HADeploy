@@ -53,7 +53,7 @@ _NODE_KEYTAB_FOLDER_="_nodeKeytabFolder_"
 
 HOST="host"
 
-class FilesPlugin(Plugin):
+class HdfsPlugin(Plugin):
     
     def __init__(self, name, path, context):
         Plugin.__init__(self, name, path, context)
