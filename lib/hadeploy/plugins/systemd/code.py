@@ -19,7 +19,7 @@ import logging
 import hadeploy.core.misc as misc
 import os
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DATA,SCOPE_SYSTEMD,ACTION_DEPLOY,ACTION_REMOVE
+from hadeploy.core.const import SRC,DATA,SCOPE_SYSTEMD,ACTION_DEPLOY,ACTION_REMOVE,ACTION_START,ACTION_STOP
 from hadeploy.plugins.files.code import lookupInLocalFiles,lookupInLocalTemplates
 from sets import Set
 
@@ -70,10 +70,19 @@ class FilesPlugin(Plugin):
         return [SCOPE_SYSTEMD]        
  
     def getSupportedActions(self):
-        return [ACTION_DEPLOY, ACTION_REMOVE]
+        return [ACTION_DEPLOY, ACTION_REMOVE,ACTION_START,ACTION_STOP]
 
     def getPriority(self, action):
-        return 3200 if action == ACTION_DEPLOY else 3800 if action == ACTION_REMOVE else misc.ERROR("Plugin 'systemd' called with invalid action: '{0}'".format(action))
+        if action == ACTION_DEPLOY:
+            return 3200
+        elif  action == ACTION_REMOVE:
+            return 3800
+        elif  action == ACTION_START:
+            return 5000
+        elif  action == ACTION_STOP:
+            return 5000
+        else:
+            misc.ERROR("Plugin 'systemd' called with invalid action: '{0}'".format(action))
 
     def onGrooming(self):
         if self.context.toExclude(SCOPE_SYSTEMD):

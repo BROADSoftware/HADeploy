@@ -1,0 +1,17 @@
+
+
+
+# ------------------------------------------------------------------------------ Handle systemd stuff
+
+{{% for scopeName, scope in data.systemd.scopeByName.iteritems() %}}
+- hosts: {{{ scopeName }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
+  tasks:
+{{% for unit in scope %}}
+  - name: Start {{{unit.name}}} systemd service
+    systemd:
+      name: {{{ unit.name }}}.service
+      state: stopped
+{{% endfor %}}
+{{% endfor %}}
+

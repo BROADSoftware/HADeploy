@@ -54,6 +54,9 @@ ACTION_DEPLOY="deploy"
 ACTION_REMOVE="remove"
 ACTION_NONE="none"
 
+ACTION_START="start"
+ACTION_STOP="stop"
+
 
 SCOPE_ALL="all"
 SCOPE_NONE="node"
