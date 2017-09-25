@@ -191,7 +191,7 @@ def groomHiveRelay(model):
                     model[SRC][HIVE_RELAY][RELAY_KEYTAB_PATH] = os.path.join( model[SRC][HIVE_RELAY][_RELAY_KEYTAB_FOLDER_], os.path.basename(model[SRC][HIVE_RELAY][LOCAL_KEYTAB_PATH]))
                 if BECOME_USER in model[SRC][HIVE_RELAY]:
                     misc.ERROR("hive_relay: become_user and principal can't be defined both!")
-                model[SRC][HIVE_RELAY][LOGS_USER] = "{{ansible_ssh_user}}"
+                model[SRC][HIVE_RELAY][LOGS_USER] = "{{ansible_user}}"
             else:
                 if LOCAL_KEYTAB_PATH in model[SRC][HIVE_RELAY] or RELAY_KEYTAB_PATH in model[SRC][HIVE_RELAY]:
                     misc.ERROR("hive_relay: Please, provide a 'principal' if you need to use a keytab")
@@ -199,7 +199,7 @@ def groomHiveRelay(model):
                 if BECOME_USER in model[SRC][HIVE_RELAY]:
                     model[SRC][HIVE_RELAY][LOGS_USER] = model[SRC][HIVE_RELAY][BECOME_USER]
                 else:
-                    model[SRC][HIVE_RELAY][LOGS_USER] = "{{ansible_ssh_user}}"
+                    model[SRC][HIVE_RELAY][LOGS_USER] = "{{ansible_user}}"
                 
 def groomHiveDatabases(model):
     if HIVE_DATABASES in model[SRC] and len(model[SRC][HIVE_DATABASES]) > 0 :

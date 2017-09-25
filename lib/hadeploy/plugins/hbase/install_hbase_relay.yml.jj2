@@ -16,13 +16,13 @@
 {{% endif %}}    
   tasks:
   - name: Setup hbase_relay helper (1/4)
-    file: path={{{ src.hbase_relay.tools_folder}}}/jdchtable owner={{ansible_ssh_user}}  mode="0755" state=directory
+    file: path={{{ src.hbase_relay.tools_folder}}}/jdchtable owner={{ansible_user}}  mode="0755" state=directory
 
   - name: Setup hbase_relay helper (2/4)
-    copy: src={{{helper.hbase.dir}}}/jdchtable/{{{helper.hbase.jdchtable_jar}}} dest={{{ src.hbase_relay.tools_folder}}}/jdchtable owner={{ansible_ssh_user}}  mode="0644"
+    copy: src={{{helper.hbase.dir}}}/jdchtable/{{{helper.hbase.jdchtable_jar}}} dest={{{ src.hbase_relay.tools_folder}}}/jdchtable owner={{ansible_user}}  mode="0644"
 
   - name: Setup hbase_relay helper (3/4)  
-    template: src={{{helper.hbase.dir}}}/jdchtable/templates/{{item.file}}.j2 dest={{{ src.hbase_relay.tools_folder}}}/jdchtable/{{item.file}} owner={{ansible_ssh_user}} mode={{item.mode}}
+    template: src={{{helper.hbase.dir}}}/jdchtable/templates/{{item.file}}.j2 dest={{{ src.hbase_relay.tools_folder}}}/jdchtable/{{item.file}} owner={{ansible_user}} mode={{item.mode}}
     with_items:
     - { file: "jdchtable", mode: "0755" }
     - { file: "setenv.sh", mode: "0644" }
@@ -37,13 +37,13 @@
 
 {{% if src.hbase_datasets is defined %}}
   - name: Setup hbase_relay helper for dataset (1/4)
-    file: path=/{{{ src.hbase_relay.tools_folder}}}/hbload owner={{ansible_ssh_user}}  mode="0755" state=directory
+    file: path=/{{{ src.hbase_relay.tools_folder}}}/hbload owner={{ansible_user}}  mode="0755" state=directory
 
   - name: Setup hbase_relay helper for dataset  (2/4)
-    copy: src={{{helper.hbase.dir}}}/hbload/{{{helper.hbase.hbload_jar}}} dest={{{ src.hbase_relay.tools_folder}}}/hbload owner={{ansible_ssh_user}}  mode="0644"
+    copy: src={{{helper.hbase.dir}}}/hbload/{{{helper.hbase.hbload_jar}}} dest={{{ src.hbase_relay.tools_folder}}}/hbload owner={{ansible_user}}  mode="0644"
 
   - name: Setup hbase_relay helper for dataset  (3/4)  
-    template: src={{{helper.hbase.dir}}}/hbload/templates/{{item.file}}.j2 dest={{{ src.hbase_relay.tools_folder}}}/hbload/{{item.file}} owner={{ansible_ssh_user}} mode={{item.mode}}
+    template: src={{{helper.hbase.dir}}}/hbload/templates/{{item.file}}.j2 dest={{{ src.hbase_relay.tools_folder}}}/hbload/{{item.file}} owner={{ansible_user}} mode={{item.mode}}
     with_items:
     - { file: "hbload", mode: "0755" }
     - { file: "setenv.sh", mode: "0644" }
@@ -58,12 +58,12 @@
     
 {{% if  src.hbase_relay._relayKeytabFolder_ is defined %}}
   - name: Create keytabs location
-    file: path={{{ src.hbase_relay._relayKeytabFolder_}}} owner={{ansible_ssh_user}}  mode="0700" state=directory
+    file: path={{{ src.hbase_relay._relayKeytabFolder_}}} owner={{ansible_user}}  mode="0700" state=directory
 {{%endif%}}
 
 {{% if  src.hbase_relay.local_keytab_path is defined %}}
   - name: Push keytab file
-    copy: src={{{src.hbase_relay.local_keytab_path }}} dest={{{src.hbase_relay.relay_keytab_path }}} owner={{ansible_ssh_user}} mode="0400"
+    copy: src={{{src.hbase_relay.local_keytab_path }}} dest={{{src.hbase_relay.relay_keytab_path }}} owner={{ansible_user}} mode="0400"
 {{%endif%}}
     
 {{%endif%}}

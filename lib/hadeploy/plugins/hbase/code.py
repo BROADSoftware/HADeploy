@@ -166,7 +166,7 @@ def groomHbaseRelay(model):
                     model[SRC][HBASE_RELAY][RELAY_KEYTAB_PATH] = os.path.join( model[SRC][HBASE_RELAY][_RELAY_KEYTAB_FOLDER_], os.path.basename(model[SRC][HBASE_RELAY][LOCAL_KEYTAB_PATH]))
                 if BECOME_USER in model[SRC][HBASE_RELAY]:
                     misc.ERROR("hbase_relay: become_user and principal can't be defined both!")
-                model[SRC][HBASE_RELAY][LOGS_USER] = "{{ansible_ssh_user}}"
+                model[SRC][HBASE_RELAY][LOGS_USER] = "{{ansible_user}}"
             else:
                 if LOCAL_KEYTAB_PATH in model[SRC][HBASE_RELAY] or RELAY_KEYTAB_PATH in model[SRC][HBASE_RELAY]:
                     misc.ERROR("hbase_relay: Please, provide a 'principal' if you need to use a keytab")
@@ -174,7 +174,7 @@ def groomHbaseRelay(model):
                 if BECOME_USER in model[SRC][HBASE_RELAY]:
                     model[SRC][HBASE_RELAY][LOGS_USER] = model[SRC][HBASE_RELAY][BECOME_USER]
                 else:
-                    model[SRC][HBASE_RELAY][LOGS_USER] = "{{ansible_ssh_user}}"
+                    model[SRC][HBASE_RELAY][LOGS_USER] = "{{ansible_user}}"
             
 def groomHBaseNamespaces(model):
     if HBASE_NAMESPACES in model[SRC] and len(model[SRC][HBASE_NAMESPACES]) > 0 :

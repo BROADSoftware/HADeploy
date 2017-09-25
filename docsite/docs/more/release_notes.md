@@ -4,6 +4,7 @@
 
 - Added almost all existing Ansible configuration variables for `hosts` and `host_override` in inventory.
 - Added maven artifact download, using ['maven_repositories`](../plugins_reference/files/maven_repositories) definition.
+- Changed all `ansible_ssh_user` to `ansible_user`.
 
 ## 0.5.0
 

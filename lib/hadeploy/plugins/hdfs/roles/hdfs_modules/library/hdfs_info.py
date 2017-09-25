@@ -58,7 +58,7 @@ options:
   hdfs_user:
     description: 
     - Define account to impersonate to perform required operation on HDFS through WebHDFS.
-    - Also accepts the special value C(KERBEROS). In such case, a valid Kerberos ticket must exist for the ansible_ssh_user account. (A C(kinit) must be issued under this account). 
+    - Also accepts the special value C(KERBEROS). In such case, a valid Kerberos ticket must exist for the ansible_user account. (A C(kinit) must be issued under this account). 
       Then HDFS operation will be performed on behalf of the user defined by the Kerberos ticket.
     required: false
     default: "hdfs"

@@ -88,8 +88,8 @@ options:
   hdfs_user:
     description: 
       - "Define account to impersonate to perform required operation on HDFS through WebHDFS."
-      - "WARNING: This will impact only C(hdfs_creates) and C(hdfs_removes). The command operation is still performed under ansible_ssh_user account."
-      - "Also accepts the special value C(KERBEROS). In such case, a valid Kerberos ticket must exist for the ansible_ssh_user account. (A C(kinit) must be issued under this account). 
+      - "WARNING: This will impact only C(hdfs_creates) and C(hdfs_removes). The command operation is still performed under ansible_user account."
+      - "Also accepts the special value C(KERBEROS). In such case, a valid Kerberos ticket must exist for the ansible_user account. (A C(kinit) must be issued under this account). 
         Then C(hdfs_creates) and C(hdfs_removes) will be performed on behalf of the user defined by the Kerberos ticket."
     required: false
     default: "hdfs"

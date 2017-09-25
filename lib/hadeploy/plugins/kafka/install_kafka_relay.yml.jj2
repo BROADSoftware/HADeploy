@@ -8,13 +8,13 @@
     kafka_relay_logs_dir: "{{{ src.kafka_relay.tools_folder}}}/jdctopic/logs-{{{src.kafka_relay.logsUser}}}"
   tasks:
   - name: Setup kafka_relay helper (1/4)
-    file: path={{{ src.kafka_relay.tools_folder}}}/jdctopic owner={{ansible_ssh_user}} mode="0755" state=directory
+    file: path={{{ src.kafka_relay.tools_folder}}}/jdctopic owner={{ansible_user}} mode="0755" state=directory
 
   - name: Setup kafka_relay helper (2/4)
-    copy: src={{{helper.kafka.dir}}}/jdctopic/{{{helper.kafka.jdctopic_jar}}} dest={{{ src.kafka_relay.tools_folder}}}/jdctopic/ owner={{ansible_ssh_user}} mode="0644"
+    copy: src={{{helper.kafka.dir}}}/jdctopic/{{{helper.kafka.jdctopic_jar}}} dest={{{ src.kafka_relay.tools_folder}}}/jdctopic/ owner={{ansible_user}} mode="0644"
 
   - name: Setup kafka_relay helper (3/4)  
-    template: src={{{helper.kafka.dir}}}/jdctopic/templates/{{item.file}}.j2 dest={{{ src.kafka_relay.tools_folder}}}/jdctopic/{{item.file}} owner={{ansible_ssh_user}} mode={{item.mode}}
+    template: src={{{helper.kafka.dir}}}/jdctopic/templates/{{item.file}}.j2 dest={{{ src.kafka_relay.tools_folder}}}/jdctopic/{{item.file}} owner={{ansible_user}} mode={{item.mode}}
     with_items:
     - { file: "jdctopic", mode: "0755" }
     - { file: "setenv.sh", mode: "0644" }
@@ -29,12 +29,12 @@
 
 {{% if  src.kafka_relay._relayKeytabFolder_ is defined %}}
   - name: Create keytabs location
-    file: path={{{ src.kafka_relay._relayKeytabFolder_}}} owner={{ansible_ssh_user}}  mode="0700" state=directory
+    file: path={{{ src.kafka_relay._relayKeytabFolder_}}} owner={{ansible_user}}  mode="0700" state=directory
 {{%endif%}}
 
 {{% if  src.kafka_relay.local_keytab_path is defined %}}
   - name: Push keytab file
-    copy: src={{{src.kafka_relay.local_keytab_path }}} dest={{{src.kafka_relay.relay_keytab_path }}} owner={{ansible_ssh_user}} mode="0400"
+    copy: src={{{src.kafka_relay.local_keytab_path }}} dest={{{src.kafka_relay.relay_keytab_path }}} owner={{ansible_user}} mode="0400"
 {{%endif%}}
     
 

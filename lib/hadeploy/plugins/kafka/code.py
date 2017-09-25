@@ -147,7 +147,7 @@ def groomKafkaRelay(model):
                 misc.setDefaultInMap(model[SRC][KAFKA_RELAY], KDEBUG, False)
                 if BECOME_USER in model[SRC][KAFKA_RELAY]:
                     misc.ERROR("kafka_relay: become_user and principal can't be defined both!")
-                model[SRC][KAFKA_RELAY][LOGS_USER] = "{{ansible_ssh_user}}"
+                model[SRC][KAFKA_RELAY][LOGS_USER] = "{{ansible_user}}"
             else:
                 if LOCAL_KEYTAB_PATH in model[SRC][KAFKA_RELAY] or RELAY_KEYTAB_PATH in model[SRC][KAFKA_RELAY]:
                     misc.ERROR("kafka_relay: Please, provide a 'principal' if you need to use a keytab")
@@ -155,7 +155,7 @@ def groomKafkaRelay(model):
                 if BECOME_USER in model[SRC][KAFKA_RELAY]:
                     model[SRC][KAFKA_RELAY][LOGS_USER] = model[SRC][KAFKA_RELAY][BECOME_USER]
                 else:
-                    model[SRC][KAFKA_RELAY][LOGS_USER] = "{{ansible_ssh_user}}"
+                    model[SRC][KAFKA_RELAY][LOGS_USER] = "{{ansible_user}}"
 
             
 def groomKafkaTopics(model):

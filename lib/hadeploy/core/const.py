@@ -33,8 +33,8 @@ ANSIBLE_ROLES_PATHS = "ansible_roles_paths"
 DEFAULT_HDFS_KEYTABS_FOLDER="{{ansible_user_dir}}/.hadeploy/keytabs"
 
 #DEFAULT_HDFS_RELAY_CACHE_FOLDER="{{ansible_user_dir}}/.hadeploy/files"
-DEFAULT_TOOLS_FOLDER="/tmp/hadeploy_{{ansible_ssh_user}}"
-DEFAULT_HDFS_RELAY_CACHE_FOLDER="/tmp/hadeploy_{{ansible_ssh_user}}/files"
+DEFAULT_TOOLS_FOLDER="/tmp/hadeploy_{{ansible_user}}"
+DEFAULT_HDFS_RELAY_CACHE_FOLDER="/tmp/hadeploy_{{ansible_user}}/files"
 
 # -------------- Shared between plugins 
 

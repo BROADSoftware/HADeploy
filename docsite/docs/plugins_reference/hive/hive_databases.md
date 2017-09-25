@@ -71,6 +71,6 @@ Database owner can be explicitly set by the `owner` attribute defined above. If 
  
 * If kerberos is not enabled, the account defined by the `ssh_user` set for the [`host`](../inventory/hosts) used as `hive_relay`
 
-Once created, one may change owner by setting the corresponding attribute. Launching HADeploy with another ansible_ssh_user/principal will have no effect
+Once created, one may change owner by setting the corresponding attribute. Launching HADeploy with another ansible_user/principal will have no effect
 
 
