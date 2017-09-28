@@ -57,14 +57,14 @@ validAon = Set([AON_NONE, AON_RELOAD, AON_RESTART])
 
 
 
-class FilesPlugin(Plugin):
+class ServicesPlugin(Plugin):
     
     def __init__(self, name, path, context):
         Plugin.__init__(self, name, path, context)
 
            
     def getGroomingPriority(self):
-        return 3200     
+        return 6000     
 
     def getSupportedScopes(self):
         return [SCOPE_SYSTEMD]        
@@ -74,9 +74,9 @@ class FilesPlugin(Plugin):
 
     def getPriority(self, action):
         if action == ACTION_DEPLOY:
-            return 3200
+            return 6000
         elif  action == ACTION_REMOVE:
-            return 3800
+            return 1800
         elif  action == ACTION_START:
             return 5000
         elif  action == ACTION_STOP:
