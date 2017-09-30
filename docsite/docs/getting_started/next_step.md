@@ -1,24 +1,20 @@
-# Getting started
-
-An application deployment is performed based on a file (or a set of files) describing all its components. This description represents a target state HADeploy will have to reach by performing all transformation operation.
-
-This description can be defined in a single file, or can be spread over several files for ease of management and separation of concerns.
-
-All these files are defined using YAML syntax, as this syntax will allow both readability and concision. (If necessary, you will find a bunch of YAML tutorial on the net).
-
-### A simple example
+# Next step
 
 We will describe here the deployment of a simple application, 'broadapp', which will need to deploy some artifacts and resources on a Hadoop cluster, both on nodes and on HDFS.
 
 We will not deeply enter in the detail of all items. You will find more exhaustive description in the Reference part of this document.
 
-> NOTE: This sample is intended to demonstrate the basic features of HADeploy. It is not intended to define 'Best Practices' about Hadoop Application deployment.
+> <sub>NOTE: This sample is intended to demonstrate the basic features of HADeploy. It is not intended to define 'Best Practices' about Hadoop Application deployment.</sub>
 
-For ease of management, this example will be divided in two parts: One describing the application deployment itself, and one describing the target Hadoop cluster.
+This example will be divided in two parts: One describing the target Hadoop cluster (Infrastructure description) and a second one the application deployment itself (Application description) 
 
 ## Infrastructure description 
 
-### Fully described
+There is two methods to provide HADeploy with the target infrastructure description. One is to explicitly list all hosts. Another one is to refer to an already existing Ansible Inventory.
+
+Let's start with the first one: 
+
+### Explicit description
 
 The infrastructure is described in a file with the following content:
 
@@ -32,7 +28,7 @@ hosts:
   ssh_user: root
   ssh_private_key_file: "keys/build_key" 
 # And these others using more consise yaml 'flow style'
-- { name: en, ssh_host: en.cluster1.mydomain.com, ssh_user: root, ssh_private_key_file: "keys/build_key" }
+- { name: en1, ssh_host: en.cluster1.mydomain.com, ssh_user: root, ssh_private_key_file: "keys/build_key" }
 - { name: nn1, ssh_host: nn1.cluster1.mydomain.com, ssh_user: root, ssh_private_key_file: "keys/build_key" }
 - { name: nn2, ssh_host: nn2.cluster1.mydomain.com, ssh_user: root, ssh_private_key_file: "keys/build_key" }
 - { name: dn1, ssh_host: dn1.cluster1.mydomain.com, ssh_user: root, ssh_private_key_file: "keys/build_key" }
@@ -51,7 +47,7 @@ host_groups:
   hosts: [ "sr", "nn1", "nn2" ]
 
 hdfs_relay:
-  host: en
+  host: en1
 
 kafka_relay:
   host: br1
@@ -66,15 +62,15 @@ First, we will describe the several hosts our cluster is made of. Each host as a
 
 The specified `ssh_user:` is typically `root`, as it must be a user with enough rights to perform all the required actions.
 
-Then we will find a block of `host_groups:` description. This will simply allow grouping hosts by function, and easing hosts's reference.
+Then we will find a block of [`host_groups`](/plugins_reference/inventory/host_groups): description. This will simply allow grouping hosts by function, and easing hosts's reference.
 
-Then is the definition of the `hdfs_relay`: specifying which host will support this task (See LINK)
+Then is the definition of the [`hdfs_relay`](/plugins_reference/hdfs/hdfs_relay): specifying which host will support all HDFS related operations.
 
-Then is the definition of the `kafka_relay:` which will be relaying all topics creation, modification and removal operations. As such it need to know how to access zookeeper and to be able to access Kafka library folder as it use corresponding jar files. The simplest solution is to use a broker node for this task.
+Then is the definition of the [`kafka_relay`](/plugins_reference/kafka/kafka_relay): which will be relaying all topics creation, modification and removal operations. As such it need to know how to access zookeeper and to be able to access Kafka library folder as it use corresponding jar files. The simplest solution is to use a broker node for this task.
 
-And last is the definition of `hbase_relay:` which will be relaying all HBase table creation, modification and removal operation. 
+And last is the definition of [`hbase_relay`](/plugins_reference/hbase/hbase_relay): which will be relaying all HBase table creation, modification and removal operation. 
 
-### From Ansible
+### From an existing Ansible inventory.
 
 Those familiar to Ansible should have noted such description is very similar to the way Ansible describe its inventory.
 
@@ -94,10 +90,6 @@ host_groups:
 - name: zookeepers
   hosts: [ "sr1", "nn1", "nn2" ]
 
-- name: en
-  hosts:
-  - en1
-
 hdfs_relay:
   host: en1
 
@@ -109,13 +101,9 @@ kafka_relay:
 hbase_relay:
   host: en1
 ```
-In our case, we add some `host_groups:` as we need them for the following, and there were not defined in the source Ansible inventory
+In our case, we add some [`host_groups`](/plugins_reference/inventory/host_groups) as we need them for the following, and there were not defined in the source Ansible inventory
 
-We also use a little trick. Our Ansible inventory refers the edge node as en1 while we used to name it simply en in our description file.
-
-To solve this, we create a group en with a single node en1. As host name and host group name are used indifferently in the HADeploy file, this will be equivalent to an alias.
-
-Another trick is the ability to modify only some attributes of one, several or all hosts of this Ansible inventory. See `host_overrides` in the reference part.
+Note we also have the ability to modify only some attributes of one, several or all hosts of this Ansible inventory. See [`host_overrides`](/plugins_reference/inventory/host_overrides) in the reference part.
 
 ## Application description
 
@@ -153,15 +141,15 @@ users:
 - { login: broaduser, scope: control_nodes, comment: "Broadapp user account", groups: "broadgroup", can_sudo_to: "hdfs, yarn" }
 
 folders:
-- { scope: "en:data_nodes", path: /var/log/broadapp, owner: broadapp, group: broadgroup, mode: "0755" }
-- { scope: en, path: /etc/broadapp, owner: root, group: root, mode: "0755" }
-- { scope: en, path: /opt/broadapp, owner: root, group: root, mode: "0755" }
+- { scope: "en1:data_nodes", path: /var/log/broadapp, owner: broadapp, group: broadgroup, mode: "0755" }
+- { scope: en1, path: /etc/broadapp, owner: root, group: root, mode: "0755" }
+- { scope: en1, path: /opt/broadapp, owner: root, group: root, mode: "0755" }
 
 - { scope: hdfs, path: /apps/broadapp, owner: broadapp, group: broadgroup, mode: "0755" }
 
 files:
-- { scope: en, src: "${app_jar_url}", dest_folder: "/opt/broadapp",  owner: root, group: root, mode: "0644", validate_certs: no }
-- { scope: en, src: "tmpl://broadapp.cfg.j2", dest_folder: /etc/broadapp, dest_name: broadapp.cfg, owner: root, group: root, mode: "0644" }
+- { scope: en1, src: "${app_jar_url}", dest_folder: "/opt/broadapp",  owner: root, group: root, mode: "0644", validate_certs: no }
+- { scope: en1, src: "tmpl://broadapp.cfg.j2", dest_folder: /etc/broadapp, dest_name: broadapp.cfg, owner: root, group: root, mode: "0644" }
 
 - { scope: hdfs, src: "${app_jar_url}", dest_folder: "/apps/broadapp", dest_name: broadapp.jar, owner: broadapp, group: broadgroup, mode: "0644", validate_certs: no }
 
@@ -194,7 +182,7 @@ hbase_tables:
       timeToLive: 200000
 ```
 
-Let's describe it part by part
+Let's describe it part by part:
 
 ### Environment part
 
@@ -210,7 +198,7 @@ local_templates_folders:
 
 This part describes the local environment, from where to find the files, which will be pushed on the target clusters.
 
-Also allow defining a template folder, where all the template source files will be stored (Templating is a powerful mechanism for defining configuration files. In our case, we use Ansible template subsystem, based on Jinja2).
+Also allow defining a template folder, where all the template source files will be stored (Templating is a powerful mechanism for defining configuration files. HADeploy use Ansible template subsystem, based on Jinja2).
 
 ### Vars
 ```yaml
@@ -228,7 +216,7 @@ And, as demonstrated by the `app_jar_url:` entry, variable value can themself in
 
 Note also than variable can be a scalar (String, int, etc...) but also a map.
 
-There is also a method to provide variable definition on the command line when launching HADeploy. See [Launching HADeploy](./gettingstarted/#launching-hadeploy) below.
+There is also a method to provide variable definition on the command line when launching HADeploy. See [Launching HADeploy](#launching-hadeploy) below.
 
 ### Groups
 
@@ -241,7 +229,7 @@ groups:
 ```
 Here we create a Linux local group named broadgroup on all hosts of the clusters.
 
-Some of the items of HADeploy definition file have a `scope:` attribute, which defines the target on which action will be performed. Such attribute is optional and has all as default value. So, the following is equivalent:
+Some of the items of HADeploy definition file have a `scope:` attribute, which defines the target on which action will be performed. Such attribute may be optional and may have `all` as default value. So, the following is equivalent:
 
 ```yaml
 groups:
@@ -261,7 +249,7 @@ users:
       can_sudo_to: "hdfs, yarn" }
 ```
 
-Each entry will support most of the usual user's configuration parameters. See the Reference part.
+Each entry will support most of the usual user's configuration parameters. See [`users`](/plugins_reference/users/users) in the Reference part.
 
 As for groups, we can define on which hosts users will be created using the `scope:` attribute.
 
@@ -271,24 +259,24 @@ This block allow us to define the directory used by the application, with all as
 
 ```yaml
 folders:
-- { scope: en, path: /etc/broadapp, owner: root, group: root, mode: "0755" }
-- { scope: en, path: /opt/broadapp, owner: root, group: root, mode: "0755" }
-- { scope: "en:data_nodes", path: /var/log/broadapp, owner: broadapp, group: broadgroup, mode: "0755" }
+- { scope: en1, path: /etc/broadapp, owner: root, group: root, mode: "0755" }
+- { scope: en1, path: /opt/broadapp, owner: root, group: root, mode: "0755" }
+- { scope: "en1:data_nodes", path: /var/log/broadapp, owner: broadapp, group: broadgroup, mode: "0755" }
 
 - { scope: hdfs, path: /apps/broadapp, owner: broadapp, group: broadgroup, mode: "0755" }
 ```
 
 Note again the `scope:` attribute; with allow specifying where the directory will be created:
 
-For a single node of name en:
+For a single node of name en1:
 ```yaml
-scope: en
+scope: en1
 ```
 
 For the same en node, plus all hosts belonging to the `data_nodes` group:
 
 ```yaml
-scope: en:data_nodes
+scope: en1:data_nodes
 ```
 
 Here the folder will not be create on one or several hosts, but on the HDFS file system:
@@ -303,8 +291,8 @@ Then the following block will set the application file in place, also with permi
 
 ```yaml
 files:
-- { scope: en, src: "${app_jar_url}", dest_folder: "/opt/broadapp",  owner: root, group: root, mode: "0644", validate_certs: no }
-- { scope: en, src: "tmpl://broadapp.cfg.j2", dest_folder: /etc/broadapp, dest_name: broadapp.cfg, owner: root, group: root, mode: "0644" }
+- { scope: en1, src: "${app_jar_url}", dest_folder: "/opt/broadapp",  owner: root, group: root, mode: "0644", validate_certs: no }
+- { scope: en1, src: "tmpl://broadapp.cfg.j2", dest_folder: /etc/broadapp, dest_name: broadapp.cfg, owner: root, group: root, mode: "0644" }
 
 - { scope: hdfs, src: "${app_jar_url}", dest_folder: "/apps/broadapp", dest_name: broadapp.jar, owner: broadapp, group: broadgroup, mode: "0644", validate_certs: no }
 ```
@@ -365,12 +353,12 @@ This block defines one namespace broadgroup and a HBase table named broadapp_t1 
 
 ## Templates
 
-Note in the `file:` part of this sample the second file with `src:` attribute: `tmpl://broadapp.cfg.j2`.
+Note in the `files:` part of this sample the second file with `src:` attribute: `tmpl://broadapp.cfg.j2`.
 
 ```yaml
 files:
 ...
-- { scope: en, src: "tmpl://broadapp.cfg.j2", dest_folder: /etc/broadapp, dest_name: broadapp.cfg, owner: root, group: root, mode: "0644" }
+- { scope: en1, src: "tmpl://broadapp.cfg.j2", dest_folder: /etc/broadapp, dest_name: broadapp.cfg, owner: root, group: root, mode: "0644" }
 ```
 
 The tmpl scheme stands for 'template'. And the corresponding source template will be fetched from one of the folders defined by the `local_templates_folders` list described previously.
@@ -397,7 +385,7 @@ HADeploy project layout may be simple. For examples, in our case, it could be:
 ```
 app.yml
 files/
-infra.yml
+infra/cluster1.yml
 keys/build_key
 templates/broadapp.cfg.j2
 ```
@@ -406,7 +394,7 @@ Note the file folder is empty, as we fetch our binary resources from a repositor
 ```
 app.yml
 files/broadapp-0.1.1.jar
-infra.yml
+infra/cluster1.yml
 keys/build_key
 templates/broadapp.cfg.j2
 ```
@@ -419,24 +407,24 @@ vars:
 
 ## Launching HADeploy
 
-Let's assume we have [installed HADeploy](./installation) and have arranged to have the `....../hadeploy/bin` folder in our PATH (See Installation above), and we are in our project directory.
+Let's assume we have [installed HADeploy](/installation) and have arranged to have the `....../hadeploy/bin` folder in our PATH (See Installation above), and we are in our project directory.
  
 To launch the deployment, just type:
 
 ```bash
-hadeploy --src app.yml --src infra.yml --action deploy
+hadeploy --src app.yml --src infra/cluster1.yml --action deploy
 ```
 
 And to perform the reverse action (Fully remove all application from target cluster):
 
 ```bash
-hadeploy --src app.yml --src infra.yml --action remove
+hadeploy --src app.yml --src infra/cluster1.yml --action remove
 ```
 
 HADeploy command line also allow direct variable definition, with the form --var name=value. For example:
 
 ```bash
-hadeploy --var app_version=0.1.2 --src app.yml --src infra.yml --action deploy
+hadeploy --var app_version=0.1.2 --src app.yml --src infra/cluster1.yml --action deploy
 ```
 
 Note in this case, the value will be overwritten by the one provided in app.yml. So you will have to remove from the definition file a variable you intend to specify on the command line.
@@ -445,8 +433,8 @@ The general rule is than variable definitions are evaluated/overridden in order 
 
 Some other option of the HADeploy command are described in other chapters:
 
-* `--workingFolder`: Refer to [`Under_the_hood`](./more/under_the_hood) chapter.
+* `--workingFolder`: Refer to [`Under_the_hood`](/more/under_the_hood) chapter.
 
-* `--askVaultPassword` and `--vaultPasswordFile`: Refer to [Encrypted variables](./plugins_reference/core/encrypted_vars)
+* `--askVaultPassword` and `--vaultPasswordFile`: Refer to [Encrypted variables](/plugins_reference/core/encrypted_vars)
 
-* `--scope` and `--noScope`: Refer to [Altering scope](../../more/altering_scope)
+* `--scope` and `--noScope`: Refer to [Altering scope](/more/altering_scope)

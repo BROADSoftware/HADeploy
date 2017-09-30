@@ -4,7 +4,7 @@
 
 HADeploy allow you to defined variable which then will be substituted by surrounding the variable name with  "${ "and "}"
 
-There is also a method to provide variable definition on the command line when launching HADeploy. See [Launching HADeploy](../../gettingstarted/#launching-hadeploy).
+There is also a method to provide variable definition on the command line when launching HADeploy. See [Launching HADeploy](/getting_started/next_step/#launching-hadeploy).
 
 ## Attributes
 

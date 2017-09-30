@@ -3,7 +3,9 @@ site_name: HADeploy
 pages:
 - Home: index.md
 - Installation: installation.md
-- "Getting started": gettingstarted.md
+- "Getting started":
+  - "First step": getting_started/first_step.md
+  - "Next step": getting_started/next_step.md
 - "Plugins reference":
   - Core:
     - encrypted_vars: plugins_reference/core/encrypted_vars.md

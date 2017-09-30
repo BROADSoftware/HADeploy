@@ -51,7 +51,7 @@ Here is the definition of a `field` element:
 | Field Attribute | Req. | Description |
 | ---   | :---: | --- |
 |name   |yes|The name of the field|
-|type   |yes|The type of the field|
+|type   |yes|The type of the field. Note this file if used as-is, without interpretation from HADeploy.<br>This will allow to define Hive Complex Types here (arrays, maps, structs,union). See examples below.|
 |comment|no |An optional comment|
 
 ### Delimited row format 
@@ -292,6 +292,47 @@ Will be interpreted, for creation as:
 CREATE  TABLE jdctest1.testSerde ( host STRING, identity STRING, theuser STRING) COMMENT 'Serde test' ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.RegexSerDe' WITH SERDEPROPERTIES ( 'input.regex'='([^ ]*) ([^ ]*) ([^ ]*)')
 ```
 
+### Complex Types example
+
+Here, the field `value` is not a simple scalar one:
+
+```yaml
+- name: testComplex
+  database: jdctest1
+  external: true
+  fields:
+  - { name: compressed, type: boolean }
+  - { name: value, type: "struct<contentType:string, message:string, sender:string, properties: array<struct<key:string,value:int>>, type:string>" }
+  - { name: timestamp, type: string }
+```
+
+And same example, but expressed differently:
+
+```yaml
+- name: testComplex
+  database: jdctest1
+  external: true
+  fields:
+  - { name: compressed, type: boolean }
+  - name: value
+    type: |
+      struct<
+        contentType:string, 
+        message:string, 
+        sender:string, 
+        properties: array<
+          struct<
+            key:string,
+            value:int
+          >
+        >, 
+        type:string
+      >
+  - { name: timestamp, type: string }
+```
+
+### Apache Ranger example
+
 Following is an illustration of Apache Ranger policy association: The table is created with select and update permissions for all users of the 'users' group. And user 'sa' can also create new indexes.
 
 ```yaml
@@ -319,6 +360,7 @@ hive_tables:
       accesses:
       - index
 ```
+
 
 
 

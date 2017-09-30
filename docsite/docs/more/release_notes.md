@@ -4,7 +4,8 @@
 
 - Added almost all existing Ansible configuration variables for `hosts` and `host_override` in inventory.
 - Added maven artifact download, using ['maven_repositories`](../plugins_reference/files/maven_repositories) definition.
-- Changed all references to ansible variable `ansible_ssh_user` to `ansible_user`.
+- Changed all references to ansible variable `ansible_ssh_user` to `ansible_user` (Following Ansible evolution).
+- Some (small) documentation improvements.
 - Added `services` plugin with [`systemd_units`](../plugins_reference/services/systemd_units) service management.
 
 ## 0.5.0
