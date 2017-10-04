@@ -1,0 +1,14 @@
+[Unit]
+Description=Process Monitoring and Control Daemon ({{{user}}})
+After=rc-local.service
+
+[Service]
+User={{{user}}}
+Type=forking
+SyslogIdentifier=supervisord_{{{name}}}
+ExecStart=/usr/bin/supervisord -c {{{conf_file_dst}}}
+SysVStartPriority=99
+
+[Install]
+WantedBy=multi-user.target
+

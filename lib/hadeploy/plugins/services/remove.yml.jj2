@@ -2,6 +2,7 @@
 
 
 # ------------------------------------------------------------------------------ Handle systemd stuff
+{{% if data.systemd is defined %}}
 
 {{% for scopeName, scope in data.systemd.scopeByName.iteritems() %}}
 - hosts: {{{ scopeName }}}
@@ -22,4 +23,35 @@
   - name: reload service file
     command: "systemctl daemon-reload"
 {{% endfor %}}
+{{% endif %}}
+
+
+# ------------------------------------------------------------------------------ Handle supervisor stuff
+{{% if data.supervisor is defined %}}
+{{% for scopeName, scope in data.supervisor.scopeByName.iteritems() %}}
+- hosts: {{{ scopeName }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
+  tasks:
+  # ----------------- Remove supervisor_xxxx folders
+  - name: Remove Supervisor folders
+    file: state=absent path={{item.path}} 
+    with_items:
+{{% for s in scope %}}
+{{% if not s.no_remove %}}
+    - { path: {{{s.logs_dir}}}, user: {{{s.user}}} }     
+    - { path: {{{s.pid_dir}}}, user: {{{s.user}}} }     
+    - { path: {{{s.socks_dir}}}, user: {{{s.user}}} }     
+    - { path: {{{s.include_dir}}}, user: {{{s.user}}} }
+{{% endif %}}     
+{{% endfor %}}
+    loop_control:
+      label: "{{item.path}} user:{{item.user}}"
+  
+  
+  # ----------------- Setup configuration file
+  
+  
+
+{{% endfor %}}
+{{% endif %}}
 

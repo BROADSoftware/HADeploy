@@ -2,7 +2,7 @@
 
 
 # ------------------------------------------------------------------------------ Handle systemd stuff
-
+{{% if data.systemd is defined %}}
 {{% for scopeName, scope in data.systemd.scopeByName.iteritems() %}}
 - hosts: {{{ scopeName }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
@@ -58,4 +58,36 @@
 {{% endfor %}}
  
 {{% endfor %}}
+
+{{% endif %}}
+
+# ------------------------------------------------------------------------------ Handle supervisor stuff
+
+{{% if data.supervisor is defined %}}
+{{% for scopeName, scope in data.supervisor.scopeByName.iteritems() %}}
+- hosts: {{{ scopeName }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
+  tasks:
+  - name: Install supervisor package
+    yum: name=supervisor  state=present  
+  # ----------------- Create supervisor_xxxx folders
+  - name: create Supervisor folders
+    file: state=directory path={{item.path}} owner={{item.user}} mode="0700"
+    with_items:
+{{% for s in scope %}}
+    - { path: {{{s.logs_dir}}}, user: {{{s.user}}} }     
+    - { path: {{{s.pid_dir}}}, user: {{{s.user}}} }     
+    - { path: {{{s.socks_dir}}}, user: {{{s.user}}} }     
+    - { path: {{{s.include_dir}}}, user: {{{s.user}}} }     
+{{% endfor %}}
+    loop_control:
+      label: "{{item.path}} user:{{item.user}}"
+  
+  
+  # ----------------- Setup configuration file
+  
+  
+
+{{% endfor %}}
+{{% endif %}}
 

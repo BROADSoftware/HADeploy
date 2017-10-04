@@ -68,6 +68,7 @@ SCOPE_KAFKA="kafka"
 SCOPE_HIVE="hive"
 SCOPE_RANGER="ranger"
 SCOPE_ANSIBLE="ansible"
+SCOPE_SERVICES="services"
 SCOPE_SYSTEMD="systemd"
 
 
