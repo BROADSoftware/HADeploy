@@ -2,13 +2,13 @@
 
 
 # ------------------------------------------------------------------------------ Handle systemd stuff
-{{% if data.systemd is defined %}}
 
-{{% for scopeName, scope in data.systemd.scopeByName.iteritems() %}}
+{{% for scopeName, scope in data.services.scopeByName.iteritems() %}}
+{{% if scope.systemd is defined and scope.systemd|length > 0 %}}
 - hosts: {{{ scopeName }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
-{{% for unit in scope %}}
+{{% for unit in scope.systemd %}}
 {{% if not unit.no_remove %}}
   - name: stop {{{unit.name}}} service
     systemd: name={{{ unit.name }}}.service state=stopped enabled=false
@@ -22,36 +22,60 @@
   handlers:
   - name: reload service file
     command: "systemctl daemon-reload"
+{{%endif%}}
 {{% endfor %}}
-{{% endif %}}
 
 
 # ------------------------------------------------------------------------------ Handle supervisor stuff
-{{% if data.supervisor is defined %}}
-{{% for scopeName, scope in data.supervisor.scopeByName.iteritems() %}}
+{{% for scopeName, scope in data.services.scopeByName.iteritems() %}}
+{{% if scope.supervisors is defined and scope.supervisors|length > 0 and scope.supervisorToRemoveCount > 0 %}}
 - hosts: {{{ scopeName }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
-  # ----------------- Remove supervisor_xxxx folders
-  - name: Remove Supervisor folders
-    file: state=absent path={{item.path}} 
+  # ------------------------ Halt supervisor_xxxx services
+  - name: Stop supervisors_xxxx service(s)
+    systemd: name=supervisord_{{item}}.service state=stopped enabled=false
+    failed_when: false
     with_items:
-{{% for s in scope %}}
+{{% for s in scope.supervisors %}}
 {{% if not s.no_remove %}}
-    - { path: {{{s.logs_dir}}}, user: {{{s.user}}} }     
-    - { path: {{{s.pid_dir}}}, user: {{{s.user}}} }     
-    - { path: {{{s.socks_dir}}}, user: {{{s.user}}} }     
-    - { path: {{{s.include_dir}}}, user: {{{s.user}}} }
+    - {{{ s.name }}}
 {{% endif %}}     
 {{% endfor %}}
-    loop_control:
-      label: "{{item.path}} user:{{item.user}}"
-  
-  
-  # ----------------- Setup configuration file
-  
-  
 
+  - name: Remove file "/usr/lib/systemd/system/supervisord_xxxxx.service"
+    file: path=/usr/lib/systemd/system/supervisord_{{item}}.service state=absent 
+    with_items:
+{{% for s in scope.supervisors %}}
+{{% if not s.no_remove %}}
+    - {{{ s.name }}}
+{{% endif %}}     
 {{% endfor %}}
-{{% endif %}}
+    notify: 
+    - reload service file
+
+
+  
+  # ----------------- Remove supervisor_xxxx files and folders
+  - name: Remove Supervisor files and folders
+    file: state=absent path={{item}} 
+    with_items:
+{{% for s in scope.supervisors %}}
+{{% if not s.no_remove %}}
+    - {{{s.conf_file_dst}}}
+    - {{{s.supervisorctl}}}
+    - {{{s.logs_dir}}}     
+    - {{{s.pid_dir}}}     
+    - {{{s.socks_dir}}}     
+    - {{{s.include_dir}}}
+{{% endif %}}     
+{{% endfor %}}
+  
+  handlers:
+  - name: reload service file
+    command: "systemctl daemon-reload"
+  
+  
+{{%endif%}}
+{{% endfor %}}
 

@@ -1,0 +1,1 @@
+/bin/supervisorctl -c {{{ conf_file_dst }}}

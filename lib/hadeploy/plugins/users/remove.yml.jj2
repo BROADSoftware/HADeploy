@@ -31,7 +31,7 @@
 
   - name: report error
     fail:
-      msg: Unable to create user '{{{user.login}}}'
+      msg: Unable to remove user '{{{user.login}}}'
     when: not result|succeeded
     
 {{% endif %}}

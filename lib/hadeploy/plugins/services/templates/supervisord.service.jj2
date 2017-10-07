@@ -4,6 +4,7 @@ After=rc-local.service
 
 [Service]
 User={{{user}}}
+Group={{{group}}}
 Type=forking
 SyslogIdentifier=supervisord_{{{name}}}
 ExecStart=/usr/bin/supervisord -c {{{conf_file_dst}}}

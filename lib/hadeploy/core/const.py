@@ -70,5 +70,6 @@ SCOPE_RANGER="ranger"
 SCOPE_ANSIBLE="ansible"
 SCOPE_SERVICES="services"
 SCOPE_SYSTEMD="systemd"
+SCOPE_SUPERVISOR="supervisor"
 
 

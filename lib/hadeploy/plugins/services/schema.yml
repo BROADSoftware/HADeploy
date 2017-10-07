@@ -26,6 +26,7 @@ mapping:
         "scope": { type: str, required: true }
         "name": { type: str, required: true }
         "user": { type: str, required: true }        
+        "group": { type: str, required: true }        
         "conf_file_src": { type: str, required: false } # Default to an internally provided one
         "conf_file_dst": { type: str, required: false } # Default /etc/supervisord_<name>.conf
         "logs_dir": { type: str, required: false } # Default /var/log/supervisor_<name>
@@ -50,8 +51,8 @@ mapping:
     sequence:
     - type: map
       mapping:
-        "supervisord": { type: bool, required: true }
-        "name": { type: bool, required: true }
+        "supervisor": { type: str, required: true }
+        "name": { type: str, required: true }
         "no_remove": { type: bool, required: false }    # Default to false
         
   "supervisor_programs":
@@ -59,8 +60,8 @@ mapping:
     sequence:
     - type: map
       mapping:
-        "supervisord": { type: bool, required: true }
-        "name": { type: bool, required: true }
+        "supervisor": { type: str, required: true }
+        "name": { type: str, required: true }
         "config_file_src": { type: str, required: false } # Default to an internally provided one
         "command": { type: str, required: false } # Required if no config_file_src provided
         "group": { type: str, required: false }

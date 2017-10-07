@@ -2,12 +2,12 @@
 
 
 # ------------------------------------------------------------------------------ Handle systemd stuff
-{{% if data.systemd is defined %}}
-{{% for scopeName, scope in data.systemd.scopeByName.iteritems() %}}
+{{% for scopeName, scope in data.services.scopeByName.iteritems() %}}
+{{% if scope.systemd is defined and scope.systemd|length > 0 %}}
 - hosts: {{{ scopeName }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
-{{% for unit in scope %}}
+{{% for unit in scope.systemd %}}
   - name: Get current state for '{{{ unit.name }}}
     command: systemctl is-active {{{ unit.name }}}.service
     register: unit_{{{ unit.name }}}
@@ -27,7 +27,7 @@
 
   - meta: flush_handlers
 
-{{% for unit in scope %}}
+{{% for unit in scope.systemd %}}
   - name: Adjust {{{unit.name}}} service state
     systemd:
       name: {{{ unit.name }}}.service
@@ -41,7 +41,7 @@
   - name: Reload systemd service file
     command: "systemctl daemon-reload"
     listen: "reload_systemd"
-{{% for unit in scope %}}
+{{% for unit in scope.systemd %}}
 {{% if unit.action_on_notify == "restart" %}}
   - name: Restart {{{unit.name}}} service
     systemd: name={{{ unit.name }}}.service state=restarted
@@ -57,14 +57,14 @@
     when: unit_{{{ unit.name }}}.rc == 0
 {{% endfor %}}
  
+{{% endif %}}      
 {{% endfor %}}
 
-{{% endif %}}
 
 # ------------------------------------------------------------------------------ Handle supervisor stuff
 
-{{% if data.supervisor is defined %}}
-{{% for scopeName, scope in data.supervisor.scopeByName.iteritems() %}}
+{{% for scopeName, scope in data.services.scopeByName.iteritems() %}}
+{{% if scope.supervisors is defined and scope.supervisors|length > 0 %}}
 - hosts: {{{ scopeName }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
@@ -72,22 +72,62 @@
     yum: name=supervisor  state=present  
   # ----------------- Create supervisor_xxxx folders
   - name: create Supervisor folders
-    file: state=directory path={{item.path}} owner={{item.user}} mode="0700"
+    file: state=directory path={{item.path}} owner={{item.user}} group={{item.group}} mode="0755"
     with_items:
-{{% for s in scope %}}
-    - { path: {{{s.logs_dir}}}, user: {{{s.user}}} }     
-    - { path: {{{s.pid_dir}}}, user: {{{s.user}}} }     
-    - { path: {{{s.socks_dir}}}, user: {{{s.user}}} }     
-    - { path: {{{s.include_dir}}}, user: {{{s.user}}} }     
+{{% for s in scope.supervisors %}}
+    - { path: {{{s.logs_dir}}}, user: {{{s.user}}}, group: {{{s.group}}} }     
+    - { path: {{{s.pid_dir}}}, user: {{{s.user}}}, group: {{{s.group}}} }     
+    - { path: {{{s.socks_dir}}}, user: {{{s.user}}}, group: {{{s.group}}} }     
+    - { path: {{{s.include_dir}}}, user: {{{s.user}}}, group: {{{s.group}}} }     
 {{% endfor %}}
     loop_control:
       label: "{{item.path}} user:{{item.user}}"
   
   
   # ----------------- Setup configuration file
+{{% for s in scope.supervisors %}}
+  - name: Setup configuration file {{{s.conf_file_dst}}}
+    template: src={{{s.conf_file_src_j2}}} dest={{{s.conf_file_dst}}} owner={{{s.user}}} group={{{s.group}}} mode="0644"
+    notify: 
+    - reload_supervisord_{{{s.name}}}
+    
+  - name: Setup supervisord_{{{s.name}}}.service
+    template: src="{{{ s.service_unit_j2 }}}" dest="/usr/lib/systemd/system/supervisord_{{{s.name}}}.service" owner=root group=root mode="0644" 
+    notify: 
+    - "reload_supervisord_{{{s.name}}}"
+    - "reload_systemd"
+    
+  - name: Setup {{{s.supervisorctl}}}
+    template: src="{{{ s.supervisorctl_j2 }}}" dest="{{{s.supervisorctl}}}" owner=root group=root mode="0755"
+{{% endfor %}}
+
+
+# --------------------------------------------------- Supervisor state management
+  - meta: flush_handlers
+
+{{% for s in scope.supervisors %}}
+  - name: Adjust {{{s.name}}} service state
+    systemd:
+      name: supervisord_{{{s.name}}}.service
+      enabled: yes
+      state: started
+{{% endfor %}}
+
+
+  handlers:
+  - name: Reload systemd service file
+    command: "systemctl daemon-reload"
+    listen: "reload_systemd"
+
+{{% for s in scope.supervisors %}}
+  - name: Restart supervisord_{{{s.name}}} service
+    systemd: name=supervisord_{{{s.name}}}.service state=restarted
+    listen: reload_supervisord_{{{s.name}}}
+{{% endfor %}}
+    
+    
   
-  
+{{% endif %}}      
 
 {{% endfor %}}
-{{% endif %}}
 
