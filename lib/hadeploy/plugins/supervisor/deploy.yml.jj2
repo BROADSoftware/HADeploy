@@ -1,69 +1,9 @@
 
 
 
-# ------------------------------------------------------------------------------ Handle systemd stuff
-{{% for scopeName, scope in data.services.scopeByName.iteritems() %}}
-{{% if scope.systemd is defined and scope.systemd|length > 0 %}}
-- hosts: {{{ scopeName }}}
-  any_errors_fatal: {{{ src.exit_on_fail }}}
-  tasks:
-{{% for unit in scope.systemd %}}
-  - name: Get current state for '{{{ unit.name }}}
-    command: systemctl is-active {{{ unit.name }}}.service
-    register: unit_{{{ unit.name }}}
-    changed_when: false
-    failed_when: false
-{{% if unit.unit_file.startswith("file://") %}}
-  - name: Copy file '{{{unit._displaySrc_}}}' to '/usr/lib/systemd/system/{{{unit.name}}}.service'
-    copy: src={{{unit._unit_file_}}} dest=/usr/lib/systemd/system/{{{unit.name}}}.service owner=root group=root mode="0644" 
-{{% elif unit.unit_file.startswith("tmpl://")  %}}
-  - name: Copy template '{{{unit._displaySrc_}}}' to '/usr/lib/systemd/system/{{{unit.name}}}.service'
-    template: src={{{unit._unit_file_}}} dest=/usr/lib/systemd/system/{{{unit.name}}}.service owner=root group=root mode="0644" 
-{{% endif %}}  
-    notify: 
-    - "reload_systemd"
-    - "reload_unit_{{{unit.name}}}"
-{{% endfor %}}
-
-  - meta: flush_handlers
-
-{{% for unit in scope.systemd %}}
-  - name: Adjust {{{unit.name}}} service state
-    systemd:
-      name: {{{ unit.name }}}.service
-      enabled: {{{ unit.enabled }}}
-{{% if unit.state == "started" or unit.state == "stopped" %}}
-      state: {{{ unit.state }}}
-{{% endif %}}      
-{{% endfor %}}
-
-  handlers:
-  - name: Reload systemd service file
-    command: "systemctl daemon-reload"
-    listen: "reload_systemd"
-{{% for unit in scope.systemd %}}
-{{% if unit.action_on_notify == "restart" %}}
-  - name: Restart {{{unit.name}}} service
-    systemd: name={{{ unit.name }}}.service state=restarted
-{{% elif unit.action_on_notify == "reload" %}}
-  - name: Reload {{{unit.name}}} service
-    systemd: name={{{ unit.name }}}.service state=reloaded
-{{% else %}}
-  - name: Notify {{{unit.name}}} service
-    debug: 
-      msg="Service {{{unit.name}}} may need a restart as some configuration has changed."
-{{% endif %}}
-    listen: "reload_unit_{{{unit.name}}}"
-    when: unit_{{{ unit.name }}}.rc == 0
-{{% endfor %}}
- 
-{{% endif %}}      
-{{% endfor %}}
-
-
 # ------------------------------------------------------------------------------ Handle supervisor stuff
 
-{{% for scopeName, scope in data.services.scopeByName.iteritems() %}}
+{{% for scopeName, scope in data.supervisors.scopeByName.iteritems() %}}
 {{% if scope.supervisors is defined and scope.supervisors|length > 0 %}}
 - hosts: {{{ scopeName }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
@@ -86,6 +26,12 @@
   
   # ----------------- Setup configuration file
 {{% for s in scope.supervisors %}}
+  - name: Get current state for '{{{ s.name }}}
+    command: systemctl is-active {{{ s.name }}}.service
+    register: supervisor_{{{ s.name }}}
+    changed_when: false
+    failed_when: false
+
   - name: Setup configuration file {{{s.conf_file_dst}}}
     template: src={{{s.conf_file_src_j2}}} dest={{{s.conf_file_dst}}} owner={{{s.user}}} group={{{s.group}}} mode="0644"
     notify: 
@@ -109,8 +55,10 @@
   - name: Adjust {{{s.name}}} service state
     systemd:
       name: supervisord_{{{s.name}}}.service
-      enabled: yes
-      state: started
+      enabled: {{{ s.enabled }}}
+{{% if s.state == "started" or s.state == "stopped" %}}
+      state: {{{ s.state }}}
+{{% endif %}}      
 {{% endfor %}}
 
 
@@ -123,6 +71,7 @@
   - name: Restart supervisord_{{{s.name}}} service
     systemd: name=supervisord_{{{s.name}}}.service state=restarted
     listen: reload_supervisord_{{{s.name}}}
+    when: supervisor_{{{ s.name }}}.rc == 0
 {{% endfor %}}
     
     
@@ -133,8 +82,8 @@
 
 # ------------------------------------------------------------------------------ Handle supervisor_programs stuff
 
-{{% for scopeName, scope in data.services.scopeByName.iteritems() %}}
-{{% if scope.supervisorPrograms is defined and scope.supervisorPrograms|length > 0 %}}
+{{% for scopeName, scope in data.supervisors.scopeByName.iteritems() %}}
+{{% if scope.programs is defined and scope.programs|length > 0 %}}
 - hosts: {{{ scopeName }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
@@ -142,7 +91,7 @@
   - name: Setup supervisors program configuration files
     template: src={{item.src}} dest="{{item.dest}}" owner={{item.owner}} group={{item.group}} mode=0644
     with_items:
-{{% for prg in scope.supervisorPrograms %}}
+{{% for prg in scope.programs %}}
     - { src: {{{ prg.conf_file_src_j2}}}, dest: {{{prg.conf_file_dst}}}, owner: {{{ prg.supervisorOwner }}}, group: {{{ prg.supervisorGroup }}}  }
 {{% endfor %}}
   

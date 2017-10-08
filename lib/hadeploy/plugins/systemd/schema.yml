@@ -1,0 +1,22 @@
+
+
+
+type: map
+mapping:
+            
+  "systemd_units":        
+    type: "seq"
+    sequence:
+    - type: map
+      mapping:
+        "name": { type: str, required: true }        
+        "scope": { type: str, required: true }
+        "unit_file": { type: str, required: true }
+        "no_remove": { type: bool, required: false }    # Default to false
+        "enabled": { type: bool, required: false } # Start on boot ? Default true
+        "state": { type: str, required: false } # started/stopped/current . Default: current
+        "action_on_notify": { type: str, required: false } # restart/reload/none. Default restart
+   
+        
+        
+        

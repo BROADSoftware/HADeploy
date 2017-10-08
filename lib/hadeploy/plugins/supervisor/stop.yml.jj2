@@ -1,0 +1,19 @@
+
+
+# ------------------------------------------------------------------------------ Handle supervisor stuff
+{{% for scopeName, scope in data.supervisors.scopeByName.iteritems() %}}
+{{% if scope.supervisors is defined and scope.supervisors|length > 0 %}}
+
+- hosts: {{{ scopeName }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
+  tasks:
+{{% for s in scope.supervisors %}}
+  - name: Stop supervisor {{{s.name}}} 
+    systemd:
+      name: supervisord_{{{s.name}}}.service
+      state: stopped
+{{% endfor %}}
+
+
+{{% endif %}}
+{{% endfor %}}

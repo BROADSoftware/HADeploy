@@ -20,33 +20,18 @@ import hadeploy.core.misc as misc
 import os
 from hadeploy.core.plugin import Plugin
 from hadeploy.core.templator import Templator
-from hadeploy.core.const import SRC,DATA,SCOPE_SYSTEMD,ACTION_DEPLOY,ACTION_REMOVE,ACTION_START,ACTION_STOP,SCOPE_SERVICES,SCOPE_SUPERVISOR
-from hadeploy.plugins.files.code import lookupInLocalFiles,lookupInLocalTemplates
+from hadeploy.core.const import SRC,DATA,ACTION_DEPLOY,ACTION_REMOVE,ACTION_START,ACTION_STOP,SCOPE_SUPERVISOR
+from hadeploy.plugins.files.code import lookupSrc
 from sets import Set
 
-logger = logging.getLogger("hadeploy.plugins.systemd")
-
-SYSTEMD_UNITS="systemd_units"
-NAME="name"
-SCOPE="scope"
-UNIT_FILE="unit_file"
-NO_REMOVE="no_remove"
-_UNIT_FILE_="_unit_file_"
-
-
-SERVICES="services"
-
-SYSTEMD="systemd"
-SCOPE_BY_NAME="scopeByName"     
-
-_SRC_="_src_"
-_DISPLAY_SRC_="_displaySrc_"
+logger = logging.getLogger("hadeploy.plugins.supervisor")
 
 ENABLED="enabled"
 STATE="state"
 ST_STARTED="started"
 ST_STOPPED="stopped"
 ST_CURRENT="current"
+
 
 ACTION_ON_NOTIFY="action_on_notify"
 AON_RESTART="restart"
@@ -55,6 +40,12 @@ AON_NONE="none"
 
 validState= Set([ST_STARTED, ST_STOPPED, ST_CURRENT])
 validAon = Set([AON_NONE, AON_RELOAD, AON_RESTART])
+
+NAME="name"
+NO_REMOVE="no_remove"
+SCOPE="scope"
+SCOPE_BY_NAME="scopeByName"     
+
 
 SUPERVISORS="supervisors"
 USER="user"
@@ -95,81 +86,48 @@ SUPERVISOR_OWNER="supervisorOwner"
 SUPERVISOR_GROUP="supervisorGroup"
 PROGRAM_TO_REMOVE_COUNT="programToRemoveCount"
 
-class ServicesPlugin(Plugin):
+class SupervisorPlugin(Plugin):
     
     def __init__(self, name, path, context):
         Plugin.__init__(self, name, path, context)
            
     def getGroomingPriority(self):
-        return 6000     
+        return 7000     
 
     def getSupportedScopes(self):
-        return [SCOPE_SYSTEMD, SCOPE_SERVICES]        
+        return [SCOPE_SUPERVISOR]        
  
     def getSupportedActions(self):
         return [ACTION_DEPLOY, ACTION_REMOVE,ACTION_START,ACTION_STOP]
 
     def getPriority(self, action):
         if action == ACTION_DEPLOY:
-            return 6000
+            return 7000
         elif  action == ACTION_REMOVE:
-            return 1800
+            return 1600
         elif  action == ACTION_START:
-            return 5000
+            return 6000
         elif  action == ACTION_STOP:
-            return 5000
+            return 4000
         else:
-            misc.ERROR("Plugin 'systemd' called with invalid action: '{0}'".format(action))
+            misc.ERROR("Plugin 'supervisor' called with invalid action: '{0}'".format(action))
 
 
     def onGrooming(self):
-        misc.ensureObjectInMaps(self.context.model[DATA], [SERVICES, SCOPE_BY_NAME], {})
-        self.groomSystemd()
+        misc.ensureObjectInMaps(self.context.model[DATA], [SUPERVISORS, SCOPE_BY_NAME], {})
         self.groomSupervisors()
         self.groomPrograms()
-                    
-    def groomSystemd(self):
-        if self.context.toExclude(SCOPE_SYSTEMD) or self.context.toExclude(SCOPE_SERVICES):
-            return
-        model = self.context.model
-        unitNames = Set()
-        if SYSTEMD_UNITS in model[SRC]:
-            for unit in model[SRC][SYSTEMD_UNITS]:
-                if unit[NAME] in unitNames:
-                    misc.ERROR("systemd_unit '{0}' is defined twice!".format(unit[NAME]))
-                unitNames.add(unit[NAME]) 
-                misc.setDefaultInMap(unit, NO_REMOVE, False)
-                misc.setDefaultInMap(unit, ENABLED, True)
-                misc.setDefaultInMap(unit, STATE, ST_CURRENT)
-                if unit[STATE] not in validState:
-                    misc.ERROR("Systemd_unit {0}: state value '{1}' is not valid. Must be one of {2}".format(unit[NAME], unit[STATE], validState))
-                misc.setDefaultInMap(unit, ACTION_ON_NOTIFY, AON_RESTART)
-                if unit[ACTION_ON_NOTIFY] not in validAon:
-                    misc.ERROR("Systemd_unit {0}: action_on_notify value '{1}' is not valid. Must be one of {2}".format(unit[NAME], unit[ACTION_ON_NOTIFY], validAon))
-                # ---------------------- Lookup unit file
-                path, displaySrc, errMsg = lookupSrc(model, unit[UNIT_FILE])
-                if path != None:
-                    unit[_UNIT_FILE_] = path
-                    unit[_DISPLAY_SRC_] = displaySrc
-                else:
-                    misc.ERROR("Systemd_unit '{0}': {1}".format(unit[NAME], errMsg))
-                # ---------------------- Insert in scope
-                if not self.context.checkScope(unit[SCOPE]):
-                    misc.ERROR("Systemd_unit {0}: scope attribute '{1}' does not match any host or host_group!".format(unit[NAME], unit[SCOPE]))
-                else:
-                    misc.ensureObjectInMaps(self.context.model[DATA][SERVICES][SCOPE_BY_NAME], [unit[SCOPE], SYSTEMD], [])
-                    model[DATA][SERVICES][SCOPE_BY_NAME][unit[SCOPE]][SYSTEMD].append(unit)
-    
+
     def groomSupervisors(self):
-        if self.context.toExclude(SCOPE_SUPERVISOR) or self.context.toExclude(SCOPE_SERVICES):
+        if self.context.toExclude(SCOPE_SUPERVISOR):
             return
         model = self.context.model
         if SUPERVISORS in model[SRC]:
-            misc.ensureObjectInMaps(self.context.model[DATA][SERVICES], [SUPERVISOR_BY_NAME], {})
+            misc.ensureObjectInMaps(self.context.model[DATA][SUPERVISORS], [SUPERVISOR_BY_NAME], {})
             for supervisord in model[SRC][SUPERVISORS]:
-                if supervisord[NAME] in self.context.model[DATA][SERVICES][SUPERVISOR_BY_NAME]:
+                if supervisord[NAME] in self.context.model[DATA][SUPERVISORS][SUPERVISOR_BY_NAME]:
                     misc.ERROR("supervisor '{0}' is defined twice!".format(supervisord[NAME]))
-                self.context.model[DATA][SERVICES][SUPERVISOR_BY_NAME][supervisord[NAME]] = supervisord                    
+                self.context.model[DATA][SUPERVISORS][SUPERVISOR_BY_NAME][supervisord[NAME]] = supervisord                    
                 misc.setDefaultInMap(supervisord, MANAGED, True)
                 if not supervisord[MANAGED]:
                     misc.ERROR("TODO")
@@ -179,10 +137,10 @@ class ServicesPlugin(Plugin):
                 if not self.context.checkScope(supervisord[SCOPE]):
                     misc.ERROR("Supervisor {0}: scope attribute '{1}' does not match any host or host_group!".format(supervisord[NAME], supervisord[SCOPE]))
                 else:
-                    misc.ensureObjectInMaps(self.context.model[DATA][SERVICES][SCOPE_BY_NAME], [supervisord[SCOPE], SUPERVISORS], [])
-                    model[DATA][SERVICES][SCOPE_BY_NAME][supervisord[SCOPE]][SUPERVISORS].append(supervisord)
+                    misc.ensureObjectInMaps(self.context.model[DATA][SUPERVISORS][SCOPE_BY_NAME], [supervisord[SCOPE], SUPERVISORS], [])
+                    model[DATA][SUPERVISORS][SCOPE_BY_NAME][supervisord[SCOPE]][SUPERVISORS].append(supervisord)
             # We need the number of supervisor to remove per scope, to help in template
-            for _, scope in  model[DATA][SERVICES][SCOPE_BY_NAME].iteritems():
+            for _, scope in  model[DATA][SUPERVISORS][SCOPE_BY_NAME].iteritems():
                 if SUPERVISORS in scope:
                     count = 0
                     for supervisord in scope[SUPERVISORS]:
@@ -199,7 +157,9 @@ class ServicesPlugin(Plugin):
         misc.setDefaultInMap(supervisord, SUPERVISORCTL, "/usr/bin/supervisorctl_{0}".format(supervisord[NAME]))
         misc.setDefaultInMap(supervisord, NO_REMOVE, False)
         misc.setDefaultInMap(supervisord, ENABLED, True)
-        misc.setDefaultInMap(supervisord, STATE, ST_CURRENT)
+        misc.setDefaultInMap(supervisord, STATE, ST_STARTED)
+        if supervisord[STATE] not in validState:
+            misc.ERROR("Supervisor {0}: state value '{1}' is not valid. Must be one of {2}".format(supervisord[NAME], supervisord[STATE], validState))
         if HTTP_SERVER in supervisord:
             misc.setDefaultInMap(supervisord[HTTP_SERVER], ENDPOINT, "127.0.0.1:9001")
             if PASSWORD in supervisord[HTTP_SERVER]:
@@ -220,15 +180,15 @@ class ServicesPlugin(Plugin):
             
 
     def groomPrograms(self):
-        if self.context.toExclude(SCOPE_SUPERVISOR) or self.context.toExclude(SCOPE_SERVICES):
+        if self.context.toExclude(SCOPE_SUPERVISOR):
             return
         model = self.context.model
         if SUPERVISOR_PROGRAMS in model[SRC]:
             for prg in model[SRC][SUPERVISOR_PROGRAMS]:
-                if not prg[SUPERVISOR] in model[DATA][SERVICES][SUPERVISOR_BY_NAME]:
+                if not prg[SUPERVISOR] in model[DATA][SUPERVISORS][SUPERVISOR_BY_NAME]:
                     misc.ERROR("supervisor_program '{}' refer to an undefined supervisor '{}'".format(prg[NAME], prg[SUPERVISOR]))
                 else:
-                    supervisord = model[DATA][SERVICES][SUPERVISOR_BY_NAME][prg[SUPERVISOR]]
+                    supervisord = model[DATA][SUPERVISORS][SUPERVISOR_BY_NAME][prg[SUPERVISOR]]
                 misc.setDefaultInMap(prg, NO_REMOVE, False)
                 if prg[NO_REMOVE] and not supervisord[NO_REMOVE]:
                     misc.ERROR("Supervisor_program '{}' has no remove flag set while its supervisor ({}) has not!".format(prg[NAME], supervisord[NAME]))
@@ -249,10 +209,10 @@ class ServicesPlugin(Plugin):
                 # Note we don't set prg[USER], as we want to be unset in config file if not set
                 
                 # ---------------------- Insert in scope
-                misc.ensureObjectInMaps(self.context.model[DATA][SERVICES][SCOPE_BY_NAME], [supervisord[SCOPE], SUPERVISORPROGRAMS], [])
-                model[DATA][SERVICES][SCOPE_BY_NAME][supervisord[SCOPE]][SUPERVISORPROGRAMS].append(prg)
+                misc.ensureObjectInMaps(self.context.model[DATA][SUPERVISORS][SCOPE_BY_NAME], [supervisord[SCOPE], SUPERVISORPROGRAMS], [])
+                model[DATA][SUPERVISORS][SCOPE_BY_NAME][supervisord[SCOPE]][SUPERVISORPROGRAMS].append(prg)
             # We need the number of supervisor to remove per scope, to help in template
-            for _, scope in  model[DATA][SERVICES][SCOPE_BY_NAME].iteritems():
+            for _, scope in  model[DATA][SUPERVISORS][SCOPE_BY_NAME].iteritems():
                 if SUPERVISORPROGRAMS in scope:
                     count = 0
                     for prg in scope[SUPERVISORPROGRAMS]:
@@ -264,7 +224,7 @@ class ServicesPlugin(Plugin):
             
     
     def buildAuxTemplates(self, action, priority):
-        if self.context.toExclude(SCOPE_SUPERVISOR) or self.context.toExclude(SCOPE_SERVICES):
+        if self.context.toExclude(SCOPE_SUPERVISOR):
             return
         if action != ACTION_DEPLOY:
             return
@@ -279,36 +239,6 @@ class ServicesPlugin(Plugin):
             for prg in model[SRC][SUPERVISOR_PROGRAMS]:
                 templator = Templator(["/"], prg)    # All template path are absolute
                 templator.generate(prg[CONF_FILE_SRC_JJ2], os.path.join(self.context.workingFolder, prg[CONF_FILE_SRC_J2]))
-
-
-
-def lookupSrc(model, src):
-    if src.startswith("file://"):
-        path = src[len('file://'):] 
-        displaySrc = path
-        if not path.startswith("/"):
-            path = lookupInLocalFiles(path, model)
-        else:
-            if not os.path.exists(path):
-                return (None, None, "'{0}' does not exists".format(path))
-        if os.path.isdir(path):
-            return (None, None, "'{0}' can't be a folder!".format(src))
-        return (path, displaySrc, None)
-    elif src.startswith("tmpl://"):
-        path = src[len('tmpl://'):] 
-        displaySrc = path
-        if not path.startswith("/"):
-            path = lookupInLocalTemplates(path, model)
-        else:
-            if not os.path.exists(path):
-                misc.ERROR("'{0}' does not exists".format(path))
-        if os.path.isdir(path):
-            misc.ERROR("Unit_file '{0}' can't be a folder!".format(src))
-        return(path, displaySrc, None)
-    else:
-        return (None, None, "{0} is not a valid form. Unknown scheme.".format(src))
-
-
 
 
     

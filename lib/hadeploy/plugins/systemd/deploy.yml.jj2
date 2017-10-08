@@ -1,0 +1,61 @@
+
+
+
+# ------------------------------------------------------------------------------ Handle systemd stuff
+{{% for scopeName, scope in data.systemd.scopeByName.iteritems() %}}
+{{% if scope.systemd is defined and scope.systemd|length > 0 %}}
+- hosts: {{{ scopeName }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
+  tasks:
+{{% for unit in scope.systemd %}}
+  - name: Get current state for '{{{ unit.name }}}
+    command: systemctl is-active {{{ unit.name }}}.service
+    register: unit_{{{ unit.name }}}
+    changed_when: false
+    failed_when: false
+{{% if unit.unit_file.startswith("file://") %}}
+  - name: Copy file '{{{unit._displaySrc_}}}' to '/usr/lib/systemd/system/{{{unit.name}}}.service'
+    copy: src={{{unit._unit_file_}}} dest=/usr/lib/systemd/system/{{{unit.name}}}.service owner=root group=root mode="0644" 
+{{% elif unit.unit_file.startswith("tmpl://")  %}}
+  - name: Copy template '{{{unit._displaySrc_}}}' to '/usr/lib/systemd/system/{{{unit.name}}}.service'
+    template: src={{{unit._unit_file_}}} dest=/usr/lib/systemd/system/{{{unit.name}}}.service owner=root group=root mode="0644" 
+{{% endif %}}  
+    notify: 
+    - "reload_systemd"
+    - "reload_unit_{{{unit.name}}}"
+{{% endfor %}}
+
+  - meta: flush_handlers
+
+{{% for unit in scope.systemd %}}
+  - name: Adjust {{{unit.name}}} service state
+    systemd:
+      name: {{{ unit.name }}}.service
+      enabled: {{{ unit.enabled }}}
+{{% if unit.state == "started" or unit.state == "stopped" %}}
+      state: {{{ unit.state }}}
+{{% endif %}}      
+{{% endfor %}}
+
+  handlers:
+  - name: Reload systemd service file
+    command: "systemctl daemon-reload"
+    listen: "reload_systemd"
+{{% for unit in scope.systemd %}}
+{{% if unit.action_on_notify == "restart" %}}
+  - name: Restart {{{unit.name}}} service
+    systemd: name={{{ unit.name }}}.service state=restarted
+{{% elif unit.action_on_notify == "reload" %}}
+  - name: Reload {{{unit.name}}} service
+    systemd: name={{{ unit.name }}}.service state=reloaded
+{{% else %}}
+  - name: Notify {{{unit.name}}} service
+    debug: 
+      msg="Service {{{unit.name}}} may need a restart as some configuration has changed."
+{{% endif %}}
+    listen: "reload_unit_{{{unit.name}}}"
+    when: unit_{{{ unit.name }}}.rc == 0
+{{% endfor %}}
+ 
+{{% endif %}}      
+{{% endfor %}}

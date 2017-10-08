@@ -493,5 +493,34 @@ def groomMavenFiles(f, model):
 
     
 
+# This is not used in file, by in systemd and supervisor plugins
+
+def lookupSrc(model, src):
+    if src.startswith("file://"):
+        path = src[len('file://'):] 
+        displaySrc = path
+        if not path.startswith("/"):
+            path = lookupInLocalFiles(path, model)
+        else:
+            if not os.path.exists(path):
+                return (None, None, "'{0}' does not exists".format(path))
+        if os.path.isdir(path):
+            return (None, None, "'{0}' can't be a folder!".format(src))
+        return (path, displaySrc, None)
+    elif src.startswith("tmpl://"):
+        path = src[len('tmpl://'):] 
+        displaySrc = path
+        if not path.startswith("/"):
+            path = lookupInLocalTemplates(path, model)
+        else:
+            if not os.path.exists(path):
+                misc.ERROR("'{0}' does not exists".format(path))
+        if os.path.isdir(path):
+            misc.ERROR("Unit_file '{0}' can't be a folder!".format(src))
+        return(path, displaySrc, None)
+    else:
+        return (None, None, "{0} is not a valid form. Unknown scheme.".format(src))
+
+
 
     
