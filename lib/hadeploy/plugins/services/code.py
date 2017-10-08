@@ -56,11 +56,9 @@ AON_NONE="none"
 validState= Set([ST_STARTED, ST_STOPPED, ST_CURRENT])
 validAon = Set([AON_NONE, AON_RELOAD, AON_RESTART])
 
-
-
-
 SUPERVISORS="supervisors"
 USER="user"
+GROUP="group"
 MANAGED="managed"
 CONF_FILE_SRC="conf_file_src"
 CONF_FILE_DST="conf_file_dst"
@@ -86,7 +84,16 @@ SUPERVISORCTL_J2="supervisorctl_j2"
 
 
 SUPERVISOR_TO_REMOVE_COUNT="supervisorToRemoveCount"
+SUPERVISOR_BY_NAME="supervisorByName"
 
+SUPERVISOR="supervisor"
+SUPERVISOR_GROUP_BY_NAME="supervisorGroupByName"
+SUPERVISOR_PROGRAMS="supervisor_programs"
+SUPERVISORPROGRAMS="supervisorPrograms"
+COMMAND="command"
+SUPERVISOR_OWNER="supervisorOwner"
+SUPERVISOR_GROUP="supervisorGroup"
+PROGRAM_TO_REMOVE_COUNT="programToRemoveCount"
 
 class ServicesPlugin(Plugin):
     
@@ -118,7 +125,8 @@ class ServicesPlugin(Plugin):
     def onGrooming(self):
         misc.ensureObjectInMaps(self.context.model[DATA], [SERVICES, SCOPE_BY_NAME], {})
         self.groomSystemd()
-        self.groomSupervisord()
+        self.groomSupervisors()
+        self.groomPrograms()
                     
     def groomSystemd(self):
         if self.context.toExclude(SCOPE_SYSTEMD) or self.context.toExclude(SCOPE_SERVICES):
@@ -151,48 +159,22 @@ class ServicesPlugin(Plugin):
                 else:
                     misc.ensureObjectInMaps(self.context.model[DATA][SERVICES][SCOPE_BY_NAME], [unit[SCOPE], SYSTEMD], [])
                     model[DATA][SERVICES][SCOPE_BY_NAME][unit[SCOPE]][SYSTEMD].append(unit)
-
     
-    def groomSupervisord(self):
+    def groomSupervisors(self):
         if self.context.toExclude(SCOPE_SUPERVISOR) or self.context.toExclude(SCOPE_SERVICES):
             return
         model = self.context.model
         if SUPERVISORS in model[SRC]:
-            supervisorNames = Set()
+            misc.ensureObjectInMaps(self.context.model[DATA][SERVICES], [SUPERVISOR_BY_NAME], {})
             for supervisord in model[SRC][SUPERVISORS]:
-                if supervisord[NAME] in supervisorNames:
+                if supervisord[NAME] in self.context.model[DATA][SERVICES][SUPERVISOR_BY_NAME]:
                     misc.ERROR("supervisor '{0}' is defined twice!".format(supervisord[NAME]))
-                supervisorNames.add(supervisord[NAME]) 
+                self.context.model[DATA][SERVICES][SUPERVISOR_BY_NAME][supervisord[NAME]] = supervisord                    
                 misc.setDefaultInMap(supervisord, MANAGED, True)
                 if not supervisord[MANAGED]:
                     misc.ERROR("TODO")
                 else:
-                    misc.setDefaultInMap(supervisord, CONF_FILE_DST, "/etc/supervisord_{0}.conf".format(supervisord[NAME]))
-                    misc.setDefaultInMap(supervisord, LOGS_DIR, "/var/log/supervisor_{0}".format(supervisord[NAME]))
-                    misc.setDefaultInMap(supervisord, PID_DIR, "/var/run/supervisor_{0}".format(supervisord[NAME]))
-                    misc.setDefaultInMap(supervisord, SOCKS_DIR, "/var/run/supervisor_{0}".format(supervisord[NAME]))
-                    misc.setDefaultInMap(supervisord, INCLUDE_DIR, "/etc/supervisord_{0}.d".format(supervisord[NAME]))
-                    misc.setDefaultInMap(supervisord, SUPERVISORCTL, "/usr/bin/supervisorctl_{0}".format(supervisord[NAME]))
-                    misc.setDefaultInMap(supervisord, NO_REMOVE, False)
-                    misc.setDefaultInMap(supervisord, ENABLED, True)
-                    misc.setDefaultInMap(supervisord, STATE, ST_CURRENT)
-                    if HTTP_SERVER in supervisord:
-                        misc.setDefaultInMap(supervisord[HTTP_SERVER], ENDPOINT, "127.0.0.1:9001")
-                        if PASSWORD in supervisord[HTTP_SERVER]:
-                            misc.setDefaultInMap(supervisord[HTTP_SERVER], USERNAME, supervisord[USER])
-                    if CONF_FILE_SRC in supervisord:
-                        path, _, errMsg = lookupSrc(model, supervisord[CONF_FILE_SRC])
-                        if path != None:
-                            supervisord[CONF_FILE_SRC_JJ2] = path
-                        else:
-                            misc.ERROR("Supervisor '{0}': {1}".format(supervisord[NAME], errMsg))
-                    else:
-                        supervisord[CONF_FILE_SRC_JJ2] = os.path.join(self.path, "templates/supervisord.conf.jj2")
-                    supervisord[CONF_FILE_SRC_J2] = "supervisord_{0}.conf.j2".format(supervisord[NAME])
-                    supervisord[SERVICE_UNIT_JJ2] = os.path.join(self.path, "templates/supervisord.service.jj2")
-                    supervisord[SERVICE_UNIT_J2] = "supervisord_{0}.service.j2".format(supervisord[NAME])
-                    supervisord[SUPERVISORCTL_JJ2] = os.path.join(self.path, "templates/supervisorctl.jj2")
-                    supervisord[SUPERVISORCTL_J2] = "supervisorctl_{0}".format(supervisord[NAME])
+                    self.groomOneSupervisord(model, supervisord)
                 # ---------------------- Insert in scope
                 if not self.context.checkScope(supervisord[SCOPE]):
                     misc.ERROR("Supervisor {0}: scope attribute '{1}' does not match any host or host_group!".format(supervisord[NAME], supervisord[SCOPE]))
@@ -207,10 +189,79 @@ class ServicesPlugin(Plugin):
                         if not supervisord[NO_REMOVE]:
                             count += 1
                     scope[SUPERVISOR_TO_REMOVE_COUNT] = count
+
+    def groomOneSupervisord(self, model, supervisord):
+        misc.setDefaultInMap(supervisord, CONF_FILE_DST, "/etc/supervisord_{0}.conf".format(supervisord[NAME]))
+        misc.setDefaultInMap(supervisord, LOGS_DIR, "/var/log/supervisor_{0}".format(supervisord[NAME]))
+        misc.setDefaultInMap(supervisord, PID_DIR, "/var/run/supervisor_{0}".format(supervisord[NAME]))
+        misc.setDefaultInMap(supervisord, SOCKS_DIR, "/var/run/supervisor_{0}".format(supervisord[NAME]))
+        misc.setDefaultInMap(supervisord, INCLUDE_DIR, "/etc/supervisord_{0}.d".format(supervisord[NAME]))
+        misc.setDefaultInMap(supervisord, SUPERVISORCTL, "/usr/bin/supervisorctl_{0}".format(supervisord[NAME]))
+        misc.setDefaultInMap(supervisord, NO_REMOVE, False)
+        misc.setDefaultInMap(supervisord, ENABLED, True)
+        misc.setDefaultInMap(supervisord, STATE, ST_CURRENT)
+        if HTTP_SERVER in supervisord:
+            misc.setDefaultInMap(supervisord[HTTP_SERVER], ENDPOINT, "127.0.0.1:9001")
+            if PASSWORD in supervisord[HTTP_SERVER]:
+                misc.setDefaultInMap(supervisord[HTTP_SERVER], USERNAME, supervisord[USER])
+        if CONF_FILE_SRC in supervisord:
+            path, _, errMsg = lookupSrc(model, supervisord[CONF_FILE_SRC])
+            if path != None:
+                supervisord[CONF_FILE_SRC_JJ2] = path
+            else:
+                misc.ERROR("Supervisor '{0}': {1}".format(supervisord[NAME], errMsg))
+        else:
+            supervisord[CONF_FILE_SRC_JJ2] = os.path.join(self.path, "templates/supervisord.conf.jj2")
+        supervisord[CONF_FILE_SRC_J2] = "supervisord_{0}.conf.j2".format(supervisord[NAME])
+        supervisord[SERVICE_UNIT_JJ2] = os.path.join(self.path, "templates/supervisord.service.jj2")
+        supervisord[SERVICE_UNIT_J2] = "supervisord_{0}.service.j2".format(supervisord[NAME])
+        supervisord[SUPERVISORCTL_JJ2] = os.path.join(self.path, "templates/supervisorctl.jj2")
+        supervisord[SUPERVISORCTL_J2] = "supervisorctl_{0}".format(supervisord[NAME])
             
 
-
-
+    def groomPrograms(self):
+        if self.context.toExclude(SCOPE_SUPERVISOR) or self.context.toExclude(SCOPE_SERVICES):
+            return
+        model = self.context.model
+        if SUPERVISOR_PROGRAMS in model[SRC]:
+            for prg in model[SRC][SUPERVISOR_PROGRAMS]:
+                if not prg[SUPERVISOR] in model[DATA][SERVICES][SUPERVISOR_BY_NAME]:
+                    misc.ERROR("supervisor_program '{}' refer to an undefined supervisor '{}'".format(prg[NAME], prg[SUPERVISOR]))
+                else:
+                    supervisord = model[DATA][SERVICES][SUPERVISOR_BY_NAME][prg[SUPERVISOR]]
+                misc.setDefaultInMap(prg, NO_REMOVE, False)
+                if prg[NO_REMOVE] and not supervisord[NO_REMOVE]:
+                    misc.ERROR("Supervisor_program '{}' has no remove flag set while its supervisor ({}) has not!".format(prg[NAME], supervisord[NAME]))
+                if CONF_FILE_SRC in prg:
+                    path, _, errMsg = lookupSrc(model, prg[CONF_FILE_SRC])
+                    if path != None:
+                        prg[CONF_FILE_SRC_JJ2] = path
+                    else:
+                        misc.ERROR("Supervisor_program '{0}': {1}".format(prg[NAME], errMsg))
+                else:
+                    prg[CONF_FILE_SRC_JJ2] = os.path.join(self.path, "templates/program.conf.jj2")
+                    if COMMAND not in prg:
+                        misc.ERROR("Supervisor_program '{}': A 'command' parameter must be provided if using the default configuration file (No 'conf_file_src' parameter".format(prg[NAME]))
+                prg[CONF_FILE_SRC_J2] = "supervisor_{}_program_{}.conf".format(supervisord[NAME], prg[NAME])
+                prg[CONF_FILE_DST] = os.path.join(supervisord[INCLUDE_DIR], "{}.init".format(prg[NAME]))
+                prg[SUPERVISOR_OWNER] = supervisord[USER]
+                prg[SUPERVISOR_GROUP] = supervisord[GROUP]
+                # Note we don't set prg[USER], as we want to be unset in config file if not set
+                
+                # ---------------------- Insert in scope
+                misc.ensureObjectInMaps(self.context.model[DATA][SERVICES][SCOPE_BY_NAME], [supervisord[SCOPE], SUPERVISORPROGRAMS], [])
+                model[DATA][SERVICES][SCOPE_BY_NAME][supervisord[SCOPE]][SUPERVISORPROGRAMS].append(prg)
+            # We need the number of supervisor to remove per scope, to help in template
+            for _, scope in  model[DATA][SERVICES][SCOPE_BY_NAME].iteritems():
+                if SUPERVISORPROGRAMS in scope:
+                    count = 0
+                    for prg in scope[SUPERVISORPROGRAMS]:
+                        if not prg[NO_REMOVE]:
+                            count += 1
+                    scope[PROGRAM_TO_REMOVE_COUNT] = count
+                        
+                
+            
     
     def buildAuxTemplates(self, action, priority):
         if self.context.toExclude(SCOPE_SUPERVISOR) or self.context.toExclude(SCOPE_SERVICES):
@@ -224,7 +275,12 @@ class ServicesPlugin(Plugin):
                 templator.generate(supervisord[CONF_FILE_SRC_JJ2], os.path.join(self.context.workingFolder, supervisord[CONF_FILE_SRC_J2]))
                 templator.generate(supervisord[SERVICE_UNIT_JJ2],  os.path.join(self.context.workingFolder, supervisord[SERVICE_UNIT_J2]))
                 templator.generate(supervisord[SUPERVISORCTL_JJ2],  os.path.join(self.context.workingFolder, supervisord[SUPERVISORCTL_J2]))
-                
+        if SUPERVISOR_PROGRAMS in model[SRC]:
+            for prg in model[SRC][SUPERVISOR_PROGRAMS]:
+                templator = Templator(["/"], prg)    # All template path are absolute
+                templator.generate(prg[CONF_FILE_SRC_JJ2], os.path.join(self.context.workingFolder, prg[CONF_FILE_SRC_J2]))
+
+
 
 def lookupSrc(model, src):
     if src.startswith("file://"):

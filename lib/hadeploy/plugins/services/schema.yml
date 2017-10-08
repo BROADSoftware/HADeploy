@@ -62,10 +62,11 @@ mapping:
       mapping:
         "supervisor": { type: str, required: true }
         "name": { type: str, required: true }
-        "config_file_src": { type: str, required: false } # Default to an internally provided one
+        "conf_file_src": { type: str, required: false } # Default to an internally provided one
         "command": { type: str, required: false } # Required if no config_file_src provided
-        "group": { type: str, required: false }
+        "group": { type: str, required: false } # ref to supervisor_group
         "no_remove": { type: bool, required: false }    # Default to false
+        "user": { type: str, required: false }
         
         
         

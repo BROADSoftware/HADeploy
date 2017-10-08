@@ -1,29 +1,27 @@
 
 
-
-# ------------------------------------------------------------------------------ Handle systemd stuff
+# ------------------------------------------------------------------------------ Handle supervisor_programs stuff
 
 {{% for scopeName, scope in data.services.scopeByName.iteritems() %}}
-{{% if scope.systemd is defined and scope.systemd|length > 0 %}}
+{{% if scope.supervisorPrograms is defined and scope.supervisorPrograms|length > 0 and scope.programToRemoveCount > 0 %}}
 - hosts: {{{ scopeName }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
-{{% for unit in scope.systemd %}}
-{{% if not unit.no_remove %}}
-  - name: stop {{{unit.name}}} service
-    systemd: name={{{ unit.name }}}.service state=stopped enabled=false
-    failed_when: false
-  - name: Remove file '/usr/lib/systemd/system/{{{unit.name}}}.service'
-    file: path=/usr/lib/systemd/system/{{{unit.name}}}.service state=absent 
-    notify: 
-    - reload service file
-{{% endif %}}
+  
+  - name: Remove supervisors program configuration files
+    file: path={{item}} state=absent
+    with_items:
+{{% for prg in scope.supervisorPrograms %}}
+{{% if not prg.no_remove %}}
+    - {{{ prg.conf_file_src_j2}}}
+{{% endif %}}     
 {{% endfor %}}
-  handlers:
-  - name: reload service file
-    command: "systemctl daemon-reload"
-{{%endif%}}
+
+
+{{% endif %}}      
+
 {{% endfor %}}
+
 
 
 # ------------------------------------------------------------------------------ Handle supervisor stuff
@@ -78,4 +76,33 @@
   
 {{%endif%}}
 {{% endfor %}}
+
+
+
+
+# ------------------------------------------------------------------------------ Handle systemd stuff
+
+{{% for scopeName, scope in data.services.scopeByName.iteritems() %}}
+{{% if scope.systemd is defined and scope.systemd|length > 0 %}}
+- hosts: {{{ scopeName }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
+  tasks:
+{{% for unit in scope.systemd %}}
+{{% if not unit.no_remove %}}
+  - name: stop {{{unit.name}}} service
+    systemd: name={{{ unit.name }}}.service state=stopped enabled=false
+    failed_when: false
+  - name: Remove file '/usr/lib/systemd/system/{{{unit.name}}}.service'
+    file: path=/usr/lib/systemd/system/{{{unit.name}}}.service state=absent 
+    notify: 
+    - reload service file
+{{% endif %}}
+{{% endfor %}}
+  handlers:
+  - name: reload service file
+    command: "systemctl daemon-reload"
+{{%endif%}}
+{{% endfor %}}
+
+
 

@@ -131,3 +131,24 @@
 
 {{% endfor %}}
 
+# ------------------------------------------------------------------------------ Handle supervisor_programs stuff
+
+{{% for scopeName, scope in data.services.scopeByName.iteritems() %}}
+{{% if scope.supervisorPrograms is defined and scope.supervisorPrograms|length > 0 %}}
+- hosts: {{{ scopeName }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
+  tasks:
+  
+  - name: Setup supervisors program configuration files
+    template: src={{item.src}} dest="{{item.dest}}" owner={{item.owner}} group={{item.group}} mode=0644
+    with_items:
+{{% for prg in scope.supervisorPrograms %}}
+    - { src: {{{ prg.conf_file_src_j2}}}, dest: {{{prg.conf_file_dst}}}, owner: {{{ prg.supervisorOwner }}}, group: {{{ prg.supervisorGroup }}}  }
+{{% endfor %}}
+  
+
+
+
+{{% endif %}}      
+
+{{% endfor %}}
