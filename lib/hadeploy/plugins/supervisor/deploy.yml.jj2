@@ -26,8 +26,8 @@
   
   # ----------------- Setup configuration file
 {{% for s in scope.supervisors %}}
-  - name: Get current state for '{{{ s.name }}}
-    command: systemctl is-active {{{ s.name }}}.service
+  - name: Get current state for supervisord_{{{ s.name }}}
+    command: systemctl is-active supervisord_{{{ s.name }}}.service
     register: supervisor_{{{ s.name }}}
     changed_when: false
     failed_when: false
@@ -87,16 +87,47 @@
 - hosts: {{{ scopeName }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
-  
-  - name: Setup supervisors program configuration files
-    template: src={{item.src}} dest="{{item.dest}}" owner={{item.owner}} group={{item.group}} mode=0644
+
+{{% for prg in scope.programs %}}
+  - name: Get current state for supervisor_{{{prg.supervisor}}}_{{{prg.name}}} programs
+    shell: "{{{ prg.supervisorctl }}} status {{{prg.name}}} | awk '{ print $2 }'"
+    register: supervisor_{{{prg.supervisor}}}_{{{prg.name}}} 
+    changed_when: false
+    failed_when: false
+
+  - debug: msg="Program {{{prg.supervisor}}}_{{{prg.name}}} is  {{supervisor_{{{prg.supervisor}}}_{{{prg.name}}}.stdout}}"
+{{% endfor %}}
+
+{{% for prg in scope.programs %}}
+  - name: Setup supervisor_{{{prg.supervisor}}}_{{{prg.name}}} configuration files
+    template: src={{{prg.conf_file_src_j2}}} dest="{{{prg.conf_file_dst}}}" owner={{{prg.supervisorOwner}}} group={{{prg.supervisorGroup}}} mode=0644
+    notify:
+    - reload_{{{prg.supervisor}}}_{{{prg.name}}}
+{{% endfor %}}
+
+# --------------------------------------------------- Programs state management
+  - meta: flush_handlers
+
+  - name: Set supervisor programs state
+    supervisorctl: config={{ item.config }} name={{ item.name }} state={{ item.state}} 
     with_items:
 {{% for prg in scope.programs %}}
-    - { src: {{{ prg.conf_file_src_j2}}}, dest: {{{prg.conf_file_dst}}}, owner: {{{ prg.supervisorOwner }}}, group: {{{ prg.supervisorGroup }}}  }
+    - { config: {{{ prg.supervisorConf}}}, name: {{{prg.name}}}, state: "present" }
+{{% if prg.state == "started" or prg.state == "stopped" %}}
+    - { config: {{{ prg.supervisorConf}}}, name: {{{prg.name}}}, state: {{{prg.state}}} }
+{{% endif %}}      
 {{% endfor %}}
-  
+    loop_control:
+      label: "{{item.name}} --> {{item.state}}"
 
 
+  handlers:
+{{% for prg in scope.programs %}}
+  - name: Restart supervisor_{{{ prg.supervisor }}} program {{{ prg.name }}}
+    supervisorctl: config={{{ prg.supervisorConf }}} name={{{ prg.name }}} state=restarted
+    listen: reload_{{{prg.supervisor}}}_{{{prg.name}}}
+    when: supervisor_{{{prg.supervisor}}}_{{{prg.name}}}.stdout == "RUNNING"
+{{% endfor %}}
 
 {{% endif %}}      
 

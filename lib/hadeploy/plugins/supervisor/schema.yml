@@ -41,6 +41,7 @@ mapping:
         "supervisor": { type: str, required: true }
         "name": { type: str, required: true }
         "no_remove": { type: bool, required: false }    # Default to false
+        "state": { type: str, required: false } # started/stopped/current . Default: started
         
   "supervisor_programs":
     type: seq
@@ -54,6 +55,8 @@ mapping:
         "group": { type: str, required: false } # ref to supervisor_group
         "no_remove": { type: bool, required: false }    # Default to false
         "user": { type: str, required: false }
+        "state": { type: str, required: false } # started/stopped/current . Default: started
+        "autostart": { type: bool, required: false }  # Default (state == started)
         
         
         

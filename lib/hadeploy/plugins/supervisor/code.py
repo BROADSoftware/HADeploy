@@ -62,6 +62,7 @@ HTTP_SERVER="http_server"
 ENDPOINT="endpoint"
 USERNAME="username"
 PASSWORD="password"
+AUTOSTART="autostart"
 
 # The supervisor.conf file is a double template.
 # Rendered a first time during build time (in buildAuxTemplates()), the result is in fact a runtime template, rendered by ansible
@@ -80,11 +81,13 @@ SUPERVISOR_BY_NAME="supervisorByName"
 SUPERVISOR="supervisor"
 SUPERVISOR_GROUP_BY_NAME="supervisorGroupByName"
 SUPERVISOR_PROGRAMS="supervisor_programs"
-SUPERVISORPROGRAMS="supervisorPrograms"
+PROGRAMS="programs"
 COMMAND="command"
 SUPERVISOR_OWNER="supervisorOwner"
 SUPERVISOR_GROUP="supervisorGroup"
+SUPERVISOR_CONF="supervisorConf"
 PROGRAM_TO_REMOVE_COUNT="programToRemoveCount"
+
 
 class SupervisorPlugin(Plugin):
     
@@ -203,19 +206,24 @@ class SupervisorPlugin(Plugin):
                     if COMMAND not in prg:
                         misc.ERROR("Supervisor_program '{}': A 'command' parameter must be provided if using the default configuration file (No 'conf_file_src' parameter".format(prg[NAME]))
                 prg[CONF_FILE_SRC_J2] = "supervisor_{}_program_{}.conf".format(supervisord[NAME], prg[NAME])
-                prg[CONF_FILE_DST] = os.path.join(supervisord[INCLUDE_DIR], "{}.init".format(prg[NAME]))
+                prg[CONF_FILE_DST] = os.path.join(supervisord[INCLUDE_DIR], "{}.ini".format(prg[NAME]))
                 prg[SUPERVISOR_OWNER] = supervisord[USER]
                 prg[SUPERVISOR_GROUP] = supervisord[GROUP]
+                prg[SUPERVISOR_CONF] = supervisord[CONF_FILE_DST]
+                prg[SUPERVISORCTL] = supervisord[SUPERVISORCTL]
+                misc.setDefaultInMap(prg, STATE, ST_STARTED)
+                if prg[STATE] not in validState:
+                    misc.ERROR("Supervisor_program {0}: state value '{1}' is not valid. Must be one of {2}".format(prg[NAME], prg[STATE], validState))
+                misc.setDefaultInMap(prg, AUTOSTART, prg[STATE] == ST_STARTED)
                 # Note we don't set prg[USER], as we want to be unset in config file if not set
-                
                 # ---------------------- Insert in scope
-                misc.ensureObjectInMaps(self.context.model[DATA][SUPERVISORS][SCOPE_BY_NAME], [supervisord[SCOPE], SUPERVISORPROGRAMS], [])
-                model[DATA][SUPERVISORS][SCOPE_BY_NAME][supervisord[SCOPE]][SUPERVISORPROGRAMS].append(prg)
+                misc.ensureObjectInMaps(self.context.model[DATA][SUPERVISORS][SCOPE_BY_NAME], [supervisord[SCOPE], PROGRAMS], [])
+                model[DATA][SUPERVISORS][SCOPE_BY_NAME][supervisord[SCOPE]][PROGRAMS].append(prg)
             # We need the number of supervisor to remove per scope, to help in template
             for _, scope in  model[DATA][SUPERVISORS][SCOPE_BY_NAME].iteritems():
-                if SUPERVISORPROGRAMS in scope:
+                if PROGRAMS in scope:
                     count = 0
-                    for prg in scope[SUPERVISORPROGRAMS]:
+                    for prg in scope[PROGRAMS]:
                         if not prg[NO_REMOVE]:
                             count += 1
                     scope[PROGRAM_TO_REMOVE_COUNT] = count
