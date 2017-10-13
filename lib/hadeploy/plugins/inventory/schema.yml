@@ -53,6 +53,7 @@ mapping:
         "become_pass": { type: str, required: false }
         "become_exe": { type: str, required: false }
         "become_flags": { type: str, required: false }
+        "priority": { type: int, required: false }    # Default to 100
         
   "host_groups":
     type: "seq"

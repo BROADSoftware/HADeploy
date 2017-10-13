@@ -36,6 +36,7 @@ SSH_HOST="ssh_host"
 SSH_PASSWORD="ssh_password"
 SSH_EXTRA_ARGS="ssh_extra_args"
 FORCE_SETUP="force_setup"
+PRIORITY="priority"
 
 HOST_GROUP_BY_NAME="hostGroupByName"
 HOSTS_TO_SETUP="hostsToSetup"
@@ -179,6 +180,9 @@ def check(model):
 def handleHostOverrides(model):
     if HOST_OVERRIDES in model[SRC]:
         for hover in model[SRC][HOST_OVERRIDES]:
+            misc.setDefaultInMap(hover, PRIORITY, 100)
+        hoverList =  sorted(model[SRC][HOST_OVERRIDES], key = lambda hover: hover[PRIORITY])
+        for hover in hoverList:
             if hover[NAME] == 'all' or hover[NAME] == '*':
                 for host in model[SRC][HOSTS]:
                     handleHostOverride(host, hover)

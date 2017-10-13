@@ -95,7 +95,7 @@
     changed_when: false
     failed_when: false
 
-  - debug: msg="Program {{{prg.supervisor}}}_{{{prg.name}}} is  {{supervisor_{{{prg.supervisor}}}_{{{prg.name}}}.stdout}}"
+#  - debug: msg="Program {{{prg.supervisor}}}_{{{prg.name}}} is  {{supervisor_{{{prg.supervisor}}}_{{{prg.name}}}.stdout}}"
 {{% endfor %}}
 
 {{% for prg in scope.programsToManage %}}

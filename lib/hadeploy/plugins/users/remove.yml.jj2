@@ -21,11 +21,16 @@
 {{% endif %}}
 {{% endif %}}
 {{% if user.managed and not user.no_remove %}}
+  - name: Clean up process for user  '{{{user.login}}}'
+    shell: pkill  -u {{{user.login}}} sshd
+    failed_when: false
+    changed_when: false
+
   - name: Remove user '{{{user.login}}}'
     user: name={{{user.login}}} state=absent remove={{{user.create_home}}}
     register: result
-    retries: 2
-    delay: 3
+    retries: 30
+    delay: 5               # May need long delay, as some user@notty can  
     until: result|succeeded
     ignore_errors: yes    
 
