@@ -17,7 +17,7 @@
 
 import logging
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC, DATA,HOST_BY_NAME, INVENTORY, SSH_USER
+from hadeploy.core.const import SRC, DATA,HOST_BY_NAME, INVENTORY
 import hadeploy.core.misc as misc
 import os
 from sets import Set

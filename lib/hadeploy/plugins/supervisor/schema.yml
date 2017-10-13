@@ -9,7 +9,7 @@ mapping:
     sequence:
     - type: map
       mapping:
-        "managed": { type: bool, required: false } # Default: yes
+        "managed": { type: bool, required: true }
         "scope": { type: str, required: true }
         "name": { type: str, required: true }
         "user": { type: str, required: true }        

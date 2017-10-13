@@ -4,7 +4,7 @@
 # ------------------------------------------------------------------------------ Handle supervisor stuff
 
 {{% for scopeName, scope in data.supervisors.scopeByName.iteritems() %}}
-{{% if scope.supervisors is defined and scope.supervisors|length > 0 %}}
+{{% if scope.supervisorsToManage is defined and scope.supervisorsToManage|length > 0  %}}
 - hosts: {{{ scopeName }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
@@ -14,7 +14,7 @@
   - name: create Supervisor folders
     file: state=directory path={{item.path}} owner={{item.user}} group={{item.group}} mode="0755"
     with_items:
-{{% for s in scope.supervisors %}}
+{{% for s in scope.supervisorsToManage %}}
     - { path: {{{s.logs_dir}}}, user: {{{s.user}}}, group: {{{s.group}}} }     
     - { path: {{{s.pid_dir}}}, user: {{{s.user}}}, group: {{{s.group}}} }     
     - { path: {{{s.socks_dir}}}, user: {{{s.user}}}, group: {{{s.group}}} }     
@@ -25,7 +25,7 @@
   
   
   # ----------------- Setup configuration file
-{{% for s in scope.supervisors %}}
+{{% for s in scope.supervisorsToManage %}}
   - name: Get current state for supervisord_{{{ s.name }}}
     command: systemctl is-active supervisord_{{{ s.name }}}.service
     register: supervisor_{{{ s.name }}}
@@ -51,7 +51,7 @@
 # --------------------------------------------------- Supervisor state management
   - meta: flush_handlers
 
-{{% for s in scope.supervisors %}}
+{{% for s in scope.supervisorsToManage %}}
   - name: Adjust {{{s.name}}} service state
     systemd:
       name: supervisord_{{{s.name}}}.service
@@ -67,7 +67,7 @@
     command: "systemctl daemon-reload"
     listen: "reload_systemd"
 
-{{% for s in scope.supervisors %}}
+{{% for s in scope.supervisorsToManage %}}
   - name: Restart supervisord_{{{s.name}}} service
     systemd: name=supervisord_{{{s.name}}}.service state=restarted
     listen: reload_supervisord_{{{s.name}}}
@@ -83,14 +83,14 @@
 # ------------------------------------------------------------------------------ Handle supervisor_programs stuff
 
 {{% for scopeName, scope in data.supervisors.scopeByName.iteritems() %}}
-{{% if scope.programs is defined and scope.programs|length > 0 %}}
+{{% if scope.programsToManage is defined and scope.programsToManage|length > 0 %}}
 - hosts: {{{ scopeName }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
 
-{{% for prg in scope.programs %}}
+{{% for prg in scope.programsToManage %}}
   - name: Get current state for supervisor_{{{prg.supervisor}}}_{{{prg.name}}} programs
-    shell: "{{{ prg.supervisorctl }}} status {{{prg.name}}} | awk '{ print $2 }'"
+    shell: "supervisorctl -c {{{ prg.supervisorConf }}} status {{{prg.name}}} | awk '{ print $2 }'"
     register: supervisor_{{{prg.supervisor}}}_{{{prg.name}}} 
     changed_when: false
     failed_when: false
@@ -98,7 +98,7 @@
   - debug: msg="Program {{{prg.supervisor}}}_{{{prg.name}}} is  {{supervisor_{{{prg.supervisor}}}_{{{prg.name}}}.stdout}}"
 {{% endfor %}}
 
-{{% for prg in scope.programs %}}
+{{% for prg in scope.programsToManage %}}
   - name: Setup supervisor_{{{prg.supervisor}}}_{{{prg.name}}} configuration files
     template: src={{{prg.conf_file_src_j2}}} dest="{{{prg.conf_file_dst}}}" owner={{{prg.supervisorOwner}}} group={{{prg.supervisorGroup}}} mode=0644
     notify:
@@ -111,7 +111,7 @@
   - name: Set supervisor programs state
     supervisorctl: config={{ item.config }} name={{ item.name }} state={{ item.state}} 
     with_items:
-{{% for prg in scope.programs %}}
+{{% for prg in scope.programsToManage %}}
     - { config: {{{ prg.supervisorConf}}}, name: {{{prg.name}}}, state: "present" }
 {{% if prg.state == "started" or prg.state == "stopped" %}}
     - { config: {{{ prg.supervisorConf}}}, name: {{{prg.name}}}, state: {{{prg.state}}} }
@@ -122,7 +122,7 @@
 
 
   handlers:
-{{% for prg in scope.programs %}}
+{{% for prg in scope.programsToManage %}}
   - name: Restart supervisor_{{{ prg.supervisor }}} program {{{ prg.name }}}
     supervisorctl: config={{{ prg.supervisorConf }}} name={{{ prg.name }}} state=restarted
     listen: reload_{{{prg.supervisor}}}_{{{prg.name}}}

@@ -81,10 +81,14 @@ _EXTENSION_="_extension_"
 WILL_USER_MAVEN_REPO = "willUseMavenRepo"    
 _CLASSIFIER_="_classifier_"    
 SYSTEMD_NOTIFICATIONS="systemdNotifications"
+SUPERVISOR_PRG_NOTIFICATIONS="supervisorPrgNotification"
 
 
 NOTIFY="notify"
+_NOTIFY_="_notify_" # Need an id for the Ansible listener, valid for both systemd_unit and supervisor
 SYSTEMD_UNITS="systemd_units"
+SUPERVISOR_PROGRAMS="supervisor_programs"
+SUPERVISOR="supervisor"
 NAME="name"
 
 logger = logging.getLogger("hadeploy.plugins.files")
@@ -185,17 +189,35 @@ def lookupSystemdUnit(model, unitName):
     else:
         return None
 
+def lookupSupervisorProgram(model, prgName):
+    # prgName must be in the form "supervisor:program"
+    x = prgName.split(":")
+    if len(x) == 2:
+        if SUPERVISOR_PROGRAMS in model[SRC]:
+            for prg in model[SRC][SUPERVISOR_PROGRAMS]:
+                if prg[SUPERVISOR] == x[0] and prg[NAME] == x[1]:
+                    return prg
+    return None
+
         
 def setServiceNotifications(model):
     # Set a list of notification handler to setup per scope
     for _, scope in (model[DATA][FILES][SCOPE_BY_NAME]).iteritems():
         misc.ensureObjectInMaps(scope, [SYSTEMD_NOTIFICATIONS], {})
+        misc.ensureObjectInMaps(scope, [SUPERVISOR_PRG_NOTIFICATIONS], {})
         for f in scope[FILES]:
             if NOTIFY in f:
                 unit = lookupSystemdUnit(model, f[NOTIFY])
-                if unit == None:
-                    misc.ERROR("Files: '{0}': There is no systemd service named '{1}'".format(f[FSRC], f[NOTIFY]))
-                scope[SYSTEMD_NOTIFICATIONS][f[NOTIFY]] = unit
+                if unit != None:
+                    f[_NOTIFY_] = "unit_{0}".format(unit[NAME])
+                    scope[SYSTEMD_NOTIFICATIONS][f[_NOTIFY_]] = unit
+                else:
+                    prg = lookupSupervisorProgram(model, f[NOTIFY])
+                    if prg != None:
+                        f[_NOTIFY_] = "supervisor_{0}_{1}".format(prg[SUPERVISOR], prg[NAME])
+                        scope[SUPERVISOR_PRG_NOTIFICATIONS][f[_NOTIFY_]] = prg
+                    else:
+                        misc.ERROR("Files: '{0}': notify '{1}' does not match any systemd services nor supervisor:program".format(f[FSRC], f[NOTIFY]))
 
 def ensureScope(model, scope):
     root = model[DATA][FILES][SCOPE_BY_NAME]

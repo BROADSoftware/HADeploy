@@ -5,18 +5,47 @@
 
 # ------------------------------------------------------------------------------ Handle supervisor stuff
 {{% for scopeName, scope in data.supervisors.scopeByName.iteritems() %}}
-{{% if scope.supervisors is defined and scope.supervisors|length > 0 %}}
+{{% if scope.supervisorsToManage is defined and scope.supervisorsToManage|length > 0 %}}
 
 - hosts: {{{ scopeName }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
-{{% for s in scope.supervisors %}}
+{{% for s in scope.supervisorsToManage %}}
+{{% if s.state != "stopped" %}}
   - name: Start supervisor {{{s.name}}} 
     systemd:
       name: supervisord_{{{s.name}}}.service
       state: started
+{{% endif %}}
 {{% endfor %}}
 
 
 {{% endif %}}
+{{% endfor %}}
+
+
+
+# ------------------------------------------------------------------------------ Handle supervisor_programs stuff
+
+{{% for scopeName, scope in data.supervisors.scopeByName.iteritems() %}}
+{{% if scope.programsToManage is defined and scope.programsToManage|length > 0 %}}
+- hosts: {{{ scopeName }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
+  tasks:
+
+  - name: Set supervisor programs state
+    supervisorctl: config={{ item.config }} name={{ item.name }} state={{ item.state}} 
+    with_items:
+{{% for prg in scope.programsToManage %}}
+    - { config: {{{ prg.supervisorConf}}}, name: {{{prg.name}}}, state: "present" }
+{{% if prg.state != "stopped" %}}
+    - { config: {{{ prg.supervisorConf}}}, name: {{{prg.name}}}, state: started }
+{{% endif %}}      
+{{% endfor %}}
+    loop_control:
+      label: "{{item.name}} --> {{item.state}}"
+
+
+{{% endif %}}      
+
 {{% endfor %}}

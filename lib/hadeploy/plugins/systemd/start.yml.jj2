@@ -8,10 +8,12 @@
   any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
 {{% for unit in scope.systemd %}}
+{{% if unit.state != "stopped" %}}
   - name: Start {{{unit.name}}} systemd service
     systemd:
       name: {{{ unit.name }}}.service
       state: started
+{{% endif %}}
 {{% endfor %}}
 {{% endif %}}
 {{% endfor %}}

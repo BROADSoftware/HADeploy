@@ -3,18 +3,27 @@
 # ------------------------------------------------------------------------------ Handle supervisor_programs stuff
 
 {{% for scopeName, scope in data.supervisors.scopeByName.iteritems() %}}
-{{% if scope.programs is defined and scope.programs|length > 0 and scope.programToRemoveCount > 0 %}}
+{{% if scope.programsToRemove is defined and scope.programsToRemove|length > 0 %}}
 - hosts: {{{ scopeName }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
   
+  - name: Shutdown supervisor programs
+    supervisorctl: config={{ item.config }} name={{ item.name }} state={{ item.state}} 
+    with_items:
+{{% for prg in scope.programsToRemove %}}
+    - { config: {{{ prg.supervisorConf}}}, name: {{{prg.name}}}, state: stopped }
+    - { config: {{{ prg.supervisorConf}}}, name: {{{prg.name}}}, state: absent }
+{{% endfor %}}
+    loop_control:
+      label: "{{item.name}}  --> {{item.state}}"
+    failed_when: false
+  
   - name: Remove supervisors program configuration files
     file: path={{item}} state=absent
     with_items:
-{{% for prg in scope.programs %}}
-{{% if not prg.no_remove %}}
-    - {{{ prg.conf_file_src_j2}}}
-{{% endif %}}     
+{{% for prg in scope.programsToRemove %}}
+    - {{{ prg.conf_file_dst}}}
 {{% endfor %}}
 
 
@@ -26,7 +35,7 @@
 
 # ------------------------------------------------------------------------------ Handle supervisor stuff
 {{% for scopeName, scope in data.supervisors.scopeByName.iteritems() %}}
-{{% if scope.supervisors is defined and scope.supervisors|length > 0 and scope.supervisorToRemoveCount > 0 %}}
+{{% if scope.supervisorsToRemove is defined and scope.supervisorsToRemove|length > 0 %}}
 - hosts: {{{ scopeName }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
@@ -35,22 +44,18 @@
     systemd: name=supervisord_{{item}}.service state=stopped enabled=false
     failed_when: false
     with_items:
-{{% for s in scope.supervisors %}}
-{{% if not s.no_remove %}}
+{{% for s in scope.supervisorsToRemove %}}
     - {{{ s.name }}}
-{{% endif %}}     
 {{% endfor %}}
 
   - name: Remove file "/usr/lib/systemd/system/supervisord_xxxxx.service"
     file: path=/usr/lib/systemd/system/supervisord_{{item}}.service state=absent 
     with_items:
-{{% for s in scope.supervisors %}}
-{{% if not s.no_remove %}}
+{{% for s in scope.supervisorsToRemove %}}
     - {{{ s.name }}}
-{{% endif %}}     
 {{% endfor %}}
     notify: 
-    - reload service file
+    - reload_service_file
 
 
   
@@ -58,21 +63,19 @@
   - name: Remove Supervisor files and folders
     file: state=absent path={{item}} 
     with_items:
-{{% for s in scope.supervisors %}}
-{{% if not s.no_remove %}}
+{{% for s in scope.supervisorsToRemove %}}
     - {{{s.conf_file_dst}}}
     - {{{s.supervisorctl}}}
     - {{{s.logs_dir}}}     
     - {{{s.pid_dir}}}     
     - {{{s.socks_dir}}}     
     - {{{s.include_dir}}}
-{{% endif %}}     
 {{% endfor %}}
   
   handlers:
   - name: reload service file
     command: "systemctl daemon-reload"
-  
+    listen: reload_service_file
   
 {{%endif%}}
 {{% endfor %}}
