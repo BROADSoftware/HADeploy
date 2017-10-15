@@ -48,8 +48,12 @@ pages:
   - Kafka:
     - kafka_relay: plugins_reference/kafka/kafka_relay.md
     - kafka_topic: plugins_reference/kafka/kafka_topics.md
-  - Services:
-    - systemd_units: plugins_reference/services/systemd_units.md
+  - Systemd:
+    - systemd_units: plugins_reference/systemd/systemd_units.md
+  - Supervisors:
+    - Overview: plugins_reference/supervisor/supervisor_overview.md
+    - supervisors: plugins_reference/supervisor/supervisors.md
+    - supervisor_programs: plugins_reference/supervisor/supervisor_programs.md
   - Ranger:
     - hbase_ranger_policies: plugins_reference/ranger/hbase_ranger_policies.md
     - hdfs_ranger_policies: plugins_reference/ranger/hdfs_ranger_policies.md

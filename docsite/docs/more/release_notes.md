@@ -6,7 +6,9 @@
 - Added maven artifact download, using ['maven_repositories`](../plugins_reference/files/maven_repositories) definition.
 - Changed all references to ansible variable `ansible_ssh_user` to `ansible_user` (Following Ansible evolution).
 - Some (small) documentation improvements.
-- Added `services` plugin with [`systemd_units`](../plugins_reference/services/systemd_units) service management.
+- Added `priority` attribute on [`host_overrides`](../plugins_reference/inventory/host_overrides)
+- Added `systemd` plugin with [`systemd_units`](../plugins_reference/systemd/systemd_units) service management.
+- Added `supervisor` plugin with [`supervisor`](../plugins_reference/supervisor/supervisor_overview) process controler management.
 
 ## 0.5.0
 

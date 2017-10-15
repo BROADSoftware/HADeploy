@@ -17,7 +17,7 @@
 
 import logging
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC, DATA,HOST_BY_NAME, INVENTORY
+from hadeploy.core.const import SRC, DATA,HOST_BY_NAME, INVENTORY, SSH_USER
 import hadeploy.core.misc as misc
 import os
 from sets import Set
@@ -158,6 +158,8 @@ def check(model):
     if HOSTS in model[SRC]:
         for h in model[SRC][HOSTS]:
             misc.setDefaultInMap(h, FORCE_SETUP, False)
+            if SSH_USER not in h:
+                misc.ERROR("Hosts:'{0}': 'ssh_user must be defined!".format(h[NAME]))
             if (SSH_PRIVATE_FILE_FILE in h) and (SSH_PASSWORD in h):
                 misc.ERROR("Hosts:'{0}': 'ssh_private_key_file' and 'ssh_password' can't be both defined!".format(h[NAME]))
             if (not SSH_PRIVATE_FILE_FILE in h) and (not 'ssh_password' in h):

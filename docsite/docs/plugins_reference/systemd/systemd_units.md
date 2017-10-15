@@ -6,7 +6,7 @@ Provide a list of `systemd` service units, related to the deployed application.
 
 This will allow to declare node local application processes as system services. All `systemctl` commands (start, stop, status, ...) will then apply to this newly created service.
 
-This module require `root` access on the target host. If you need to deploy local services under the control of a non-priviledged user, you can use the ['supervisor_programs']() module.
+This module require `root` access on the target host. If you need to deploy local services under the control of a non-priviledged user, you can use the ['supervisor'](../supervisor/supervisor_overview) module.
 
 This module will also allow HADeploy to handle start and stop of the defined services.
 

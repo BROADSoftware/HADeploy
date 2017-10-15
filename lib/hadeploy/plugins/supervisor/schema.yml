@@ -9,19 +9,18 @@ mapping:
     sequence:
     - type: map
       mapping:
-        "managed": { type: bool, required: true }
         "scope": { type: str, required: true }
         "name": { type: str, required: true }
         "user": { type: str, required: true }        
         "group": { type: str, required: true }        
+        "managed": { type: bool, required: false }
         "conf_file_src": { type: str, required: false } # Default to an internally provided one
         "conf_file_dst": { type: str, required: false } # Default /etc/supervisord_<name>.conf
         "logs_dir": { type: str, required: false } # Default /var/log/supervisor_<name>
         "pid_dir": { type: str, required: false } # Default /var/run/supervisor_<name>
         "socks_dir": { type: str, required: false } # Default to /var/run/supervisor_<name>
         "include_dir": { type: str, required: false } # Default to /etc/supervisord_<name>.d
-        "supervisorctl": { type: str, required: false } # Default to /usr/bin/supervisorctl_<name>.d
-        "password": { type: str, required: false }  # Default to no password. (Access is limited to user)
+        "supervisorctl": { type: str, required: false } # Default to /usr/bin/supervisorctl_<name>
         "no_remove": { type: bool, required: false }    # Default to false
         "enabled": { type: bool, required: false } # Start on boot ? Default true
         "state": { type: str, required: false } # started/stopped/current . Default: started

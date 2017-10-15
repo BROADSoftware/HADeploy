@@ -31,6 +31,7 @@ become_method|no|Allow to override become_method
 become_user|no|Allow to override become_user
 become_pass|no|Allow to override become_pass. This may be encrypted. Refer to [encrypted variables](../core/encrypted_vars)
 become_exe|no|Allow to override become_exe
+priority|no|An integer number allowing to order overriding in case of multiple `host_override` on the same host(s). See example below.<br>Default: 100
 
 
 
@@ -71,6 +72,42 @@ host_overrides:
   ssh_private_key_file: ''
 ```
 Refer to [encrypted variables](../core/encrypted_vars) for more information.
+
+### Priority
+
+Here is an illustration of the `priority` attribute usage: 
+
+```yaml
+host_overrides:
+- name: all
+  become_user: root
+
+....  
+
+host_overrides:
+- name: all
+  become_user: ''
+  priority: 110
+```
+This will result with `become_user` not set. 
+
+While:
+
+```yaml
+host_overrides:
+- name: all
+  become_user: root
+
+....  
+
+host_overrides:
+- name: all
+  become_user: ''
+  priority: 90
+```
+Will result with `become_user` set to `root`. (Default value is 100, so the first one take precedence).
+
+This feature may be usefull when building complex configuration by merging several inventory files.
 
 ## Tricks
 

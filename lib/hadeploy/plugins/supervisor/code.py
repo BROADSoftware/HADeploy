@@ -156,6 +156,7 @@ class SupervisorPlugin(Plugin):
         misc.setDefaultInMap(supervisord, NO_REMOVE, False)
         misc.setDefaultInMap(supervisord, ENABLED, True)
         misc.setDefaultInMap(supervisord, STATE, ST_STARTED)
+        misc.setDefaultInMap(supervisord, MANAGED, True)
         if supervisord[STATE] not in validState:
             misc.ERROR("Supervisor {0}: state value '{1}' is not valid. Must be one of {2}".format(supervisord[NAME], supervisord[STATE], validState))
         if supervisord[MANAGED]:

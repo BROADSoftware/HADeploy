@@ -22,7 +22,7 @@ force_basic_auth|no|Boolean; In case of `src: http://...` or `src: https://...`.
 url_username|no|String; In case of `src: http://...` or `src: https://...`. The username for use in HTTP basic authentication. This parameter can be used without url_password for sites that allow empty passwords.
 url_password|no|String; In case of `src: http://...` or `src: https://...`. The password for use in HTTP basic authentication
 no_remove|no|Boolean: Prevent this file to be removed when HADeploy will be used in REMOVE mode.<br>Default: `no`
-notify|no|name of a [`systemd_unit`](../services/systemd_units) or [`supervisor_program`](../services/supervisor_programs) to restart if the file is modified.
+notify|no|name of a [`systemd_unit`](../systemd/systemd_units) or [`supervisor_program`](../supervisor/supervisor_programs) to restart if the file is modified. See [below](#service-notification)
 ranger\_policy|no|Definition of Apache Ranger policy bound to this file. <br>Parameters are same as [`hdfs_ranger_policies`](../ranger/hdfs_ranger_policies) items, excepts than `paths` should not be defined as automatically set to the file path, and the policy is not recursive by default.<br>Scope must be hdfs.<br>The policy name can be explicitly defined. Otherwise, a name will be generated as `"_<targetPath>_"`.<br>See example below for more information.
 
 > NB: `src:` must not reference a folder. To create a folder, use the `folders` definition and to copy a folder content, use the `trees` definition.
@@ -87,4 +87,10 @@ files:
 
 HARelay is aimed not only to perform initial deployment, but also to cleverly propagate application modification. 
 
-in particular, file modification are only performed when needed. In some case, such modification need to trigger some action, such as service restart to be take in account. This is the function of the `notify` attribute
+in particular, file modification are only performed when needed. In some case, such modification need to trigger some action, such as service restart to be take in account. This is the function of the `notify` attribute.
+
+If the notify attribut include a ':', then it will be interpreted as a [supervisor_program](../supervisor/supervisor_programs) where the left part indicated the supervisor instance and the right part the program to restart.
+
+If the notify attribut does not include a ':', it will be interpreted as a [`systemd`](../systemd/systemd_units) service to restart.
+
+
