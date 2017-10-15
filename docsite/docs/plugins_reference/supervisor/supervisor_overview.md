@@ -393,7 +393,7 @@ host_overrides:
   ssh_private_key_file: keys/tsup_id 
 
 vars:
-  managing_supervisors: yes
+  managing_supervisors: no
 
 include: supervisors.yml
 
