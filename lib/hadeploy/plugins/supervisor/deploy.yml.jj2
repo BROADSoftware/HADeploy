@@ -90,7 +90,7 @@
 
 {{% for prg in scope.programsToManage %}}
   - name: Get current state for supervisor_{{{prg.supervisor}}}_{{{prg.name}}} programs
-    shell: "supervisorctl -c {{{ prg.supervisorConf }}} status {{{prg.name}}} | awk '{ print $2 }'"
+    shell: "supervisorctl -c {{{ prg.supervisorConf }}} status '{{{prg._name_}}}' | awk '{ print $2 }'"
     register: supervisor_{{{prg.supervisor}}}_{{{prg.name}}} 
     changed_when: false
     failed_when: false
@@ -112,9 +112,9 @@
     supervisorctl: config={{ item.config }} name={{ item.name }} state={{ item.state}} 
     with_items:
 {{% for prg in scope.programsToManage %}}
-    - { config: {{{ prg.supervisorConf}}}, name: {{{prg.name}}}, state: "present" }
+    - { config: {{{ prg.supervisorConf}}}, name: "{{{prg._name_}}}", state: "present" }
 {{% if prg.state == "started" or prg.state == "stopped" %}}
-    - { config: {{{ prg.supervisorConf}}}, name: {{{prg.name}}}, state: {{{prg.state}}} }
+    - { config: {{{ prg.supervisorConf}}}, name: "{{{prg._name_}}}", state: {{{prg.state}}} }
 {{% endif %}}      
 {{% endfor %}}
     loop_control:
@@ -124,7 +124,7 @@
   handlers:
 {{% for prg in scope.programsToManage %}}
   - name: Restart supervisor_{{{ prg.supervisor }}} program {{{ prg.name }}}
-    supervisorctl: config={{{ prg.supervisorConf }}} name={{{ prg.name }}} state=restarted
+    supervisorctl: config={{{ prg.supervisorConf }}} name="{{{ prg._name_ }}}" state=restarted
     listen: reload_{{{prg.supervisor}}}_{{{prg.name}}}
     when: supervisor_{{{prg.supervisor}}}_{{{prg.name}}}.stdout == "RUNNING"
 {{% endfor %}}

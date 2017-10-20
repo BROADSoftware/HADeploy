@@ -12,8 +12,8 @@
     supervisorctl: config={{ item.config }} name={{ item.name }} state={{ item.state}} 
     with_items:
 {{% for prg in scope.programsToRemove %}}
-    - { config: {{{ prg.supervisorConf}}}, name: {{{prg.name}}}, state: stopped }
-    - { config: {{{ prg.supervisorConf}}}, name: {{{prg.name}}}, state: absent }
+    - { config: {{{ prg.supervisorConf}}}, name: "{{{prg._name_}}}", state: stopped }
+    - { config: {{{ prg.supervisorConf}}}, name: "{{{prg._name_}}}", state: absent }
 {{% endfor %}}
     loop_control:
       label: "{{item.name}}  --> {{item.state}}"

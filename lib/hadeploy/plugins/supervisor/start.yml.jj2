@@ -37,9 +37,9 @@
     supervisorctl: config={{ item.config }} name={{ item.name }} state={{ item.state}} 
     with_items:
 {{% for prg in scope.programsToManage %}}
-    - { config: {{{ prg.supervisorConf}}}, name: {{{prg.name}}}, state: "present" }
+    - { config: {{{ prg.supervisorConf}}}, name: "{{{prg._name_}}}", state: "present" }
 {{% if prg.state != "stopped" %}}
-    - { config: {{{ prg.supervisorConf}}}, name: {{{prg.name}}}, state: started }
+    - { config: {{{ prg.supervisorConf}}}, name: "{{{prg._name_}}}", state: started }
 {{% endif %}}      
 {{% endfor %}}
     loop_control:

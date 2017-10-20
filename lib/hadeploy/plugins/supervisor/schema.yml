@@ -49,14 +49,35 @@ mapping:
       mapping:
         "supervisor": { type: str, required: true }
         "name": { type: str, required: true }
-        "conf_file_src": { type: str, required: false } # Default to an internally provided one
+        "conf_file_src": { type: str, required: false } # Default to an internally provided one (Useless, so switched to undocumenetd)
         "command": { type: str, required: false } # Required if no config_file_src provided
+        "process_name" : { type: str, required: false }
+        "numprocs" : { type: int, required: false }
+        "numprocs_start" : { type: int, required: false }
+        "priority" : { type: int, required: false }
+        "autostart" : { type: bool, required: false }
+        "startsecs" : { type: int, required: false }
+        "startretries" : { type: int, required: false }
+        "autorestart" : { type: str, required: false }
+        "exitcodes" : { type: seq, sequence: [ { type: int } ] }
+        "stopsignal" : { type: str, required: false }
+        "stopwaitsecs" : { type: int, required: false }
+        "stopasgroup" : { type: bool, required: false }
+        "killasgroup" : { type: bool, required: false }
+        "user": { type: str, required: false }
+        "redirect_stderr" : { type: bool, required: false }
+        "stdout_logfile" : { type: str, required: false }
+        "stdout_logfile_maxbytes" : { type: str, required: false }
+        "stdout_logfile_backups" : { type: int, required: false }
+        "stderr_logfile" : { type: str, required: false }
+        "stderr_logfile_maxbytes" : { type: str, required: false }
+        "stderr_logfile_backups" : { type: int, required: false }
+        "environment" : { type: seq, sequence: [ { type: str } ] }
+        "directory" : { type: str, required: false }
+        "umask" : { type: str, required: false }
         "group": { type: str, required: false } # ref to supervisor_group
         "no_remove": { type: bool, required: false }    # Default to false
-        "user": { type: str, required: false }
         "state": { type: str, required: false } # started/stopped/current . Default: started
-        "autostart": { type: bool, required: false }  # Default (state == started)
-        
         
         
         

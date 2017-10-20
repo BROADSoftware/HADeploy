@@ -89,6 +89,8 @@ SUPERVISOR_GROUP="supervisorGroup"
 SUPERVISOR_CONF="supervisorConf"
 PROGRAMS_TO_REMOVE="programsToRemove"
 PROGRAMS_TO_MANAGE="programsToManage"
+_NAME_="_name_"
+NUMPROCS="numprocs"
 
 
 class SupervisorPlugin(Plugin):
@@ -208,6 +210,10 @@ class SupervisorPlugin(Plugin):
                 prg[SUPERVISOR_GROUP] = supervisord[GROUP]
                 prg[SUPERVISOR_CONF] = supervisord[CONF_FILE_DST]
                 misc.setDefaultInMap(prg, STATE, ST_STARTED)
+                if NUMPROCS in prg and prg[NUMPROCS] > 1:
+                    prg[_NAME_] = prg[NAME] + ":"    # This is in fact a group of process
+                else:
+                    prg[_NAME_] = prg[NAME]
                 if prg[STATE] not in validState:
                     misc.ERROR("Supervisor_program {0}: state value '{1}' is not valid. Must be one of {2}".format(prg[NAME], prg[STATE], validState))
                 misc.setDefaultInMap(prg, AUTOSTART, prg[STATE] == ST_STARTED)
