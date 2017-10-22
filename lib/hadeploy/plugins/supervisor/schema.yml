@@ -37,10 +37,15 @@ mapping:
     sequence:
     - type: map
       mapping:
-        "supervisor": { type: str, required: true }
         "name": { type: str, required: true }
+        "supervisor": { type: str, required: true }
+        "programs":
+          required: true
+          type: seq
+          sequence:
+          - type: str
+        "priority": { type: int, required: false }
         "no_remove": { type: bool, required: false }    # Default to false
-        "state": { type: str, required: false } # started/stopped/current . Default: started
         
   "supervisor_programs":
     type: seq

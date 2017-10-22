@@ -18,6 +18,17 @@
     loop_control:
       label: "{{item.name}}  --> {{item.state}}"
     failed_when: false
+
+
+{{% if scope.groupsToRemove is defined and scope.groupsToRemove|length > 0 %}}
+  - name: Remove supervisor group configuration files
+    file: path={{item}} state=absent
+    with_items:
+{{% for grp in scope.groupsToRemove %}}
+    - {{{ grp.conf_file_dst}}}
+{{% endfor %}}
+{{% endif %}}      
+
   
   - name: Remove supervisors program configuration files
     file: path={{item}} state=absent
