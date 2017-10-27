@@ -1,51 +1,36 @@
 
+{{% for scopeName, scope in data.supervisors.scopeByName.iteritems() %}}
 
 # ------------------------------------------------------------------------------ Handle supervisor_programs stuff
 
-{{% for scopeName, scope in data.supervisors.scopeByName.iteritems() %}}
-{{% if scope.programsToRemove is defined and scope.programsToRemove|length > 0 %}}
+{{% if scope.supervisors is defined and scope.supervisors|length > 0  %}}
 - hosts: {{{ scopeName }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
+
+{{% for sup in scope.supervisors %}}
+  - name: Install programs definition file(s)
+    template: src={{{sup.unprograms_j2}}} dest={{{sup.programs_dest}}} owner={{{sup.user}}} group={{{sup.group}}} mode="0755"
+    notify:
+    - update_unprograms_{{{sup.name}}}
+{{% endfor %}}         
+
+  - meta: flush_handlers
   
-  - name: Shutdown supervisor programs
-    supervisorctl: config={{ item.config }} name={{ item.name }} state={{ item.state}} 
-    with_items:
-{{% for prg in scope.programsToRemove %}}
-    - { config: {{{ prg.supervisorConf}}}, name: "{{{prg._name_}}}", state: stopped }
-    - { config: {{{ prg.supervisorConf}}}, name: "{{{prg._name_}}}", state: absent }
-{{% endfor %}}
-    loop_control:
-      label: "{{item.name}}  --> {{item.state}}"
-    failed_when: false
-
-
-{{% if scope.groupsToRemove is defined and scope.groupsToRemove|length > 0 %}}
-  - name: Remove supervisor group configuration files
-    file: path={{item}} state=absent
-    with_items:
-{{% for grp in scope.groupsToRemove %}}
-    - {{{ grp.conf_file_dst}}}
-{{% endfor %}}
+  handlers:
+  
+{{% for sup in scope.supervisors %}}
+  - name: Update supervisor_{{{sup.name}}} programs
+    shell: "supervisorctl -c {{{ sup.conf_file_dst }}} update"
+    listen: update_unprograms_{{{sup.name}}}
+{{% endfor %}}         
+  
 {{% endif %}}      
 
-  
-  - name: Remove supervisors program configuration files
-    file: path={{item}} state=absent
-    with_items:
-{{% for prg in scope.programsToRemove %}}
-    - {{{ prg.conf_file_dst}}}
-{{% endfor %}}
-
-
-{{% endif %}}      
-
-{{% endfor %}}
 
 
 
 # ------------------------------------------------------------------------------ Handle supervisor stuff
-{{% for scopeName, scope in data.supervisors.scopeByName.iteritems() %}}
 {{% if scope.supervisorsToRemove is defined and scope.supervisorsToRemove|length > 0 %}}
 - hosts: {{{ scopeName }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
@@ -89,6 +74,7 @@
     listen: reload_service_file
   
 {{%endif%}}
+
 {{% endfor %}}
 
 

@@ -127,17 +127,18 @@
 {{% if scope.supervisorPrgNotification|length > 0 %}}
 {{% for _, prg in scope.supervisorPrgNotification.iteritems() %}}
   - name: Get current state for supervisor_{{{prg.supervisor}}}_{{{prg.name}}} programs
-    shell: "supervisorctl -c {{{ prg.supervisorConf }}} status {{{prg.name}}} | awk '{ print $2 }'"
+    shell: "supervisorctl -c {{{ prg.supervisorConf }}} status '{{{prg._name_}}}' | awk '{ print $2 }'"
     register: supervisor_{{{prg.supervisor}}}_{{{prg.name}}} 
     changed_when: false
     failed_when: false
+#  - debug: msg="Program {{{prg.supervisor}}}_{{{prg.name}}} is  {{supervisor_{{{prg.supervisor}}}_{{{prg.name}}}.stdout}}"    
 {{% endfor %}}
   handlers:
 {{% for notified, prg in scope.supervisorPrgNotification.iteritems() %}}
   - name: Restart supervisor_{{{ prg.supervisor }}} program {{{ prg.name }}}
-    supervisorctl: config={{{ prg.supervisorConf }}} name={{{ prg.name }}} state=restarted
+    supervisorctl: config={{{ prg.supervisorConf }}} name="{{{ prg._name_ }}}" state=restarted
     listen: reload_{{{notified}}}
-    when: supervisor_{{{prg.supervisor}}}_{{{prg.name}}}.stdout == "RUNNING"
+    when: supervisor_{{{prg.supervisor}}}_{{{prg.name}}}.stdout.find("RUNNING") != -1
 {{% endfor %}}
 {{% endif %}}
 

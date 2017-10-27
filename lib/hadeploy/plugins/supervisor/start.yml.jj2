@@ -28,7 +28,7 @@
 # ------------------------------------------------------------------------------ Handle supervisor_programs stuff
 
 {{% for scopeName, scope in data.supervisors.scopeByName.iteritems() %}}
-{{% if scope.programsToManage is defined and scope.programsToManage|length > 0 %}}
+{{% if scope.programs is defined and scope.programs|length > 0 %}}
 - hosts: {{{ scopeName }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
@@ -36,7 +36,7 @@
   - name: Set supervisor programs state
     supervisorctl: config={{ item.config }} name={{ item.name }} state={{ item.state}} 
     with_items:
-{{% for prg in scope.programsToManage %}}
+{{% for prg in scope.programs %}}
     - { config: {{{ prg.supervisorConf}}}, name: "{{{prg._name_}}}", state: "present" }
 {{% if prg.state != "stopped" %}}
     - { config: {{{ prg.supervisorConf}}}, name: "{{{prg._name_}}}", state: started }
