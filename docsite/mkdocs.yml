@@ -53,6 +53,7 @@ pages:
   - Supervisors:
     - Overview: plugins_reference/supervisor/supervisor_overview.md
     - supervisors: plugins_reference/supervisor/supervisors.md
+    - supervisor_groups: plugins_reference/supervisor/supervisor_groups.md
     - supervisor_programs: plugins_reference/supervisor/supervisor_programs.md
   - Ranger:
     - hbase_ranger_policies: plugins_reference/ranger/hbase_ranger_policies.md

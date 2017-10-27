@@ -80,7 +80,6 @@ mapping:
         "environment" : { type: seq, sequence: [ { type: str } ] }
         "directory" : { type: str, required: false }
         "umask" : { type: str, required: false }
-        "group": { type: str, required: false } # ref to supervisor_group
         "no_remove": { type: bool, required: false }    # Default to false
         "state": { type: str, required: false } # started/stopped/current . Default: started
         

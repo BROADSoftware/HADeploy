@@ -186,8 +186,11 @@ def handleHostOverrides(model):
         hoverList =  sorted(model[SRC][HOST_OVERRIDES], key = lambda hover: hover[PRIORITY])
         for hover in hoverList:
             if hover[NAME] == 'all' or hover[NAME] == '*':
-                for host in model[SRC][HOSTS]:
-                    handleHostOverride(host, hover)
+                if HOSTS in model[SRC]:
+                    for host in model[SRC][HOSTS]:
+                        handleHostOverride(host, hover)
+                else:
+                    misc.ERROR("No host definition at all. Can't override")
             else:
                 if hover[NAME] in model[DATA][INVENTORY][HOST_BY_NAME]:
                     handleHostOverride(model[DATA][INVENTORY][HOST_BY_NAME][hover[NAME]], hover)
@@ -198,19 +201,6 @@ def handleHostOverride(host, overrider):
     for key in overrider:
         if key != "name":
             host[key] = overrider[key]
-#    if SSH_HOST in overrider:
-#        host[SSH_HOST] = overrider[SSH_HOST]
-#    if SSH_USER in overrider:
-#        host[SSH_USER] = overrider[SSH_USER]
-#    if SSH_PRIVATE_FILE_FILE in overrider:
-#        host[SSH_PRIVATE_FILE_FILE] = overrider[SSH_PRIVATE_FILE_FILE]
-#    if SSH_PASSWORD in overrider:
-#        host[SSH_PASSWORD] = overrider[SSH_PASSWORD]
-#    if SSH_EXTRA_ARGS in overrider:
-#        host[SSH_EXTRA_ARGS] = overrider[SSH_EXTRA_ARGS]
-#    if FORCE_SETUP in overrider:
-#        host[FORCE_SETUP] = overrider[FORCE_SETUP]        
-    # A loop to detect and delete empty elements
     todel = []
     for k in host:
         if host[k] == "":

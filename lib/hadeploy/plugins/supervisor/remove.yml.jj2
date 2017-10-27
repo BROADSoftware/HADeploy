@@ -9,10 +9,15 @@
   tasks:
 
 {{% for sup in scope.supervisors %}}
+  - name: Need to skip if supervisor has already been removed
+    stat: path={{{sup.include_dir}}}
+    register: supervisor_{{{sup.name}}}_include_dir
+
   - name: Install programs definition file(s)
     template: src={{{sup.unprograms_j2}}} dest={{{sup.programs_dest}}} owner={{{sup.user}}} group={{{sup.group}}} mode="0755"
     notify:
     - update_unprograms_{{{sup.name}}}
+    when:  supervisor_{{{sup.name}}}_include_dir.stat.isdir is defined and supervisor_{{{sup.name}}}_include_dir.stat.isdir 
 {{% endfor %}}         
 
   - meta: flush_handlers

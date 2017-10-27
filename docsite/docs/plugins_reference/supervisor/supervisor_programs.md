@@ -18,8 +18,30 @@ command|yes if `conf_file_src` is not provided|The command to launch. Refer to t
 no_remove|no|Boolean: Prevent this program to be removed when HADeploy will be used with `--action remove`.<br>Default: `no`
 user|no|From the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values): Instruct supervisord to use this UNIX user account as the account which runs the program. The user can only be switched if supervisord is run as the root user. If supervisord can’t switch to the specified user, the program will not be started.<br>Default is the supervisord's user.
 state|no|<lu><li>`started`: The program will be started on deployment</li><li>`stopped`: The program will be stopped on deployment.</li><li>`current`: The program state will be left unchanged during deployment. (stopped on initial creation).</li></ul>Default value: `started`.
-autostart|no|If true, this program will start automatically when supervisord is started.
-conf_file_src|no|Each program is defined by a control file. Such control file is built by HADeploy from a template populated with attributes described in this page. If you need deeper control about the way you program is launched and managed, you can provide your own version of this template. See [Provided configuration file](#provided-configuration-file) below.
+autostart|no|Boolean. If true, this program will start automatically when supervisord is started. Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
+process_name|no|Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
+numprocs|no|Integer. Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
+numprocs_start|no|Integer. Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
+priority|no|Integer. Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
+startsecs|no|Integer. Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
+startretries|no|Integer. Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
+autorestart|no|Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
+exitcodes|no|List of Integer. Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
+stopsignal|no|Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
+stopwaitsecs|no|Integer. Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
+stopasgroup|no|Boolean. Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values). May be required if your program fork another one.
+killasgroup|no|Boolean. Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
+redirect_stderr|no|Boolan. Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
+stdout_logfile|no|Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
+stdout_logfile_maxbytes|no|Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
+stdout_logfile_backups|no|Integer. Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
+stderr_logfile|no|Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
+stderr_logfile_maxbytes|no|Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
+stderr_logfile_backups|no|Integer. Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
+environment|no|List of String. Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
+directory|no|Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
+umask|no|Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
+
 
 ## Example
 
@@ -39,77 +61,36 @@ This program can then be managed (stopped/resarted/...) by:
 
 - HADeploy using `--action start` and `--action stop`.
 
-## About managed programs
+Another example, with more parameters:
 
-Programs meant to be run under supervisor should not daemonize themselves. Instead, they should run in the foreground. They should not detach from the terminal from which they are started.
-
-More info [here](http://supervisord.org/subprocess.html#nondaemonizing-of-subprocesses)
-
-
-## Provided configuration file.
-
-> This is Advanded configuration.
-
-Each program has its own control file, providing some launch and management parameters.
-
-Such file is generated by HADeploy by populating a template from the values provided as attributes.
-
-In most case this will be sufficient. But if, for some specifics cases, you need to modify other parameters of this configuration file, you can provide your own template.
-
-Of course, you should be familiar with the [original supervisor configuration syntax for programs](http://supervisord.org/configuration.html#program-x-section-settings).
-
-Then, you can provide your own file using the `conf_file_sr` attribute, by providing it as a file, or as a template, such as:
-```
+```yaml
 supervisor_programs:
 - name: program2
   supervisor: tech1
-  conf_file_src: tmpl://program2.conf.jj2
-```
-This will be handled as usual files or template ressource ([See here](../files/files#schemes))
- 
-> <sub>NB: Only `file://` or `tmpl://` schema are allowed here.</sub>
-
-As a starting point, here is the provided template:
-
-```
-[program:{{{name}}}]
-command={{{ command }}}
-{{% if user is defined %}}
-user={{{user}}}                   ; setuid to this UNIX account to run the program
-{{% endif %}}
-autostart={{{ 'true' if autostart else 'false'}}}     ; start at supervisord start (default: true)
-;process_name=%(program_name)s      ; process_name expr (default %(program_name)s)
-;numprocs=1                    ; number of processes copies to start (def 1)
-;directory=/tmp                ; directory to cwd to before exec (def no cwd)
-;umask=022                     ; umask for process (default None)
-;priority=999                  ; the relative start priority (default 999)
-;autorestart=true              ; retstart at unexpected quit (default: true)
-;startsecs=10                  ; number of secs prog must stay running (def. 1)
-;startretries=3                ; max # of serial start failures (default 3)
-;exitcodes=0,2                 ; 'expected' exit codes for process (default 0,2)
-;stopsignal=QUIT               ; signal used to kill process (default TERM)
-;stopwaitsecs=10               ; max num secs to wait b4 SIGKILL (default 10)
-
-;redirect_stderr=true          ; redirect proc stderr to stdout (default false)
-;stdout_logfile=/a/path        ; stdout log path, NONE for none; default AUTO
-;stdout_logfile_maxbytes=1MB   ; max # logfile bytes b4 rotation (default 50MB)
-;stdout_logfile_backups=10     ; # of stdout logfile backups (default 10)
-;stdout_capture_maxbytes=1MB   ; number of bytes in 'capturemode' (default 0)
-;stdout_events_enabled=false   ; emit events on stdout writes (default false)
-;stderr_logfile=/a/path        ; stderr log path, NONE for none; default AUTO
-;stderr_logfile_maxbytes=1MB   ; max # logfile bytes b4 rotation (default 50MB)
-;stderr_logfile_backups=10     ; # of stderr logfile backups (default 10)
-;stderr_capture_maxbytes=1MB   ; number of bytes in 'capturemode' (default 0)
-;stderr_events_enabled=false   ; emit events on stderr writes (default false)
-;environment=A=1,B=2           ; process environment additions (def no adds)
-;serverurl=AUTO                ; override serverurl computation (childutils)
-
+  command: "/bin/bash /opt/tsupervisor/program2.sh"
+  stopasgroup: yes
+  environment:
+  - MY_HOME="/opt/program2"
+  - JAVA_HOME="/usr/java/jdk1.8.0_74"
+  directory: /opt/program2/work
+  stdout_logfile: /opt/program2/logs/program2.out
+  stderr_logfile: /opt/program2/logs/program2.err
 ```
 
-You can see than variable hosting configuration attribute are of the form `{{{...}}}`. If you want to use your own variable (Set in the `vars:`block), you must use the `{{...}}`notation. More information on variable syntax in [`Under the  hood`](../../more/under_the_hood.md)
+## About managed programs
 
-Also, another better starting point if you plan to provide you own template would be to use the one corresponding to you version of HADeploy. 
-You can easely grab it from [Github](https://github.com/BROADSoftware/HADeploy), by setting the tag corresponding to your version.
+* **Programs meant to be run under supervisor should not daemonize themselves**. Instead, they should run in the foreground. They should not detach from the terminal from which they are started.
+More info [here](http://supervisord.org/subprocess.html#nondaemonizing-of-subprocesses)
 
+* If the launched programs fork one or several child processes, there may be a problem on stop. Only the initial process will be killed by supervisor, and all children will become orphean. 
+There will be two solutions for this:
+
+    * Catch the `stopsignal` and then kill all child processes.
+    
+    * Set the `stopasgroup` flag
+    
+    This last solution is of course the simplest. 
+    
+    A typical case encountering this issue is a java programs launched by a wrapper script.
 
 
