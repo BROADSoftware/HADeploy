@@ -85,7 +85,10 @@ mapping:
     - type: map
       mapping:
         "name": { type: str, required: true }
-        "url": { type: str, required: true }
+        "url": { type: str, required: false }
+        "releases_url": { type: str, required: false }
+        "snapshots_url": { type: str, required: false }
+        "latest_url": { type: str, required: false }
         "username": { type: str, required: false }
         "password": { type: str, required: false }
         "timeout": { type: int, required: false } # Default to 10

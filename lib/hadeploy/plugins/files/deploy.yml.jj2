@@ -46,7 +46,7 @@
 {{% elif file.src.startswith("mvn://")  %}}
   - name: Fetch artifact '{{{file._groupId_}}}:{{{file._artifactId_}}}:{{{file._version_}}}' '(classifier:{{{file._classifier_|default("none")}}}  extension:{{{file._extension_}}}) from repository '{{{file._repo_}}}'
     maven_artifact:
-      repository_url: "{{{ data.mavenRepoByName[file._repo_].url }}}"
+      repository_url: "{{{ file._repoUrl_ }}}"
       group_id:  "{{{ file._groupId_ }}}"
       artifact_id: "{{{ file._artifactId_ }}}" 
       version:  "{{{ file._version_ }}}"

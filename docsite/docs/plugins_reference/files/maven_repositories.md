@@ -11,11 +11,16 @@ Each item of the list has the following attributes:
 Name | req? | 	Description
 --- | ---  | ---
 name|yes|Local name of this repository. Will be used for reference in a [`file`](./files)  with `src: "mvn//<repoName>/..."`
-url|yes|The URL of the Maven Repository to download from.
+url|no|The default URL of the Maven Repository to download from.
+snapshots_url|no|The URL of the Maven Repository to download from. This URL will be used if the artifact's version contains the token `SNAPSHOT`.<br>Default to `url`.
+latest_url|no|The URL of the Maven Repository to download from. This URL will be used if the artifact's version is the token `latest`.<br>Default to `url`.
+releases_url|no|The URL of the Maven Repository to download from. This URL will be used if the artifact's version is not a `SNAPSHOT` or `latest`.<br>Default to `url`.
 username|no|The username to authenticate as to the Maven Repository, in case of access control.
 password|no|Associated password
 timeout|no|Specifies a timeout in seconds for the connection attempt. Default: `10`
 validate_certs|no|Boolean; In case of `src: https://...` Setting to false, will disable strict certificate checking, thus allowing self-signed certificate.<br>Default: `yes`
+
+
 
 ## Example
 
@@ -30,14 +35,15 @@ maven_repositories:
 A local, private repository, requiring user authentication, and accessed using SSL, but with an invalid certificate:
 
 ```yaml
-- name: nexus_snapshots
-  url: https://nexus_server.local/nexus/content/repositories/snapshots/
+- name: nexus
+  snapshots_url: https://nexus_server.local/nexus/content/repositories/snapshots/
+  releases_url: https://nexus_server.local/nexus/content/repositories/releases/
+  latest_url: https://nexus_server.local/nexus/content/repositories/releases/
   username: john
   password: aNicePassword
   validate_certs: no
 ```
-
-As released artifact are under another URL, you may have to define another one for releases:
+Note we have defined `latest_url` to the 'releases' part. This means we intend to fetch the 'latest stable' release in this case.
 
 And here, we also adopt the good practice of encrypting the password.
 
@@ -53,12 +59,15 @@ encrypted_vars:
     6231
 
 
-- name: nexus_releases
-  url: https://nexus_server.local/nexus/content/repositories/releases/
+- name: nexus
+  snapshots_url: https://nexus_server.local/nexus/content/repositories/snapshots/
+  releases_url: https://nexus_server.local/nexus/content/repositories/releases/
+  latest_url: https://nexus_server.local/nexus/content/repositories/snapshots/
   username: john
   password: "{{john_password}}"
   validate_certs: no
 ```
-
 Refer to [encrypted variables](../core/encrypted_vars) for more information.
+
+Note also, in this last case, we are fetching 'latest' versions from the 'snapshots' part.
 

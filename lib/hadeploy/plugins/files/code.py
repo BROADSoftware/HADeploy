@@ -69,8 +69,12 @@ NODE_TO_HDFS_FLAG="_nodeToHdfs_"
 
 
 MAVEN_REPOSITORIES="maven_repositories"
-
 MAVEN_REPO_BY_NAME="mavenRepoByName"
+URL="url"
+RELEASES_URL="releases_url"
+SNAPSHOTS_URL="snapshots_url"
+LASTEST_URL="latest_url"
+_REPO_URL_="_repoUrl_"
 
 _REPO_ = "_repo_"
 _GROUP_ID_ = "_groupId_"
@@ -497,6 +501,8 @@ def groomMavenFiles(f, model):
         misc.ERROR("'{0}' is not a valid maven path. Must be in the form mvn://maven_repo/group_id/artifact_id/version[classifier[/extension]]".format(f[SRC]))
     if src[0] not in model[DATA][MAVEN_REPO_BY_NAME]:
         misc.ERROR("'{0}' is not a defined maven repository".format(src[0]))
+    else:
+        repository = model[DATA][MAVEN_REPO_BY_NAME][src[0]]
     f[_REPO_] = src[0]
     f[_GROUP_ID_] = src[1]
     f[_ARTIFACT_ID_] = src[2]
@@ -510,6 +516,28 @@ def groomMavenFiles(f, model):
             f[_EXTENSION_] = "jar"
     else:
         f[_EXTENSION_] = "jar"
+    # Fixup _repoUrl_ based on version
+    if f[_VERSION_] == "latest":
+        if LASTEST_URL in repository:
+            f[_REPO_URL_] = repository[LASTEST_URL]
+        elif URL in repository:
+            f[_REPO_URL_] = repository[URL]
+        else:
+            misc.ERROR("Maven artifact '{0}': No 'latest_url' nor 'url' defined in repository '{1}'".format(src, repository[NAME]))
+    elif f[_VERSION_].find("SNAPSHOT") != -1:
+        if SNAPSHOTS_URL in repository:
+            f[_REPO_URL_] = repository[SNAPSHOTS_URL]
+        elif URL in repository:
+            f[_REPO_URL_] = repository[URL]
+        else:
+            misc.ERROR("Maven artifact '{0}': No 'snapshots_url' nor 'url' defined in repository '{1}'".format(src, repository[NAME]))
+    else:
+        if RELEASES_URL in repository:
+            f[_REPO_URL_] = repository[RELEASES_URL]
+        elif URL in repository:
+            f[_REPO_URL_] = repository[URL]
+        else:
+            misc.ERROR("Maven artifact '{0}': No 'releases_url' nor 'url' defined in repository '{1}'".format(src, repository[NAME]))
     misc.setDefaultInMap(f, DEST_NAME, "{0}-{1}{2}.{3}".format(f[_ARTIFACT_ID_], f[_VERSION_], ("-" + f[_CLASSIFIER_]) if _CLASSIFIER_ in f else "", f[_EXTENSION_]))
     f[_TARGET_] = os.path.normpath(os.path.join(f[DEST_FOLDER], f[DEST_NAME]))
 
