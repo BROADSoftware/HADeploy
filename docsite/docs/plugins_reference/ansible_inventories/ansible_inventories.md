@@ -6,7 +6,7 @@ Provide a list of Ansible Inventory.
 
 These inventories will be parsed, eventually merged with locally defined [`hosts`](../inventory/hosts) and [`host_groups`](../inventory/host_groups) and will allow target Ansible inventory file generation.
 
-Also, some paramters may be modified by using [`host_overrides`](../inventory/host_overrides.md) and [`host_group_overrides`](../inventory/host_group_overrides.md). 
+Also, most of the parameters may be modified by using [`host_overrides`](../inventory/host_overrides.md) and [`host_group_overrides`](../inventory/host_group_overrides.md). 
 
 ## Attributes
 

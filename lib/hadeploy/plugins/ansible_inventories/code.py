@@ -15,17 +15,58 @@
 # You should have received a copy of the GNU General Public License
 # along with HADeploy.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+There is significant changes in the Python API interface about Inventory between 2.3 and 2.4:
+
+http://docs.ansible.com/ansible/2.3/dev_guide/developing_api.html
+
+    from ansible.inventory import Inventory
+    ....
+    # create inventory and pass to var manager
+   inventory = Inventory(loader=loader, variable_manager=variable_manager, host_list='localhost')
+   variable_manager.set_inventory(inventory)
+
+http://docs.ansible.com/ansible/2.4/dev_guide/developing_api.html
+
+    from ansible.inventory.manager import InventoryManager
+    ....
+    # create inventory and pass to var manager
+    inventory = InventoryManager(loader=loader, sources=['localhost'])
+    variable_manager = VariableManager(loader=loader, inventory=inventory)
+    
+    
+"""
+
+
+
 import logging
 import hadeploy.core.misc as misc
 import os
 import getpass
 
-from ansible.inventory import Inventory
 from ansible.parsing.dataloader import DataLoader
-from ansible.vars import VariableManager
 
 from hadeploy.core.plugin import Plugin
 from hadeploy.core.const import SRC
+
+PRE24="pre24"
+POST24="post24"
+
+try:
+    from ansible.inventory import Inventory
+    from ansible.vars import VariableManager
+    inventoryHandler = PRE24
+except ImportError:
+    try:
+        from ansible.inventory.manager import InventoryManager
+        from ansible.vars.manager import VariableManager
+        from ansible.module_utils._text import to_bytes
+        inventoryHandler = POST24
+    except ImportError:
+        misc.ERROR("Unable to import Inventory or InventoryManager from Ansible! (Another Ansible API change ?)")
+        
+
+
 
 
 HOSTS="hosts"
@@ -76,35 +117,48 @@ class AnsiblePlugin(Plugin):
 
 
 def populateModelFromInventory(model, inventory):
-    loader = DataLoader()
-    if VAULT_PASSWORD_FILE in inventory:
-        vpf = inventory[VAULT_PASSWORD_FILE]
-        if not os.path.exists(vpf):
-            misc.ERROR("Ansible vault password file '{0}' does not exists!".format(vpf))
-        with open(vpf) as f:
-            content = f.readlines()
-        if len(content) == 0 or len(content[0].strip()) == 0:
-            misc.ERROR("Invalid Ansible vault password file '{0}' content!".format(vpf))
-        loader.set_vault_password(content[0].strip())
-    elif ASK_VAULT_PASSWORD in inventory and inventory[ASK_VAULT_PASSWORD]:
-        prompt = "Password for Ansible inventory{0}: ".format(" '" + inventory[NAME] + "'" if NAME in inventory else "")
-        content = getpass.getpass(prompt)
-        loader.set_vault_password(content.strip())
-    variable_manager = VariableManager()
-    
     if HOSTS not in model:
         model[HOSTS] = []
     if HOST_GROUPS not in model:
         model[HOST_GROUPS] = []
-    
-    try:
-        inventory = Inventory(loader=loader, variable_manager=variable_manager, host_list=inventory[FILE])
-    except Exception as e:
-        misc.ERROR(str(e))
-    
-    variable_manager.set_inventory(inventory)
-    
-    hosts = inventory.get_hosts()
+
+    loader = DataLoader()
+
+    if inventoryHandler == PRE24:
+        if VAULT_PASSWORD_FILE in inventory:
+            vpf = inventory[VAULT_PASSWORD_FILE]
+            if not os.path.exists(vpf):
+                misc.ERROR("Ansible vault password file '{0}' does not exists!".format(vpf))
+            with open(vpf) as f:
+                content = f.readlines()
+            if len(content) == 0 or len(content[0].strip()) == 0:
+                misc.ERROR("Invalid Ansible vault password file '{0}' content!".format(vpf))
+            loader.set_vault_password(content[0].strip())
+        elif ASK_VAULT_PASSWORD in inventory and inventory[ASK_VAULT_PASSWORD]:
+            prompt = "Password for Ansible inventory{0}: ".format(" '" + inventory[NAME] + "'" if NAME in inventory else "")
+            content = getpass.getpass(prompt)
+            loader.set_vault_password(content.strip())
+        variable_manager = VariableManager()
+        try:
+            inventory = Inventory(loader=loader, variable_manager=variable_manager, host_list=inventory[FILE])
+        except Exception as e:
+            misc.ERROR(str(e))
+        variable_manager.set_inventory(inventory)
+        hosts = inventory.get_hosts()
+    else:
+        if VAULT_PASSWORD_FILE in inventory:
+            from ansible.cli import CLI
+            vpf = inventory[VAULT_PASSWORD_FILE]
+            if not os.path.exists(vpf):
+                misc.ERROR("Ansible vault password file '{0}' does not exists!".format(vpf))
+            CLI.setup_vault_secrets(loader=loader, vault_ids=[], vault_password_files=[vpf], ask_vault_pass=False, create_new_password=False)
+        elif ASK_VAULT_PASSWORD in inventory and inventory[ASK_VAULT_PASSWORD]:
+            from ansible.cli import CLI
+            CLI.setup_vault_secrets(loader=loader, vault_ids=[], vault_password_files=[], ask_vault_pass=True, create_new_password=False)
+        
+        inventory = InventoryManager(loader=loader, sources=inventory[FILE])
+        variable_manager = VariableManager(loader=loader, inventory=inventory)
+        hosts = inventory.get_hosts()
     
     existingHosts = set(map(lambda x : x[NAME], model[HOSTS]))
     #print(existingHosts)
@@ -128,7 +182,10 @@ def populateModelFromInventory(model, inventory):
 
     existingHostGroups = set(map(lambda x : x[NAME], model[HOST_GROUPS]))
     #print(existingHostGroups)
-    hvars = variable_manager.get_vars(loader, host=hosts[0], include_hostvars=False)
+    if inventoryHandler == PRE24:
+        hvars = variable_manager.get_vars(loader=loader, host=hosts[0], include_hostvars=False)
+    else:
+        hvars = variable_manager.get_vars(host=hosts[0], include_hostvars=False)
     groups = hvars[GROUPS]
     for grpName in groups:
         if grpName != 'all' and grpName != 'ungrouped' and (not grpName in existingHostGroups):

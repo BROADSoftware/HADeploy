@@ -2,7 +2,7 @@
 
 ## Version
 
-The lastest stable version of HADeploy is **`0.5.1`**.
+The lastest stable version of HADeploy is **`0.5.2`**.
 
 ## Prerequisite
 
@@ -51,7 +51,7 @@ sudo yum install -y python-devel openssl-devel gcc
 We strongly adivise you to ensure you have the latest `pip` version:
 
 ```bash
-pip install --upgrade pip
+sudo pip install --upgrade pip
 ```
 
 Then, you can install HADeploy:
