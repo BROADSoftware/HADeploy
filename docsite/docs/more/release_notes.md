@@ -1,5 +1,9 @@
 # Release notes
 
+## 0.5.3
+
+- ???
+
 ## 0.5.2
 
 - A change in the API of Ansible 2.4 broke `ansible_inventory` plugin. Fixed.
