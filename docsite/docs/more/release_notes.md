@@ -2,6 +2,7 @@
 
 ## 0.5.3
 
+- In some cases, using include directive disrupt some relative file relocation. Fixed
 - ???
 
 ## 0.5.2

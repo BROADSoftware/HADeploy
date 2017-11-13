@@ -310,6 +310,7 @@ class Parser:
                         self.setState(State.BETWEEN_DOCS)
                         self.path.reduce()
                         self.path.reduce()
+                        self.adjustRelativePath(fileName)
                         self.parse(included)
                         self.path.add(PathItem("include", PathItem.SEQ))
                         logger.debug("********************* Path:'{0}' Back from include '{1}'".format(repr(self.path), included))
@@ -325,6 +326,7 @@ class Parser:
                         logger.debug("********************* Path:'{0}'  -> INCLUDE '{1}' from SINGLE".format(repr(self.path), included))
                         self.path.reduce()
                         self.setState(State.BETWEEN_DOCS)
+                        self.adjustRelativePath(fileName)
                         self.parse(included)
                         logger.debug("********************* Path:{0} Back from include '{1}'".format(repr(self.path), included))
                         self.adjustStateFromTop()
@@ -354,12 +356,15 @@ class Parser:
         
         logger.debug("End or parsing: Anchors:{0}".format(str(self.anchors)))
         # Adjust some environment variable, as they are relative to source file path
+        self.adjustRelativePath(fileName)
+
+    def adjustRelativePath(self, fileName):
         if fileName != None:
             base = os.path.dirname(os.path.abspath(fileName))
             self.context.model[SRC] = self.getResult()
             for plugin in self.context.plugins:
                 plugin.onNewSnippet(base)
-
+        
         
     def getResult(self):
         return self.path.top().object
