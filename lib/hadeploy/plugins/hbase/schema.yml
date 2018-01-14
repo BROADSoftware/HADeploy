@@ -15,6 +15,7 @@ mapping:
       "debug": { type: bool, required: false }              # Display jdctopic input file
       "become_user": { type: str, required: false }
       "become_method": { type: str, required: false }   
+      "when": { type: bool, required: false }    # Default to true
 
 
 
@@ -26,6 +27,7 @@ mapping:
         "name": { type: str, required: true }
         "no_remove": { type: bool, required: false }    # Default to false
         "managed": { type: bool, required: false }    # Default to true
+        "when": { type: bool, required: false }    # Default to true
         
           
   "hbase_tables":        
@@ -59,6 +61,7 @@ mapping:
             "end_key": { type: str, required: false }
             "num_region": { type: int, required: false }
         "no_remove": { type: bool, required: false }    # Default to false
+        "when": { type: bool, required: false }    # Default to true
         
       
   "hbase_datasets":
@@ -79,6 +82,7 @@ mapping:
         "url_username":  { type: str, required: false } # For http/https
         "url_password":  { type: str, required: false } # For http/https
         "no_remove": { type: bool, required: false }    # Default to false
+        "when": { type: bool, required: false }    # Default to true
                 
                 
                 

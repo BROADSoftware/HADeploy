@@ -69,6 +69,8 @@ class UsersPlugin(Plugin):
         if self.context.toExclude(SCOPE_USERS):
             return
         misc.ensureObjectInMaps(self.context.model[DATA], [USERS, SCOPE_BY_NAME], {})
+        misc.applyWhenOnList(self.context.model[SRC], USERS)
+        misc.applyWhenOnList(self.context.model[SRC], GROUPS)
         groomUsers(self.context)
         groomGroups(self.context)
 

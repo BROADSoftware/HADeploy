@@ -76,6 +76,10 @@ class InventoryPlugin(Plugin):
 
     def onGrooming(self):
         self.context.model[DATA][INVENTORY] = {}
+        misc.applyWhenOnList(self.context.model[SRC], HOSTS)
+        misc.applyWhenOnList(self.context.model[SRC], HOST_GROUPS)
+        misc.applyWhenOnList(self.context.model[SRC], HOST_OVERRIDES)
+        misc.applyWhenOnList(self.context.model[SRC], HOST_GROUP_OVERRIDES)
         buildHostDicts(self.context.model)
         flattenGroups(self.context.model)
         handleHostOverrides(self.context.model)

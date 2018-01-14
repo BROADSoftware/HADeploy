@@ -109,6 +109,7 @@ class AnsiblePlugin(Plugin):
         
     def onGrooming(self):
         if ANSIBLE_INVENTORIES in self.context.model[SRC]:
+            misc.applyWhenOnList(self.context.model[SRC], ANSIBLE_INVENTORIES)
             for inventory in self.context.model[SRC][ANSIBLE_INVENTORIES]:
                 if not os.path.exists(inventory[FILE]):
                     misc.ERROR("Ansible inventory file '{0}' does not exists!".format(inventory[FILE]))

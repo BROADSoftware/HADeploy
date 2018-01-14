@@ -23,6 +23,7 @@ import os
 from sets import Set
 import yaml
 import hadeploy.core.schema as schema
+#from lib.hadeploy.plugins.ranger.code import HDFS_RANGER_POLICIES
 
 logger = logging.getLogger("hadeploy.plugins.ranger")
 
@@ -127,6 +128,16 @@ class RangerPlugin(Plugin):
     def onGrooming(self):
         if self.context.toExclude(SCOPE_RANGER):
             return
+        misc.applyWhenOnSingle(self.context.model[SRC], RANGER_RELAY)
+        if 'hdfs' in self.context.pluginByName:
+            misc.applyWhenOnList(self.context.model[SRC], HDFS_RANGER_POLICIES)
+        if 'hbase' in self.context.pluginByName:
+            misc.applyWhenOnList(self.context.model[SRC], HBASE_RANGER_POLICIES)
+        if 'kafka' in self.context.pluginByName:
+            misc.applyWhenOnList(self.context.model[SRC], KAFKA_RANGER_POLICIES)
+        if 'hive' in self.context.pluginByName:
+            misc.applyWhenOnList(self.context.model[SRC], HIVE_RANGER_POLICIES)
+        misc.applyWhenOnList(self.context.model[SRC], YARN_RANGER_POLICIES)
         groomRangerRelay(self.context.model)
         if 'hdfs' in self.context.pluginByName:
             groomRangerHdfsPolicies(self.context.model)
@@ -183,7 +194,7 @@ def groomRangerHdfsPolicies(model):
     grabHdfsRangerPoliciesFromFolders(model)
     grabHdfsRangerPoliciesFromTrees(model)
     grabHdfsRangerPoliciesFromFiles(model)
-    if HDFS_RANGER_POLICIES in model[SRC]:
+    if HDFS_RANGER_POLICIES in model[SRC] and len(model[SRC][HDFS_RANGER_POLICIES]) > 0:
         if RANGER_RELAY not in model[SRC]:
             misc.ERROR("There is at least one 'hdfs_ranger_policies', but no 'ranger_relay' was defined!")
         names = Set()
@@ -279,7 +290,7 @@ def grabHBaseRangerPoliciesFromTables(model):
 def groomRangerHBasePolicies(model):
     grabHBaseRangerPoliciesFromNamespaces(model)
     grabHBaseRangerPoliciesFromTables(model)
-    if HBASE_RANGER_POLICIES in model[SRC]:
+    if HBASE_RANGER_POLICIES in model[SRC] and len(model[SRC][HBASE_RANGER_POLICIES]) > 0:
         if RANGER_RELAY not in model[SRC]:
             misc.ERROR("There is at least one 'hbase_ranger_policies', but no 'ranger_relay' was defined!")
         names = Set()
@@ -322,7 +333,7 @@ def grabKafkaRangerPoliciesFromTopics(model):
 
 def groomRangerKafkaPolicies(model):
     grabKafkaRangerPoliciesFromTopics(model)
-    if KAFKA_RANGER_POLICIES in model[SRC]:
+    if KAFKA_RANGER_POLICIES in model[SRC] and len(model[SRC][KAFKA_RANGER_POLICIES]) > 0:
         if RANGER_RELAY not in model[SRC]:
             misc.ERROR("There is at least one 'kafka_ranger_policies', but no 'ranger_relay' was defined!")
         names = Set()
@@ -379,7 +390,7 @@ def grabHiveRangerPoliciesFromTables(model):
 def groomRangerHivePolicies(model):
     grabHiveRangerPoliciesFromDatabase(model)
     grabHiveRangerPoliciesFromTables(model)
-    if HIVE_RANGER_POLICIES in model[SRC]:
+    if HIVE_RANGER_POLICIES in model[SRC] and len(model[SRC][HIVE_RANGER_POLICIES]) > 0:
         if RANGER_RELAY not in model[SRC]:
             misc.ERROR("There is at least one 'hive_ranger_policies', but no 'ranger_relay' was defined!")
         names = Set()
@@ -415,7 +426,7 @@ def groomRangerHivePolicies(model):
 # -------------------------------------------------------------- Yarn
             
 def groomRangerYarnPolicies(model):
-    if YARN_RANGER_POLICIES in model[SRC]:
+    if YARN_RANGER_POLICIES in model[SRC] and len(model[SRC][YARN_RANGER_POLICIES]) > 0:
         if RANGER_RELAY not in model[SRC]:
             misc.ERROR("There is at least one 'yarn_ranger_policies', but no 'ranger_relay' was defined!")
         names = Set()

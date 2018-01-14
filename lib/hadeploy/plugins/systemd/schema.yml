@@ -16,6 +16,7 @@ mapping:
         "enabled": { type: bool, required: false } # Start on boot ? Default true
         "state": { type: str, required: false } # started/stopped/current . Default: current
         "action_on_notify": { type: str, required: false } # restart/reload/none. Default restart
+        "when": { type: bool, required: false }    # Default to true
    
         
         

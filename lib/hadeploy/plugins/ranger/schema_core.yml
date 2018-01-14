@@ -18,6 +18,7 @@ mapping:
       "hive_service_name": { type: str, required: false }
       "yarn_service_name": { type: str, required: false }
       "policy_name_decorator": { type: str, required: false } # Default to "HAD[{0}]"
+      "when": { type: bool, required: false }    # Default to true
       
 
   # In schema_core, as we don't have yarn module yet      
@@ -32,6 +33,7 @@ mapping:
         "enabled": { type: bool, required: false }    # Default to True
         "recursive": { type: bool, required: false }    # Default to True
         "no_remove": { type: bool, required: false }    # Default to false
+        "when": { type: bool, required: false }    # Default to true
         "permissions": 
           type: seq
           sequence:
@@ -41,5 +43,4 @@ mapping:
               "groups": { type: seq, sequence: [ { type: str } ] }
               "accesses": { type: seq, sequence: [ { type: str, enum: [ 'submit-app', 'admin-queue' ] } ], required: true }
               "delegate_admin": { type: bool, required: false }    # Default to False
-        
         

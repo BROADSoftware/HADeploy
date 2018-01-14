@@ -66,4 +66,37 @@ def snippetRelocate(snippetPath, varPath):
         return os.path.expanduser(varPath)
     else:
         return os.path.normpath(os.path.join(snippetPath,varPath))
-               
+
+
+
+
+WHEN="when"
+
+#def removeOnNotWhen(l):
+#    l2 = []
+#    for item in l:
+#        setDefaultInMap(item, WHEN, True)
+#        if item[WHEN]:
+#            l2.append(item)
+#    return l2
+
+#def checkWhen(o):
+#    setDefaultInMap(o, WHEN, True)
+#    return o[WHEN]
+                   
+def applyWhenOnSingle(root, token):
+    if token in root:
+        setDefaultInMap(root[token], WHEN, True)
+        if not root[token][WHEN]:
+            del root[token]
+
+def applyWhenOnList(root, token):
+    if token in root:
+        l2 = []
+        for item in root[token]:
+            setDefaultInMap(item, WHEN, True)
+            if item[WHEN]:
+                l2.append(item)
+        root[token] = l2
+        
+        

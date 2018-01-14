@@ -4,7 +4,6 @@
 
 type: map
 mapping:
-
      
   "kafka_relay":
     type: map
@@ -23,6 +22,7 @@ mapping:
       "kdebug": { type: bool, required: false }             # Display klist result            
       "become_user": { type: str, required: false }
       "become_method": { type: str, required: false }   
+      "when": { type: bool, required: false }    # Default to true
      
           
   "kafka_topics":        
@@ -40,6 +40,7 @@ mapping:
           type: map
           allowempty: True
         "no_remove": { type: bool, required: false }    # Default to false
+        "when": { type: bool, required: false }    # Default to true
         
 
 

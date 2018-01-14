@@ -30,6 +30,7 @@ mapping:
             "endpoint": { type: str, required: false } # Default to 127.0.0.1:9001
             "username": { type: str, required: false } # Default to no user if no password, or user if a password is provided
             "password": { type: str, required: false } # Default to no password (Open server)
+        "when": { type: bool, required: false }    # Default to true
         
         
   "supervisor_groups":
@@ -46,6 +47,7 @@ mapping:
           - type: str
         "priority": { type: int, required: false }
         "no_remove": { type: bool, required: false }    # Default to false
+        "when": { type: bool, required: false }    # Default to true
         
   "supervisor_programs":
     type: seq
@@ -82,6 +84,7 @@ mapping:
         "umask" : { type: str, required: false }
         "no_remove": { type: bool, required: false }    # Default to false
         "state": { type: str, required: false } # started/stopped/current . Default: started
+        "when": { type: bool, required: false }    # Default to true
         
         
         

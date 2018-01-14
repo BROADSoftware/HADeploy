@@ -103,6 +103,10 @@ class HBasePlugin(Plugin):
             return
         self.buildHelper()
         misc.ensureObjectInMaps(self.context.model[DATA], [HBASE], {})
+        misc.applyWhenOnSingle(self.context.model[SRC], HBASE_RELAY)
+        misc.applyWhenOnList(self.context.model[SRC], HBASE_NAMESPACES)
+        misc.applyWhenOnList(self.context.model[SRC], HBASE_TABLES)
+        misc.applyWhenOnList(self.context.model[SRC], HBASE_DATASETS)
         groomHbaseRelay(self.context.model)
         groomHBaseNamespaces(self.context.model)
         groomHBaseTables(self.context.model)

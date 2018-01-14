@@ -86,6 +86,8 @@ class KafkaPlugin(Plugin):
             return
         self.buildHelper()
         misc.ensureObjectInMaps(self.context.model[DATA], [KAFKA], {})
+        misc.applyWhenOnSingle(self.context.model[SRC], KAFKA_RELAY)
+        misc.applyWhenOnList(self.context.model[SRC], KAFKA_TOPICS)
         groomKafkaRelay(self.context.model)
         groomKafkaTopics(self.context.model)
     

@@ -94,6 +94,8 @@ class AnsiblePlugin(Plugin):
         playbooksByActionByPriority = {}
         if not self.context.toExclude(SCOPE_ANSIBLE):
             src = self.context.model[SRC]
+            misc.applyWhenOnList(src, ANSIBLE_PLAYBOOKS)
+            misc.applyWhenOnList(src, ANSIBLE_ROLES)
             if ANSIBLE_PLAYBOOKS in src:
                 for pl in src[ANSIBLE_PLAYBOOKS]:
                     action = pl[FOR_ACTION]

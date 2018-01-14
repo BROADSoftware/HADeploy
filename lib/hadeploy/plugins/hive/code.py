@@ -106,6 +106,9 @@ class HBasePlugin(Plugin):
             return
         self.buildHelper()
         misc.ensureObjectInMaps(self.context.model[DATA], [HIVE], {})
+        misc.applyWhenOnSingle(self.context.model[SRC], HIVE_RELAY)
+        misc.applyWhenOnList(self.context.model[SRC], HIVE_DATABASES)
+        misc.applyWhenOnList(self.context.model[SRC], HIVE_TABLES)
         groomHiveRelay(self.context.model)
         groomHiveDatabases(self.context.model)
         groomHiveTables(self.context.model)
@@ -123,6 +126,7 @@ class HBasePlugin(Plugin):
                     for db in model[SRC][HIVE_DATABASES]:
                         db2 = copy.deepcopy(db)
                         del(db2[NO_REMOVE])
+                        del(db2[misc.WHEN])
                         if RANGER_POLICY in db2:
                             del(db2[RANGER_POLICY])
                         tgt["databases"].append(db2)
@@ -130,6 +134,7 @@ class HBasePlugin(Plugin):
                     for tbl in model[SRC][HIVE_TABLES]:
                         tbl2 = copy.deepcopy(tbl)
                         del(tbl2[NO_REMOVE])
+                        del(tbl2[misc.WHEN])
                         if RANGER_POLICY in tbl2:
                             del(tbl2[RANGER_POLICY])
                         tgt["tables"].append(tbl2)

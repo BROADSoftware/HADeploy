@@ -44,6 +44,7 @@ HDFS_RELAY="hdfs_relay"
 CACHEFOLDERS="cacheFolders"
 LOCAL_FILES_FOLDERS="local_files_folders"
 LOCAL_TEMPLATES_FOLDERS="local_templates_folders"
+SOURCE_HOST_CREDENTIALS="source_host_credentials"
 
 # items attributes
 FSRC="src"
@@ -139,8 +140,14 @@ class FilesPlugin(Plugin):
             misc.ensureObjectInMaps(model[DATA], [HDFS, FOLDERS], [] )
             misc.ensureObjectInMaps(model[DATA], [HDFS, TREES], [] )
             misc.ensureObjectInMaps(model[DATA], [HDFS, CACHEFOLDERS], Set())
+            misc.applyWhenOnSingle(self.context.model[SRC], HDFS_RELAY)
+            misc.applyWhenOnList(self.context.model[SRC], SOURCE_HOST_CREDENTIALS)
         if HDFS_RELAY in model[SRC]:
             misc.setDefaultInMap(model[SRC][HDFS_RELAY], CACHE_FOLDER, DEFAULT_HDFS_RELAY_CACHE_FOLDER)
+        misc.applyWhenOnList(self.context.model[SRC], MAVEN_REPOSITORIES)
+        misc.applyWhenOnList(self.context.model[SRC], FOLDERS)
+        misc.applyWhenOnList(self.context.model[SRC], FILES)
+        misc.applyWhenOnList(self.context.model[SRC], TREES)
         groomMavenRepositories(self.context)
         groomFolders(self.context)
         groomFiles(self.context)

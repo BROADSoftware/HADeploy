@@ -163,11 +163,15 @@ then
 	NO_SCOPE="--noScope $NO_SCOPE"
 fi
 
+SRC="hadeploy_action=${ACTION} ${SRC}"
+
+set +x
 $CMD --workingFolder $WF $LOGOPT --src $SRC $SCOPE $NO_SCOPE --action $ACTION
 if [ $? -ne "0" ]
 then 
 	exit 1
 fi
+
 
 case $ACTION in
 	none)

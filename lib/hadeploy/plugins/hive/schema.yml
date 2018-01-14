@@ -15,6 +15,7 @@ mapping:
       "become_user": { type: str, required: false }
       "become_method": { type: str, required: false }   
       "report_file": { type: str, required: false }
+      "when": { type: bool, required: false }    # Default to true
       
 
      
@@ -32,6 +33,7 @@ mapping:
         "properties": 
           type: map
           allowempty: True
+        "when": { type: bool, required: false }    # Default to true
 
   "hive_tables":
     type: "seq"
@@ -111,6 +113,7 @@ mapping:
         "alterable": { type: bool, required: false }    # Default to false
         "droppable": { type: bool, required: false }    # Default to false
         "no_remove": { type: bool, required: false }    # Default to false
+        "when": { type: bool, required: false }    # Default to true
         
           
         

@@ -81,6 +81,7 @@ class SystemdPlugin(Plugin):
 
     def onGrooming(self):
         misc.ensureObjectInMaps(self.context.model[DATA], [SYSTEMD, SCOPE_BY_NAME], {})
+        misc.applyWhenOnList(self.context.model[SRC], SYSTEMD_UNITS)
         self.groomSystemd()
                     
     def groomSystemd(self):

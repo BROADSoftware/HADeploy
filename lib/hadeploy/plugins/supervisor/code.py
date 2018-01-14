@@ -134,6 +134,9 @@ class SupervisorPlugin(Plugin):
 
     def onGrooming(self):
         misc.ensureObjectInMaps(self.context.model[DATA], [SUPERVISORS, SCOPE_BY_NAME], {})
+        misc.applyWhenOnList(self.context.model[SRC], SUPERVISORS)
+        misc.applyWhenOnList(self.context.model[SRC], SUPERVISOR_PROGRAMS)
+        misc.applyWhenOnList(self.context.model[SRC], SUPERVISOR_GROUPS)
         self.groomSupervisors()
         self.groomPrograms()
         self.groomGroups()

@@ -10,5 +10,6 @@ mapping:
         "file": { type: str, required: true }
         "vault_password_file": { type: str, required: false }
         "ask_vault_password": { type: bool, required: false }
+        "when": { type: bool, required: false }    # Default to true
                         
   

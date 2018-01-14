@@ -12,6 +12,7 @@ mapping:
         "managed": { type: bool, required: false }    # Default to true
         "scope": { type: str, required: false }       # Default to 'all'
         "no_remove": { type: bool, required: false }    # Default to false
+        "when": { type: bool, required: false }    # Default to true
         
           
   "users":
@@ -30,6 +31,7 @@ mapping:
         "password": { type: str, required: false }    # Crypted password
         "system": { type: bool, required: false }     # Default to false
         "no_remove": { type: bool, required: false }    # Default to false
+        "when": { type: bool, required: false }    # Default to true
         "authorized_keys":
           type: seq
           sequence:
