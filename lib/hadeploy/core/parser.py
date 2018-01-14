@@ -391,6 +391,23 @@ class Parser:
             except Exception as e:
                 misc.ERROR("{0} {1} (path:{2})".format(str(e), event.start_mark, str(self.path)))
             ##logger.debug("*********Result is {0}".format(value))
+        if '>>' in value:
+            thevars = self.vars
+            #logger.debug("*********Will pass '{0}' through jinja2 with {1}".format(value, str(thevars)))
+            try:
+                value = jinja2.Template(value, 
+                    undefined=jinja2.StrictUndefined,
+                    trim_blocks = True,
+                    block_start_string="%<",
+                    block_end_string=">>",
+                    variable_start_string="<<",
+                    variable_end_string=">>",
+                    comment_start_string="#<",
+                    comment_end_string=">>"
+                ).render(thevars)
+            except Exception as e:
+                misc.ERROR("{0} {1} (path:{2})".format(str(e), event.start_mark, str(self.path)))
+            ##logger.debug("*********Result is {0}".format(value))
         value = value.encode('utf8')
         if event.style == u'"' or event.style == u'\'':
             return value
