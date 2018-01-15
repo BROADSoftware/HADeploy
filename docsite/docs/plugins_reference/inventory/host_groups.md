@@ -15,6 +15,7 @@ name|yes|The name of the host group
 hosts|no|A list of hosts included in this group. Each host must be defined in the [`hosts:`](./hosts) part (Or the associated Ansible inventory).
 groups|no|A list of `host_group` from wich all hosts will be included in this group. Allow group composition, and also group renaming.
 force_setup|no|A common Ansible problem is when referencing host info for a host which has not being accessed, so there is no fact grabbed for it.<br>Setting this flag to `yes` will trigger an access to all hosts of this group at the begining of the play.<br>Default: `no`
+when|no|Boolean. Allow [conditional deployment](../../more/conditional_deployment) of this item.<br>Default `True` 
 
 Note than same host can belong to several groups.
 

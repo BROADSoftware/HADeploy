@@ -10,14 +10,15 @@ Each item of the list has the following attributes:
 
 Name | req? |	Description
 --- | --- |  ---
- name |yes|The name of the HIVE database. 
- properties |no | A map of properties. Equivalent to WITH DBPROPERTIES Hive DDL clause
- location   |no | Equivalent to LOCATION Hive DDL clause
- owner      |no | The owner of the database. May be a user account or a group.
- owner_type |no | USER or ROLE. Specify what represent the owner attribute
- comment    |no | Equivalent to the COMMENT Hive DDL close
- no_remove|no|Boolean: Prevent this database to be removed when HADeploy will be used in REMOVE mode.<br>Default: `no`
- ranger_policy|no|Definition of Apache Ranger policy bound to this database.<br>Parameters are same as [hive_ranger_policies](../ranger/hive_ranger_policies) except than `databases`, `tables` and `columns` should not be defined. The policy will apply on all columns of all tables of this database.<br>The policy name can be explicitly defined. Otherwise, a name will be generated as "`_<database>_`".<br>See example below for more information
+name |yes|The name of the HIVE database. 
+properties |no | A map of properties. Equivalent to WITH DBPROPERTIES Hive DDL clause
+location   |no | Equivalent to LOCATION Hive DDL clause
+owner      |no | The owner of the database. May be a user account or a group.
+owner_type |no | USER or ROLE. Specify what represent the owner attribute
+comment    |no | Equivalent to the COMMENT Hive DDL close
+no_remove|no|Boolean: Prevent this database to be removed when HADeploy will be used in REMOVE mode.<br>Default: `no`
+ranger_policy|no|Definition of Apache Ranger policy bound to this database.<br>Parameters are same as [hive_ranger_policies](../ranger/hive_ranger_policies) except than `databases`, `tables` and `columns` should not be defined. The policy will apply on all columns of all tables of this database.<br>The policy name can be explicitly defined. Otherwise, a name will be generated as "`_<database>_`".<br>See example below for more information
+when|no|Boolean. Allow [conditional deployment](../../more/conditional_deployment) of this item.<br>Default `True` 
 
 ### Example:
 

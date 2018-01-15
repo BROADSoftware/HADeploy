@@ -24,6 +24,7 @@ local_keytab_path|no|A local path to the associated keytab file. This path is re
 relay_keytab_path|no|A path to the associated keytab file on the relay host. See [below](#kerberos-authentication)
 become_user|no|A user account under which all namespace and table operations will be performed. Only used on non-Kerberos cluster.<br>Note: The [`ssh_user`](../inventory/hosts) defined for this relay host must have enough rights to switch to this `become_user` using the `become_method` below.<br>Default: No user switch, so the [`ssh_user`](../inventory/hosts) defined for this relay host will be used.
 become_method|no|The method used to swith to this user. Refer to the Ansible documentation on this parameter.<br>Default: Ansible default (`sudo`).
+when|no|Boolean. Allow [conditional deployment](../../more/conditional_deployment) of this item.<br>Default `True` 
 
 ## Kerberos authentication
 

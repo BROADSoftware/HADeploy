@@ -22,6 +22,7 @@ hdfs_service_name|no|In most cases, you should not need to set this parameter. I
 hbase_service_name|no|In most cases, you should not need to set this parameter. It defines the Ranger Admin HBase service, typically: `<yourClusterName>_hbase`.<br>It must be set if there are several such services defined in your Ranger Admin configuration, to select the one you intend to use.
 kafka_service_name|no|In most cases, you should not need to set this parameter. It defines the Ranger Admin Kafka service, typically: `<yourClusterName>_kafka`.<br>It must be set if there are several such services defined in your Ranger Admin configuration, to select the one you intend to use.
 policy_name_decorator|no|To distinguish Ranger policy managed by HADeploy, a naming convention is applied by default. The policy name, as it will appears in the GUI Ranger interface will be in the form `HAD[<policyName>]`, where `<policyName>` is the name of the policy as you provide it.<br>This is achieved by wrapping the name with this pattern, where `{0}` is substituted with the policy name. <br>For python aware reader, this is performed as:<br>`"HAD[{0}]".format(policyName)`.<br>If you just want to have raw policy name, simply define the parameter with `{0}`.<br>Default: `HAD[{0}]`
+when|no|Boolean. Allow [conditional deployment](../../more/conditional_deployment) of this item.<br>Default `True` 
 
 ## Example
 

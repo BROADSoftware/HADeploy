@@ -31,6 +31,7 @@ alterable        |no |Boolean. Allow most of ALTER TABLE commands to be automati
 droppable        |no |Boolean. Allow this table to be dropped and recreated if definition is modified.<br>Default value is `yes` if the table is external, `no`for all other cases
 no_remove        |no |Boolean: Prevent this database to be removed when HADeploy will be used in REMOVE mode.<br>Default: `no`
 ranger_policy    |no |Definition of Apache Ranger policy bound to this table.<br>Parameters are same as [hive_ranger_policies](../ranger/hive_ranger_policies) except than `database`, `tables` and `columns` should not be defined. The policy will apply on all columns of this table.<br>The policy name can be explicitly defined. Otherwise, a name will be generated as "`_<database.table>_`".<br>See example below for more information
+when|no|Boolean. Allow [conditional deployment](../../more/conditional_deployment) of this item.<br>Default `True` 
  
 [1]: Storage format can be defined using two methods:
 

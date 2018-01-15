@@ -17,6 +17,7 @@ name|yes|Name of the group.
 programs|yes|The list of program belonging tho this group.
 priority|no|The priority assigned to this group. Refer to [supervisor documentation](http://supervisord.org/configuration.html#group-x-section-settings).
 no_remove|no|Boolean: Prevent this program to be removed when HADeploy will be used with `--action remove`.<br>Default: `no`
+when|no|Boolean. Allow [conditional deployment](../../more/conditional_deployment) of this item.<br>Default `True` 
 
 ## Example
 

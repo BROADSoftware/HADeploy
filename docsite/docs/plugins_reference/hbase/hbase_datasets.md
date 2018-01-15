@@ -23,6 +23,7 @@ force_basic_auth|no|Boolean; In case of `src: http[s]://...` . The underlying mo
 url_username|no|String; In case of `src: http[s]://...`. The username for use in HTTP basic authentication. This parameter can be used without url_password for sites that allow empty passwords.
 url_password|no|String; In case of `src: http[s]://...`. The password for use in HTTP basic authentication
 no_remove|no|Boolean: Prevent this dataset to be deleted from the table when HADeploy will be used in REMOVE mode.<br>Default: `no`
+when|no|Boolean. Allow [conditional deployment](../../more/conditional_deployment) of this item.<br>Default `True` 
 
 ## Example
 ```yaml

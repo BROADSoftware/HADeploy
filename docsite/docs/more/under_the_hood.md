@@ -12,9 +12,11 @@ The main steps of an HADeploy run are the following:
 
 1. Build a data model in memory representing this file content.
 
+1. For all objects, Check `when:` clause and remove it if `False`.
+
 1. Check this data model for consistency, enrich it, or transform some data to ease the next stages.
 
-1. Generate a Jinja2 template by concatenating all template snippets provided by the plugin.
+1. Generate a Jinja2 template by concatenating all template snippets provided by the plugins.
 
 1. Render this template with the model to generate an Ansible playbook
 

@@ -23,6 +23,7 @@ create_home|no|Unless set to no, a home directory will be made for the user when
 password|no|Set the user's password to this crypted value.
 no_remove|no|Boolean: Prevent this group to be removed when HADeploy will be used in REMOVE mode.<br>Default: `no`
 authorized_keys|no|Provide a list of public key files, which will be added to this user account in its authorized_keys file. Note this will be applied even if `managed==no`.<br>If these public key file locations are not absolute, they will be relative to the HADeploy embedding file location.
+when|no|Boolean. Allow [conditional deployment](../../more/conditional_deployment) of this item.<br>Default `True` 
 
 # Example
 

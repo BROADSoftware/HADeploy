@@ -31,8 +31,7 @@ HADeploy added an alternate notation for variable by using '<<' and '>>'. This n
 
 ```yaml
 files:
-
-- {  when: <<isKerberos>>, scope: all, dest_folder: "/etc/security/keytabs", src="${appUser}.keytab" owner: ${appUser}, group: broadgroup, mode: "0400" }
+- {  when: <<isKerberos>>, scope: all, dest_folder: "/etc/security/keytabs", src= "${appUser}.keytab" owner: "${appUser}", group: broadgroup, mode: "0400" }
 ```
 
 If we where using `when: ${isKerberos}`, this will generate an error as the opening `{` will be confused with the start of the map delimiter.

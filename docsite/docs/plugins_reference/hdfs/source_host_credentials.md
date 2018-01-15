@@ -16,6 +16,7 @@ host|yes|The source host
 principal|yes|A Kerberos principal allowing all HDFS related operation to be performed. See below
 local_keytab_path|yes if<br>`node_keytab_path`<br>is not defined|A local path to the associated keytab file. This path is relative to the embeding file. See [below](#kerberos-authentication)
 node_keytab_path|yes if<br>`local_keytab_path`<br>is not defined|A path to the associated keytab file on the node. See [below](#kerberos-authentication)
+when|no|Boolean. Allow [conditional deployment](../../more/conditional_deployment) of this item.<br>Default `True` 
 
 ## Kerberos authentication
 When performing a copy operation (files or trees) from a cluster's host to HDFS, if a `principal` and `..._keytab_path` variables are defined for this host, Kerberos authentication will be activated before issuing the operation. 

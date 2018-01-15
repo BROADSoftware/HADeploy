@@ -29,6 +29,7 @@ become_user|no|Allows to set the user you become through privilege escalation
 become_pass|no|Allows you to set the privilege escalation password. This may be encrypted. Refer to [encrypted variables](../core/encrypted_vars)
 become_exe|no|Allows you to set the executable for the escalation method selected
 become\_flags|no|Allows you to set the flags passed to the selected escalation method.
+when|no|Boolean. Allow [conditional deployment](../../more/conditional_deployment) of this item.<br>Default `True` 
 
 
 

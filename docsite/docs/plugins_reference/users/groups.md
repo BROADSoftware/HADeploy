@@ -15,7 +15,7 @@ system|no|Is this a System group.<br>Default: `no`
 managed|no|Boolean: Does HADeploy manage this group? If not, no action will be performed on it, but a failure will the triggered if it does not exists.<br>Default: `yes` 
 scope|no|On which host does this group will be created? May be:<ul><li>A single host name</li><li>A single host_group name</li><li>Several hosts or host_groups, separated by the character ':'</li></ul>Default: `all`
 no_remove|no|Boolean: Prevent this group to be removed when HADeploy will be used in REMOVE mode.<br>Default: `no`
-
+when|no|Boolean. Allow [conditional deployment](../../more/conditional_deployment) of this item.<br>Default `True` 
 ## Example
 
 ```yaml

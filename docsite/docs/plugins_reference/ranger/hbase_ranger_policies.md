@@ -18,6 +18,7 @@ audit|no|Did this policy is audited by Ranger.<br>Default: `yes`
 enabled|no|Allow this policy to be disabled.<br>Default: `yes`
 no_remove|False|Boolean: Prevent this policy to be removed when HADeploy will be used in REMOVE mode.<br>Default: `no`
 permissions|yes|A list of permissions defining rights granted by this policy. See below
+when|no|Boolean. Allow [conditional deployment](../../more/conditional_deployment) of this item.<br>Default `True` 
 
 ## permissions
 

@@ -21,6 +21,7 @@ no_remove|no|Boolean: Prevent this supervisor to be removed when HADeploy will b
 enabled|no|Is this supervisord instance daemon start on system boot ? Default: `yes`.
 state|no|<lu><li>`started`: The supervisors instance daemon will be started on deployment</li><li>`stopped`: The supervisord instance daemon will be stopped on deployment.</li><li>`current`: The supervisord instance daemon state will be left unchanged during deployment. (stopped on initial creation).</li></ul>Default value: `started`.
 http_server|no|Allow a management HTTP server to be exposed. See [Web Interface](#web-interface) below to see how to activate and configure it.
+when|no|Boolean. Allow [conditional deployment](../../more/conditional_deployment) of this item.<br>Default `True` 
 
 Based on these parameters, HADeploy will instanciate a specific `supervisord` daemon, with the following characteristics:
 

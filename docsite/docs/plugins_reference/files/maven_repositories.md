@@ -19,6 +19,7 @@ username|no|The username to authenticate as to the Maven Repository, in case of 
 password|no|Associated password
 timeout|no|Specifies a timeout in seconds for the connection attempt. Default: `10`
 validate_certs|no|Boolean; In case of `src: https://...` Setting to false, will disable strict certificate checking, thus allowing self-signed certificate.<br>Default: `yes`
+when|no|Boolean. Allow [conditional deployment](../../more/conditional_deployment) of this item.<br>Default `True` 
 
 
 

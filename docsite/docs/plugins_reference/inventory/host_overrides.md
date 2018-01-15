@@ -32,6 +32,7 @@ become_user|no|Allow to override become_user
 become_pass|no|Allow to override become_pass. This may be encrypted. Refer to [encrypted variables](../core/encrypted_vars)
 become_exe|no|Allow to override become_exe
 priority|no|An integer number allowing to order overriding in case of multiple `host_override` on the same host(s). See example below.<br>Default: 100
+when|no|Boolean. Allow [conditional deployment](../../more/conditional_deployment) of this item.<br>Default `True` 
 
 
 

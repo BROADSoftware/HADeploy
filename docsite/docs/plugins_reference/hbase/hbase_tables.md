@@ -17,6 +17,7 @@ column_families|yes|Provide a list of one or several column families. See below
 presplit|no|Allow an initial region split schema to be defined. See below
 no_remove|no|Boolean: Prevent this table to be removed when HADeploy will be used in REMOVE mode.<br>Default: `no`
 ranger_policy|no|Definition of Apache Ranger policy bound to this table. Parameters are same as [hbase_ranger_policies](../ranger/hbase_ranger_policies) except than `tables`, `columns_families` and `columns` should not be defined. The policy will apply on all column families and all column of the table.<br>The policy name can be explicitly defined. Otherwise, a name will be generated as "`_<namespace>:<table>_`".<br>See example below for more information
+when|no|Boolean. Allow [conditional deployment](../../more/conditional_deployment) of this item.<br>Default `True` 
 
 ## column_families
 

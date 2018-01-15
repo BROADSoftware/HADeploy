@@ -41,6 +41,7 @@ stderr_logfile_backups|no|Integer. Refer to the [supervisor documentation](http:
 environment|no|List of String. Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
 directory|no|Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
 umask|no|Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
+when|no|Boolean. Allow [conditional deployment](../../more/conditional_deployment) of this item.<br>Default `True` 
 
 
 ## Example

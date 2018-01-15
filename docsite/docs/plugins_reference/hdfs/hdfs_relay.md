@@ -25,6 +25,7 @@ webhdfs_endpoint|no|HADeploy will perform several actions through WebHDFS REST i
 principal|no|A Kerberos principal allowing all HDFS related operation to be performed. See below
 local_keytab_path|no|A local path to the associated keytab file. This path is relative to the embeding file. See [below](#kerberos-authentication)
 relay_keytab_path|no|A path to the associated keytab file on the relay host. See [below](#kerberos-authentication)
+when|no|Boolean. Allow [conditional deployment](../../more/conditional_deployment) of this item.<br>Default `True` 
 
 ## Kerberos authentication
 
