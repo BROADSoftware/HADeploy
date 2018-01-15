@@ -4,7 +4,8 @@
 
 - In some cases, using include directive disrupted some relative file relocation. Fixed
 - An [alternate variable notation](../plugins_reference/core/vars/#alternate-notation) (`<<...>>`) has been introduced to allow non-string variable in flow style notation.
-- ???
+- [Conditional deployment](./conditional_deployment) was implemented in all plugins.
+- A switch `no_log` has been added to [`ranger_relay`](../plugins_reference/ranger/ranger_relay) to ease debugging.
 
 ## 0.5.2
 

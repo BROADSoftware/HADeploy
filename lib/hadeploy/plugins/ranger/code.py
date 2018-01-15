@@ -50,6 +50,7 @@ GROUPS="groups"
 DELEGATE_ADMIN="delegate_admin"
 RANGER_POLICY="ranger_policy"
 SCOPE="scope"
+NO_LOG="no_log"
 
 # -------------------- HDFS
 
@@ -178,6 +179,7 @@ def groomRangerRelay(model):
     if RANGER_RELAY in model[SRC]:
         relay = model[SRC][RANGER_RELAY]
         misc.setDefaultInMap(relay, VALIDATE_CERTS, True)
+        misc.setDefaultInMap(relay, NO_LOG, True)
         misc.setDefaultInMap(relay, POLICY_NAME_DECORATOR, 'HAD[{0}]')
         if CA_BUNDLE_LOCAL_FILE in relay:
             if not os.path.exists(relay[CA_BUNDLE_LOCAL_FILE]):
