@@ -299,7 +299,8 @@ files:
 
 Here again, the `scope:` attribute indicates where to store the file. And the `src:` attribute is an URI, providing a choice of sources. More on that in the reference part.
 
-Note also variable are surrounded by quotes. This is required when using 'flow style', otherwise the opening '{' will be confused when the start of map delimiter.
+Note also variable are surrounded by quotes. This is required when using 'flow style', otherwise the opening '{' will be confused when the start of map delimiter. 
+See also [alternate variable notation](../plugins_reference/core/vars/#alternate-notation) for non-String variables.
 
 ### Trees
 

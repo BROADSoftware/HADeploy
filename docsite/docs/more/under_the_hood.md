@@ -25,11 +25,15 @@ The main steps of an HADeploy run are the following:
 When using HADeploy in an advanced way (i.e using the `ansible` module, or developping your own plugin), you may be disturbed by different variable notation. 
 There is in fact 3 kinds of variables involved in HADeploy
 
-#### `${my_variable}`
+#### `${my_variable}` 
+
+Or `<<my_variable>>`
 
 This is the only variable notation you should be aware of for standart usage of HADeploy.
 
-Such variable are resolved during step 1 (Building of the deployment file).
+Such variables are resolved during step 1 (Building of the deployment file).
+
+Refer to [alternate notation](../plugins_reference/core/vars/#alternate-notation) for the motivation of using `<<my_variable>>`.
 
 #### `{{{my_variable}}}`
 

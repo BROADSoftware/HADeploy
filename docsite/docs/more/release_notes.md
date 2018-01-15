@@ -2,7 +2,8 @@
 
 ## 0.5.3
 
-- In some cases, using include directive disrupt some relative file relocation. Fixed
+- In some cases, using include directive disrupted some relative file relocation. Fixed
+- An [alternate variable notation](../plugins_reference/core/vars/#alternate-notation) (`<<...>>`) has been introduced to allow non-string variable in flow style notation.
 - ???
 
 ## 0.5.2
