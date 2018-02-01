@@ -26,7 +26,7 @@ import dump
 
 from context import Context
 from parser import Parser
-from const import PLUGINS, PLUGINS_PATHS, SRC
+from const import PLUGINS, PLUGINS_PATHS, SRC, VARS
 from templator import Templator
 
 
@@ -140,6 +140,11 @@ def main():
             context.builRolesPath(action, pluginExts)
             context.generateAuxTemplates(action, pluginExts)
             templator.generate("{0}.yml.jj2".format(action), os.path.join(context.workingFolder, "{0}.yml".format(action)))
+    elif action == "dumpvars":
+        if SRC in context.model and VARS in context.model[SRC]:
+            txt = yaml.dump(context.model[SRC][VARS], default_flow_style=False, default_style=None)
+            print("---\n" + txt)
+            return
     else: 
         if not action in actions:
             misc.ERROR("Action {0} not supported. Current configuration only supports {1}".format(action, str(actions)))

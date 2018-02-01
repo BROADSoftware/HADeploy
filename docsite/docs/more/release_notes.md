@@ -2,7 +2,7 @@
 
 ## 0.5.4
 
-- ??
+- Added an action `vars`, to dump all variables
 
 ## 0.5.3
 

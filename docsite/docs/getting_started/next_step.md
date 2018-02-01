@@ -428,9 +428,22 @@ HADeploy command line also allow direct variable definition, with the form --var
 hadeploy --var app_version=0.1.2 --src app.yml --src infra/cluster1.yml --action deploy
 ```
 
-Note in this case, the value will be overwritten by the one provided in app.yml. So you will have to remove from the definition file a variable you intend to specify on the command line.
+Note in this case, the value will be overwritten by the one provided in `app.yml`. So you will have to remove from the definition file a variable you intend to specify on the command line.
 
 The general rule is than variable definitions are evaluated/overridden in order of which they appears. So the order of --var and --src on the command line is significant.
+
+There is also another option `--action dumpvars`, to display all defined variables:
+
+```bash
+hadeploy --var app_version=0.1.2 --src app.yml --src infra/cluster1.yml --action dumpvars
+app_version: 0.1.2
+file_mode: 640
+folder_mode: 750
+forceAll: true
+zookeeper:
+  connection_timeout: 60000
+  zkpath: /broadapp
+```
 
 Some other option of the HADeploy command are described in other chapters:
 

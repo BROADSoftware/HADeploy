@@ -28,7 +28,7 @@ function usage {
 	echo '     [--askVaultPassword] [--vaultPasswordFile <vaultPasswordFile>]'
 	echo '     [--workingFolder <workingFolder>]'
 	echo '     [--loggingConf <loginConfFile>]'
-	echo '     --action <deploy|remove|none>'
+	echo '     --action <deploy|remove|dumpvars|stop|start|none>'
 	echo '  or'
 	echo 'hadeploy --version'
 }
@@ -140,7 +140,10 @@ else
 fi
 mkdir -p ${WF}
 
-echo "WORKING_FOLDER: $WF"
+if [ "$ACTION" != "dumpvars" ]
+then
+	echo "WORKING_FOLDER: $WF"
+fi
 
 
 if [ -x "$MYDIR/hadeploy-main" ]
@@ -175,6 +178,8 @@ fi
 
 case $ACTION in
 	none)
+	;;
+	dumpvars)
 	;;
 	*)
 		bash -c "cd $WF; ansible-playbook ${VAULT_PASSWORD} ${VERBOSE} ${ACTION}.yml"
