@@ -2,7 +2,8 @@
 
 ## 0.5.4
 
-- Added an action `vars`, to dump all variables
+- Added an action `dumpvars`, to dump all variables
+- With Ranger 0.7, there was unjustified 'changed' on policies settings. Fixed
 
 ## 0.5.3
 
