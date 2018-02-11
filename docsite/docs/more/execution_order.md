@@ -52,20 +52,22 @@ To achieve this, internally, each plugin is granted with a priority for each act
 
 Here are the values per plugin and action:
 
-|        Plugin       |   grooming |   deploy   | remove   |  start |  stop |
-|---                  |     ---    |     ---    |   ---    |  ---   |  ---  |
-|header               |   1100     |   1100     |   1100   |    -   |   -   |
-|ansible_inventories  |   1200     |   1200     |   1200   |    -   |   -   |
-|inventory            |   1300 (3) |   1300     |   1300   |    -   |   -   |
-|ansible              |   1400     |   (2)      |   (2)    |    -   |   -   |
-|users                |   2000     |   2000     |   7000   |    -   |   -   |
-|ranger               |   8000 (1) |   2500     |   6000   |    -   |   -   |
-|Nodes files & folders|   3000     |   3000     |   4000   |    -   |   -   |
-|hdfs files & folders |   3500 (4) |   3500     |   3500   |    -   |   -   |
-|hbase                |   4000     |   4000     |   3000   |    -   |   -   |
-|hive                 |   4500     |   4500     |   2500   |    -   |   -   |
-|kafka                |   5000     |   5000     |   2000   |    -   |   -   |
-|Services             |   6000     |   6000     |   1800   | 5000   | 5000  |
+|        Plugin       |   grooming |   deploy   | remove   |  start |  stop | status |
+|---                  |     ---    |     ---    |   ---    |  ---   |  ---  |  ---   |
+|header               |   1100     |   1100     |   1100   |    -   |   -   |   -    |
+|ansible_inventories  |   1200     |   1200     |   1200   |    -   |   -   |   -    |
+|inventory            |   1300 (3) |   1300     |   1300   |    -   |   -   |   -    |
+|ansible              |   1400     |   (2)      |   (2)    |    -   |   -   |   -    |
+|users                |   2000     |   2000     |   7000   |    -   |   -   |   -    |
+|ranger               |   8000 (1) |   2500     |   6000   |    -   |   -   |   -    |
+|Nodes files & folders|   3000     |   3000     |   4000   |    -   |   -   |   -    |
+|hdfs files & folders |   3500 (4) |   3500     |   3500   |    -   |   -   |   -    |
+|hbase                |   4000     |   4000     |   3000   |    -   |   -   |   -    |
+|hive                 |   4500     |   4500     |   2500   |    -   |   -   |   -    |
+|kafka                |   5000     |   5000     |   2000   |    -   |   -   |   -    |
+|Services             |   6000     |   6000     |   1800   | 5000   | 5000  |   -    |
+|Supervisor           |   7000     |   7000     |   1600   | 6000   | 4000  |   -    |
+|Storm                |   7100     |     -      |     -    | 6500   | 3500  | 5000   |
 
 NB: `grooming` is an internal action, performed on [step 4 of the run](./under_the_hood)
 

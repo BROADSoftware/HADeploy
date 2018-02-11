@@ -1,0 +1,14 @@
+galaxy_info:
+  author: Serge ALEXANDRE
+  description: Storm topology lifecycle managment 
+  company: BROADSoftware
+  license: GPLv3
+  min_ansible_version: 1.9
+
+  platforms:
+  - name: EL
+    versions:
+    - 7
+
+  galaxy_tags: [ "storm", "streaming", "bigdata" ]
+  dependencies: []

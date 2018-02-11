@@ -90,12 +90,12 @@ class AnsiblePlugin(Plugin):
             misc.ERROR("Unable to find {0} '{1}' in {2}".format(kind, path, self.context.model[SRC][folderListId]))
         
     def onGrooming(self):
-        """ Main job is to build a referencial playbookByActionByPriority"""
+        misc.applyWhenOnList(self.context.model[SRC], ANSIBLE_PLAYBOOKS)
+        misc.applyWhenOnList(self.context.model[SRC], ANSIBLE_ROLES)
+        """ Main job is to build a referential playbookByActionByPriority"""
         playbooksByActionByPriority = {}
         if not self.context.toExclude(SCOPE_ANSIBLE):
             src = self.context.model[SRC]
-            misc.applyWhenOnList(src, ANSIBLE_PLAYBOOKS)
-            misc.applyWhenOnList(src, ANSIBLE_ROLES)
             if ANSIBLE_PLAYBOOKS in src:
                 for pl in src[ANSIBLE_PLAYBOOKS]:
                     action = pl[FOR_ACTION]

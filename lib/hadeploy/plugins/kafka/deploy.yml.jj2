@@ -1,3 +1,4 @@
+# ------------------------------------------------------------------------------- Handle kafka topic creation
 
 {{% if src.kafka_topics is defined and  src.kafka_topics|length > 0 %}}
 

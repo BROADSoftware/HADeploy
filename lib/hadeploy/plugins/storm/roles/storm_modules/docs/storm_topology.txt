@@ -1,0 +1,42 @@
+> STORM_TOPOLOGY    
+
+  Allow to fetch topology status and to change it by activating, deactivating or killing it.
+
+Options (= is mandatory):
+
+- kerberos
+        Boolean. Storm UI access require kerberos authentication
+        [Default: False]
+= name
+        Topology name
+        [Default: None]
+= state
+        target topology state: `active', `inactive', `killed', `nonexistent', `existing', `get'
+        `active': Set in `active' state if was `inactive'. Error if topology does not exists
+        `inactive': Set in `inactive? state if was C(active'. Error if topology does not exists
+        `killed': Issue a kill command if topology is existing. If not, or already in `killed' state, do nothing. Exit
+        immediately.
+        `nonexistent': Issue a kill command if topology is existing. If not, or already in `killed' state, do nothing. Wait for
+        the topology to be removed.
+        `existing': Do nothing, but wait for the topology to be running
+        [Default: None]
+- timeout_secs
+        Timeout value when waiting a target state
+        [Default: 60]
+= ui_url
+        The URL of the Storm UI, without path
+        [Default: None]
+- wait_time_secs
+        Integer. The wait_time in seconds provided to the `kill' command
+        (Delay between spouts deactivation and topology destruction)
+        [Default: 30]
+Notes:
+  * All operations are performed using Storm UI REST API
+EXAMPLES:
+
+
+MAINTAINERS: Serge ALEXANDRE
+
+METADATA:
+	Status: ['preview']
+	Supported_by: community
