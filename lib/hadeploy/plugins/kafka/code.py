@@ -82,12 +82,12 @@ class KafkaPlugin(Plugin):
         return 5000 if action == ACTION_DEPLOY else 2000 if action == ACTION_REMOVE else misc.ERROR("Plugin 'kafka' called with invalid action: '{0}'".format(action))
 
     def onGrooming(self):
+        misc.applyWhenOnSingle(self.context.model[SRC], KAFKA_RELAY)
+        misc.applyWhenOnList(self.context.model[SRC], KAFKA_TOPICS)
         if self.context.toExclude(SCOPE_KAFKA):
             return
         self.buildHelper()
         misc.ensureObjectInMaps(self.context.model[DATA], [KAFKA], {})
-        misc.applyWhenOnSingle(self.context.model[SRC], KAFKA_RELAY)
-        misc.applyWhenOnList(self.context.model[SRC], KAFKA_TOPICS)
         groomKafkaRelay(self.context.model)
         groomKafkaTopics(self.context.model)
     

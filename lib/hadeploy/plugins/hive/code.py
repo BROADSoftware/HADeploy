@@ -102,13 +102,13 @@ class HBasePlugin(Plugin):
 
             
     def onGrooming(self):
+        misc.applyWhenOnSingle(self.context.model[SRC], HIVE_RELAY)
+        misc.applyWhenOnList(self.context.model[SRC], HIVE_DATABASES)
+        misc.applyWhenOnList(self.context.model[SRC], HIVE_TABLES)
         if self.context.toExclude(SCOPE_HIVE):
             return
         self.buildHelper()
         misc.ensureObjectInMaps(self.context.model[DATA], [HIVE], {})
-        misc.applyWhenOnSingle(self.context.model[SRC], HIVE_RELAY)
-        misc.applyWhenOnList(self.context.model[SRC], HIVE_DATABASES)
-        misc.applyWhenOnList(self.context.model[SRC], HIVE_TABLES)
         groomHiveRelay(self.context.model)
         groomHiveDatabases(self.context.model)
         groomHiveTables(self.context.model)

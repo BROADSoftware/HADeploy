@@ -127,8 +127,6 @@ class RangerPlugin(Plugin):
         return 2500 if action == ACTION_DEPLOY else 6000 if action == ACTION_REMOVE else misc.ERROR("Plugin 'ranger' called with invalid action: '{0}'".format(action))
 
     def onGrooming(self):
-        if self.context.toExclude(SCOPE_RANGER):
-            return
         misc.applyWhenOnSingle(self.context.model[SRC], RANGER_RELAY)
         if 'hdfs' in self.context.pluginByName:
             misc.applyWhenOnList(self.context.model[SRC], HDFS_RANGER_POLICIES)
@@ -139,6 +137,8 @@ class RangerPlugin(Plugin):
         if 'hive' in self.context.pluginByName:
             misc.applyWhenOnList(self.context.model[SRC], HIVE_RANGER_POLICIES)
         misc.applyWhenOnList(self.context.model[SRC], YARN_RANGER_POLICIES)
+        if self.context.toExclude(SCOPE_RANGER):
+            return
         groomRangerRelay(self.context.model)
         if 'hdfs' in self.context.pluginByName:
             groomRangerHdfsPolicies(self.context.model)

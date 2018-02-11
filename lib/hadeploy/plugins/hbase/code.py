@@ -99,14 +99,14 @@ class HBasePlugin(Plugin):
         return 4000 if action == ACTION_DEPLOY else 3000 if action == ACTION_REMOVE else misc.ERROR("Plugin 'hbase' called with invalid action: '{0}'".format(action))
 
     def onGrooming(self):
-        if self.context.toExclude(SCOPE_HBASE):
-            return
-        self.buildHelper()
-        misc.ensureObjectInMaps(self.context.model[DATA], [HBASE], {})
         misc.applyWhenOnSingle(self.context.model[SRC], HBASE_RELAY)
         misc.applyWhenOnList(self.context.model[SRC], HBASE_NAMESPACES)
         misc.applyWhenOnList(self.context.model[SRC], HBASE_TABLES)
         misc.applyWhenOnList(self.context.model[SRC], HBASE_DATASETS)
+        if self.context.toExclude(SCOPE_HBASE):
+            return
+        self.buildHelper()
+        misc.ensureObjectInMaps(self.context.model[DATA], [HBASE], {})
         groomHbaseRelay(self.context.model)
         groomHBaseNamespaces(self.context.model)
         groomHBaseTables(self.context.model)

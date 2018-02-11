@@ -66,11 +66,11 @@ class UsersPlugin(Plugin):
         return 2000 if action == ACTION_DEPLOY else 7000 if action == ACTION_REMOVE else misc.ERROR("Plugin 'users' called with invalid action: '{0}'".format(action))
     
     def onGrooming(self):
+        misc.applyWhenOnList(self.context.model[SRC], USERS)
+        misc.applyWhenOnList(self.context.model[SRC], GROUPS)
         if self.context.toExclude(SCOPE_USERS):
             return
         misc.ensureObjectInMaps(self.context.model[DATA], [USERS, SCOPE_BY_NAME], {})
-        misc.applyWhenOnList(self.context.model[SRC], USERS)
-        misc.applyWhenOnList(self.context.model[SRC], GROUPS)
         groomUsers(self.context)
         groomGroups(self.context)
 
