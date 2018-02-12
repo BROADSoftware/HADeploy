@@ -1,0 +1,48 @@
+
+type: map
+mapping:
+        
+  "storm_ranger_policies":
+    type: seq
+    sequence:
+    - type: map
+      mapping:
+        "name": { type: str, required: true }
+        "topologies": { type: seq, sequence: [ { type: str } ], required: true }
+        "audit": { type: bool, required: false }    # Default to True
+        "enabled": { type: bool, required: false }    # Default to True
+        "no_remove": { type: bool, required: false }    # Default to false
+        "when": { type: bool, required: false }    # Default to true
+        "permissions": 
+          type: seq
+          sequence:
+          - type: map
+            mapping:
+              "users": { type: seq, sequence: [ { type: str } ] }
+              "groups": { type: seq, sequence: [ { type: str } ] }
+              "accesses": { type: seq, sequence: [ { type: str, enum: [ 'submitTopology', 'fileUpload', 'fileDownload', 'killTopology', 'rebalance', 'activate', 'deactivate', 'getTopologyConf', 'getTopology', 'getUserTopology', 'getTopologyInfo', 'uploadNewCredentials' ] } ], required: true }
+              "delegate_admin": { type: bool, required: false }    # Default to False
+        
+          
+  "storm_topologies":        
+    type: "seq"
+    sequence:
+    - type: map
+      mapping:
+        "ranger_policy":
+          type: map
+          mapping:
+            "name": { type: str, required: false }
+            "audit": { type: bool, required: false }    # Default to True
+            "enabled": { type: bool, required: false }    # Default to True
+            "permissions": 
+              type: seq
+              sequence:
+              - type: map
+                mapping:
+                  "users": { type: seq, sequence: [ { type: str } ] }
+                  "groups": { type: seq, sequence: [ { type: str } ] }
+                  "accesses": { type: seq, sequence: [ { type: str, enum: [ 'submitTopology', 'fileUpload', 'fileDownload', 'killTopology', 'rebalance', 'activate', 'deactivate', 'getTopologyConf', 'getTopology', 'getUserTopology', 'getTopologyInfo', 'uploadNewCredentials' ] } ], required: true }
+                  "delegate_admin": { type: bool, required: false }    # Default to False
+        
+

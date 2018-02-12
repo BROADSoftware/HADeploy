@@ -99,6 +99,13 @@ UDFS="udfs"
 YARN_RANGER_POLICIES="yarn_ranger_policies"
 YARN_RANGER_POLICIES_TO_REMOVE="yarnRangerPoliciesToRemove"
 
+# -------------------------------------- Storm
+
+STORM_TOPOLOGIES="storm_topologies"        
+TOPOLOGIES="topologies"
+STORM_RANGER_POLICIES="storm_ranger_policies"
+STORM_RANGER_POLICIES_TO_REMOVE="stormRangerPoliciesToRemove"
+
 class RangerPlugin(Plugin):
     
     def __init__(self, name, path, context):
@@ -136,6 +143,8 @@ class RangerPlugin(Plugin):
             misc.applyWhenOnList(self.context.model[SRC], KAFKA_RANGER_POLICIES)
         if 'hive' in self.context.pluginByName:
             misc.applyWhenOnList(self.context.model[SRC], HIVE_RANGER_POLICIES)
+        if 'storm' in self.context.pluginByName:
+            misc.applyWhenOnList(self.context.model[SRC], STORM_RANGER_POLICIES)
         misc.applyWhenOnList(self.context.model[SRC], YARN_RANGER_POLICIES)
         if self.context.toExclude(SCOPE_RANGER):
             return
@@ -148,6 +157,8 @@ class RangerPlugin(Plugin):
             groomRangerKafkaPolicies(self.context.model)
         if 'hive' in self.context.pluginByName:
             groomRangerHivePolicies(self.context.model)
+        if 'storm' in self.context.pluginByName:
+            groomRangerStormPolicies(self.context.model)
         groomRangerYarnPolicies(self.context.model)
 
     def getSchema(self):
@@ -164,6 +175,9 @@ class RangerPlugin(Plugin):
             schema.schemaMerge(theSchema, yaml.load(open(schemaFile)))
         if 'hive' in self.context.pluginByName:
             schemaFile = os.path.join(self.path, "schema_hive.yml")
+            schema.schemaMerge(theSchema, yaml.load(open(schemaFile)))
+        if 'storm' in self.context.pluginByName:
+            schemaFile = os.path.join(self.path, "schema_storm.yml")
             schema.schemaMerge(theSchema, yaml.load(open(schemaFile)))
         return theSchema
 
@@ -453,4 +467,42 @@ def groomRangerYarnPolicies(model):
                 toRemoveCount = toRemoveCount + 1
         model[DATA][YARN_RANGER_POLICIES_TO_REMOVE] = toRemoveCount
             
+# -------------------------------------------------------------- Storm
+
+def grabStormRangerPoliciesFromTopologies(model):
+    if STORM_TOPOLOGIES in model[SRC]:
+        for topology in model[SRC][STORM_TOPOLOGIES]:
+            if RANGER_POLICY in topology:
+                policy = topology[RANGER_POLICY]
+                policy[TOPOLOGIES] = [ topology[NAME] ]
+                misc.setDefaultInMap(policy, NAME, DEFAULT_POLICY_NAME.format(topology[NAME]))
+                policy[NO_REMOVE] = topology[NO_REMOVE]
+                misc.ensureObjectInMaps( model[SRC], [STORM_RANGER_POLICIES], [])
+                model[SRC][STORM_RANGER_POLICIES].append(policy)
+
+def groomRangerStormPolicies(model):
+    grabStormRangerPoliciesFromTopologies(model)
+    if STORM_RANGER_POLICIES in model[SRC] and len(model[SRC][STORM_RANGER_POLICIES]) > 0:
+        if RANGER_RELAY not in model[SRC]:
+            misc.ERROR("There is at least one 'storm_ranger_policies', but no 'ranger_relay' was defined!")
+        names = Set()
+        toRemoveCount = 0
+        for policy in model[SRC][STORM_RANGER_POLICIES]:
+            policy[NAME] = model[SRC][RANGER_RELAY][POLICY_NAME_DECORATOR].format(policy[NAME])
+            if policy[NAME] in names:
+                misc.ERROR("storm_ranger_policy.name: '{0}' is defined twice".format(policy[NAME])) 
+            names.add(policy[NAME])
+            misc.setDefaultInMap(policy, AUDIT, True)
+            misc.setDefaultInMap(policy, ENABLED, True)
+            misc.setDefaultInMap(policy, NO_REMOVE, False)
+            misc.setDefaultInMap(policy, PERMISSIONS, [])
+            for perms in policy[PERMISSIONS]:
+                misc.setDefaultInMap(perms, USERS, [])
+                misc.setDefaultInMap(perms, GROUPS, [])
+                misc.setDefaultInMap(perms, DELEGATE_ADMIN, False)
+                if len(perms[USERS]) == 0 and len(perms[GROUPS]) == 0:
+                    misc.ERROR("storm_ranger_policy.name: '{0}'. A permission has neither group or user defined.".format(policy[NAME]))
+            if not policy[NO_REMOVE]:
+                toRemoveCount = toRemoveCount + 1
+        model[DATA][STORM_RANGER_POLICIES_TO_REMOVE] = toRemoveCount
                  

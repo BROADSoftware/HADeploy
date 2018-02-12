@@ -25,6 +25,7 @@ mapping:
         "launching_dir": { type: str, required: false } # Default: "~". Will cd in this folder before launching 'launching_strip' Must be an absolute path
         "wait_time_secs": { type: int, required: false } # Default: 30. The wait_time in seconds provided to the `kill' command (Delay between spouts deactivation and topology destruction)
         "timeout_secs": { type: int, required: false } # Default: Value set by storm_relay. Timeout before raising an error value when waiting a target state
+        "no_remove": { type: bool, required: false }    # Default to false. Used only for eventual associated ranger policy.
         "when": { type: bool, required: false }    # Default to true
                           
   

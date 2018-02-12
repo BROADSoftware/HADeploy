@@ -113,6 +113,7 @@ LAUNCHING_DIR="launching_dir"
 WAIT_TIME_SECS="wait_time_secs"
 TIMEOUT_SECS="timeout_secs"
 NAME="name"
+NO_REMOVE="no_remove"
             
 def groomStormTopologies(model):
     if STORM_TOPOLOGIES in model[SRC] and len(model[SRC][STORM_TOPOLOGIES]) > 0 :
@@ -122,6 +123,7 @@ def groomStormTopologies(model):
             misc.setDefaultInMap(topology, LAUNCHING_DIR, "~")
             misc.setDefaultInMap(topology, WAIT_TIME_SECS, 30)
             misc.setDefaultInMap(topology, TIMEOUT_SECS, model[SRC][STORM_RELAY][DEFAULT_TIMEOUT_SECS])
+            misc.setDefaultInMap(topology, NO_REMOVE, False)  # Used only for associated ranger policy.
             if LAUNCHING_DIR in topology:
                 if not os.path.isabs(topology[LAUNCHING_DIR]) and not topology[LAUNCHING_DIR].startswith("~"):
                     misc.ERROR("storm_topology '{}': launching_dir must be an absolute path".format(topology[NAME]))

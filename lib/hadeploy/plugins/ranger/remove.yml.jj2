@@ -162,6 +162,32 @@
 {{%endif%}}
 
 
+{{% if src.storm_ranger_policies is defined and data.stormRangerPoliciesToRemove > 0 %}}
+  - name: will remove Storm policies
+{{% if src.ranger_relay.no_log %}}  
+    no_log: true
+{{% endif %}}
+    ranger_storm_policies:
+      state: absent
+      admin_url: "{{{ src.ranger_relay.ranger_url }}}"
+      admin_username: "{{{ src.ranger_relay.ranger_username }}}"
+      admin_password: "{{{ src.ranger_relay.ranger_password }}}"
+      validate_certs: "{{{ src.ranger_relay.validate_certs }}}"
+{{% if src.ranger_relay.storm_service_name is defined %}}
+      service_name: "{{{ src.ranger_relay.storm_service_name }}}"
+{{%endif%}}
+{{% if src.ranger_relay.ca_bundle_relay_file is defined %}}
+      ca_bundle_file: "{{{ src.ranger_relay.ca_bundle_relay_file }}}"
+{{%endif%}}
+      policies: 
+{{% for policy in src.storm_ranger_policies %}}
+{{% if not policy.no_remove %}}
+      - name: "{{{policy.name}}}"
+        topologies: [ {{% for t in policy.topologies %}}{{% if not loop.first %}}, {{% endif %}}"{{{t}}}"{{%endfor%}} ]
+        permissions: []
+{{%endif%}}
+{{% endfor %}}
+{{%endif%}}
 
   
 {{% if src.ranger_relay.ca_bundle_local_file is defined %}}
