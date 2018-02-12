@@ -104,6 +104,7 @@ vars:
     group: myappgrp
     mode: "0644"
 
+files:
 - scope: hdfs
   src: file://myapp1.jar
   dest_folder: /apps/mayapp
@@ -125,6 +126,7 @@ vars:
     group: myappgrp
     mode: "0644"
 
+files:
 - { scope: hdfs, src: file://myapp1.jar, dest_folder: /apps/mayapp, <<: *permsFiles }
 - { scope: hdfs, src: file://myapp2.jar, dest_folder: /apps/mayapp, <<: *permsFiles }
 - { scope: hdfs, src: file://myapp3.jar, dest_folder: /apps/mayapp, <<: *permsFiles }
