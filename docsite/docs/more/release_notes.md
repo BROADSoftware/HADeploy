@@ -4,6 +4,8 @@
 
 - Added an action `dumpvars`, to dump all variables
 - With Ranger 0.7, there was unjustified 'changed' on policies settings. Fixed
+- Added a [Storm plugin](../plugins_reference/storm/storm_overview) to handle Storm topologies lifecycle.
+- Added [Storm Ranger policies](../plugins_reference/ranger/storm_ranger_policies) management.
 
 ## 0.5.3
 

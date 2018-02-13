@@ -54,7 +54,12 @@ pages:
     - hive_ranger_policies: plugins_reference/ranger/hive_ranger_policies.md
     - kafka_ranger_policies: plugins_reference/ranger/kafka_ranger_policies.md
     - ranger_relay: plugins_reference/ranger/ranger_relay.md
+    - storm_ranger_policies: plugins_reference/ranger/storm_ranger_policies.md
     - yarn_ranger_policies: plugins_reference/ranger/yarn_ranger_policies.md
+  - Storm:
+    - storm_overview: plugins_reference/storm/storm_overview.md
+    - storm_relay: plugins_reference/storm/storm_relay.md
+    - storm_topologies: plugins_reference/storm/storm_topologies.md
   - Systemd:
     - systemd_units: plugins_reference/systemd/systemd_units.md
   - Supervisors:

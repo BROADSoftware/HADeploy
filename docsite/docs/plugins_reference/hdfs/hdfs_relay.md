@@ -22,7 +22,7 @@ cache_folder|no|A folder on this host, which will be used by HADeploy as cache s
 user|no|The user account HADeploy will use to perform all HDFS related operation. Must have enough rights to do so.<br>Not to be defined when using Kerberos authentication.<br>Default: The [`ssh_user`](../inventory/hosts) defined for this relay host or `hdfs` if this user is `root`.
 hadoop_conf_dir|no|Where HADeploy will lookup Hadoop configuration file.<br>Default: `/etc/hadoop/conf`
 webhdfs_endpoint|no|HADeploy will perform several actions through WebHDFS REST interface. You can specify corresponding endpoint, if it is not defined in the usual configuration way.<br>Default: The value found in `<hadoop_conf_dir>/hdfs-site.xml`
-principal|no|A Kerberos principal allowing all HDFS related operation to be performed. See below
+principal|no|A Kerberos principal allowing all HDFS related operation to be performed. See [below](#kerberos-authentication)
 local_keytab_path|no|A local path to the associated keytab file. This path is relative to the embeding file. See [below](#kerberos-authentication)
 relay_keytab_path|no|A path to the associated keytab file on the relay host. See [below](#kerberos-authentication)
 when|no|Boolean. Allow [conditional deployment](../../more/conditional_deployment) of this item.<br>Default `True` 

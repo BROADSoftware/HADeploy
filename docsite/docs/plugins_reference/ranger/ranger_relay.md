@@ -1,7 +1,8 @@
 # ranger_relay
 
 ## Synopsis
-All Apache Ranger command will be performed using Ranger HTTP/REST API. This definition will provide informations for HADeploy to use this interface.
+
+All Apache Ranger commands will be performed using Ranger HTTP/REST API. This definition will provide informations for HADeploy to use this interface.
 
 There should be only one entry of this type in the HADeploy definition file.
 

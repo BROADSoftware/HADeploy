@@ -14,7 +14,7 @@
     changed_when: false 
 {{%endif%}}
 
-{{% if src.hdfs_ranger_policies is defined and data.hdfsRangerPoliciesToRemove > 0 %}}
+{{% if src.hdfs_ranger_policies is defined and data.hdfsRangerPoliciesToRemove is defined and data.hdfsRangerPoliciesToRemove > 0 %}}
   - name: will remove HDFS policies
 {{% if src.ranger_relay.no_log %}}  
     no_log: true
@@ -42,7 +42,7 @@
 {{%endif%}}
 
 
-{{% if src.hbase_ranger_policies is defined and data.hbaseRangerPoliciesToRemove > 0 %}}
+{{% if src.hbase_ranger_policies is defined and data.hbaseRangerPoliciesToRemove is defined and data.hbaseRangerPoliciesToRemove > 0 %}}
   - name: will remove HBase policies
 {{% if src.ranger_relay.no_log %}}  
     no_log: true
@@ -73,7 +73,7 @@
 
 
 
-{{% if src.kafka_ranger_policies is defined and data.kafkaRangerPoliciesToRemove > 0 %}}
+{{% if src.kafka_ranger_policies is defined and data.kafkaRangerPoliciesToRemove is defined and data.kafkaRangerPoliciesToRemove > 0 %}}
   - name: will remove Kafka policies
 {{% if src.ranger_relay.no_log %}}  
     no_log: true
@@ -100,7 +100,7 @@
 {{% endfor %}}
 {{%endif%}}
 
-{{% if src.hive_ranger_policies is defined and data.hiveRangerPoliciesToRemove > 0 %}}
+{{% if src.hive_ranger_policies is defined and data.hiveRangerPoliciesToRemove is defined and data.hiveRangerPoliciesToRemove > 0 %}}
   - name: will remove HIVE policies
 {{% if src.ranger_relay.no_log %}}  
     no_log: true
@@ -134,7 +134,7 @@
 {{%endif%}}
 
 
-{{% if src.yarn_ranger_policies is defined and data.yarnRangerPoliciesToRemove > 0 %}}
+{{% if src.yarn_ranger_policies is defined and data.yarnRangerPoliciesToRemove is defined and data.yarnRangerPoliciesToRemove > 0 %}}
   - name: will remove Yarn policies
 {{% if src.ranger_relay.no_log %}}  
     no_log: true
@@ -162,7 +162,7 @@
 {{%endif%}}
 
 
-{{% if src.storm_ranger_policies is defined and data.stormRangerPoliciesToRemove > 0 %}}
+{{% if src.storm_ranger_policies is defined and data.stormRangerPoliciesToRemove is defined and data.stormRangerPoliciesToRemove > 0 %}}
   - name: will remove Storm policies
 {{% if src.ranger_relay.no_log %}}  
     no_log: true

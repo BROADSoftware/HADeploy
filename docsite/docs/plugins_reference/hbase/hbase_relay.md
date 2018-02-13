@@ -19,7 +19,7 @@ Name | req? |	Description
 --- | --- | ---
 host|yes|The host on which all hbase commands will be pushed for execution. Must be fully configured as HBase client.
 tools_folder|no|Folder used by HADeploy to install some tools for HBase management.<br>Default: `/tmp/hadeploy_<user>/` where `user` is the [`ssh_user`](../inventory/hosts) defined for this relay host.
-principal|no|A Kerberos principal allowing all HBase related operation to be performed. See below
+principal|no|A Kerberos principal allowing all HBase related operation to be performed. See [below](#kerberos-authentication)
 local_keytab_path|no|A local path to the associated keytab file. This path is relative to the embeding file. See [below](#kerberos-authentication)
 relay_keytab_path|no|A path to the associated keytab file on the relay host. See [below](#kerberos-authentication)
 become_user|no|A user account under which all namespace and table operations will be performed. Only used on non-Kerberos cluster.<br>Note: The [`ssh_user`](../inventory/hosts) defined for this relay host must have enough rights to switch to this `become_user` using the `become_method` below.<br>Default: No user switch, so the [`ssh_user`](../inventory/hosts) defined for this relay host will be used.
