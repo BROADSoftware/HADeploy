@@ -20,7 +20,7 @@ import hadeploy.core.misc as misc
 import os
 from hadeploy.core.plugin import Plugin
 from hadeploy.core.templator import Templator
-from hadeploy.core.const import SRC,DATA,ACTION_DEPLOY,ACTION_REMOVE,ACTION_START,ACTION_STOP,SCOPE_SUPERVISOR
+from hadeploy.core.const import SRC,DATA,ACTION_DEPLOY,ACTION_REMOVE,ACTION_START,ACTION_STOP,SCOPE_SUPERVISOR,ACTION_STATUS
 from hadeploy.plugins.files.code import lookupSrc
 from sets import Set
 
@@ -117,7 +117,7 @@ class SupervisorPlugin(Plugin):
         return [SCOPE_SUPERVISOR]        
  
     def getSupportedActions(self):
-        return [ACTION_DEPLOY, ACTION_REMOVE,ACTION_START,ACTION_STOP]
+        return [ACTION_DEPLOY, ACTION_REMOVE,ACTION_START,ACTION_STOP,ACTION_STATUS]
 
     def getPriority(self, action):
         if action == ACTION_DEPLOY:
@@ -128,6 +128,8 @@ class SupervisorPlugin(Plugin):
             return 6000
         elif  action == ACTION_STOP:
             return 4000
+        elif  action == ACTION_STATUS:
+            return 5000
         else:
             misc.ERROR("Plugin 'supervisor' called with invalid action: '{0}'".format(action))
 

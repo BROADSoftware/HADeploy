@@ -18,7 +18,7 @@
 import logging
 import hadeploy.core.misc as misc
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DATA,SCOPE_SYSTEMD,ACTION_DEPLOY,ACTION_REMOVE,ACTION_START,ACTION_STOP
+from hadeploy.core.const import SRC,DATA,SCOPE_SYSTEMD,ACTION_DEPLOY,ACTION_REMOVE,ACTION_START,ACTION_STOP,ACTION_STATUS
 from hadeploy.plugins.files.code import lookupSrc
 from sets import Set
 
@@ -64,7 +64,7 @@ class SystemdPlugin(Plugin):
         return [SCOPE_SYSTEMD]        
  
     def getSupportedActions(self):
-        return [ACTION_DEPLOY, ACTION_REMOVE,ACTION_START,ACTION_STOP]
+        return [ACTION_DEPLOY, ACTION_REMOVE,ACTION_START,ACTION_STOP,ACTION_STATUS]
 
     def getPriority(self, action):
         if action == ACTION_DEPLOY:
@@ -74,6 +74,8 @@ class SystemdPlugin(Plugin):
         elif  action == ACTION_START:
             return 5000
         elif  action == ACTION_STOP:
+            return 5000
+        elif  action == ACTION_STATUS:
             return 5000
         else:
             misc.ERROR("Plugin 'systemd' called with invalid action: '{0}'".format(action))

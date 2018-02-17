@@ -1,0 +1,69 @@
+
+
+
+
+
+# ------------------------------------------------------------------------------ Handle supervisor stuff
+{{% for scopeName, scope in data.supervisors.scopeByName.iteritems() %}}
+{{% if scope.supervisorsToManage is defined and scope.supervisorsToManage|length > 0 %}}
+
+- hosts: {{{ scopeName }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
+  tasks:
+  
+  - name: Get Supervisor services state
+    command: systemctl is-active {{ item }}.service
+    register: sstates
+    failed_when: false
+    changed_when: false
+    with_items:
+{{% for s in scope.supervisorsToManage %}}
+{{% if s.state != "stopped" %}}
+    - supervisord_{{{s.name}}}
+{{% endif %}}
+{{% endfor %}}
+
+#  - debug: var=sstates
+
+  - name: Display Supervisor services state
+    set_fact:
+      status_list: "{{ status_list|default([])  +  [ { 'name': item.item,  'status': item.stdout_lines[0] } ] }}"  
+    with_items: "{{ sstates.results }}"
+    loop_control:
+      label: "{{ item.item }}:{{ item.stdout_lines[0] }}"
+
+
+{{% endif %}}
+{{% endfor %}}
+
+
+
+# ------------------------------------------------------------------------------ Handle supervisor_programs stuff
+
+{{% for scopeName, scope in data.supervisors.scopeByName.iteritems() %}}
+{{% if scope.programs is defined and scope.programs|length > 0  %}}
+- hosts: {{{ scopeName }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
+  tasks:
+
+  - name: Get current state for supervisor's programs in scope '{{{scopeName}}}'
+    shell: "supervisorctl -c {{ item.config }} status '{{item._name_}}' | awk '{ print $2 }'"
+    register: pstates
+    with_items: 
+{{% for prg in scope.programs %}}
+    - { config: "{{{prg.supervisorConf}}}", name: "{{{prg.name}}}", _name_: "{{{prg._name_}}}" } 
+{{% endfor %}}
+
+  #- debug: var=pstates
+
+  - name: Display Supervisor's programs state in scope '{{{scopeName}}}'
+    set_fact:
+      status_list: "{{ status_list|default([])  +  [ { 'name': item.item.name,  'status': item.stdout_lines[0] } ] }}"  
+    with_items: "{{ pstates.results }}"
+    loop_control:
+      label: "{{ item.item.name }}:{{ item.stdout_lines[0] }}"
+
+
+{{% endif %}}      
+
+{{% endfor %}}

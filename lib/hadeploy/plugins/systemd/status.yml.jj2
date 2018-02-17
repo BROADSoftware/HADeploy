@@ -1,0 +1,31 @@
+
+
+
+# ------------------------------------------------------------------------------ Handle systemd stuff
+{{% for scopeName, scope in data.systemd.scopeByName.iteritems() %}}
+{{% if scope.systemd is defined and scope.systemd|length > 0 %}}
+- hosts: {{{ scopeName }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
+  tasks:
+  - name: Get services state
+    command: systemctl is-active {{ item }}.service
+    register: sstates
+    failed_when: false
+    changed_when: false
+    with_items:
+{{% for unit in scope.systemd %}}
+    - "{{{ unit.name }}}"
+{{% endfor %}}
+
+#  - debug: var=sstates
+
+  - name: Display Systemd services state
+    set_fact:
+      status_list: "{{ status_list|default([])  +  [ { 'name': item.item,  'status': item.stdout_lines[0] } ] }}"  
+    with_items: "{{ sstates.results }}"
+    loop_control:
+      label: "{{ item.item }}:{{ item.stdout_lines[0] }}"
+
+
+{{% endif %}}
+{{% endfor %}}
