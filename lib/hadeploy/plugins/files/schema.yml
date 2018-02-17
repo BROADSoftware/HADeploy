@@ -55,7 +55,10 @@ mapping:
         "url_username":  { type: str, required: false } # For http/https
         "url_password":  { type: str, required: false } # For http/https
         "no_remove": { type: bool, required: false }    # Default to false
-        "notify": { type: str, required: false }   
+        "notify":
+          type: "seq"
+          sequence:
+          - type: str
         "when": { type: bool, required: false }    # Default to true
         
 

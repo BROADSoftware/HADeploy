@@ -201,8 +201,8 @@ def lookupSystemdUnit(model, unitName):
         return None
 
 def lookupSupervisorProgram(model, prgName):
-    # prgName must be in the form "supervisor:program"
-    x = prgName.split(":")
+    # prgName must be in the form "supervisor/program"
+    x = prgName.split("/")
     if len(x) == 2:
         if SUPERVISOR_PROGRAMS in model[SRC]:
             for prg in model[SRC][SUPERVISOR_PROGRAMS]:
@@ -210,6 +210,10 @@ def lookupSupervisorProgram(model, prgName):
                     return prg
     return None
 
+
+NOTIFY_SYSTEMD_PREFIX="systemd://"
+NOTIFY_SUPERVISOR_PREFIX="supervisor://"
+NOTIFY_STORM_PREFIX="storm://"
         
 def setServiceNotifications(model):
     # Set a list of notification handler to setup per scope
@@ -218,17 +222,31 @@ def setServiceNotifications(model):
         misc.ensureObjectInMaps(scope, [SUPERVISOR_PRG_NOTIFICATIONS], {})
         for f in scope[FILES]:
             if NOTIFY in f:
-                unit = lookupSystemdUnit(model, f[NOTIFY])
-                if unit != None:
-                    f[_NOTIFY_] = "unit_{0}".format(unit[NAME])
-                    scope[SYSTEMD_NOTIFICATIONS][f[_NOTIFY_]] = unit
-                else:
-                    prg = lookupSupervisorProgram(model, f[NOTIFY])
-                    if prg != None:
-                        f[_NOTIFY_] = "supervisor_{0}_{1}".format(prg[SUPERVISOR], prg[NAME])
-                        scope[SUPERVISOR_PRG_NOTIFICATIONS][f[_NOTIFY_]] = prg
+                f[_NOTIFY_] = []
+                for notification in f[NOTIFY]:
+                    if notification.startswith(NOTIFY_SYSTEMD_PREFIX):
+                        if not notification in scope[SYSTEMD_NOTIFICATIONS]:
+                            # Not already notified
+                            unitName = notification[len(NOTIFY_SYSTEMD_PREFIX):]
+                            unit = lookupSystemdUnit(model, unitName)
+                            if not unit:
+                                misc.ERROR("Files: '{}': There is no systemd_unit named '{}' defined in this deployment".format(f[FSRC], unitName))
+                            else:
+                                scope[SYSTEMD_NOTIFICATIONS][notification] = unit
+                        f[_NOTIFY_].append(notification)
+                    elif notification.startswith(NOTIFY_SUPERVISOR_PREFIX):
+                        if not notification in scope[SUPERVISOR_PRG_NOTIFICATIONS]:
+                            prgName = notification[len(NOTIFY_SUPERVISOR_PREFIX):]
+                            prg = lookupSupervisorProgram(model, prgName)
+                            if not prg:
+                                misc.ERROR("Files: '{}': There is no supervisor/program '{}' defined in this deployment".format(f[FSRC], prgName))
+                            else:
+                                scope[SUPERVISOR_PRG_NOTIFICATIONS][notification] = prg
+                        f[_NOTIFY_].append(notification)
+                    elif notification.startswith(NOTIFY_STORM_PREFIX):
+                        pass
                     else:
-                        misc.ERROR("Files: '{0}': notify '{1}' does not match any systemd services nor supervisor:program".format(f[FSRC], f[NOTIFY]))
+                        misc.ERROR("Files: '{0}': notify '{1}' must begin with 'systemd://', 'supervisor://' or 'storm://'".format(f[FSRC], notification))
 
 def ensureScope(model, scope):
     root = model[DATA][FILES][SCOPE_BY_NAME]
