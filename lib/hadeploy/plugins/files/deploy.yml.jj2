@@ -114,6 +114,8 @@
 {{% endif %}}
 {{% endfor %}}
 
+# ------------------- Pre-tasks for notification handling
+
 {{% if scope.systemdNotifications|length > 0 %}}
 {{% for _, unit in scope.systemdNotifications.iteritems() %}}
   - name: Get current state for '{{{ unit.name }}}
@@ -122,7 +124,35 @@
     changed_when: false
     failed_when: false
 {{% endfor %}}
+{{% endif %}}
+
+
+{{% if scope.supervisorPrgNotification|length > 0 %}}
+{{% for _, prg in scope.supervisorPrgNotification.iteritems() %}}
+  - name: Get current state for supervisor_{{{prg.supervisor}}}_{{{prg.name}}} programs
+    shell: "supervisorctl -c {{{ prg.supervisorConf }}} status '{{{prg._name_}}}' | awk '{ print $2 }'"
+    register: supervisor_{{{prg.supervisor}}}_{{{prg.name}}} 
+    changed_when: false
+    failed_when: false
+#  - debug: msg="Program {{{prg.supervisor}}}_{{{prg.name}}} is  {{supervisor_{{{prg.supervisor}}}_{{{prg.name}}}.stdout}}"    
+{{% endfor %}}
+{{% endif %}}
+
+
+{{% if scope.stormNotifications|length > 0 %}}
+  - set_fact:
+      topology_to_restart: []
+      status_by_name: {}
+{{%endif%}}
+
+
+# ----------------------------------------------------- Handler for notification
+
+{{% if scope.systemdNotifications|length > 0  or scope.supervisorPrgNotification|length > 0 or scope.stormNotifications|length > 0 %}}
   handlers:
+{{%endif%}}
+
+{{% if scope.systemdNotifications|length > 0 %}}
 {{% for notified, unit in scope.systemdNotifications.iteritems() %}}
 {{% if unit.action_on_notify == "restart" %}}
   - name: Restart {{{unit.name}}} service
@@ -140,18 +170,7 @@
 {{% endfor %}}
 {{% endif %}}
 
-
-
 {{% if scope.supervisorPrgNotification|length > 0 %}}
-{{% for _, prg in scope.supervisorPrgNotification.iteritems() %}}
-  - name: Get current state for supervisor_{{{prg.supervisor}}}_{{{prg.name}}} programs
-    shell: "supervisorctl -c {{{ prg.supervisorConf }}} status '{{{prg._name_}}}' | awk '{ print $2 }'"
-    register: supervisor_{{{prg.supervisor}}}_{{{prg.name}}} 
-    changed_when: false
-    failed_when: false
-#  - debug: msg="Program {{{prg.supervisor}}}_{{{prg.name}}} is  {{supervisor_{{{prg.supervisor}}}_{{{prg.name}}}.stdout}}"    
-{{% endfor %}}
-  handlers:
 {{% for notified, prg in scope.supervisorPrgNotification.iteritems() %}}
   - name: Restart supervisor_{{{ prg.supervisor }}} program {{{ prg.name }}}
     supervisorctl: config={{{ prg.supervisorConf }}} name="{{{ prg._name_ }}}" state=restarted
@@ -160,20 +179,13 @@
 {{% endfor %}}
 {{% endif %}}
 
-
-
 {{% if scope.stormNotifications|length > 0 %}}
-  - set_fact:
-      topology_to_restart: []
-      status_by_name: {}
-  handlers:
 {{% for notified, topology in scope.stormNotifications.iteritems() %}}
-  - name: Flag topology to restart
+  - name: Flag "{{{topology.name}}}" topology to restart
     set_fact:
       topology_to_restart: '{{topology_to_restart + ["{{{topology.name}}}"] }}'
     listen: reload_{{{notified}}}
 {{% endfor %}}
-
 {{%endif%}}
 
 

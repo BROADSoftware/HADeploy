@@ -27,6 +27,7 @@
 {{% for sup in scope.supervisors %}}
   - name: Update supervisor_{{{sup.name}}} programs
     shell: "supervisorctl -c {{{ sup.conf_file_dst }}} update"
+    failed_when: False                      # May be the supervisor has been stopped
     listen: update_unprograms_{{{sup.name}}}
 {{% endfor %}}         
   
