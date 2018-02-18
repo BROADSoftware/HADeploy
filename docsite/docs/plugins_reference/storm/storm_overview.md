@@ -59,7 +59,7 @@ will display current status of the topologies, in a rather primitive form.
 
 ## Asynchronous mode
 
-A single topology launch take a signifiant amount of time. When there is several one to launch, performing all launch simultaneously can save a lot of time. This is the default behavior of HADeploy.
+A single topology launch take a signifiant amount of time. When there are several ones to launch, performing all launch simultaneously can save a lot of time. This is the default behavior of HADeploy.
 
 In this default mode, all launching commands are run in a detached mode. Then HADeploy wait for all topologies to reach the `active` state.
 
@@ -76,6 +76,16 @@ When HADeploy is instructed to halt all topologies (`--action stop`), it also pe
 - Then HADeploy wait for all topologies to terminate, after the defined 'wait_time_secs' (Delay between spouts deactivation and topology destruction)
 
 Setting the `async` flag of of [`storm_relay`](./storm_relay) to false has no effect on this behavior.
+
+## Notifications: Topologies restart
+
+Let's say we now want to update the topology's jar or one of the associated configuration files.
+
+We can modify it and trigger a new deployment. HADeploy will notice the modification and push the new version on the target hosts. But, the running topologies will be unafected.
+
+We can restart it manually. But, HADeploy provide a mechanisme to automate this. By adding a `notify` attribute to the [`files`](../files/files) definition. See the example below.
+
+Note also if the deployment trigger the restart of several topologies, both kill and restart will be performed asynchronously, to save time.
 
 ## Example
 
@@ -105,10 +115,13 @@ folders:
 - { path: "${basedir2}", scope: "${storm_launcher_host}", owner: "${user}", group: "${group}", mode: "755" }
 
 files:
-- { scope: "${storm_launcher_host}", src: "mvn://myrepo/com.mydomain/storm1/${storm1_version}/uber", dest_folder: "${basedir1}", owner: "${user}", group: "${group}", mode: "0644" }
-- { scope: "${storm_launcher_host}", src: "mvn://myrepo/com.mydomain/storm2/${storm2_version}/uber", dest_folder: "${basedir2}", owner: "${user}", group: "${group}", mode: "0644" }
+- { scope: "${storm_launcher_host}", src: "mvn://myrepo/com.mydomain/storm1/${storm1_version}/uber", 
+    notify: ['storm://storm1'], dest_folder: "${basedir1}", owner: "${user}", group: "${group}", mode: "0644" }
+- { scope: "${storm_launcher_host}", src: "mvn://myrepo/com.mydomain/storm2/${storm2_version}/uber", 
+    notify: ['storm://storm2'], dest_folder: "${basedir2}", owner: "${user}", group: "${group}", mode: "0644" }
 
-- { scope: "${storm_launcher_host}", src: "tmpl://launch2.sh", dest_folder: "${basedir2}", owner: "${user}", group: "${group}", mode: "0744" }
+- { scope: "${storm_launcher_host}", src: "tmpl://launch2.sh", dest_folder: "${basedir2}", 
+    notify: ['storm://storm2'], owner: "${user}", group: "${group}", mode: "0744" }
 
 
 storm_topologies:
@@ -126,7 +139,7 @@ storm_topologies:
 ```
 This is of course not complete, as it lack at least the target cluster definition.
 
-Please refer to [`storm_relay`](./storm_relay) and [`storm_topologies`](./storm_topologies) for a complete description.
+Please refer to [`storm_relay`](./storm_relay) and [`storm_topologies`](./storm_topologies) for a complete description. And to [`files`](../files/files) for the `notify` syntax.
 
 Of course, before being able to launch the topologies (`--action start`), a deployment must be performed before (`--action deploy`)
 

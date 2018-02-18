@@ -139,22 +139,6 @@ By default, this instance is not activated:
 ```
 It is up to the user to activate it if needed. But keep in mind this instance is under `root` control, and as such can't be managed by non-priviledged users. 
 
-## Actions `stop` and `start`
-
-The `supervisors` plugin introduce two new actions:
-
-```sh
-hadeploy --src ..... --action stop
-```
-
-Will stop all supervisord dameon described by the `supervisors` list which have the `managed` flag to `true`. And 
-
-```sh
-hadeploy --src ..... --action start
-```
-
-Will start the same supervisord daemon. 
-
 ## Provided configuration file.
 
 > This is Advanded configuration.

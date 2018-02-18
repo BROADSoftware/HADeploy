@@ -144,6 +144,29 @@ An check on the edge node:
 8974 /bin/bash /opt/tsup/program1.sh
 9046 sleep 2
 ```
+
+
+## Actions `stop`, `start` and `status`
+
+As just mentionned, the `Supervisor` plugin introduce three new actions:
+
+```sh
+hadeploy --src ..... --action stop
+```
+
+Will stop all `supervisor_programs` and then all supervisord dameon described by the `supervisors` list which have the `managed` flag to `true`. And: 
+
+```sh
+hadeploy --src ..... --action start
+```
+
+Will start the same supervisord daemon, then all `supervisor_programs`. And:
+
+```sh
+hadeploy --src ..... --action status
+```
+Will display current status in a rather primitive form.
+
 ## Web interface
 
 Each supervisor instance can expose a web interface for management. We can easily configure it by adding a line to our supervisor definition:
@@ -196,11 +219,11 @@ Let's say we now want to update our `program1.sh`.
 
 We can modify it and trigger a new deployment. HADeploy will notice the modification and push the new version on the target hosts. But, the running daemon will be unafected.
 
-We can restart it manually. But, HADeploy provide a mechanisme to automate this. By adding a `notify` attribute to the `files` definition:
+We can restart it manually. But, HADeploy provide a mechanisme to automate this. By adding a `notify` attribute to the [`files`](../files/files) definition:
 
 ```yaml
 files:
-- { scope: all, notify: "tsupv:program1", src: "tmpl://program1.sh", dest_folder: /opt/tsup, owner: tsup, group: tsup, mode: "0755" }
+- { scope: all, notify: ["supervisor://tsupv/program1"], src: "tmpl://program1.sh", dest_folder: /opt/tsup, owner: tsup, group: tsup, mode: "0755" }
 ``` 
 
 This will instruct HADeploy to restart the program `program1` of the supervisor instance `tsupv` in case of modification of program1.sh

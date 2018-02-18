@@ -22,7 +22,7 @@ force_basic_auth|no|Boolean; In case of `src: http://...` or `src: https://...`.
 url_username|no|String; In case of `src: http://...` or `src: https://...`. The username for use in HTTP basic authentication. This parameter can be used without url_password for sites that allow empty passwords.
 url_password|no|String; In case of `src: http://...` or `src: https://...`. The password for use in HTTP basic authentication
 no_remove|no|Boolean: Prevent this file to be removed when HADeploy will be used in REMOVE mode.<br>Default: `no`
-notify|no|name of a [`systemd_unit`](../systemd/systemd_units) or [`supervisor_program`](../supervisor/supervisor_programs) to restart if the file is modified. See [below](#service-notification)
+notify|no|List of strings. Allow automatic restart of one or several background tasks if the file is modified.<br>Can refer to a [`systemd_unit`](../systemd/systemd_units), a [`supervisor_program`](../supervisor/supervisor_overview/#notifications-daemon-restart)  or a [`storm_topology`](../storm/storm_overview/#notifications-topologies-restart). See [below](#service-notification)
 ranger\_policy|no|Definition of Apache Ranger policy bound to this file. <br>Parameters are same as [`hdfs_ranger_policies`](../ranger/hdfs_ranger_policies) items, excepts than `paths` should not be defined as automatically set to the file path, and the policy is not recursive by default.<br>Scope must be hdfs.<br>The policy name can be explicitly defined. Otherwise, a name will be generated as `"_<targetPath>_"`.<br>See example below for more information.
 when|no|Boolean. Allow [conditional deployment](../../more/conditional_deployment) of this item.<br>Default `True` 
 
@@ -84,14 +84,31 @@ files:
   
 ```
 
-## Service notification
+## Background tasks notifications
 
-HARelay is aimed not only to perform initial deployment, but also to cleverly propagate application modification. 
+HADeploy is aimed not only to perform initial deployment, but also to cleverly propagate application modification. 
 
-in particular, file modification are only performed when needed. In some case, such modification need to trigger some action, such as service restart to be take in account. This is the function of the `notify` attribute.
+in particular, file modification are only performed when needed. In some case, such modification need to trigger some other action, such as background process restart. This is the function of the `notify` attribute.
 
-If the notify attribut include a ':', then it will be interpreted as a [supervisor_program](../supervisor/supervisor_programs) where the left part indicated the supervisor instance and the right part the program to restart.
+This `notify` attribut is a list of string where each item can be of one of three forms:
 
-If the notify attribut does not include a ':', it will be interpreted as a [`systemd`](../systemd/systemd_units) service to restart.
+- `"systemd://<systemd_unit_name>"`
 
+- `"supervisor://<supervisor_name>/<program_name>"`
 
+- `"storm://<topology_name>"`
+
+In the example below, the jar is shared by two topologies. If updated on the maven repository, it will be pulled on next deployment and the topologies will be automatically restarted.
+
+```yaml
+files:  
+- scope: egde_nodes
+  src: "mvn://maven2/mycompany.com/myapp/1.0.0-SNAPSHOT"
+  dest_folder: "/opt/myapp/lib" 
+  owner: root
+  group: root
+  mode: "0644" 
+  notify:
+  - "storm://topo1"
+  - "storm://topo2"
+```

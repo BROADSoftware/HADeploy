@@ -6,6 +6,12 @@
 - With Ranger 0.7, there was unjustified 'changed' on policies settings. Fixed
 - Added a [Storm plugin](../plugins_reference/storm/storm_overview) to handle Storm topologies lifecycle.
 - Added [Storm Ranger policies](../plugins_reference/ranger/storm_ranger_policies) management.
+- Action `status` as been implemented in [Storm](../plugins_reference/storm/storm_overview#actions-stopstart-and-status), 
+[Systemd](../plugins_reference/systemd/systemd_units#actions-stop-start-and-status) and [Supervisor](../plugins_reference/supervisor/supervisor_overview#actions-stop-start-and-status) plugins.
+
+#### INCOMPATIBILITY
+
+- Notification syntax has been modified for [`files`](../plugins_reference/files/files) definition.
 
 ## 0.5.3
 

@@ -69,8 +69,10 @@ vars:
   group: harelay
 
 files:
-- { scope: edge_nodes, notify: harelay, src: "tmpl://harelay", dest_folder: "/opt/harelay/bin", owner: "${user}", group: "${group}", mode: "0755" }
-- { scope: edge_nodes, notify: harelay, src: "tmpl://config.conf", dest_folder: "/opt/harelay/etc", owner: "${user}", group: "${group}", mode: "0644" }
+- { scope: edge_nodes, notify: [ "systemd://harelay" ], src: "tmpl://harelay", dest_folder: "/opt/harelay/bin", 
+    owner: "${user}", group: "${group}", mode: "0755" }
+- { scope: edge_nodes, notify: [ "systemd://harelay" ], src: "tmpl://config.conf", dest_folder: "/opt/harelay/etc", 
+    owner: "${user}", group: "${group}", mode: "0644" }
 
 systemd_units:
 - name: harelay
@@ -79,11 +81,11 @@ systemd_units:
   
 ```
 
-Note the `notify` attribute in the `files` entries, to trigger a service restart in case of modification of these files.
+Note the `notify` attribute in the [`files`](../files/files) entries, to trigger a service restart in case of modification of these files.
 
-## Actions `stop` and `start`
+## Actions `stop`, `start` and `status`
 
-The `services` plugin introduce two new actions:
+The `services` plugin introduce three new actions:
 
 ```sh
 hadeploy --src ..... --action stop
@@ -95,4 +97,10 @@ Will stop all services described by the `systemd_units` list. And
 hadeploy --src ..... --action start
 ```
 
-Will start the same services. 
+Will start the same services. While 
+
+```sh
+hadeploy --src ..... --action status
+```
+
+will display current status of the managed services, in a rather primitive form.
