@@ -19,10 +19,16 @@
 {{% if scope.files|length > 0 or  scope.trees|length > 0 %}}
 - hosts: {{{ scopeName }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
-{{% if scope.willUseMavenRepo %}}
+{{% if scope.willUseMavenRepo or scope.stormNotifications|length > 0 %}}
   roles:
+{{% endif %}}
+{{% if scope.willUseMavenRepo %}}
     - lxml
 {{% endif %}}
+{{% if scope.stormNotifications|length > 0 %}}
+    - storm_modules
+{{% endif %}}
+
   tasks:
 {{% for file in scope.files %}}
 {{% if file.src.startswith("file://") %}}
@@ -154,6 +160,131 @@
 {{% endfor %}}
 {{% endif %}}
 
+
+
+{{% if scope.stormNotifications|length > 0 %}}
+  - set_fact:
+      topology_to_restart: []
+      status_by_name: {}
+  handlers:
+{{% for notified, topology in scope.stormNotifications.iteritems() %}}
+  - name: Flag topology to restart
+    set_fact:
+      topology_to_restart: '{{topology_to_restart + ["{{{topology.name}}}"] }}'
+    listen: reload_{{{notified}}}
+{{% endfor %}}
+
+{{%endif%}}
+
+
+# ----------------------------------------------------- Effective restart of topologies
+
+{{% if scope.stormNotifications|length > 0 %}}
+    
+- hosts: {{{ scopeName }}}
+  vars:
+    conf_by_topology:
+{{% for topology in src.storm_topologies %}}
+      "{{{ topology.name }}}": { wait_time_secs: {{{ topology.wait_time_secs }}}, launching_cmd: "{{{ topology.launching_cmd }}}", launching_dir: "{{{ topology.launching_dir }}}", timeout_secs: "{{{ topology.timeout_secs}}}" }
+{{% endfor %}}
+
+  tasks:  
+
+#  - debug: var=topology_to_restart   
+
+{{% if src.storm_relay._kerberos_ %}}
+{{% if  src.storm_relay._relayKeytabFolder_ is defined %}}
+  - name: Create keytabs location
+    file: path={{{ src.storm_relay._relayKeytabFolder_}}} owner={{ansible_user}}  mode="0700" state=directory
+{{%endif%}}
+{{% if  src.storm_relay.local_keytab_path is defined %}}
+  - name: Push keytab file
+    copy: src={{{src.storm_relay.local_keytab_path }}} dest={{{src.storm_relay.relay_keytab_path }}} owner={{ansible_user}} mode="0400"
+{{%endif%}}
+  - name: Perform kinit for Storm UI access
+    shell: kinit -kt {{{ src.storm_relay.relay_keytab_path }}} {{{ src.storm_relay.principal }}}
+    changed_when: false
+{{% if src.storm_relay.kdebug %}} 
+  - name: Check kerberos ticket for Storm access
+    shell: klist
+    register: klist_result
+    changed_when: false
+  - debug: var=klist_result
+{{%endif%}}
+{{%endif%}}
+
+
+
+  - name: Check topologies state
+    storm_topology:
+      ui_url: "{{{ src.storm_relay.storm_ui_url }}}"
+      name: "{{item}}"
+      state: get
+      kerberos: {{{ src.storm_relay._kerberos_ }}}
+    register: topostates
+    with_items: "{{topology_to_restart}}"
+
+#  - debug: var=topostates
+
+  - name: Build topologies state by name
+    set_fact:
+      status_by_name: "{{ status_by_name|combine({ item.item:  item.status }) }}"
+    with_items: "{{ topostates.results }}"
+    loop_control:
+      label: "{{ item.item }}:{{ item.status }}"
+
+#  - debug: var=status_by_name
+
+  - name: Kill topologies to restart
+    storm_topology:
+      ui_url: "{{{ src.storm_relay.storm_ui_url }}}"
+      name: "{{item}}"
+      state: killed
+      wait_time_secs:  "{{ conf_by_topology[item].wait_time_secs }}"
+      timeout_secs:  "{{ conf_by_topology[item].timeout_secs }}"
+      kerberos:  {{{ src.storm_relay._kerberos_ }}}
+    when: status_by_name[item] == "active"
+    with_items: "{{topology_to_restart}}"
+    
+  - name: Wait topologies to restart to be down
+    storm_topology:
+      ui_url: "{{{ src.storm_relay.storm_ui_url }}}"
+      name: "{{item}}"
+      state: nonexistent
+      timeout_secs: "{{ conf_by_topology[item].timeout_secs }}"
+      kerberos: {{{ src.storm_relay._kerberos_ }}}
+    when: status_by_name[item] == "active"
+    with_items: "{{topology_to_restart}}"
+
+
+  - name: Relaunch topologies to restart 
+    shell: "{{ conf_by_topology[item].launching_cmd }}"
+    args:
+      chdir: "{{ conf_by_topology[item].launching_dir }}"
+{{% if src.storm_relay.async %}}
+    async: 1000
+    poll: 0
+{{% endif %}}    
+    when: status_by_name[item] == "active"
+    with_items: "{{topology_to_restart}}"
+    
+  - name: Wait retstarted topologies to be up and running
+    storm_topology:
+      ui_url: "{{{ src.storm_relay.storm_ui_url }}}"
+      name: "{{item}}"
+      state: existing
+      timeout_secs: "{{ conf_by_topology[item].timeout_secs }}"
+      kerberos: {{{ src.storm_relay._kerberos_ }}}
+    when: status_by_name[item] == "active"
+    with_items: "{{topology_to_restart}}"
+
+{{% if src.storm_relay._kerberos_ %}}
+  - name: Perform kdestroy for Storm access
+    shell: kdestroy
+    changed_when: false
+{{%endif%}}
+
+{{%endif%}}
 
 {{%endif%}}
 {{% endfor %}}

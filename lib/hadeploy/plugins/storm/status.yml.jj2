@@ -48,7 +48,7 @@
     register: tstates
     with_items: "{{ topologies }}"
 
-  - name: Build status list
+  - name: Display topologies state
     set_fact:
       status_list: "{{ status_list|default([])  +  [ { 'name': item.item,  'status': item.status } ] }}"  
     with_items: "{{ tstates.results }}"

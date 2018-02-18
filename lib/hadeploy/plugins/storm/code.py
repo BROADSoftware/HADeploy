@@ -19,7 +19,7 @@ import logging
 import hadeploy.core.misc as misc
 import os
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DEFAULT_TOOLS_FOLDER,ACTION_STATUS,SCOPE_STORM,ACTION_START,ACTION_STOP
+from hadeploy.core.const import SRC,DEFAULT_TOOLS_FOLDER,ACTION_STATUS,SCOPE_STORM,ACTION_START,ACTION_STOP,ACTION_DEPLOY
 
 logger = logging.getLogger("hadeploy.plugins.kafka")
 
@@ -48,7 +48,7 @@ class StormPlugin(Plugin):
         if self.context.toExclude(SCOPE_STORM):
             return []
         else:
-            return [ACTION_START, ACTION_STOP, ACTION_STATUS]
+            return [ACTION_START, ACTION_STOP, ACTION_STATUS, ACTION_DEPLOY]
 
     def getPriority(self, action):
         if action == ACTION_START:
@@ -57,6 +57,8 @@ class StormPlugin(Plugin):
             return 3500
         elif action == ACTION_STATUS:
             return 5000
+        elif action == ACTION_DEPLOY:
+            return 7100
         else:
             misc.ERROR("Plugin 'storm' called with invalid action: '{0}'".format(action))
 

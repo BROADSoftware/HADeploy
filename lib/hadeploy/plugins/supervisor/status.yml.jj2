@@ -49,10 +49,13 @@
   - name: Get current state for supervisor's programs in scope '{{{scopeName}}}'
     shell: "supervisorctl -c {{ item.config }} status '{{item._name_}}' | awk '{ print $2 }'"
     register: pstates
+    changed_when: false
     with_items: 
 {{% for prg in scope.programs %}}
     - { config: "{{{prg.supervisorConf}}}", name: "{{{prg.name}}}", _name_: "{{{prg._name_}}}" } 
 {{% endfor %}}
+    loop_control:
+      label: "{{ item.name }}"
 
   #- debug: var=pstates
 
