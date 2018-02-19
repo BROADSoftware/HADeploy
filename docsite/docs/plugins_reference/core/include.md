@@ -22,3 +22,12 @@ include:
 
 If paths are not absolute, they will be relative to the HADeploy embedding file location.
  
+The included file name can also be build from variables: 
+ 
+```yaml
+vars:
+  env: dev
+....
+
+include: ./envs/${env}.yml
+```

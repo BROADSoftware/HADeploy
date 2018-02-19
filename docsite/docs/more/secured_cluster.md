@@ -8,6 +8,7 @@ All Kerberos configuration will occur in the relay definition. So, refer to
 * [hive_relay](../plugins_reference/hive/hive_relay.md)
 * [hbase_relay](../plugins_reference/hbase/hbase_relay.md)
 * [kafka_relay](../plugins_reference/kafka/kafka_relay.md)
+* [storm_relay](../plugins_reference/storm/storm_relay.md)
 * [source_host_credentials](../plugins_reference/hdfs/source_host_credentials.md)
 
 In the Reference part for how to configure Kerberos access for all HADeploy operations.

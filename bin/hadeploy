@@ -28,7 +28,7 @@ function usage {
 	echo '     [--askVaultPassword] [--vaultPasswordFile <vaultPasswordFile>]'
 	echo '     [--workingFolder <workingFolder>]'
 	echo '     [--loggingConf <loginConfFile>]'
-	echo '     --action <deploy|remove|dumpvars|stop|start|none>'
+	echo '     --action <deploy|remove|dumpvars|stop|start|status|dumpvars|none>'
 	echo '  or'
 	echo 'hadeploy --version'
 }

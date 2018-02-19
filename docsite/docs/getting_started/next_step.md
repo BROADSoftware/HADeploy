@@ -445,6 +445,8 @@ zookeeper:
   zkpath: /broadapp
 ```
 
+This can be of great help in case you have a quite complex configuration, whith several level of included files.
+
 Some other option of the HADeploy command are described in other chapters:
 
 * `--workingFolder`: Refer to [`Under_the_hood`](/more/under_the_hood) chapter.
