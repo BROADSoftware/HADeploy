@@ -2,7 +2,7 @@
 
 ## 0.5.5
 
-- ???
+- Scope for Storm's notification handler was erroneous. Fixed
 
 ## 0.5.4
 

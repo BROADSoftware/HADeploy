@@ -193,7 +193,7 @@
 
 {{% if scope.stormNotifications|length > 0 %}}
     
-- hosts: {{{ scopeName }}}
+- hosts: {{{ src.storm_relay.host }}}
   vars:
     conf_by_topology:
 {{% for topology in src.storm_topologies %}}
