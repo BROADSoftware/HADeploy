@@ -1,0 +1,37 @@
+
+
+# ----------------------------------------------------------------------------- Elasticsearch indices and templates
+
+{{% if data.elastic is defined and data.elastic.serverByName is defined %}}
+{{% for _, server in data.elastic.serverByName.iteritems() %}}
+
+{{% if server.indices|length > 0 or server.templates|length > 0 %}}
+- hosts: {{{server.relay_host}}}
+  roles: 
+  - elastic_modules
+  tasks:
+{{% for index in server.indices %}}
+{{% if not index.no_remove %}}
+  - name: Delete index {{{index.name}}}
+    elasticsearch_index:
+      name: "{{{index.name}}}"
+      elasticsearch_url: "{{{server.url}}}"
+      state: absent
+{{% endif %}}
+{{% endfor %}}
+
+{{% for template in server.templates %}}
+{{% if not template.no_remove %}}
+  - name: Delete template {{{template.name}}}
+    elasticsearch_template:
+      name: "{{{template.name}}}"
+      elasticsearch_url: "{{{server.url}}}"
+      state: absent
+{{% endif %}}
+{{% endfor %}}
+
+
+{{% endif %}}
+{{% endfor %}}
+
+{{% endif %}}

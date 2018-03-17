@@ -3,6 +3,7 @@
 ## 0.5.5
 
 - Scope for Storm's notification handler was erroneous. Fixed
+- Now allow missing both `ssh_private_key_file` and `ssh_password` in host definition. (As already stated in the doc)
 
 ## 0.5.4
 

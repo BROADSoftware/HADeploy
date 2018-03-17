@@ -1,0 +1,72 @@
+> ELASTICSEARCH_INDEX    
+
+        Allow to create ES indices in an idempotent way.
+
+OPTIONS (= is mandatory):
+
+= definition
+        Index definition as a json string or as a YAML definition
+        [Default: None]
+
+= elasticsearch_url
+        The Elasticsearch server base URL to access API. Typically http://elastic1.myserver.com:9200
+        [Default: None]
+
+= name
+        Index name
+        [Default: None]
+
+- state
+        Whether to create (present) or remove (absent) this index. Also accept 'get' value, which return index
+        definition
+        (Choices: present, absent, get)[Default: present]
+
+
+NOTES:
+      * All operations are performed using elasticsearch REST API
+
+AUTHOR: Serge ALEXANDRE
+
+EXAMPLES:
+- hosts: elastic1
+  roles:
+  - elastic_modules
+  tasks:
+  - name: Create index
+    elasticsearch_index:
+      name: index1
+      elasticsearch_url: "http://elastic1.mydomain.com:9200"
+      definition: |
+        {
+            "settings" : {
+                "index": {
+                    "number_of_shards" : 1
+                }
+            },
+            "mappings" : {
+                "type1" : {
+                    "properties" : {
+                        "field1" : { "type" : "text" }
+                    }
+                }
+            }
+        }
+      state: present
+
+# One can also use a pure YAML notation. 
+
+  - name: Create index
+    elasticsearch_index:
+      name: test1
+      elasticsearch_url: "http://elastic1.mydomain.com:9200"
+      definition:
+        settings:
+          index:
+            number_of_shards: 1
+        mappings:
+          type1:
+            properties:
+              field1:
+                type: text
+      state: present
+

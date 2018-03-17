@@ -118,6 +118,10 @@ Currently, HADeploy is provided with the following internal plugin:
 
 * For Apache Ranger policy handling, HADeploy embeds the [ranger_modules](https://github.com/BROADSoftware/ranger_modules) Ansible modules in the Ranger plugin
 
+* For Storm topologies lifecycle handling, HADeploy embeds the [storm_modules](https://github.com/BROADSoftware/storm_modules) Ansible modules in the Elasticsearch plugin
+
+* For Elasticsearch indices and templates managment, HADeploy embeds the [elastic_modules](https://github.com/BROADSoftware/elastic_modules) Ansible modules in the Elasticsearch plugin
+
 ## Embedded Helpers
 
 ### Hive

@@ -4,7 +4,8 @@ The order of action performed on the target host does NOT depend of the order in
 
 * Linux local groups are created
 * Linux local users are created.
-* Apache Ranger policies are applied 
+* Apache Ranger policies are applied
+* Elastic indices and templates are created 
 * Linux nodes folders are created.
 * Files and trees with nodes as target are deployed
 * hdfs_relay host is configured, if needed
@@ -17,7 +18,7 @@ The order of action performed on the target host does NOT depend of the order in
 * Hive databases and tables are created
 * kafka_relay host is configured, if needed
 * Kafka topics are created
-* Services are deployed
+* Services and Supervisor are deployed
 
 Removal action order is the reverse.
 
@@ -60,6 +61,7 @@ Here are the values per plugin and action:
 |ansible              |   1400     |   (2)      |   (2)    |    -   |   -   |   -    |
 |users                |   2000     |   2000     |   7000   |    -   |   -   |   -    |
 |ranger               |   8000 (1) |   2500     |   6000   |    -   |   -   |   -    |
+|Elastic              |   3000     |   2700     |   5000   |    -   |   -   |   -    |
 |Nodes files & folders|   3000     |   3000     |   4000   |    -   |   -   |   -    |
 |hdfs files & folders |   3500 (4) |   3500     |   3500   |    -   |   -   |   -    |
 |hbase                |   4000     |   4000     |   3000   |    -   |   -   |   -    |

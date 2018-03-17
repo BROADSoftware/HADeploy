@@ -16,11 +16,11 @@
 # along with this software. If not, see <http://www.gnu.org/licenses/>.
 
 
-- name: Install python-requests and python-requests-kerberos for storm_topology ansibles module (RedHat)
-  yum: name=python-requests,python-requests-kerberos state=present
+- name: Install python-requests for elasticsearch_xxxxxx ansibles modules (RedHat)
+  yum: name=python-requests state=present
   when: ansible_os_family == 'RedHat'
 
-- name: Install python-requests and python-requests-kerberos for storm_topology ansibles module (Debian)
-  apt: name=python-requests,python-requests-kerberos state=present
+- name: Install python-requests for elasticsearch_xxxxxx ansibles modules (Debian)
+  apt: name=python-requests state=present
   when: ansible_os_family == 'Debian'
   

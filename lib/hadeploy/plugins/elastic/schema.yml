@@ -1,0 +1,37 @@
+
+type: map
+mapping:
+
+  "elasticsearch_servers":
+    type: "seq"
+    sequence:
+    - type: map
+      mapping:
+        "name": { type: str, required: true }
+        "relay_host": { type: str, required: true }
+        "url": { type: str, required: true }
+        "when": { type: bool, required: false }    # Default to true
+
+  "elasticsearch_indices":        
+    type: "seq"
+    sequence:
+    - type: map
+      mapping:
+        "server": { type: str, required: true }
+        "name": { type: str, required: true }
+        "definition": { type: any, required: true }
+        "recreate": { type: bool, required: false }  # Default false
+        "no_remove": { type: bool, required: false }    # Default to false
+        "when": { type: bool, required: false }    # Default to true
+      
+  "elasticsearch_templates":        
+    type: "seq"
+    sequence:
+    - type: map
+      mapping:
+        "server": { type: str, required: true }
+        "name": { type: str, required: true }
+        "definition": { type: any, required: true }
+        "no_remove": { type: bool, required: false }    # Default to false
+        "when": { type: bool, required: false }    # Default to true
+      

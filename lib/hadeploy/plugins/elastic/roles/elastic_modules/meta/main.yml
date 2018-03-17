@@ -1,0 +1,14 @@
+galaxy_info:
+  author: Serge ALEXANDRE
+  description: Elasticsearch indices and templates managment 
+  company: BROADSoftware
+  license: GPLv3
+  min_ansible_version: 1.9
+
+  platforms:
+  - name: EL
+    versions:
+    - 7
+
+  galaxy_tags: [ "elastic", "elasticsearch", "bigdata" ]
+  dependencies: []

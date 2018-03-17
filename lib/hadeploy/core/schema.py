@@ -72,6 +72,6 @@ def validate(model, schema):
         k.validate(raise_exception=False)
         if len(k.errors) != 0:
             misc.ERROR("Problem {0}".format(k.errors))
-    except Exception as e:          # Need to catch, as, dispite raise_exeception=False, some cases still generate exception (ie map/list mismatch)
+    except Exception as e:          # Need to catch, as, despite raise_exeception=False, some cases still generate exception (ie map/list mismatch)
         misc.ERROR("Problem {0}".format(e))
     

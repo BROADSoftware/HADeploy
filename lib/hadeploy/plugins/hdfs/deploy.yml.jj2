@@ -148,7 +148,7 @@
 # ------------------------------------------------------- Handle node to HDFS push files and trees
 
 {{% for scopeName, scope in data.hdfs.nodeToHdfsByName.iteritems() %}}
-{{% if scope.files|length > 0 or scope.trees|length %}}
+{{% if scope.files|length > 0 or scope.trees|length > 0 %}}
 - hosts: {{{ scopeName }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
   roles:

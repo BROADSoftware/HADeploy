@@ -1,0 +1,90 @@
+> ELASTICSEARCH_TEMPLATE    
+
+        Allow to create ES templates in an idempotent way.
+
+OPTIONS (= is mandatory):
+
+= definition
+        Template definition as a json string or as a YAML definition
+        [Default: None]
+
+= elasticsearch_url
+        The Elasticsearch server base URL to access API. Typically http://elastic1.myserver.com:9200
+        [Default: None]
+
+= name
+        Template name
+        [Default: None]
+
+- state
+        Whether to create (present) or remove (absent) this template. Also accept 'get' value, which return the
+        template definition
+        (Choices: present, absent, get)[Default: present]
+
+
+NOTES:
+      * All operations are performed using elasticsearch REST API
+
+AUTHOR: Serge ALEXANDRE
+
+EXAMPLES:
+- hosts: elastic1
+  roles:
+  - elastic_modules
+  tasks:
+  - name: Create template
+    elasticsearch_template:
+      name: tmpl1
+      elasticsearch_url: "http://elastic1.mydomain.com:9200"
+      definition: |
+        {
+          "index_patterns": ["xte*", "bar*"],
+          "settings": {    
+            "index": {
+                "number_of_shards": 1
+            }
+          },
+          "mappings": {
+            "type1": {
+              "_source": {
+                "enabled": false
+              },
+              "properties": {
+                "host_name": {
+                  "type": "keyword"
+                },
+                "created_at": {
+                  "type": "date",
+                  "format": "EEE MMM dd HH:mm:ss Z YYYY"
+                }
+              }
+            }
+          }
+        }      
+      state: present
+
+# One can also use a pure YAML notation. 
+
+  - name: Create template
+    elasticsearch_template:
+      name: tmpl1
+      elasticsearch_url: "http://elastic1.mydomain.com:9200"
+      definition:
+        index_patterns: 
+        - "xte*"
+        - "bar*"
+        settings:
+          index:
+            number_of_shards: 1
+        mappings:
+          type1:
+            _source:
+              enabled: False
+            properties:
+              host_name:
+                type: keyword
+              created_at:
+                type: date
+                format: "EEE MMM dd HH:mm:ss Z YYYY"
+      state: present
+
