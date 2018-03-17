@@ -166,8 +166,8 @@ def check(model):
                 misc.ERROR("Hosts:'{0}': 'ssh_user must be defined!".format(h[NAME]))
             if (SSH_PRIVATE_FILE_FILE in h) and (SSH_PASSWORD in h):
                 misc.ERROR("Hosts:'{0}': 'ssh_private_key_file' and 'ssh_password' can't be both defined!".format(h[NAME]))
-            if (not SSH_PRIVATE_FILE_FILE in h) and (not 'ssh_password' in h):
-                misc.ERROR("Hosts:'{0}': One of 'ssh_private_key_file' or 'ssh_password' must be defined!".format(h[NAME]))
+            #if (not SSH_PRIVATE_FILE_FILE in h) and (not 'ssh_password' in h):
+            #    misc.ERROR("Hosts:'{0}': One of 'ssh_private_key_file' or 'ssh_password' must be defined!".format(h[NAME]))
             if SSH_PRIVATE_FILE_FILE in h:
                 if not os.path.exists(h[SSH_PRIVATE_FILE_FILE]):
                     misc.ERROR("host:{0}': ssh_private_key_file  '{1}' does not exists!".format(h[NAME], h[SSH_PRIVATE_FILE_FILE]))
