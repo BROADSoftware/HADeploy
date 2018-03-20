@@ -22,7 +22,8 @@ from sets import Set
 
 
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DATA,DEFAULT_HDFS_RELAY_CACHE_FOLDER,INVENTORY,HOST_BY_NAME,SCOPE_FILES,SCOPE_HDFS,ACTION_DEPLOY,ACTION_REMOVE
+from hadeploy.core.const import SRC,DATA,DEFAULT_HDFS_RELAY_CACHE_FOLDER,INVENTORY,HOST_BY_NAME,SCOPE_FILES,SCOPE_HDFS,ACTION_DEPLOY,ACTION_REMOVE,\
+    SCOPE_SYSTEMD, SCOPE_SUPERVISOR, SCOPE_STORM
 
 """
     This plugin also prepare data for the HDFS plugin, conditioned by the fact an hdfs_relay is defined
@@ -172,7 +173,7 @@ class FilesPlugin(Plugin):
             if HDFS_RELAY in model[SRC]:
                 del(model[SRC][HDFS_RELAY])
         setWillUseMavenRepo(model)
-        setServiceNotifications(model)        
+        setServiceNotifications(self.context)        
         
             
 # ---------------------------------------------------- Static functions
@@ -234,7 +235,8 @@ def lookupTopology(model, name):
     
 
         
-def setServiceNotifications(model):
+def setServiceNotifications(context):
+    model = context.model
     # Set a list of notification handler to setup per scope
     for scopeName, scope in (model[DATA][FILES][SCOPE_BY_NAME]).iteritems():
         misc.ensureObjectInMaps(scope, [SYSTEMD_NOTIFICATIONS], {})
@@ -244,42 +246,48 @@ def setServiceNotifications(model):
             if NOTIFY in f:
                 f[_NOTIFY_] = []
                 for notification in f[NOTIFY]:
-                    if notification.startswith(NOTIFY_SYSTEMD_PREFIX):
-                        if not notification in scope[SYSTEMD_NOTIFICATIONS]:
-                            # Not already notified
-                            unitName = notification[len(NOTIFY_SYSTEMD_PREFIX):]
-                            unit = lookupSystemdUnit(model, unitName)
-                            if unit:
-                                if scopeName != unit[SCOPE]:
-                                    misc.ERROR("Files: '{}': Scope is '{}' while scope of systemd_unit '{}' is '{}'. Must be same".format(f[FSRC], scopeName, unit[NAME], unit[SCOPE]))
-                                scope[SYSTEMD_NOTIFICATIONS][notification] = unit
-                            else:
-                                misc.ERROR("Files: '{}': There is no systemd_unit named '{}' defined in this deployment".format(f[FSRC], unitName))
-                        f[_NOTIFY_].append(notification)
+                    if  notification.startswith(NOTIFY_SYSTEMD_PREFIX):
+                        if not context.toExclude(SCOPE_SYSTEMD): 
+                            if not notification in scope[SYSTEMD_NOTIFICATIONS]:
+                                # Not already notified
+                                unitName = notification[len(NOTIFY_SYSTEMD_PREFIX):]
+                                unit = lookupSystemdUnit(model, unitName)
+                                if unit:
+                                    if scopeName != unit[SCOPE]:
+                                        misc.ERROR("Files: '{}': Scope is '{}' while scope of systemd_unit '{}' is '{}'. Must be same".format(f[FSRC], scopeName, unit[NAME], unit[SCOPE]))
+                                    scope[SYSTEMD_NOTIFICATIONS][notification] = unit
+                                else:
+                                    misc.ERROR("Files: '{}': There is no systemd_unit named '{}' defined in this deployment".format(f[FSRC], unitName))
+                            f[_NOTIFY_].append(notification)
                     elif notification.startswith(NOTIFY_SUPERVISOR_PREFIX):
-                        if not notification in scope[SUPERVISOR_PRG_NOTIFICATIONS]:
-                            prgName = notification[len(NOTIFY_SUPERVISOR_PREFIX):]
-                            prg = lookupSupervisorProgram(model, prgName)
-                            if prg:
-                                prgScope = lookupSupervisorScope(model, prg[SUPERVISOR]) 
-                                if scopeName != prgScope: 
-                                    misc.ERROR("Files: '{}': Scope is '{}' while scope of supervisor program '{}' is '{}'. Must be same".format(f[FSRC], scopeName, prg[NAME], prgScope))
-                                scope[SUPERVISOR_PRG_NOTIFICATIONS][notification] = prg
-                            else:
-                                misc.ERROR("Files: '{}': There is no supervisor/program '{}' defined in this deployment".format(f[FSRC], prgName))
-                        f[_NOTIFY_].append(notification)
+                        if not context.toExclude(SCOPE_SUPERVISOR):
+                            if not notification in scope[SUPERVISOR_PRG_NOTIFICATIONS]:
+                                prgName = notification[len(NOTIFY_SUPERVISOR_PREFIX):]
+                                prg = lookupSupervisorProgram(model, prgName)
+                                if prg:
+                                    prgScope = lookupSupervisorScope(model, prg[SUPERVISOR]) 
+                                    if scopeName != prgScope: 
+                                        misc.ERROR("Files: '{}': Scope is '{}' while scope of supervisor program '{}' is '{}'. Must be same".format(f[FSRC], scopeName, prg[NAME], prgScope))
+                                    scope[SUPERVISOR_PRG_NOTIFICATIONS][notification] = prg
+                                else:
+                                    misc.ERROR("Files: '{}': There is no supervisor/program '{}' defined in this deployment".format(f[FSRC], prgName))
+                            f[_NOTIFY_].append(notification)
                     elif notification.startswith(NOTIFY_STORM_PREFIX):
-                        if not notification in scope[STORM_NOTIFICATIONS]:
-                            topologyName = notification[len(NOTIFY_STORM_PREFIX):]
-                            topology = lookupTopology(model, topologyName)
-                            if topology:
-                                scope[STORM_NOTIFICATIONS][notification] = topology
-                            else:
-                                misc.ERROR("Files: '{}': There is no topology '{}' defined in this deployment".format(f[FSRC], topologyName))
-                        f[_NOTIFY_].append(notification)
+                        if not context.toExclude(SCOPE_STORM):
+                            if not notification in scope[STORM_NOTIFICATIONS]:
+                                topologyName = notification[len(NOTIFY_STORM_PREFIX):]
+                                topology = lookupTopology(model, topologyName)
+                                if topology:
+                                    scope[STORM_NOTIFICATIONS][notification] = topology
+                                else:
+                                    misc.ERROR("Files: '{}': There is no topology '{}' defined in this deployment".format(f[FSRC], topologyName))
+                            f[_NOTIFY_].append(notification)
                     else:
                         misc.ERROR("Files: '{0}': notify '{1}' must begin with 'systemd://', 'supervisor://' or 'storm://'".format(f[FSRC], notification))
-
+                if len(f[_NOTIFY_]) == 0:
+                    del(f[_NOTIFY_])
+                    
+                    
 def ensureScope(model, scope):
     root = model[DATA][FILES][SCOPE_BY_NAME]
     if not scope in root:

@@ -24,6 +24,7 @@
       elasticsearch_url: "{{{server.url}}}"
       definition: {{{ index._definition_ }}}
       state: present
+      #log_level: debug
 {{% endfor %}}
 
 {{% for template in server.templates %}}
@@ -33,6 +34,7 @@
       elasticsearch_url: "{{{server.url}}}"
       definition: {{{ template._definition_ }}}
       state: present
+      #log_level: debug
 {{% endfor %}}
 
 

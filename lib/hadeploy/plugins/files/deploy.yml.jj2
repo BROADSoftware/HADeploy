@@ -114,9 +114,9 @@
 {{% endif %}}
 {{% endfor %}}
 
-# ------------------- Pre-tasks for notification handling
 
 {{% if scope.systemdNotifications|length > 0 %}}
+# ------------------- Pre-tasks for Systemd notification handling
 {{% for _, unit in scope.systemdNotifications.iteritems() %}}
   - name: Get current state for '{{{ unit.name }}}
     command: systemctl is-active {{{ unit.name }}}.service
@@ -128,6 +128,7 @@
 
 
 {{% if scope.supervisorPrgNotification|length > 0 %}}
+# ------------------- Pre-tasks for Supervisor notification handling
 {{% for _, prg in scope.supervisorPrgNotification.iteritems() %}}
   - name: Get current state for supervisor_{{{prg.supervisor}}}_{{{prg.name}}} programs
     shell: "supervisorctl -c {{{ prg.supervisorConf }}} status '{{{prg._name_}}}' | awk '{ print $2 }'"
@@ -140,15 +141,16 @@
 
 
 {{% if scope.stormNotifications|length > 0 %}}
+# ------------------- Pre-tasks for Storm notification handling
   - set_fact:
       topology_to_restart: []
       status_by_name: {}
 {{%endif%}}
 
 
-# ----------------------------------------------------- Handler for notification
 
 {{% if scope.systemdNotifications|length > 0  or scope.supervisorPrgNotification|length > 0 or scope.stormNotifications|length > 0 %}}
+# ----------------------------------------------------- Handler for notification
   handlers:
 {{%endif%}}
 
@@ -189,9 +191,9 @@
 {{%endif%}}
 
 
-# ----------------------------------------------------- Effective restart of topologies
 
 {{% if scope.stormNotifications|length > 0 %}}
+# ----------------------------------------------------- Effective restart of topologies
     
 - hosts: {{{ src.storm_relay.host }}}
   vars:
