@@ -20,6 +20,10 @@ pages:
     - roles_folders: plugins_reference/ansible/roles_folders.md
   - Ansible_inventories:
     - ansible_inventories: plugins_reference/ansible_inventories/ansible_inventories.md
+  - Elasticsearch:
+    - elasticsearch_indices: plugins_reference/elastic/elasticsearch_indices.md
+    - elasticsearch_servers: plugins_reference/elastic/elasticsearch_servers.md
+    - elasticsearch_templates: plugins_reference/elastic/elasticsearch_templates.md
   - Files:
     - files: plugins_reference/files/files.md
     - folders: plugins_reference/files/folders.md
