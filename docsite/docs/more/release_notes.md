@@ -5,7 +5,8 @@
 - Scope for Storm's notification handler was erroneous. Fixed
 - Now allow missing both `ssh_private_key_file` and `ssh_password` in host definition. (As already stated in the doc)
 - Notification system generated some errors when scope was limited to `files`. Fixed by suppressing notification in such case.
-- Added Elasticsearch [indices](../plugins_reference/elastic/elasticsearch_indices) and [Templates](../plugins_reference/elastic/elasticsearch_templates) management
+- Added Elasticsearch [indices](../plugins_reference/elastic/elasticsearch_indices) and [Templates](../plugins_reference/elastic/elasticsearch_templates) management.
+- Modification of [grooming order](./execution_order/) for `Storm`, `Systemd` and `Supervisor` plugins. Now grooming occurs before `files`, to handle notifications correctly.
 
 ## 0.5.4
 

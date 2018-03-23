@@ -67,9 +67,9 @@ Here are the values per plugin and action:
 |hbase                |   4000     |   4000     |   3000   |    -   |   -   |   -    |
 |hive                 |   4500     |   4500     |   2500   |    -   |   -   |   -    |
 |kafka                |   5000     |   5000     |   2000   |    -   |   -   |   -    |
-|Services             |   6000     |   6000     |   1800   | 5000   | 5000  | 5000   |
-|Supervisor           |   7000     |   7000     |   1600   | 6000   | 4000  | 5000   |
-|Storm                |   7100     |   7100 (5) |     -    | 6500   | 3500  | 5000   |
+|Systemd              |   2500 (6) |   6000     |   1800   | 5000   | 5000  | 5000   |
+|Supervisor           |   2510 (6) |   7000     |   1600   | 6000   | 4000  | 5000   |
+|Storm                |   2520 (6) |   7100 (5) |     -    | 6500   | 3500  | 5000   |
 
 NB: `grooming` is an internal action, performed on [step 4 of the run](./under_the_hood)
 
@@ -85,3 +85,4 @@ These priorities value are of interest if you insert some raw ansible playbooks 
 
 (5): This plugin is involved in 'deploy' action only by files notification
 
+(6): Must be before 'files', for notification handling

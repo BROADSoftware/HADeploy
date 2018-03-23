@@ -58,7 +58,7 @@ class SystemdPlugin(Plugin):
         Plugin.__init__(self, name, path, context)
            
     def getGroomingPriority(self):
-        return 6000     
+        return 2500     
 
     def getSupportedScopes(self):
         return [SCOPE_SYSTEMD]        

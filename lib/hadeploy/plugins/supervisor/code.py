@@ -111,7 +111,7 @@ class SupervisorPlugin(Plugin):
         Plugin.__init__(self, name, path, context)
            
     def getGroomingPriority(self):
-        return 7000     
+        return 2510     
 
     def getSupportedScopes(self):
         return [SCOPE_SUPERVISOR]        

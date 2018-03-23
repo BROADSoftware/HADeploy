@@ -39,7 +39,7 @@ class StormPlugin(Plugin):
                 model[SRC][STORM_RELAY][LOCAL_KEYTAB_PATH] = misc.snippetRelocate(snippetPath, model[SRC][STORM_RELAY][LOCAL_KEYTAB_PATH])
 
     def getGroomingPriority(self):
-        return 7100
+        return 2520
 
     def getSupportedScopes(self):
         return [SCOPE_STORM]        
@@ -48,6 +48,7 @@ class StormPlugin(Plugin):
         if self.context.toExclude(SCOPE_STORM):
             return []
         else:
+            # NB: We need to add ACTION_DEPLOY, as we need role 'storm_modules' to be added in the playbook of deployment, for files notifications 
             return [ACTION_START, ACTION_STOP, ACTION_STATUS, ACTION_DEPLOY]
 
     def getPriority(self, action):
