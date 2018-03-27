@@ -1,0 +1,71 @@
+# -------------------------------------------------------------------------------- Handle storm topologies kill
+
+{{% if src.storm_topologies is defined and  src.storm_topologies|length > 0 %}}
+
+- hosts: {{{ src.storm_relay.host }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
+  vars: 
+    topologies:
+{{% for topology in src.storm_topologies %}}
+    - "{{{ topology.name }}}"
+{{% endfor %}}
+    conf_by_topology:
+{{% for topology in src.storm_topologies %}}
+      "{{{ topology.name }}}": { wait_time_secs: {{{ topology.wait_time_secs }}}, launching_cmd: "{{{ topology.launching_cmd }}}", launching_dir: "{{{ topology.launching_dir }}}", timeout_secs: "{{{ topology.timeout_secs}}}" }
+{{% endfor %}}
+  roles:
+  - storm_modules  
+  tasks:
+
+{{% if src.storm_relay._kerberos_ %}}
+{{% if  src.storm_relay._relayKeytabFolder_ is defined %}}
+  - name: Create keytabs location
+    file: path={{{ src.storm_relay._relayKeytabFolder_}}} owner={{ansible_user}}  mode="0700" state=directory
+{{%endif%}}
+{{% if  src.storm_relay.local_keytab_path is defined %}}
+  - name: Push keytab file
+    copy: src={{{src.storm_relay.local_keytab_path }}} dest={{{src.storm_relay.relay_keytab_path }}} owner={{ansible_user}} mode="0400"
+{{%endif%}}
+  - name: Perform kinit for Storm UI access
+    shell: kinit -kt {{{ src.storm_relay.relay_keytab_path }}} {{{ src.storm_relay.principal }}}
+    changed_when: false
+{{% if src.storm_relay.kdebug %}} 
+  - name: Check kerberos ticket for Storm access
+    shell: klist
+    register: klist_result
+    changed_when: false
+  - debug: var=klist_result
+{{%endif%}}
+{{%endif%}}
+
+
+  - name: Kill running topologies
+    storm_topology:
+      ui_url: "{{{ src.storm_relay.storm_ui_url }}}"
+      name: "{{item}}"
+      state: killed
+      wait_time_secs:  "{{ conf_by_topology[item].wait_time_secs }}"
+      timeout_secs:  "{{ conf_by_topology[item].timeout_secs }}"
+      kerberos:  {{{ src.storm_relay._kerberos_ }}}
+    with_items: "{{ topologies }}"
+    
+ 
+    
+  - name: Wait topologies to be down
+    storm_topology:
+      ui_url: "{{{ src.storm_relay.storm_ui_url }}}"
+      name: "{{item}}"
+      state: nonexistent
+      timeout_secs: "{{ conf_by_topology[item].timeout_secs }}"
+      kerberos: {{{ src.storm_relay._kerberos_ }}}
+    with_items: "{{ topologies }}"
+
+
+{{% if src.storm_relay._kerberos_ %}}
+  - name: Perform kdestroy for Storm access
+    shell: kdestroy
+    changed_when: false
+{{%endif%}}
+
+{{%endif%}}
+    

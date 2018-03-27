@@ -19,7 +19,7 @@ import logging
 import hadeploy.core.misc as misc
 import os
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DEFAULT_TOOLS_FOLDER,ACTION_STATUS,SCOPE_STORM,ACTION_START,ACTION_STOP,ACTION_DEPLOY
+from hadeploy.core.const import SRC,DEFAULT_TOOLS_FOLDER,ACTION_STATUS,SCOPE_STORM,ACTION_START,ACTION_STOP,ACTION_DEPLOY,ACTION_REMOVE
 
 logger = logging.getLogger("hadeploy.plugins.kafka")
 
@@ -49,7 +49,7 @@ class StormPlugin(Plugin):
             return []
         else:
             # NB: We need to add ACTION_DEPLOY, as we need role 'storm_modules' to be added in the playbook of deployment, for files notifications 
-            return [ACTION_START, ACTION_STOP, ACTION_STATUS, ACTION_DEPLOY]
+            return [ACTION_START, ACTION_STOP, ACTION_STATUS, ACTION_DEPLOY, ACTION_REMOVE]
 
     def getPriority(self, action):
         if action == ACTION_START:
@@ -60,6 +60,8 @@ class StormPlugin(Plugin):
             return 5000
         elif action == ACTION_DEPLOY:
             return 7100
+        elif action == ACTION_REMOVE:
+            return 1500
         else:
             misc.ERROR("Plugin 'storm' called with invalid action: '{0}'".format(action))
 

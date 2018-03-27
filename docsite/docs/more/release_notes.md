@@ -10,6 +10,7 @@
 - [ansible_inventories](../plugins_reference/ansible_inventories/ansible_inventories/) is now compatible with `ansible_user/host/...` variables (Formerly `ansible_ssh_user/host/...`).
 - Refactoring of [supervisors](../plugins_reference/supervisor/supervisors/) plugin to have one configuration file per program and group (Instead of a single file for all).
 - Added a `scope` attribute to [supervisor_programs](../plugins_reference/supervisor/supervisor_programs/) items. 
+- Action `remove` on [Storm plugin](../plugins_reference/storm/storm_overview) now kill all running topologies.
 
 ## 0.5.4
 
