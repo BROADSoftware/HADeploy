@@ -7,6 +7,7 @@
 - Notification system generated some errors when scope was limited to `files`. Fixed by suppressing notification in such case.
 - Added Elasticsearch [indices](../plugins_reference/elastic/elasticsearch_indices) and [Templates](../plugins_reference/elastic/elasticsearch_templates) management.
 - Modification of [grooming order](./execution_order/) for `Storm`, `Systemd` and `Supervisor` plugins. Now grooming occurs before `files`, to handle notifications correctly.
+- [ansible_inventories](../plugins_reference/ansible_inventories/ansible_inventories/) is now compatible with `ansible_user/host/...` variables (Formerly `ansible_ssh_user/host/...`)
 
 ## 0.5.4
 

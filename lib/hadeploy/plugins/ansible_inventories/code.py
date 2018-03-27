@@ -170,6 +170,10 @@ def populateModelFromInventory(model, inventory):
             for key in host.vars:
                 if key.startswith('ansible_'):
                     key2 = key[len('ansible_'):].encode('utf8')
+                    #print "key2:{}".format(key2)
+                    if not key2.startswith("ssh_"):
+                        key2 = "ssh_" + key2
+                    #print "key2b:{}".format(key2)
                     if isinstance(host.vars[key], basestring):
                         h[key2] = host.vars[key].encode('utf8')
                     else:
