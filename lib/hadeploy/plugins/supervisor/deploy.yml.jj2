@@ -1,9 +1,7 @@
 
-
-{{% for scopeName, scope in data.supervisors.scopeByName.iteritems() %}}
-
 # ------------------------------------------------------------------------------ Handle supervisor stuff
 
+{{% for scopeName, scope in data.supervisors.scopeByName.iteritems() %}}
 {{% if scope.supervisorsToManage is defined and scope.supervisorsToManage|length > 0  %}}
 - hosts: {{{ scopeName }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
@@ -76,32 +74,91 @@
   
 {{% endif %}}      
 
-# ---------------------------------------------------- Handle supervisor_programs
+{{% endfor %}}
 
-{{% if scope.supervisors is defined and scope.supervisors|length > 0  %}}
+# ------------------------------------------------------------------------------ Handle supervisor_programs stuff
+
+{{% for scopeName, scope in data.supervisors.scopeByName.iteritems() %}}
+{{% if scope.programsToManage is defined and scope.programsToManage|length > 0 %}}
 - hosts: {{{ scopeName }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
 
-{{% for sup in scope.supervisors %}}
-  - name: Install programs definition file(s)
-    template: src={{{sup.programs_j2}}} dest={{{sup.programs_dest}}} owner={{{sup.user}}} group={{{sup.group}}} mode="0755"
-    notify:
-    - update_programs_{{{sup.name}}}
-{{% endfor %}}         
+{{% for prg in scope.programsToManage %}}
+  - name: Get current state for supervisor_{{{prg.supervisor}}}_{{{prg.name}}} programs
+    shell: "supervisorctl -c {{{ prg.supervisorConf }}} status '{{{prg._name_}}}' | awk '{ print $2 }'"
+    register: supervisor_{{{prg.supervisor}}}_{{{prg.name}}} 
+    changed_when: false
+    failed_when: false
 
-  - meta: flush_handlers
-  
-  handlers:
-  
-{{% for sup in scope.supervisors %}}
-  - name: Update supervisor_{{{sup.name}}} programs
-    shell: "supervisorctl -c {{{ sup.conf_file_dst }}} update"
-    listen: update_programs_{{{sup.name}}}
-{{% endfor %}}         
-  
+#  - debug: msg="Program {{{prg.supervisor}}}_{{{prg.name}}} is  {{supervisor_{{{prg.supervisor}}}_{{{prg.name}}}.stdout}}"
+{{% endfor %}}
+
+{{% for prg in scope.programsToManage %}}
+  - name: Setup supervisor_{{{prg.supervisor}}}_{{{prg.name}}} program configuration files
+    template: src={{{prg.conf_file_src_j2}}} dest="{{{prg.conf_file_dst}}}" owner={{{prg.supervisorOwner}}} group={{{prg.supervisorGroup}}} mode=0644
+    notify:
+    - reload_prg_{{{prg.supervisor}}}_{{{prg.name}}}
+{{% endfor %}}
+
+{{% if scope.groupsToManage is defined and scope.groupsToManage|length > 0 %}}
+{{% for grp in scope.groupsToManage %}}
+  - name: Setup supervisor_{{{grp.supervisor}}}_{{{grp.name}}} group configuration files
+    template: src={{{grp.conf_file_src_j2}}} dest="{{{grp.conf_file_dst}}}" owner={{{grp.supervisorOwner}}} group={{{grp.supervisorGroup}}} mode=0644
+    notify:
+    - reload_grp_{{{grp.supervisor}}}_{{{grp.name}}}
+{{% endfor %}}
 {{% endif %}}      
 
-# --------------
+# --------------------------------------------------- Programs state management
+  - meta: flush_handlers
+
+{{% if scope.groupsToManage is defined and scope.groupsToManage|length > 0 %}}
+  - name: Set supervisor group state
+    supervisorctl: config={{ item.config }} name={{ item.name }} state={{ item.state}} 
+    with_items:
+{{% for grp in scope.groupsToManage %}}
+    - { config: {{{ grp.supervisorConf}}}, name: "{{{grp._name_}}}", state: "present" }
+{{% endfor %}}
+    loop_control:
+      label: "{{item.name}} --> present"
+{{% endif %}}      
+
+  - name: Set supervisor programs state
+    supervisorctl: config={{ item.config }} name={{ item.name }} state={{ item.state}} 
+    with_items:
+{{% for prg in scope.programsToManage %}}
+    - { config: {{{ prg.supervisorConf}}}, name: "{{{prg._name_}}}", state: "present" }
+{{% if prg.state == "started" or prg.state == "stopped" %}}
+    - { config: {{{ prg.supervisorConf}}}, name: "{{{prg._name_}}}", state: {{{prg.state}}} }
+{{% endif %}}      
+{{% endfor %}}
+    loop_control:
+      label: "{{item.name}} --> {{item.state}}"
+
+
+  handlers:
+{{% for prg in scope.programsToManage %}}
+  - name: Restart supervisor_{{{ prg.supervisor }}} program {{{ prg.name }}}
+    supervisorctl: config={{{ prg.supervisorConf }}} name="{{{ prg._name_ }}}" state=restarted
+    listen: reload_prg_{{{prg.supervisor}}}_{{{prg.name}}}
+    when: supervisor_{{{prg.supervisor}}}_{{{prg.name}}}.stdout.find("RUNNING") != -1
+
+  - name: Force a reload of supervisor_{{{ prg.supervisor }}} group {{{ prg.name }}} on next restart
+    supervisorctl: config={{{ prg.supervisorConf }}} name="{{{ prg._name_ }}}" state=absent
+    listen: reload_prg_{{{prg.supervisor}}}_{{{prg.name}}}
+    when: supervisor_{{{prg.supervisor}}}_{{{prg.name}}}.stdout.find("RUNNING") == -1
+{{% endfor %}}
+
+{{% if scope.groupsToManage is defined and scope.groupsToManage|length > 0 %}}
+{{% for grp in scope.groupsToManage %}}
+  - name: Force a reload of supervisor_{{{ grp.supervisor }}} program {{{ grp.name }}} on next restart
+    supervisorctl: config={{{ grp.supervisorConf }}} name="{{{ grp._name_ }}}" state=absent
+    listen: reload_grp_{{{grp.supervisor}}}_{{{grp.name}}}
+{{% endfor %}}
+{{% endif %}}      
+
+
+{{% endif %}}      
 
 {{% endfor %}}

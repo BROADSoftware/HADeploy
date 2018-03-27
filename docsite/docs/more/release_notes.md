@@ -2,21 +2,22 @@
 
 ## 0.5.5
 
+- **Added Elasticsearch [indices](../plugins_reference/elastic/elasticsearch_indices) and [Templates](../plugins_reference/elastic/elasticsearch_templates) management.**
 - Scope for Storm's notification handler was erroneous. Fixed
 - Now allow missing both `ssh_private_key_file` and `ssh_password` in host definition. (As already stated in the doc)
 - Notification system generated some errors when scope was limited to `files`. Fixed by suppressing notification in such case.
-- Added Elasticsearch [indices](../plugins_reference/elastic/elasticsearch_indices) and [Templates](../plugins_reference/elastic/elasticsearch_templates) management.
 - Modification of [grooming order](./execution_order/) for `Storm`, `Systemd` and `Supervisor` plugins. Now grooming occurs before `files`, to handle notifications correctly.
-- [ansible_inventories](../plugins_reference/ansible_inventories/ansible_inventories/) is now compatible with `ansible_user/host/...` variables (Formerly `ansible_ssh_user/host/...`)
+- [ansible_inventories](../plugins_reference/ansible_inventories/ansible_inventories/) is now compatible with `ansible_user/host/...` variables (Formerly `ansible_ssh_user/host/...`).
+- Refactoring of [supervisors](../plugins_reference/supervisor/supervisors/) plugin to have one configuration file per programs and group (Instead of a single file).
 
 ## 0.5.4
 
-- Added an action `dumpvars`, to dump all variables
+- **Added an action `dumpvars`, to dump all variables.**
 - With Ranger 0.7, there was unjustified 'changed' on policies settings. Fixed
-- Added a [Storm plugin](../plugins_reference/storm/storm_overview) to handle Storm topologies lifecycle.
-- Added [Storm Ranger policies](../plugins_reference/ranger/storm_ranger_policies) management.
-- Action `status` as been implemented in [Storm](../plugins_reference/storm/storm_overview#actions-stopstart-and-status), 
-[Systemd](../plugins_reference/systemd/systemd_units#actions-stop-start-and-status) and [Supervisor](../plugins_reference/supervisor/supervisor_overview#actions-stop-start-and-status) plugins.
+- **Added a [Storm plugin](../plugins_reference/storm/storm_overview) to handle Storm topologies lifecycle.**
+- **Added [Storm Ranger policies](../plugins_reference/ranger/storm_ranger_policies) management.**
+- **Action `status` as been implemented in [Storm](../plugins_reference/storm/storm_overview#actions-stopstart-and-status), 
+[Systemd](../plugins_reference/systemd/systemd_units#actions-stop-start-and-status) and [Supervisor](../plugins_reference/supervisor/supervisor_overview#actions-stop-start-and-status) plugins.**
 
 #### INCOMPATIBILITY
 
@@ -26,7 +27,7 @@
 
 - In some cases, using include directive disrupted some relative file relocation. Fixed
 - An [alternate variable notation](../plugins_reference/core/vars/#alternate-notation) (`<<...>>`) has been introduced to allow non-string variable in flow style notation.
-- [Conditional deployment](./conditional_deployment) was implemented in all plugins.
+- **[Conditional deployment](./conditional_deployment) was implemented in all plugins.**
 - A switch `no_log` has been added to [`ranger_relay`](../plugins_reference/ranger/ranger_relay) to ease debugging.
 
 ## 0.5.2

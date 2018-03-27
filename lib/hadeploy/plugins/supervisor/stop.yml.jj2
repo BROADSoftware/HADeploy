@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------------------ Handle supervisor_programs stuff
 
 {{% for scopeName, scope in data.supervisors.scopeByName.iteritems() %}}
-{{% if scope.programs is defined and scope.programs|length > 0  %}}
+{{% if scope.programsToManage is defined and scope.programsToManage|length > 0  %}}
 - hosts: {{{ scopeName }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
@@ -12,7 +12,7 @@
     supervisorctl: config={{ item.config }} name={{ item.name }} state={{ item.state}} 
     failed_when: false
     with_items:
-{{% for prg in scope.programs %}}
+{{% for prg in scope.programsToManage %}}
     - { config: {{{ prg.supervisorConf}}}, name: "{{{prg._name_}}}", state: stopped }
 {{% endfor %}}
     loop_control:
