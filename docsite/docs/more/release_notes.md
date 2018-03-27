@@ -1,5 +1,9 @@
 # Release notes
 
+## 0.5.6
+
+- ???
+
 ## 0.5.5
 
 - **Added Elasticsearch [indices](../plugins_reference/elastic/elasticsearch_indices) and [Templates](../plugins_reference/elastic/elasticsearch_templates) management.**
