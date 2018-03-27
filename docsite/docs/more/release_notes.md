@@ -8,7 +8,8 @@
 - Notification system generated some errors when scope was limited to `files`. Fixed by suppressing notification in such case.
 - Modification of [grooming order](./execution_order/) for `Storm`, `Systemd` and `Supervisor` plugins. Now grooming occurs before `files`, to handle notifications correctly.
 - [ansible_inventories](../plugins_reference/ansible_inventories/ansible_inventories/) is now compatible with `ansible_user/host/...` variables (Formerly `ansible_ssh_user/host/...`).
-- Refactoring of [supervisors](../plugins_reference/supervisor/supervisors/) plugin to have one configuration file per programs and group (Instead of a single file).
+- Refactoring of [supervisors](../plugins_reference/supervisor/supervisors/) plugin to have one configuration file per program and group (Instead of a single file for all).
+- Added a `scope` attribute to [supervisor_programs](../plugins_reference/supervisor/supervisor_programs/) items. 
 
 ## 0.5.4
 

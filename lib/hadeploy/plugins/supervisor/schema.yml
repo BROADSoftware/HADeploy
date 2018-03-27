@@ -40,6 +40,7 @@ mapping:
       mapping:
         "name": { type: str, required: true }
         "supervisor": { type: str, required: true }
+        "scope": { type: str, required: false }   # Default to supervisor's one
         "programs":
           required: true
           type: seq
@@ -55,6 +56,7 @@ mapping:
     - type: map
       mapping:
         "supervisor": { type: str, required: true }
+        "scope": { type: str, required: false }   # Default to supervisor's one
         "name": { type: str, required: true }
         "conf_file_src": { type: str, required: false } # Default to an internally provided one (Useless, so switched to undocumenetd)
         "command": { type: str, required: false } # Required if no config_file_src provided

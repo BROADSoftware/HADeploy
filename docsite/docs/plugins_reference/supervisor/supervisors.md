@@ -13,7 +13,7 @@ Each item of the list has the following attribute:
 Name | req? | 	Description
 --- | ---  | ---
 name|yes|Name of the supervisor.
-scope|yes|On which target does this file be deployed? May be:<ul><li>A single `host` name</li><li>A single `host_group` name</li><li>Several `hosts` or `host_groups`, separated by the character ':'</li></ul>
+scope|yes|On which target does this supervisor be deployed? May be:<ul><li>A single `host` name</li><li>A single `host_group` name</li><li>Several `hosts` or `host_groups`, separated by the character ':'</li></ul>
 user|yes|The owner of this supervisor. This account will be allowed to fully control all associated [`supervisor_programs`](./supervisor_programs).
 group|yes|The group of the owner.
 managed|no|Boolean. Did this supervisor under the control of HADeploy ? If `no`, it will only act as a description to be referenced by [`supervisor_programs`](./supervisor_programs)<br>You will find more information on what this attribute is intended for in [Supervisor overview / Non-root deployment](./supervisor_overview/#non-root-deployment)<br>Default: `yes`

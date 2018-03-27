@@ -214,12 +214,12 @@ def lookupSupervisorProgram(model, prgName):
 SUPERVISORS="supervisors"
 
 # When we need this info, grooming is not yet performed on supervisor
-def lookupSupervisorScope(model, supervisorName):
-    if SUPERVISORS in model[SRC]:
-        for s in model[SRC][SUPERVISORS]:
-            if s[NAME] == supervisorName:
-                return s[SCOPE]
-    return None
+#def lookupSupervisorScope(model, supervisorName):
+#    if SUPERVISORS in model[SRC]:
+#        for s in model[SRC][SUPERVISORS]:
+#            if s[NAME] == supervisorName:
+#                return s[SCOPE]
+#    return None
 
 STORM_TOPOLOGIES="storm_topologies"
 NOTIFY_SYSTEMD_PREFIX="systemd://"
@@ -265,7 +265,8 @@ def setServiceNotifications(context):
                                 prgName = notification[len(NOTIFY_SUPERVISOR_PREFIX):]
                                 prg = lookupSupervisorProgram(model, prgName)
                                 if prg:
-                                    prgScope = lookupSupervisorScope(model, prg[SUPERVISOR]) 
+                                    #prgScope = lookupSupervisorScope(model, prg[SUPERVISOR]) 
+                                    prgScope = prg[SCOPE]
                                     if scopeName != prgScope: 
                                         misc.ERROR("Files: '{}': Scope is '{}' while scope of supervisor program '{}' is '{}'. Must be same".format(f[FSRC], scopeName, prg[NAME], prgScope))
                                     scope[SUPERVISOR_PRG_NOTIFICATIONS][notification] = prg

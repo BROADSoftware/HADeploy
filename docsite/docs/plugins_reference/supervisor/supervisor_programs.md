@@ -14,6 +14,7 @@ Name | req? | 	Description
 --- | ---  | ---
 supervisor|yes|The supervisor managing this program
 name|yes|Name of the program.
+scope|no|On which target does this supervisor's program be deployed? May be:<ul><li>A single `host` name</li><li>A single `host_group` name</li><li>Several `hosts` or `host_groups`, separated by the character ':'</li></ul>Default to the supervisor's scope
 command|yes if `conf_file_src` is not provided|The command to launch. Refer to the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values)
 no_remove|no|Boolean: Prevent this program to be removed when HADeploy will be used with `--action remove`.<br>Default: `no`
 user|no|From the [supervisor documentation](http://supervisord.org/configuration.html#program-x-section-values): Instruct supervisord to use this UNIX user account as the account which runs the program. The user can only be switched if supervisord is run as the root user. If supervisord can’t switch to the specified user, the program will not be started.<br>Default is the supervisord's user.

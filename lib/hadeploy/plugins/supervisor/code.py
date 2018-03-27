@@ -45,7 +45,7 @@ NAME="name"
 NO_REMOVE="no_remove"
 SCOPE="scope"
 SCOPE_BY_NAME="scopeByName"     
-
+_SCOPE_="_scope_"
 
 SUPERVISORS="supervisors"
 USER="user"
@@ -252,13 +252,15 @@ class SupervisorPlugin(Plugin):
                 if prg[STATE] not in validState:
                     misc.ERROR("Supervisor_program {0}: state value '{1}' is not valid. Must be one of {2}".format(prg[NAME], prg[STATE], validState))
                 misc.setDefaultInMap(prg, AUTOSTART, prg[STATE] == ST_STARTED)
+                if SCOPE not in prg:
+                    prg[SCOPE] = supervisord[SCOPE]
                 # Note we don't set prg[USER], as we want to be unset in config file if not set
                 # ---------------------- Insert in scope
-                misc.ensureObjectInMaps(self.context.model[DATA][SUPERVISORS][SCOPE_BY_NAME], [supervisord[SCOPE], PROGRAMS_TO_MANAGE], [])
-                model[DATA][SUPERVISORS][SCOPE_BY_NAME][supervisord[SCOPE]][PROGRAMS_TO_MANAGE].append(prg)
+                misc.ensureObjectInMaps(self.context.model[DATA][SUPERVISORS][SCOPE_BY_NAME], [prg[SCOPE], PROGRAMS_TO_MANAGE], [])
+                model[DATA][SUPERVISORS][SCOPE_BY_NAME][prg[SCOPE]][PROGRAMS_TO_MANAGE].append(prg)
                 if not prg[NO_REMOVE]:
-                    misc.ensureObjectInMaps(self.context.model[DATA][SUPERVISORS][SCOPE_BY_NAME], [supervisord[SCOPE], PROGRAMS_TO_REMOVE], [])
-                    model[DATA][SUPERVISORS][SCOPE_BY_NAME][supervisord[SCOPE]][PROGRAMS_TO_REMOVE].append(prg)
+                    misc.ensureObjectInMaps(self.context.model[DATA][SUPERVISORS][SCOPE_BY_NAME], [prg[SCOPE], PROGRAMS_TO_REMOVE], [])
+                    model[DATA][SUPERVISORS][SCOPE_BY_NAME][prg[SCOPE]][PROGRAMS_TO_REMOVE].append(prg)
     
     def groomGroups(self):
         if self.context.toExclude(SCOPE_SUPERVISOR):
@@ -277,8 +279,14 @@ class SupervisorPlugin(Plugin):
                     if prgName not in supervisord[PROGRAM_BY_NAME]:
                         misc.ERROR("supervisor_group '{}' refer to an undefined program '{}'".format(grp[NAME], prgName))
                     else:
+                        prg = supervisord[PROGRAM_BY_NAME][prgName] 
                         # The program name must be patched:
-                        supervisord[PROGRAM_BY_NAME][prgName][_NAME_] = grp[NAME] + ":" + supervisord[PROGRAM_BY_NAME][prgName][_NAME_]
+                        prg[_NAME_] = grp[NAME] + ":" + supervisord[PROGRAM_BY_NAME][prgName][_NAME_]
+                        if _SCOPE_ in grp:
+                            if grp[_SCOPE_] != prg[SCOPE]:
+                                misc.ERROR("supervisor_group '{}' host programs with different scope ({} != {}). Must be same".format(grp[NAME], grp[_SCOPE_], prg[SCOPE]))
+                        else:
+                            grp[_SCOPE_] = prg[SCOPE]
                 misc.setDefaultInMap(grp, NO_REMOVE, False)
                 if grp[NO_REMOVE] and not supervisord[NO_REMOVE]:
                     misc.ERROR("Supervisor_group '{}' has no remove flag set while its supervisor ({}) has not!".format(grp[NAME], supervisord[NAME]))
@@ -291,11 +299,11 @@ class SupervisorPlugin(Plugin):
                 grp[_NAME_] = grp[NAME] + ":"
                     
                 # ---------------------- Insert in scope
-                misc.ensureObjectInMaps(self.context.model[DATA][SUPERVISORS][SCOPE_BY_NAME], [supervisord[SCOPE], GROUPS_TO_MANAGE], [])
-                model[DATA][SUPERVISORS][SCOPE_BY_NAME][supervisord[SCOPE]][GROUPS_TO_MANAGE].append(grp)
+                misc.ensureObjectInMaps(self.context.model[DATA][SUPERVISORS][SCOPE_BY_NAME], [grp[_SCOPE_], GROUPS_TO_MANAGE], [])
+                model[DATA][SUPERVISORS][SCOPE_BY_NAME][grp[_SCOPE_]][GROUPS_TO_MANAGE].append(grp)
                 if not grp[NO_REMOVE]:
-                    misc.ensureObjectInMaps(self.context.model[DATA][SUPERVISORS][SCOPE_BY_NAME], [supervisord[SCOPE], GROUPS_TO_REMOVE], [])
-                    model[DATA][SUPERVISORS][SCOPE_BY_NAME][supervisord[SCOPE]][GROUPS_TO_REMOVE].append(grp)
+                    misc.ensureObjectInMaps(self.context.model[DATA][SUPERVISORS][SCOPE_BY_NAME], [grp[_SCOPE_], GROUPS_TO_REMOVE], [])
+                    model[DATA][SUPERVISORS][SCOPE_BY_NAME][grp[_SCOPE_]][GROUPS_TO_REMOVE].append(grp)
                     
   
     
