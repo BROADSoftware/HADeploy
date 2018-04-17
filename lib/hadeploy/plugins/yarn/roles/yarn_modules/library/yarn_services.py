@@ -241,9 +241,9 @@ class YarnAPI:
         self.updateStatus(status)
         before = copy.deepcopy(status)
         #pprint(status)
-        for name, app in status.iteritems():
-            for id in app["ids"]:
-                self.kill(id)
+        for _, app in status.iteritems():
+            for appId in app["ids"]:
+                self.kill(appId)
                 p.changed = True
         self.updateStatus(status)
         return (Errno.OK, before, status)
@@ -257,7 +257,7 @@ class YarnAPI:
             stillRunning = False 
             #pprint(status)
             print
-            for name, app in status.iteritems():
+            for _, app in status.iteritems():
                 if app["state"] != State.NONEXISTENT and app["state"] != State.KILLED:
                     stillRunning = True 
             if time.time() > startTime + timeout:
@@ -328,11 +328,11 @@ def lookupYarnApi(p):
             yarnAPI= YarnAPI(endpoint, p.kerberos)
             (x, err) = yarnAPI.test()
             if x:
-                p.webhdfsEndpoint = yarnAPI.endpoint
+                p.rmEndpoint = yarnAPI.endpoint
                 return yarnAPI
             else:
                 errors.append(err)
-        error("Unable to find a valid 'rm_endpoint' in: " + p.webhdfsEndpoint + " (" + str(errors) + ")")
+        error("Unable to find a valid 'rm_endpoint' in: " + p.rmEndpoint + " (" + str(errors) + ")")
 
 
             

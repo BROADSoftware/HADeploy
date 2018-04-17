@@ -19,12 +19,17 @@ import logging
 import hadeploy.core.misc as misc
 import os
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DEFAULT_TOOLS_FOLDER,ACTION_STATUS,ACTION_START,ACTION_STOP,ACTION_DEPLOY,ACTION_REMOVE,SCOPE_YARN
+from hadeploy.core.const import SRC,DEFAULT_TOOLS_FOLDER,ACTION_STATUS,ACTION_START,ACTION_STOP,ACTION_DEPLOY,ACTION_REMOVE,SCOPE_YARN,DATA
 
 logger = logging.getLogger("hadeploy.plugins.kafka")
 
 YARN_RELAY="yarn_relay"
 YARN_SERVICES="yarn_services"
+
+# Our private space in data model
+YARN="yarn" 
+ALL_SERVICES="allServices"
+SERVICES_TO_KILL="servicesToKill"
 
 class YarnPlugin(Plugin):
     
@@ -70,6 +75,7 @@ class YarnPlugin(Plugin):
             return
         misc.applyWhenOnSingle(self.context.model[SRC], YARN_RELAY)
         misc.applyWhenOnList(self.context.model[SRC], YARN_SERVICES)
+        misc.ensureObjectInMaps(self.context.model[DATA], [YARN], {})
         groomYarnRelay(self.context.model)
         groomYarnServices(self.context.model)
 
@@ -126,6 +132,17 @@ def groomYarnServices(model):
             if LAUNCHING_DIR in service:
                 if not os.path.isabs(service[LAUNCHING_DIR]) and not service[LAUNCHING_DIR].startswith("~"):
                     misc.ERROR("yarn_services '{}': launching_dir must be an absolute path".format(service[NAME]))
+            if ALL_SERVICES in model[DATA][YARN]:
+                model[DATA][YARN][ALL_SERVICES] = model[DATA][YARN][ALL_SERVICES] + "," + service[NAME]
+            else:
+                model[DATA][YARN][ALL_SERVICES] = service[NAME]
+            if not KILLING_CMD in service:
+                if SERVICES_TO_KILL in model[DATA][YARN]:
+                    model[DATA][YARN][SERVICES_TO_KILL] = model[DATA][YARN][SERVICES_TO_KILL] + "," + service[NAME]
+                else:
+                    model[DATA][YARN][SERVICES_TO_KILL] = service[NAME]
+                
+                
 
 
 

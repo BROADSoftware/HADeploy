@@ -1,0 +1,64 @@
+# -------------------------------------------------------------------------------- Handle Yarn services status
+
+{{% if src.yarn_services is defined and  src.yarn_services|length > 0 %}}
+
+- hosts: {{{ src.yarn_relay.host }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
+  roles:
+  - yarn_modules  
+  tasks:
+
+{{% if src.yarn_relay._kerberos_ %}}
+{{% if  src.yarn_relay._relayKeytabFolder_ is defined %}}
+  - name: Create keytabs location
+    file: path={{{ src.yarn_relay._relayKeytabFolder_}}} owner={{ansible_user}}  mode="0700" state=directory
+{{%endif%}}
+{{% if  src.yarn_relay.local_keytab_path is defined %}}
+  - name: Push keytab file
+    copy: src={{{src.yarn_relay.local_keytab_path }}} dest={{{src.yarn_relay.relay_keytab_path }}} owner={{ansible_user}} mode="0400"
+{{%endif%}}
+  - name: Perform kinit for Yarn UI access
+    shell: kinit -kt {{{ src.yarn_relay.relay_keytab_path }}} {{{ src.yarn_relay.principal }}}
+    changed_when: false
+{{% if src.yarn_relay.kdebug %}} 
+  - name: Check kerberos ticket for Yarn access
+    shell: klist
+    register: klist_result
+    changed_when: false
+  - debug: var=klist_result
+{{%endif%}}
+{{%endif%}}
+
+
+  - name: Check Yarn services state
+    yarn_services:
+      names: "{{{data.yarn.allServices}}}"
+      state: get
+      kerberos: {{{ src.yarn_relay._kerberos_ }}}
+{{% if src.yarn_relay.hadoop_conf_dir is defined %}}
+      hadoop_conf_dir: {{{src.yarn_relay.hadoop_conf_dir}}} 
+{{%endif%}}
+{{% if src.yarn_relay.rm_endpoint is defined %}}
+      rm_endpoint: {{{src.yarn_relay.rm_endpoint}}} 
+{{%endif%}}
+    register: ystates
+    
+ # - debug: var=ystates
+
+
+  - name: Display Yarn services state
+    set_fact:
+      status_list: "{{ status_list|default([])  +  [ { 'name': item,  'status': ystates.status[item].state } ] }}"  
+    with_items: "{{ ystates.status|sort }}"
+    loop_control:
+      label: "{{ item }}:{{ystates.status[item].state}}"
+
+
+{{% if src.yarn_relay._kerberos_ %}}
+  - name: Perform kdestroy for Yarn access
+    shell: kdestroy
+    changed_when: false
+{{%endif%}}
+
+{{%endif%}}
+    
