@@ -1,0 +1,32 @@
+
+type: map
+mapping:
+     
+  "yarn_relay":
+    type: map
+    mapping:
+      "host": { type: str, required: true }                  
+      "default_timeout_secs": { type: int, required: false } # Default: 90. Timeout value before raising an error when waiting a target state
+      "principal": { type: str, required: false }            # Kerberos principal
+      "relay_keytab_path": { type: str, required: false }    # Path to a keytab file on relay host
+      "local_keytab_path": { type: str, required: false }    # Path to a keytab file on HADeploy node
+      "tools_folder": { type: str, required: false }
+      "hadoop_conf_dir": { type: str, required: false }     # default: "/etc/hadoop/conf"       
+      "rm_endpoint": { type: str, required: false }    # Default: Lookup in <hadoop_conf_dir>/yarn-site.xml     
+      "kdebug": { type: bool, required: false }              # Display klist result
+      "when": { type: bool, required: false }    # Default to true
+                  
+  "yarn_services":
+    type: "seq"
+    sequence:
+    - type: map
+      mapping:
+        "name": { type: str, required: true }
+        "launching_cmd": { type: str, required: true } # The command to launch this yarn job. Typically, a launching script for more complex one 
+        "killing_cmd": { type: str, required: false } # The command to kill this topology. If not provided, will be killed using Yarn REST API. 
+        "launching_dir": { type: str, required: false } # Default: "~". Will cd in this folder before issuing 'launching_cmd' Must be an absolute path
+        "timeout_secs": { type: int, required: false } # Default: Value set by storm_relay. Timeout before raising an error value when waiting a target state
+        "when": { type: bool, required: false }    # Default to true
+                          
+  
+      

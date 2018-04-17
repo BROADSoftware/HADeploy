@@ -43,7 +43,7 @@ HOST_BY_NAME="hostByName"
 SSH_USER="ssh_user"
 
 # default plugins list
-DEFAULT_PLUGINS = [ 'header', 'inventory', 'ansible_inventories', 'users', 'ansible', 'files', 'hdfs', "hbase", 'hive', 'kafka', 'ranger', 'systemd', 'supervisor', 'storm', 'elastic']
+DEFAULT_PLUGINS = [ 'header', 'inventory', 'ansible_inventories', 'users', 'ansible', 'files', 'hdfs', "hbase", 'hive', 'kafka', 'ranger', 'systemd', 'supervisor', 'storm', 'elastic', 'yarn']
 
 # Actions: deploy, remove, halt, launch, reset, report.
 # To other pseudo/internal action:
@@ -73,5 +73,6 @@ SCOPE_SYSTEMD="systemd"
 SCOPE_SUPERVISOR="supervisor"
 SCOPE_STORM="storm"
 SCOPE_ELASTIC="elastic"
+SCOPE_YARN="yarn"
 
 

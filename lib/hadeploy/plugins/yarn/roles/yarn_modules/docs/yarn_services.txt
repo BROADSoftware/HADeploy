@@ -1,0 +1,43 @@
+> YARN_SERVICES    
+
+  Allow to fetch yarn jobs status, to wait for up or down state and to kill jobs, based on jobs name.
+
+Options (= is mandatory):
+
+- hadoop_conf_dir
+        Where to find Hadoop configuration file, specially yarn-site.xml, in order to lookup ressource manager web endpoint
+        (`yarn.resourcemanager.webapp.address[.rm1|.rm2]') Used only if rm_endpoints is not defined
+        [Default: /etc/hadoop/conf]
+- kerberos
+        Boolean. Storm UI access require kerberos authentication
+        [Default: False]
+= names
+        A comma separated list of job names to control
+        [Default: None]
+- rm_endpoint
+        Provide Yarn REST API entry point. Typically `<namenodeHost>:8088'. It could also be a comma separated list of entry
+        point, which will be checked up to a valid one. This will allow resource manager H.A. handling. If not defined, will be
+        looked up in local yarn-site.xml
+        [Default: None]
+= state
+        target job state: `running', `killed', `nonexistent', `existing', `get'
+        `running': Wait for all jobs to be in RUNNING state. Also, can exit on timeout, or when detecting a failing job.
+        `killed': Issue a kill command if yarn job is running (or starting). If not, or already in `killed' state, do nothing.
+        Exit immediately.
+        `nonexistent': Wait for all jobs to be not running.
+        `get': Do nothing. Return current jobs status
+        [Default: None]
+- timeout_secs
+        Timeout value when waiting a target state
+        [Default: 120]
+Notes:
+  * All operations are performed using Ressource Manager web REST API
+  * This module is intended to manage a list of jobs as a whole.
+EXAMPLES:
+
+
+MAINTAINERS: Serge ALEXANDRE
+
+METADATA:
+	Status: ['preview']
+	Supported_by: community
