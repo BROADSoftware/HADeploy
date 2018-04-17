@@ -23,7 +23,7 @@ from sets import Set
 #import json
 
 
-logger = logging.getLogger("hadeploy.plugins.kafka")
+logger = logging.getLogger("hadeploy.plugins.elastic")
 
 ELASTICSEARCH_SERVERS="elasticsearch_servers"
 ELASTICSEARCH_INDICES="elasticsearch_indices"

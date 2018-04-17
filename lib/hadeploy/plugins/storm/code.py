@@ -21,7 +21,7 @@ import os
 from hadeploy.core.plugin import Plugin
 from hadeploy.core.const import SRC,DEFAULT_TOOLS_FOLDER,ACTION_STATUS,SCOPE_STORM,ACTION_START,ACTION_STOP,ACTION_DEPLOY,ACTION_REMOVE
 
-logger = logging.getLogger("hadeploy.plugins.kafka")
+logger = logging.getLogger("hadeploy.plugins.storm")
 
 STORM_RELAY="storm_relay"
 STORM_TOPOLOGIES="storm_topologies"        
