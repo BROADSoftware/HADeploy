@@ -39,10 +39,10 @@ options:
     default: None
   state:
     description:
-      - 'target job state: C(running), C(killed), C(nonexistent), C(existing), C(get)'
-      - 'C(running): Wait for all jobs to be in RUNNING state. Also, can exit on timeout, or when detecting a failing job.'
-      - 'C(killed): Issue a kill command if yarn job is running (or starting). If not, or already in C(killed) state, do nothing. Exit immediately.' 
-      - 'C(nonexistent): Wait for all jobs to be not running.' 
+      - 'target job state: C(RUNNING), C(killed), C(nonexistent), C(existing), C(get)'
+      - 'C(RUNNING): Wait for all jobs to be in RUNNING state. Also, can exit on timeout, or when detecting a failing job.'
+      - 'C(killed): Issue a kill command if yarn job is RUNNING (or starting). If not, or already in C(killed) state, do nothing. Exit immediately.' 
+      - 'C(nonexistent): Wait for all jobs to be not RUNNING.' 
       - 'C(get): Do nothing. Return current jobs status' 
     required: true
     default: None
@@ -134,7 +134,7 @@ class YarnState:
 # Used both in parameters and result
 class State:
     STARTING="starting"
-    RUNNING="running"
+    RUNNING="RUNNING"
     NONEXISTENT="nonexistent"
     KILLED="killed"
     GET="get"
@@ -342,7 +342,7 @@ def main():
     module = AnsibleModule(
         argument_spec = dict(
             names = dict(required=True),
-            state = dict(required=True, choices=['running','killed','nonexistent','get']),
+            state = dict(required=True, choices=['RUNNING','killed','nonexistent','get']),
             kerberos = dict(required=False, type='bool', default=False),
             timeout = dict(required=False, type='int', default=120),
             hadoop_conf_dir = dict(required=False, default="/etc/hadoop/conf"),

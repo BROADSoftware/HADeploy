@@ -20,10 +20,9 @@ import hadeploy.core.misc as misc
 import os
 from sets import Set
 
-
 from hadeploy.core.plugin import Plugin
 from hadeploy.core.const import SRC,DATA,DEFAULT_HDFS_RELAY_CACHE_FOLDER,INVENTORY,HOST_BY_NAME,SCOPE_FILES,SCOPE_HDFS,ACTION_DEPLOY,ACTION_REMOVE,\
-    SCOPE_SYSTEMD, SCOPE_SUPERVISOR, SCOPE_STORM
+    SCOPE_SYSTEMD, SCOPE_SUPERVISOR, SCOPE_STORM, SCOPE_YARN
 
 """
     This plugin also prepare data for the HDFS plugin, conditioned by the fact an hdfs_relay is defined
@@ -69,7 +68,6 @@ _TSRC_="_tsrc_"
 
 NODE_TO_HDFS_FLAG="_nodeToHdfs_"
 
-
 MAVEN_REPOSITORIES="maven_repositories"
 MAVEN_REPO_BY_NAME="mavenRepoByName"
 URL="url"
@@ -89,6 +87,7 @@ _CLASSIFIER_="_classifier_"
 SYSTEMD_NOTIFICATIONS="systemdNotifications"
 SUPERVISOR_PRG_NOTIFICATIONS="supervisorPrgNotification"
 STORM_NOTIFICATIONS="stormNotifications"
+YARN_NOTIFICATIONS="yarnNotifications"
 
 NOTIFY="notify"
 _NOTIFY_="_notify_" # Need an id for the Ansible listener, valid for both systemd_unit and supervisor
@@ -225,12 +224,22 @@ STORM_TOPOLOGIES="storm_topologies"
 NOTIFY_SYSTEMD_PREFIX="systemd://"
 NOTIFY_SUPERVISOR_PREFIX="supervisor://"
 NOTIFY_STORM_PREFIX="storm://"
+NOTIFY_YARN_PREFIX="yarn://"
 
 def lookupTopology(model, name):
     if STORM_TOPOLOGIES in model[SRC]:
         for t in model[SRC][STORM_TOPOLOGIES]:
             if t[NAME] == name:
                 return t
+    return None
+    
+YARN_SERVICES="yarn_services"
+    
+def lookupYarnService(model, name):
+    if YARN_SERVICES in model[SRC]:
+        for s in model[SRC][YARN_SERVICES]:
+            if s[NAME] == name:
+                return s
     return None
     
 
@@ -242,6 +251,7 @@ def setServiceNotifications(context):
         misc.ensureObjectInMaps(scope, [SYSTEMD_NOTIFICATIONS], {})
         misc.ensureObjectInMaps(scope, [SUPERVISOR_PRG_NOTIFICATIONS], {})
         misc.ensureObjectInMaps(scope, [STORM_NOTIFICATIONS], {})
+        misc.ensureObjectInMaps(scope, [YARN_NOTIFICATIONS], {})
         for f in scope[FILES]:
             if NOTIFY in f:
                 f[_NOTIFY_] = []
@@ -282,6 +292,16 @@ def setServiceNotifications(context):
                                     scope[STORM_NOTIFICATIONS][notification] = topology
                                 else:
                                     misc.ERROR("Files: '{}': There is no topology '{}' defined in this deployment".format(f[FSRC], topologyName))
+                            f[_NOTIFY_].append(notification)
+                    elif notification.startswith(NOTIFY_YARN_PREFIX):
+                        if not context.toExclude(SCOPE_YARN):
+                            if not notification in scope[YARN_NOTIFICATIONS]:
+                                serviceName = notification[len(NOTIFY_YARN_PREFIX):]
+                                service = lookupYarnService(model, serviceName)
+                                if service:
+                                    scope[YARN_NOTIFICATIONS][notification] = service
+                                else:
+                                    misc.ERROR("Files: '{}': There is no yarn_services '{}' defined in this deployment".format(f[FSRC], serviceName))
                             f[_NOTIFY_].append(notification)
                     else:
                         misc.ERROR("Files: '{0}': notify '{1}' must begin with 'systemd://', 'supervisor://' or 'storm://'".format(f[FSRC], notification))

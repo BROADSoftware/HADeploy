@@ -1,4 +1,4 @@
-# -------------------------------------------------------------------------------- Handle Yarn services stop
+# -------------------------------------------------------------------------------- Handle Yarn services stop before removal
 
 {{% if src.yarn_services is defined and  src.yarn_services|length > 0 %}}
 

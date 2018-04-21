@@ -1,4 +1,4 @@
-# -------------------------------------------------------------------------------- Handle Yarn services status
+# -------------------------------------------------------------------------------- Handle Yarn services start
 
 {{% if src.yarn_services is defined and  src.yarn_services|length > 0 %}}
 
@@ -65,7 +65,7 @@
   - name: Wait for all Yarn services to be running
     yarn_services:
       names: "{{{data.yarn.allServices}}}"
-      state: running
+      state: RUNNING
       kerberos: {{{ src.yarn_relay._kerberos_ }}}
 {{% if src.yarn_relay.hadoop_conf_dir is defined %}}
       hadoop_conf_dir: {{{src.yarn_relay.hadoop_conf_dir}}} 

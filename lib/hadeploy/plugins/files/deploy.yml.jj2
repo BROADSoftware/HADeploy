@@ -19,14 +19,11 @@
 {{% if scope.files|length > 0 or  scope.trees|length > 0 %}}
 - hosts: {{{ scopeName }}}
   any_errors_fatal: {{{ src.exit_on_fail }}}
-{{% if scope.willUseMavenRepo or scope.stormNotifications|length > 0 %}}
+{{% if scope.willUseMavenRepo %}}
   roles:
 {{% endif %}}
 {{% if scope.willUseMavenRepo %}}
     - lxml
-{{% endif %}}
-{{% if scope.stormNotifications|length > 0 %}}
-    - storm_modules
 {{% endif %}}
 
   tasks:
@@ -149,7 +146,16 @@
 
 
 
-{{% if scope.systemdNotifications|length > 0  or scope.supervisorPrgNotification|length > 0 or scope.stormNotifications|length > 0 %}}
+{{% if scope.yarnNotifications|length > 0 %}}
+# ------------------- Pre-tasks for Yarn services notification handling
+  - set_fact:
+      yarn_service_to_restart0: []
+      yarn_service_to_restart1: []
+{{%endif%}}
+
+
+
+{{% if scope.systemdNotifications|length > 0  or scope.supervisorPrgNotification|length > 0 or scope.stormNotifications|length > 0 or scope.yarnNotifications|length > 0 %}}
 # ----------------------------------------------------- Handler for notification
   handlers:
 {{%endif%}}
@@ -191,17 +197,29 @@
 {{%endif%}}
 
 
+{{% if scope.yarnNotifications|length > 0 %}}
+{{% for notified, service in scope.yarnNotifications.iteritems() %}}
+  - name: Flag Yarn service "{{{service.name}}}" to restart
+    set_fact:
+      yarn_service_to_restart0: '{{yarn_service_to_restart0 + ["{{{service.name}}}"] }}'
+    listen: "reload_{{{notified}}}"
+{{% endfor %}}
+{{%endif%}}
+
+
 
 {{% if scope.stormNotifications|length > 0 %}}
 # ----------------------------------------------------- Effective restart of topologies
     
 - hosts: {{{ src.storm_relay.host }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
   vars:
     conf_by_topology:
 {{% for topology in src.storm_topologies %}}
       "{{{ topology.name }}}": { wait_time_secs: {{{ topology.wait_time_secs }}}, launching_cmd: "{{{ topology.launching_cmd }}}", launching_dir: "{{{ topology.launching_dir }}}", timeout_secs: "{{{ topology.timeout_secs}}}" }
 {{% endfor %}}
-
+  roles:
+  - storm_modules
   tasks:  
 
 #  - debug: var=topology_to_restart   
@@ -300,5 +318,155 @@
 
 {{%endif%}}
 
-{{%endif%}}
+
+{{% if scope.yarnNotifications|length > 0 %}}
+# ----------------------------------------------------- Effective restart of yarn services
+
+- hosts: {{{ src.yarn_relay.host }}}
+  any_errors_fatal: {{{ src.exit_on_fail }}}
+  vars:
+    conf_by_service:
+{{% for service in src.yarn_services %}}
+      "{{{ service.name }}}": { launching_cmd: "{{{ service.launching_cmd }}}", launching_dir: "{{{ service.launching_dir }}}"{{% if service.killing_cmd is defined %}}, killing_cmd: "{{{ service.killing_cmd }}}" {{%endif%}} }
 {{% endfor %}}
+
+  roles:
+  - yarn_modules  
+  tasks:
+
+
+{{% if src.yarn_relay._kerberos_ %}}
+{{% if  src.yarn_relay._relayKeytabFolder_ is defined %}}
+  - name: Create keytabs location
+    file: path={{{ src.yarn_relay._relayKeytabFolder_}}} owner={{ansible_user}}  mode="0700" state=directory
+{{%endif%}}
+{{% if  src.yarn_relay.local_keytab_path is defined %}}
+  - name: Push keytab file
+    copy: src={{{src.yarn_relay.local_keytab_path }}} dest={{{src.yarn_relay.relay_keytab_path }}} owner={{ansible_user}} mode="0400"
+{{%endif%}}
+  - name: Perform kinit for Yarn UI access
+    shell: kinit -kt {{{ src.yarn_relay.relay_keytab_path }}} {{{ src.yarn_relay.principal }}}
+    changed_when: false
+{{% if src.yarn_relay.kdebug %}} 
+  - name: Check kerberos ticket for Yarn access
+    shell: klist
+    register: klist_result
+    changed_when: false
+  - debug: var=klist_result
+{{%endif%}}
+{{%endif%}}
+
+
+  - name: Check Yarn services state before restart
+    yarn_services:
+      names: "{{{data.yarn.allServices}}}"
+      state: get
+      kerberos: {{{ src.yarn_relay._kerberos_ }}}
+{{% if src.yarn_relay.hadoop_conf_dir is defined %}}
+      hadoop_conf_dir: {{{src.yarn_relay.hadoop_conf_dir}}} 
+{{%endif%}}
+{{% if src.yarn_relay.rm_endpoint is defined %}}
+      rm_endpoint: {{{src.yarn_relay.rm_endpoint}}} 
+{{%endif%}}
+    register: initial_services_state
+    
+#  - debug: var=initial_services_state
+#  - debug: var=conf_by_service
+
+  - name: Compute services to be effectivly restarted
+    set_fact:
+      yarn_service_to_restart1: '{{yarn_service_to_restart1 + [ item ] }}'
+    when: initial_services_state.status[item].state != "nonexistent"
+    with_items: "{{yarn_service_to_restart0}}"
+    
+    
+#  - debug: var=yarn_service_to_restart0
+#  - debug: var=yarn_service_to_restart1
+
+  - name: Stop Yarn services using provided script  
+    shell: "{{ conf_by_service[item].killing_cmd }}"
+    args:
+      chdir: "{{ conf_by_service[item].launching_dir }}"
+    when: (initial_services_state.status[item].state != 'nonexistent') and (conf_by_service[item].killing_cmd is defined)
+    with_items: "{{yarn_service_to_restart1}}"
+
+  - name: Stop Yarn services using Yarn REST API 
+    yarn_services:
+      names: "{{item}}"
+      state: killed
+      kerberos: {{{ src.yarn_relay._kerberos_ }}}
+{{% if src.yarn_relay.hadoop_conf_dir is defined %}}
+      hadoop_conf_dir: {{{src.yarn_relay.hadoop_conf_dir}}} 
+{{%endif%}}
+{{% if src.yarn_relay.rm_endpoint is defined %}}
+      rm_endpoint: {{{src.yarn_relay.rm_endpoint}}} 
+{{%endif%}}
+    when: (initial_services_state.status[item].state != 'nonexistent') and (conf_by_service[item].killing_cmd is not defined)
+    with_items: "{{yarn_service_to_restart1}}"
+
+
+  - name: Wait for yarn services to be stopped 
+    yarn_services:
+      names: "{{yarn_service_to_restart1|join(',')}}"
+      state: nonexistent
+      kerberos: {{{ src.yarn_relay._kerberos_ }}}
+{{% if src.yarn_relay.hadoop_conf_dir is defined %}}
+      hadoop_conf_dir: {{{src.yarn_relay.hadoop_conf_dir}}} 
+{{%endif%}}
+{{% if src.yarn_relay.rm_endpoint is defined %}}
+      rm_endpoint: {{{src.yarn_relay.rm_endpoint}}} 
+{{%endif%}}
+    when: yarn_service_to_restart1|length > 0
+
+
+  - name: Relaunch Yarn services  
+    shell: "{{ conf_by_service[item].launching_cmd }}"
+    args:
+      chdir: "{{ conf_by_service[item].launching_dir }}"
+    when: (initial_services_state.status[item].state != 'nonexistent')
+    with_items: "{{yarn_service_to_restart1}}"
+
+
+  - name: Wait for all relaunched Yarn services to be running
+    yarn_services:
+      names: "{{yarn_service_to_restart1|join(',')}}"
+      state: RUNNING
+      kerberos: {{{ src.yarn_relay._kerberos_ }}}
+{{% if src.yarn_relay.hadoop_conf_dir is defined %}}
+      hadoop_conf_dir: {{{src.yarn_relay.hadoop_conf_dir}}} 
+{{%endif%}}
+{{% if src.yarn_relay.rm_endpoint is defined %}}
+      rm_endpoint: {{{src.yarn_relay.rm_endpoint}}} 
+{{%endif%}}
+    when: yarn_service_to_restart1|length > 0
+    
+  - name: Check Yarn services state after deployment
+    yarn_services:
+      names: "{{{data.yarn.allServices}}}"
+      state: get
+      kerberos: {{{ src.yarn_relay._kerberos_ }}}
+{{% if src.yarn_relay.hadoop_conf_dir is defined %}}
+      hadoop_conf_dir: {{{src.yarn_relay.hadoop_conf_dir}}} 
+{{%endif%}}
+{{% if src.yarn_relay.rm_endpoint is defined %}}
+      rm_endpoint: {{{src.yarn_relay.rm_endpoint}}} 
+{{%endif%}}
+    register: final_services_state
+        
+#  - debug: var=final_services_state
+
+  - name: Display Yarn services state after deployment
+    set_fact:
+      status_list: "{{ status_list|default([])  +  [ { 'name': item,  'status': final_services_state.status[item].state } ] }}"  
+    with_items: "{{ final_services_state.status|sort }}"
+    loop_control:
+      label: "{{ item }}:{{final_services_state.status[item].state}}"
+
+
+{{%endif%}}
+
+# Match -- if scope.files|length > 0 or  scope.trees|length > 0 -- 
+{{%endif%}} 
+
+#  Match -- for scopeName, scope in data.files.scopeByName.iteritems() -- 
+{{% endfor %}} 
