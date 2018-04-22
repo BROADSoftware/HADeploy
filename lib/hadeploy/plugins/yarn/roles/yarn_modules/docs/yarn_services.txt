@@ -20,14 +20,14 @@ Options (= is mandatory):
         looked up in local yarn-site.xml
         [Default: None]
 = state
-        target job state: `running', `killed', `nonexistent', `existing', `get'
-        `running': Wait for all jobs to be in RUNNING state. Also, can exit on timeout, or when detecting a failing job.
-        `killed': Issue a kill command if yarn job is running (or starting). If not, or already in `killed' state, do nothing.
+        target job state: `RUNNING', `killed', `nonexistent', `existing', `get'
+        `RUNNING': Wait for all jobs to be in RUNNING state. Also, can exit on timeout, or when detecting a failing job.
+        `killed': Issue a kill command if yarn job is RUNNING (or starting). If not, or already in `killed' state, do nothing.
         Exit immediately.
-        `nonexistent': Wait for all jobs to be not running.
+        `nonexistent': Wait for all jobs to be not RUNNING.
         `get': Do nothing. Return current jobs status
         [Default: None]
-- timeout_secs
+- timeout
         Timeout value when waiting a target state
         [Default: 120]
 Notes:

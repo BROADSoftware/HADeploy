@@ -90,7 +90,7 @@ HADeploy is aimed not only to perform initial deployment, but also to cleverly p
 
 in particular, file modification are only performed when needed. In some case, such modification need to trigger some other action, such as background process restart. This is the function of the `notify` attribute.
 
-This `notify` attribut is a list of string where each item can be of one of three forms:
+This `notify` attribute is a list of string where each item can be of one of three forms:
 
 - `"systemd://<systemd_unit_name>"`
 

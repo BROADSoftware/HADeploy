@@ -2,7 +2,7 @@
 
 ## 0.5.6
 
-- ???
+- **Added a [Yarn plugin](../plugins_reference/yarn/yarn_overview) to handle Yarn services (long running jobs) lifecycle.**
 
 ## 0.5.5
 

@@ -1,6 +1,6 @@
 # Conditional deployment
 
-Sometime, you want to skip a particuliar object creation, based on specifics condition. 
+Sometime, you want to skip a particular object creation, based on specifics condition. 
 
 It is quite easy to do with HADeploy, as most of the object declaration accept a `when:` attribute. If this boolean resolve to 'False', then the object creation will be skipped.
 

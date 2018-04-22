@@ -123,9 +123,9 @@ The file may contains:
   - name: "Remove kdescribe"
     yum: name=kdescribe state=absent
 ```  
-Note the way we access the `tools_target` variable. Explication of this syntax can be found [here](../../more/under_the_hood/#variables). 
+Note the way we access the `tools_target` variable. Explanation of this syntax can be found [here](../../more/under_the_hood/#variables). 
 
-The key point is this file is a snippet which will be agregated with many other to built the overall playbook, as described by [step 5 of the processing](../../more/under_the_hood) 
+The key point is this file is a snippet which will be aggregated with many other to built the overall playbook, as described by [step 5 of the processing](../../more/under_the_hood) 
 
 Another aspect is where to store these playbook files? As usual, a specific entry will provide a list of folders where HADeply will lookup your file:
 

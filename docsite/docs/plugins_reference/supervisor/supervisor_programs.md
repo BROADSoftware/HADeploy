@@ -55,7 +55,7 @@ supervisor_programs:
 ```
 This snippet create a program 'program1' running as a daemon. This program being a simple shell script (`program1.sh`) and will be managed by the [`supervisor named tech1`](./supervisors/#example).
 
-This program can then be managed (stopped/resarted/...) by:
+This program can then be managed (stopped/restarted/...) by:
 
 - The Web interface provided by the supervisor, if any.
 
@@ -84,7 +84,7 @@ supervisor_programs:
 * **Programs meant to be run under supervisor should not daemonize themselves**. Instead, they should run in the foreground. They should not detach from the terminal from which they are started.
 More info [here](http://supervisord.org/subprocess.html#nondaemonizing-of-subprocesses)
 
-* If the launched programs fork one or several child processes, there may be a problem on stop. Only the initial process will be killed by supervisor, and all children will become orphean. 
+* If the launched programs fork one or several child processes, there may be a problem on stop. Only the initial process will be killed by supervisor, and all children will become orphan. 
 There will be two solutions for this:
 
     * Catch the `stopsignal` and then kill all child processes.

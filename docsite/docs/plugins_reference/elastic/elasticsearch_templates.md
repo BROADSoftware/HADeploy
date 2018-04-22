@@ -2,7 +2,7 @@
 
 ## Synopsis
 
-Allow definition of a list of Elasticserch templates.
+Allow definition of a list of Elasticsearch templates.
 
 ## Attributes
 
@@ -77,9 +77,9 @@ elasticsearch_templates:
             format: "EEE MMM dd HH:mm:ss Z YYYY"
 
 ```
-## Idempotency
+## Idempotence
 
-For Templates, there is no idempotency concern, as a template can be recreated at anytime, without loosing any data.
+For Templates, there is no idempotence concern, as a template can be recreated at any time, without loosing any data.
 
 But keep in mind template recreation does not affect existing indices.
 

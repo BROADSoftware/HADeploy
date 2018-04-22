@@ -30,7 +30,7 @@ properties|no||A list of properties, allowing definition of this column family p
 
 ## presplit
 
-> NB: Please, note than unlike all other definition, presplitting is only effective at the initial table creation. If the table already exists, no modification is performed and the presplit: attribute is ignored.
+> NB: Please, note than unlike all other definition, presplitting is only effective at the initial table creation. If the table already exists, no modification is performed and the `presplit:` attribute is ignored.
 
 Presplitting can be expressed with one of the following 2 methods:
 ```yaml
@@ -117,7 +117,7 @@ hbase_tables:
     splits: ['BENJAMIN', 'JULIA', 'MARTIN', 'PAUL', 'VALENTIN']
 no_remove: yes
 ```
-Create a table with two column families, with all properties to default value. Table is presplit on an estimated distribution of first names. This table will not be removed by the application removal processing.
+Create a table with two column families, with all properties to default value. Table is presplitted on an estimated distribution of first names. This table will not be removed by the application removal processing.
 
 Following will create a table with two columns families and grant read access to members of `users` group through Apache Ranger.
 ```yaml

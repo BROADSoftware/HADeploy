@@ -2,7 +2,7 @@
 
 Aim of the Storm plugin is to handle Storm topologies lifecycle.
 
-- Start toplogies
+- Start topologies
 
 - Stop topologies
 
@@ -10,7 +10,7 @@ Aim of the Storm plugin is to handle Storm topologies lifecycle.
 
 This is achieved by:
 
-- Issuing command to the Storm subsystem throught the Storm UI REST API
+- Issuing command to the Storm subsystem through the Storm UI REST API
 
 - Start topology when required using a user provided launching script.
 
@@ -43,7 +43,7 @@ The `storm` plugin introduce three new actions:
 hadeploy --src ..... --action start
 ```
 
-Will start all toplogies described by the `storm_topologies` list. And 
+Will start all toplogies described by the [`storm_topologies`](./storm_topologies) list. And 
 
 ```sh
 hadeploy --src ..... --action stop
@@ -57,6 +57,10 @@ hadeploy --src ..... --action status
 
 will display current status of the topologies, in a rather primitive form.
 
+Also, the Storm plugin kill all running topologies at one of the first step of the removal action (`--action remove`).
+
+Of course, all this will occur only on topologies HADeploy is aware of (Defined with [`storm_topologies`](./storm_topologies)). Other topologies will not be impacted.
+
 ## Asynchronous mode
 
 A single topology launch take a signifiant amount of time. When there are several ones to launch, performing all launch simultaneously can save a lot of time. This is the default behavior of HADeploy.
@@ -64,7 +68,7 @@ A single topology launch take a signifiant amount of time. When there are severa
 In this default mode, all launching commands are run in a detached mode. Then HADeploy wait for all topologies to reach the `active` state.
 
 But this mode has a drawback. If a launch fail, there is no easy way to get the error message. 
-This is why this mode can be desactivated by setting the `async` attribute of [`storm_relay`](./storm_relay) to false. 
+This is why this mode can be deactivated by setting the `async` attribute of [`storm_relay`](./storm_relay) to false. 
 In such case, topologies wil be launched one at a time, and in case of error, processing will stop and appropriate error message will be raised.
 
 ### Topologies killing.

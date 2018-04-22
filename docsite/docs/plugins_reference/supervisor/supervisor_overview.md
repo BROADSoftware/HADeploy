@@ -148,13 +148,13 @@ An check on the edge node:
 
 ## Actions `stop`, `start` and `status`
 
-As just mentionned, the `Supervisor` plugin introduce three new actions:
+As just mentioned, the `Supervisor` plugin introduce three new actions:
 
 ```sh
 hadeploy --src ..... --action stop
 ```
 
-Will stop all `supervisor_programs` and then all supervisord dameon described by the `supervisors` list which have the `managed` flag to `true`. And: 
+Will stop all `supervisor_programs` and then all supervisord daemon described by the `supervisors` list which have the `managed` flag to `true`. And: 
 
 ```sh
 hadeploy --src ..... --action start
@@ -329,7 +329,7 @@ Let's comment it:
  
 But, there is a problem. To perform this last operation, HADeploy need to know most of the parameters of the supervisor (Mostly its file layout). This is why we need to insert the supervisor definition in the file, here at the end.
 
-But, we just want to describe it. We don't want to manage it (This is the role of the `init.yml` script). This is why we add the `managed: no` attribut.
+But, we just want to describe it. We don't want to manage it (This is the role of the `init.yml` script). This is why we add the `managed: no` attribute.
 
 > <sub>Don't be confused. Managing supervisor's program is not managing the supervisor by itself.</sub>
 
@@ -352,11 +352,11 @@ This pattern provide other benefits:
 But, how can we prevent a regular (non-root) user to launch the `init.yml` script ?
 
 A simple answer is to arrange for the root private key (`keys/root_id` in our case) to be accessible only by the root user (or by a priviledged users group) on the HADeploy node. 
-This is an easy way to bind priviledged access on target cluster to priviledged access on the deployment node.
+This is an easy way to bind priviledged access on target cluster to privileged access on the deployment node.
 
 ## Non-root deployment improved
 
-If you look at the previous `init.yml` and `app.yml`, you will find some redondancies:
+If you look at the previous `init.yml` and `app.yml`, you will find some redundancies:
 
 - The host inventory
 
@@ -364,7 +364,7 @@ If you look at the previous `init.yml` and `app.yml`, you will find some redonda
 
 So, we need some refactoring to have something more maintainable:
 
-First, we isolate our target cluster inventory defintion in a separate file `mycluster.yml`:
+First, we isolate our target cluster inventory definition in a separate file `mycluster.yml`:
 
 ```yaml
 hosts:

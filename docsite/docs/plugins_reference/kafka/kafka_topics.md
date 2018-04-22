@@ -56,7 +56,7 @@ Then the first partition (#0) will have two replicas, placed on brokers of id 10
 
 If `hdfs_relay` does not contains a `broker_id_map`, then the first partition (#0) will have two replicas, placed on brokers of id 1 and 2. 
 
-> NB: Recent version of Kafka introduced a 'Rack awarness' capability which ensure a good distribution of replica amongs several racks. This explicit partition assignment may now be used only on very specifics cases.
+> NB: Recent version of Kafka introduced a 'Rack awareness' capability which ensure a good distribution of replica amongst several racks. This explicit partition assignment may now be used only on very specifics cases.
 
 > NB: Partition re-assignment on topic modification is not supported. One may use the kafka provided partition reassignment tool (kafka-reassign-partitions.sh) for this.
  

@@ -10,7 +10,7 @@ The main steps of an HADeploy run are the following:
 
 * Build a data model in memory representing this file content.
 
-* Check this data model for coherency,enrich it, or transform some data to ease the next stages.
+* Check this data model for coherence, enrich it, or transform some data to ease the next stages.
 
 * From this model, generate an Ansible playbook
 

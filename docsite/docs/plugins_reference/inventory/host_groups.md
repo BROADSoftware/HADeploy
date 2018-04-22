@@ -25,7 +25,7 @@ Note than same host can belong to several groups.
 
 host_groups:
 - name: data_nodes
-  hosts:	# This host list in standart YAML style
+  hosts:	# This host list in standard YAML style
   - dn1
   - dn2
   - dn3

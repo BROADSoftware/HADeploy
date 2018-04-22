@@ -24,14 +24,14 @@ The main steps of an HADeploy run are the following:
 
 ## Variables
 
-When using HADeploy in an advanced way (i.e using the `ansible` module, or developping your own plugin), you may be disturbed by different variable notation. 
+When using HADeploy in an advanced way (i.e using the `ansible` module, or developing your own plugin), you may be disturbed by different variable notation. 
 There is in fact 3 kinds of variables involved in HADeploy
 
 #### `${my_variable}` 
 
 Or `<<my_variable>>`
 
-This is the only variable notation you should be aware of for standart usage of HADeploy.
+This is the only variable notation you should be aware of for standard usage of HADeploy.
 
 Such variables are resolved during step 1 (Building of the deployment file).
 
@@ -39,7 +39,7 @@ Refer to [alternate notation](../plugins_reference/core/vars/#alternate-notation
 
 #### `{{{my_variable}}}`
 
-This is the variable notation used during the rendering of step 6. This will allow all snippets provided by the plugin to acccess variables of the model.
+This is the variable notation used during the rendering of step 6. This will allow all snippets provided by the plugin to access variables of the model.
 
 #### `{{my_variable}}`
 
@@ -85,7 +85,7 @@ This is intended to validate description for all action.
 
 A plugin is a component which may be involved in all phases described at the befinning of this page. It is typically made of:
 
-* A partial schema. All plugin's YAML schema parts will be merged to provide the overall schema against which the deployement file will be validated.
+* A partial schema. All plugin's YAML schema parts will be merged to provide the overall schema against which the deployment file will be validated.
 
 * Some Python code called to check and enrich the model. This code must include a subclass of the `Plugin` class, to handle plugin properties and lifecycle.
 

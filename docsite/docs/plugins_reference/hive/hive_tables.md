@@ -193,7 +193,7 @@ Just think of a simple use case: Breaking a `full_name` field (content: i.e. 'Sy
 This problem has been addressed by some tools in the RDBMS fields. But there is no miracle. These tools are in fact more frameworks which globally act the following way:
 
 * Version database schema
-* Request the user to provide a set of migration scripts to tranform database version X to version Y
+* Request the user to provide a set of migration scripts to transform database version X to version Y
 * For each migration, lookup source and target version. And try to find a appropriate sequence of user's migration scripts
 
 Currently, HADeploy do not provide such solution yet. But, under the hood, all HIVE operation are performed by a special tools: [jdchive](https://github.com/BROADSoftware/jdchive). This tool has been designed with this migraton pattern in mind. Check [here](https://github.com/BROADSoftware/jdchive#database-migration)
@@ -367,7 +367,7 @@ hive_tables:
 
 ## HBase table mapping
 
-A frequent use case is the mapping of HBase table by HIVE, to ease quering. This can be achieved using HADeply. 
+A frequent use case is the mapping of HBase table by HIVE, to ease querying. This can be achieved using HADeploy. 
 
 ### Example:
 

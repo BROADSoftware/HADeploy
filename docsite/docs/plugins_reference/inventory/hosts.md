@@ -32,10 +32,6 @@ become\_flags|no|Allows you to set the flags passed to the selected escalation m
 when|no|Boolean. Allow [conditional deployment](../../more/conditional_deployment) of this item.<br>Default `True` 
 
 
-
-
-
-
 > If the user launching HADeploy have itself a private key granting access to all the hosts, there is no need to define `ssh_private_key_file` and `ssh_password` in any Ansible or HADeploy file.
 
 ## Example

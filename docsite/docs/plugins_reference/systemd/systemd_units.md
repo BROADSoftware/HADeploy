@@ -6,7 +6,7 @@ Provide a list of `systemd` service units, related to the deployed application.
 
 This will allow to declare node local application processes as system services. All `systemctl` commands (start, stop, status, ...) will then apply to this newly created service.
 
-This module require `root` access on the target host. If you need to deploy local services under the control of a non-priviledged user, you can use the ['supervisor'](../supervisor/supervisor_overview) module.
+This module require `root` access on the target host. If you need to deploy local services under the control of a non-privileged user, you can use the ['supervisor'](../supervisor/supervisor_overview) module.
 
 This module will also allow HADeploy to handle start and stop of the defined services.
 
@@ -30,7 +30,7 @@ A systemd unit file encode information about several system object type, such as
 
 A systemd.service unit file will provide all information to handle operation of a service life cycle, such as start, stop, restart on failure, reload, etc.. Full documentation can be found [here](https://www.freedesktop.org/software/systemd/man/systemd.service.html#)
 
-HADeploy will place the provided unit file in the `/usr/lib/systemd/system` folder and trigger appropriate opeation to make systemd aware of this newly created (or modified) file.
+HADeploy will place the provided unit file in the `/usr/lib/systemd/system` folder and trigger appropriate operation to make systemd aware of this newly created (or modified) file.
 
 ### Unit file example
 

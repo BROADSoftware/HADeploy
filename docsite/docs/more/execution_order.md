@@ -70,6 +70,7 @@ Here are the values per plugin and action:
 |Systemd              |   2500 (6) |   6000     |   1800     | 5000   | 5000  | 5000   |
 |Supervisor           |   2510 (6) |   7000     |   1600     | 6000   | 4000  | 5000   |
 |Storm                |   2520 (6) |   7100 (5) |   1500 (7) | 6500   | 3500  | 5000   |
+|Yarn                 |   2520 (6) |   7050 (5) |   1550 (7) | 6400   | 3600  | 5000   |
 
 NB: `grooming` is an internal action, performed on [step 4 of the run](./under_the_hood)
 
@@ -87,6 +88,6 @@ These priorities value are of interest if you insert some raw ansible playbooks 
 
 (6): Must be before 'files', for notification handling
 
-(7): Does not remove anything. But stop all running topologies
+(7): Does not remove anything, but stop all running Storm topologies and/or Yarn services 
 
 

@@ -71,15 +71,13 @@ Here is some requirement about the launching command or script.
 
 - It must ensure setting topology name same as the one provided in this description.
 
-- If `launching_dir` is not defined, the the `launching_cmd` must be refer to absolute path for all its part.
-
-- It must be fully synchronous, i.e. not running in the background. 
+- It must be fully synchronous, i.e. not running in the background. But it must exit once topology is started.
 
 ## For kerberos: client_jaas.conf
 
 In a kerboros secured context, the storm command use a configuration file to define how it will authenticate against the Storm server. 
 
-For HADeploy usage, this file must be configured to use the current ticket in the local cache. Unfortunatly, this is not always the case. Sometime, it may be configured to use another principal and keytab.
+For HADeploy usage, this file must be configured to use the current ticket in the local cache. Unfortunately, this is not always the case. Sometime, it may be configured to use another principal and keytab.
 
 If this is the case, we suggest to explicitly provide such a configuration file: For example, in an Hortonworks context, one can write:
 

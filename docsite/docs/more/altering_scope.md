@@ -1,9 +1,9 @@
 # Altering scope
 
-Sometime, it may be usefull to execute only parts of a full deployment. May be you have only a small modification to propagate, 
+Sometime, it may be useful to execute only parts of a full deployment. May be you have only a small modification to propagate, 
 and we want cut off execution time. Or may be some part are not relevant for your current context.
 
-HADeploy provide a mechanisme to scope the deployment (or removal) process to only some part, thus achieving partial execution.
+HADeploy provide a mechanism to scope the deployment (or removal) process to only some part, thus achieving partial execution.
 
 This mechanisme is driven by:
 

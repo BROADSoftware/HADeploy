@@ -12,7 +12,7 @@ HADeploy can be installed on a Linux system, or on a MAC OS X workstation
 
 ### Ansible
 
-HADeploy internally use [Ansible](http://docs.ansible.com/ansible/). If it is not already installed, you can install it independantly, or let HADeploy install it automatically.
+HADeploy internally use [Ansible](http://docs.ansible.com/ansible/). If it is not already installed, you can install it independently, or let HADeploy install it automatically.
 
 NB: HADeploy require at least **Ansible version 2.3.0** 
 
@@ -20,7 +20,7 @@ NB: HADeploy require at least **Ansible version 2.3.0**
  
 HADeploy (And Ansible) can be installed inside Python [virtual Environnemnt](https://virtualenv.pypa.io/en/stable/).
 
-Installing inside virtual environement has several advantages:
+Installing inside virtual environment has several advantages:
 
 * Installation does not require root access.
 
@@ -28,7 +28,7 @@ Installing inside virtual environement has several advantages:
 
 * Your installation will not interfere with others users. 
 
-One drawback is you will need to activate your virtual environnement on each login. But you can automate this in your `~/.profile`.
+One drawback is you will need to activate your virtual environment on each login. But you can automate this in your `~/.profile`.
  
 Of course, if you want to share a single installation of HADeploy amongst all users of your system, you must install it globally.
 
@@ -71,7 +71,7 @@ You are now ready to used HADeploy from this workstation.
 
 ## Latest release via `pip` (Mac OS X)
 
-`pip` is the Python package manager. If not already installed, you can easely install it. 
+`pip` is the Python package manager. If not already installed, you can easily install it. 
 
 ```bash
 sudo easy_install pip

@@ -70,7 +70,7 @@ The offending line appears to be:
 ```
 
 
-More detail on how to encrypt a value and providing a password on executuion at [encrypted variables](../core/encrypted_vars)
+More detail on how to encrypt a value and providing a password on execution at [encrypted variables](../core/encrypted_vars)
 
 ## Simple CA_BUNDLE
  

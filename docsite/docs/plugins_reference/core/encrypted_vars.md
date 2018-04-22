@@ -12,7 +12,7 @@ Attributes are variables name.
 
 ## Example
 
-A typical use case of encryption is to protect the`ssh_password` in a host definition. Encryption can be achived by provided the values as in the following sample:
+A typical use case of encryption is to protect the`ssh_password` in a host definition. Encryption can be achieved by provided the values as in the following sample:
 
 ```yaml
 
@@ -36,7 +36,7 @@ as the variable resolution must be performed by Ansible, not by HADeploy. See [V
 
 NB: As the encrypted value is directly provided to Ansible, which will decrypt it in memory, HADeploy itself does not perform any decryption. So, there is no risk to have a decrypted, clear value in some intermediate file.
 
-Using this pattern, most of the values of type string can be encrypted in the depployement file.
+Using this pattern, most of the values of type string can be encrypted in the deployment file.
 
 Another use case of encryption is to protect the ranger admin password in the `ranger_relay` definition:
 ```yaml
@@ -61,7 +61,7 @@ ranger_relay:
 
 ## Encrypting a value
 
-HADeploy encryption rely on the Ansible Vault capability. So, the encryption will be performed using `ansible-vault` commmand.
+HADeploy encryption rely on the Ansible Vault capability. So, the encryption will be performed using `ansible-vault` command.
 
 Here is a simple approach to achieve this:
 

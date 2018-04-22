@@ -2,7 +2,7 @@
 
 ## Synopsis
 
-Allow definition of a list of Elasticserch indices.
+Allow definition of a list of Elasticsearch indices.
 
 ## Attributes
 

@@ -45,7 +45,7 @@ HADeploy can also take as input an environment description file that encourages 
 
 ### Idempotence
 
-HADeploy embeds the lightweight Ansible tool as its main execution engine. By doing so, it benefits from the idempotency principles at the core of Ansible design.
+HADeploy embeds the lightweight Ansible tool as its main execution engine. By doing so, it benefits from the idempotence principles at the core of Ansible design.
 As with Ansible, you will be able to run the same application deployment multiple times and expect the same result. If the application is in the expected state on the target cluster, 
 then HADeploy will not perform any actions, but simply display that it is satisfied with the current state.
 

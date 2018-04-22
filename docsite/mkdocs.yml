@@ -74,6 +74,10 @@ pages:
   - Users:
     - "groups": plugins_reference/users/groups.md
     - "users": plugins_reference/users/users.md
+  - Yarn:
+    - yarn_overview: plugins_reference/yarn/yarn_overview.md
+    - yarn_relay: plugins_reference/yarn/yarn_relay.md
+    - yarn_service: plugins_reference/yarn/yarn_services.md
 - More:
   - "Conditional deployment": more/conditional_deployment.md
   - "Under the hood": more/under_the_hood.md
