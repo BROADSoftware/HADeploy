@@ -275,7 +275,7 @@
       wait_time_secs:  "{{ conf_by_topology[item].wait_time_secs }}"
       timeout_secs:  "{{ conf_by_topology[item].timeout_secs }}"
       kerberos:  {{{ src.storm_relay._kerberos_ }}}
-    when: status_by_name[item] == "active"
+    when: status_by_name[item] == "ACTIVE"
     with_items: "{{topology_to_restart}}"
     
   - name: Wait topologies to restart to be down
@@ -285,7 +285,7 @@
       state: nonexistent
       timeout_secs: "{{ conf_by_topology[item].timeout_secs }}"
       kerberos: {{{ src.storm_relay._kerberos_ }}}
-    when: status_by_name[item] == "active"
+    when: status_by_name[item] == "ACTIVE"
     with_items: "{{topology_to_restart}}"
 
 
@@ -297,7 +297,7 @@
     async: 1000
     poll: 0
 {{% endif %}}    
-    when: status_by_name[item] == "active"
+    when: status_by_name[item] == "ACTIVE"
     with_items: "{{topology_to_restart}}"
     
   - name: Wait retstarted topologies to be up and running
@@ -307,7 +307,7 @@
       state: existing
       timeout_secs: "{{ conf_by_topology[item].timeout_secs }}"
       kerberos: {{{ src.storm_relay._kerberos_ }}}
-    when: status_by_name[item] == "active"
+    when: status_by_name[item] == "ACTIVE"
     with_items: "{{topology_to_restart}}"
 
 {{% if src.storm_relay._kerberos_ %}}

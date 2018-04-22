@@ -94,6 +94,10 @@ We can modify it and trigger a new deployment. HADeploy will notice the modifica
 
 We can restart it manually. But, HADeploy provide a mechanism to automate this. By adding a `notify` attribute to the [`files`](../files/files) definition. See the example below.
 
+## Ranger support.
+
+Ranger handling on Yarn jobs is based on Yarn Queue management. HADeploy allow you to define such permission using [yarn_ranger_policies](../ranger/yarn_ranger_policies/).
+
 ## Example
 
 Here is a snippet describing the deployment of a simple Yarn services 'datastep':
@@ -149,5 +153,4 @@ This is of course not complete, as it lack at least the target cluster definitio
 Please refer to [`yarn_relay`](./yarn_relay) and [`yarn_services`](./yarn_services) for a complete description. And to [`files`](../files/files) for the `notify` syntax.
 
 Of course, before being able to launch the services (`--action start`), a deployment must be performed before (`--action deploy`)
-
 

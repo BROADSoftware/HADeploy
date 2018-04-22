@@ -43,9 +43,9 @@ options:
     default: None
   state:
     description:
-      - 'target topology state: C(active), C(inactive), C(killed), C(nonexistent), C(existing), C(get)'
-      - 'C(active): Set in C(active) state if was C(inactive). Error if topology does not exists'
-      - 'C(inactive): Set in C(inactive) state if was C(active). Error if topology does not exists'
+      - 'target topology state: C(ACTIVE), C(inactive), C(killed), C(nonexistent), C(existing), C(get)'
+      - 'C(ACTIVE): Set in C(ACTIVE) state if was C(inactive). Error if topology does not exists'
+      - 'C(inactive): Set in C(inactive) state if was C(ACTIVE). Error if topology does not exists'
       - 'C(killed): Issue a kill command if topology is existing. If not, or already in C(killed) state, do nothing. Exit immediately.' 
       - 'C(nonexistent): Issue a kill command if topology is existing. If not, or already in C(killed) state, do nothing. Wait for the topology to be removed.' 
       - 'C(existing): Do nothing, but wait for the topology to be running' 
@@ -131,7 +131,7 @@ class Token:
 
 # These are the possible value of the state command.
 class State:
-    ACTIVE="active"
+    ACTIVE="ACTIVE"
     KILLED="killed"
     INACTIVE="inactive"
     NONEXISTENT="nonexistent"
@@ -198,7 +198,7 @@ class StormRestApi:
     def activateTopology(self, p):
         topology = self.getTopologyByName(p.name)
         if topology != None:
-            if topology[Token.STATUS] == Satus.INACTIVE:
+            if topology[Token.STATUS] == Status.INACTIVE:
                 p.changed = True
                 if not p.checkMode:
                     self.post("/api/v1/topology/{}/activate".format(topology[Token.ID]))
@@ -225,7 +225,7 @@ def main():
         argument_spec = dict(
             ui_url = dict(required=True),
             name = dict(required=True),
-            state = dict(required=True, choices=['active','killed','inactive','existing','nonexistent','get']),
+            state = dict(required=True, choices=['ACTIVE','killed','inactive','existing','nonexistent','get']),
             wait_time_secs = dict(required=False, type='int', default=30),
             timeout_secs = dict(required=False, type='int', default=60),
             kerberos = dict(required=False, type='bool', default=False),
@@ -294,7 +294,9 @@ def main():
         status = topology[Token.STATUS]
     else:
         status = Status.NONEXISTENT
-    module.exit_json(changed=p.changed, status=status.lower(), logs=logs)
+    if status != Status.ACTIVE:
+        status = status.lower()
+    module.exit_json(changed=p.changed, status=status, logs=logs)
 
 
 from ansible.module_utils.basic import *
