@@ -99,7 +99,7 @@
     file: path="{{{ file._cacheTarget_ }}}" mode="0644"  # 0644 as hdfs user must be able to read it 
 {{% endif %}}
   - name: Push '{{{file._cacheTarget_}}}' to HDFS as {{{file._target_}}}
-    hdfs_put: src={{{file._cacheTarget_}}} hdfs_dest={{{file._target_}}} owner={{{file.owner}}} group={{{file.group}}} mode="{{{file.mode}}}" hdfs_user={{{src.hdfs_relay.user}}}
+    hdfs_put: src={{{file._cacheTarget_}}} hdfs_dest={{{file._target_}}} owner={{{file.owner}}} group={{{file.group}}} mode="{{{file.mode}}}"{{%if src.hdfs_relay.hadoop_conf_dir is defined%}} hadoop_conf_dir={{{src.hdfs_relay.hadoop_conf_dir}}}{{%endif%}}{{%if src.hdfs_relay.webhdfs_endpoint is defined%}} webhdfs_endpoint={{{src.hdfs_relay.webhdfs_endpoint}}}{{%endif%}} hdfs_user={{{src.hdfs_relay.user}}}
 {{% endfor %}}
 
 {{% for tree in data.hdfs.trees %}}
@@ -126,9 +126,9 @@
 {{% endif %}}
 {{% endif %}}
   - name: Create folder '{{{tree.dest_folder}}}'
-    hdfs_file: hdfs_path={{{tree.dest_folder}}} state=directory  owner={{{tree.owner}}} group={{{tree.group}}} mode="{{{tree.folder_mode}}}" hdfs_user={{{src.hdfs_relay.user}}}
+    hdfs_file: hdfs_path={{{tree.dest_folder}}} state=directory  owner={{{tree.owner}}} group={{{tree.group}}} mode="{{{tree.folder_mode}}}"{{%if src.hdfs_relay.hadoop_conf_dir is defined%}} hadoop_conf_dir={{{src.hdfs_relay.hadoop_conf_dir}}}{{%endif%}}{{%if src.hdfs_relay.webhdfs_endpoint is defined%}} webhdfs_endpoint={{{src.hdfs_relay.webhdfs_endpoint}}}{{%endif%}} hdfs_user={{{src.hdfs_relay.user}}}
   - name: Push '{{{tree._cacheTarget_}}}' to HDFS as {{{tree.dest_folder}}}
-    hdfs_put: src={{{tree._cacheTarget_}}} hdfs_dest={{{tree.dest_folder}}} owner={{{tree.owner}}} group={{{tree.group}}} mode="{{{tree.file_mode}}}" directory_mode="{{{tree.folder_mode}}}" hdfs_user={{{src.hdfs_relay.user}}}
+    hdfs_put: src={{{tree._cacheTarget_}}} hdfs_dest={{{tree.dest_folder}}} owner={{{tree.owner}}} group={{{tree.group}}} mode="{{{tree.file_mode}}}" directory_mode="{{{tree.folder_mode}}}"{{%if src.hdfs_relay.hadoop_conf_dir is defined%}} hadoop_conf_dir={{{src.hdfs_relay.hadoop_conf_dir}}}{{%endif%}}{{%if src.hdfs_relay.webhdfs_endpoint is defined%}} webhdfs_endpoint={{{src.hdfs_relay.webhdfs_endpoint}}}{{%endif%}} hdfs_user={{{src.hdfs_relay.user}}}
 {{% endfor %}}
 {{%endif%}}
 
@@ -187,7 +187,7 @@
     when: st.stat.isdir  
 
   - name: Push '{{{file._src_}}}' to HDFS as '{{{file._target_}}}'
-    hdfs_put: src={{{file._src_}}} hdfs_dest={{{file._target_}}} owner={{{file.owner}}} group={{{file.group}}} mode="{{{file.mode}}}" hdfs_user={{{src.hdfs_relay.user}}}
+    hdfs_put: src={{{file._src_}}} hdfs_dest={{{file._target_}}} owner={{{file.owner}}} group={{{file.group}}} mode="{{{file.mode}}}"{{%if src.hdfs_relay.hadoop_conf_dir is defined%}} hadoop_conf_dir={{{src.hdfs_relay.hadoop_conf_dir}}}{{%endif%}}{{%if src.hdfs_relay.webhdfs_endpoint is defined%}} webhdfs_endpoint={{{src.hdfs_relay.webhdfs_endpoint}}}{{%endif%}} hdfs_user={{{src.hdfs_relay.user}}}
 {{% endfor %}}
 
 {{% for tree in scope.trees %}}
@@ -201,9 +201,9 @@
     when: not st.stat.isdir  
 
   - name: Create folder '{{{tree.dest_folder}}}'
-    hdfs_file: hdfs_path={{{tree.dest_folder}}} state=directory  owner={{{tree.owner}}} group={{{tree.group}}} mode="{{{tree.folder_mode}}}" hdfs_user={{{src.hdfs_relay.user}}}
+    hdfs_file: hdfs_path={{{tree.dest_folder}}} state=directory  owner={{{tree.owner}}} group={{{tree.group}}} mode="{{{tree.folder_mode}}}"{{%if src.hdfs_relay.hadoop_conf_dir is defined%}} hadoop_conf_dir={{{src.hdfs_relay.hadoop_conf_dir}}}{{%endif%}}{{%if src.hdfs_relay.webhdfs_endpoint is defined%}} webhdfs_endpoint={{{src.hdfs_relay.webhdfs_endpoint}}}{{%endif%}} hdfs_user={{{src.hdfs_relay.user}}}
   - name: Push '{{{tree._src_}}}' to HDFS to '{{{tree.dest_folder}}}'
-    hdfs_put: src={{{tree._src_}}} hdfs_dest={{{tree.dest_folder}}} owner={{{tree.owner}}} group={{{tree.group}}} mode="{{{tree.file_mode}}}" directory_mode="{{{tree.folder_mode}}}" hdfs_user={{{src.hdfs_relay.user}}}
+    hdfs_put: src={{{tree._src_}}} hdfs_dest={{{tree.dest_folder}}} owner={{{tree.owner}}} group={{{tree.group}}} mode="{{{tree.file_mode}}}" directory_mode="{{{tree.folder_mode}}}"{{%if src.hdfs_relay.hadoop_conf_dir is defined%}} hadoop_conf_dir={{{src.hdfs_relay.hadoop_conf_dir}}}{{%endif%}}{{%if src.hdfs_relay.webhdfs_endpoint is defined%}} webhdfs_endpoint={{{src.hdfs_relay.webhdfs_endpoint}}}{{%endif%}} hdfs_user={{{src.hdfs_relay.user}}}
 {{% endfor %}}
 
 {{% if data.hdfs.credentialByHost[scopeName] is defined %}}
