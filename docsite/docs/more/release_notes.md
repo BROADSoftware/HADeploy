@@ -5,6 +5,7 @@
 - **Added a [Yarn plugin](../plugins_reference/yarn/yarn_overview) to handle Yarn services (long running jobs) lifecycle.**
 - Storm topologies ACTIVE status is now displayed in upper case, for better visibility.
 - HDFS plugin: `hadoop_conf_dir` and `webhdfs_endpoint` was not propagated on all HDFS commands. Fixed.
+- Users plugin: When a user is not managed and an authorized_keys is to be set, HADeploy ensure home folder is accessible by performing an `su` command. 
 
 ## 0.5.5
 

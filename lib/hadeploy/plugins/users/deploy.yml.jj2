@@ -37,8 +37,16 @@
     fail:
       msg: Unable to create user '{{{user.login}}}'
     when: not result|succeeded
-
 {{% endif %}}
+
+{{% if not user.managed and user.authorized_keys is defined%}}
+  - name: Ensure home folder for '{{{user.login}}}'
+    shell: su - {{{user.login}}}
+    args:
+      warn: false
+    changed_when: false
+{{% endif %}}
+
 
 {{% if user.authorized_keys is defined %}}
   - name: Set authorized_keys for user '{{{user.login}}}'
@@ -48,6 +56,7 @@
     - {{{k}}}
 {{% endfor %}}
 {{% endif %}}
+
 {{% if user.can_sudo_to is defined %}}   
   - name: Grants sudo rights for '{{{user.can_sudo_to}}}' to '{{{user.login}}}'
     copy: content="{{{user.login}}}  ALL=({{{user.can_sudo_to}}}) NOPASSWD:ALL\n" dest=/etc/sudoers.d/{{{user.login}}} mode=040 owner=root group=root
