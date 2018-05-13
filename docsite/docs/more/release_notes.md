@@ -1,5 +1,9 @@
 # Release notes
 
+## 0.5.7
+
+- ???
+
 ## 0.5.6
 
 - **Added a [Yarn plugin](../plugins_reference/yarn/yarn_overview) to handle Yarn services (long running jobs) lifecycle.**
