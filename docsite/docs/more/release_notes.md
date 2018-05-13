@@ -2,7 +2,7 @@
 
 ## 0.5.7
 
-- ???
+- Fixed this [DEPRECATION WARNING]: Using tests as filters is deprecated. Instead of using `result|succeeded` instead use `result is succeeded`
 
 ## 0.5.6
 

@@ -12,13 +12,13 @@
     register: result
     retries: 2
     delay: 3
-    until: result|succeeded
+    until: result is succeeded
     ignore_errors: yes    
 
   - name: report error
     fail:
       msg: Unable to create group '{{{group.name}}}'
-    when: not result|succeeded
+    when: not result is succeeded
 
 {{% endif %}}
 {{% endfor %}}
@@ -30,13 +30,13 @@
     register: result
     retries: 2
     delay: 3
-    until: result|succeeded
+    until: result is succeeded
     ignore_errors: yes    
 
   - name: report error
     fail:
       msg: Unable to create user '{{{user.login}}}'
-    when: not result|succeeded
+    when: not result is succeeded
 {{% endif %}}
 
 {{% if not user.managed and user.authorized_keys is defined%}}

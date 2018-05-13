@@ -31,13 +31,13 @@
     register: result
     retries: 30
     delay: 5               # May need long delay, as some user@notty can  
-    until: result|succeeded
+    until: result is succeeded
     ignore_errors: yes    
 
   - name: report error
     fail:
       msg: Unable to remove user '{{{user.login}}}'
-    when: not result|succeeded
+    when: not result is succeeded
     
 {{% endif %}}
 {{% endfor %}}
@@ -49,13 +49,13 @@
     register: result
     retries: 2
     delay: 3
-    until: result|succeeded
+    until: result is succeeded
     ignore_errors: yes    
 
   - name: report error
     fail:
       msg: Unable to remove group '{{{group.name}}}'
-    when: not result|succeeded
+    when: not result is succeeded
     
 {{% endif %}}
 {{% endfor %}}
