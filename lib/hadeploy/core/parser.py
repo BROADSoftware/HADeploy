@@ -24,7 +24,7 @@ import os
 
 from const import SRC
 
-logger = logging.getLogger("hadeploy.Parser")
+logger = logging.getLogger("hadeploy.parser")
 
 
 
@@ -181,12 +181,13 @@ trueRegex = re.compile(r"^(?:y|Y|yes|Yes|YES|true|True|TRUE|on|On|ON)$")
 falseRegex = re.compile(r"^(?:n|N|no|No|NO|false|False|FALSE|off|Off|OFF)$")
 
 class Parser:
-    def __init__(self, context):
+    def __init__(self, context, fileByVariable):
         self.context = context
         self.path = Path()
         self.state = State.WAITING_FOR_TYPE
         self.vars = None
         self.anchors = {}
+        self.fileByVariable = fileByVariable
         self.parse(None)        # This to have an empty 'vars' dict. Otherwise, if no vars was defined at all, missing var error message was not explicit.
 
     def invalidEventError(self, event):
@@ -262,6 +263,7 @@ class Parser:
                 logger.debug("--- MappingEndEvent")
                 if self.state == State.WAITING_FOR_MAP_ENTRY:
                     if self.path.len() > 1:
+                        self.register(fileName)
                         self.path.reduce()
                         self.adjustStateFromTop()
                     else:
@@ -289,6 +291,7 @@ class Parser:
                 logger.debug("--- SequenceEndEvent")
                 if self.state == State.WAITING_FOR_SEQ_ENTRY:
                     if self.path.len() > 1:
+                        self.register(fileName)
                         self.path.reduce()
                         self.adjustStateFromTop()
                     else:
@@ -304,6 +307,7 @@ class Parser:
                 elif self.state == State.WAITING_FOR_SEQ_ENTRY:
                     self.path.add(PathItem("?", PathItem.SCALAR))
                     self.path.top().object = self.setScalar(event)
+                    self.register(fileName)
                     if self.path.len() == 3 and self.path.path[1].name ==  "include":
                         included = os.path.join(location, self.path.top().object)
                         logger.debug("********************* Path:'{0}'  -> INCLUDE '{1}' from SEQ".format(repr(self.path), included))
@@ -321,6 +325,7 @@ class Parser:
                 elif self.state == State.WAITING_FOR_TYPE:
                     self.path.top().type = PathItem.SCALAR
                     self.path.top().object = self.setScalar(event)
+                    self.register(fileName)
                     if self.path.len() == 2 and self.path.path[1].name ==  "include":
                         included = os.path.join(location, self.path.top().object)
                         logger.debug("********************* Path:'{0}'  -> INCLUDE '{1}' from SINGLE".format(repr(self.path), included))
@@ -424,4 +429,11 @@ class Parser:
                         return False
                     else:
                         return value
+                    
+                    
+    def register(self, fileName):
+        if self.fileByVariable != None:
+            if self.path.len() == 3 and self.path.path[1].name ==  "vars":
+                #print("{}: {}".format(self.path.top().name, os.path.relpath(fileName)))
+                self.fileByVariable[self.path.top().name] = os.path.relpath(fileName)
             

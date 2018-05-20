@@ -3,6 +3,7 @@
 ## 0.5.7
 
 - Fixed this [DEPRECATION WARNING]: Using tests as filters is deprecated. Instead of using `result|succeeded` instead use `result is succeeded`
+- `--action dumpvars` now display the file where the variable is defined.
 
 ## 0.5.6
 

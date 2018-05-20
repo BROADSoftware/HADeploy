@@ -13,6 +13,10 @@ loggers:
     level: INFO
     handlers: [console]
     propagate: no
+  hadeploy.parser:
+    level: INFO
+    handlers: [console]
+    propagate: no
   hadeploy.context:
     level: INFO
     handlers: [console]

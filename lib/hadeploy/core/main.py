@@ -36,8 +36,8 @@ INCLUDED_SCOPES="included_scopes"
 EXCLUDED_SCOPES="excluded_scopes"
 
 
-def handleSourceFiles(srcFileList, context):
-    parser = Parser(context)
+def handleSourceFiles(srcFileList, context, fileByVariable):
+    parser = Parser(context, fileByVariable)
     for src in srcFileList:
         parser.parse(src)
 
@@ -84,7 +84,7 @@ def main():
     masterPluginPath = os.path.abspath(os.path.join(mydir, "."))
     context = Context(workingFolder)
     context.loadPlugin("master", [masterPluginPath])
-    handleSourceFiles(param.src, context)
+    handleSourceFiles(param.src, context, None)
     context.groom()
     
     # --------------------------------------------- included scope handling
@@ -104,7 +104,8 @@ def main():
     for plName in context.model[SRC][PLUGINS]:
             context.loadPlugin(plName, context.model[SRC][PLUGINS_PATHS])
     # And reload source files, with now all plugins activated
-    handleSourceFiles(param.src, context)
+    fileByVariable = {} if param.action == "dumpvars" else None        
+    handleSourceFiles(param.src, context, fileByVariable)
     if 'include' in context.model[SRC]:
         del(context.model[SRC]['include'])  # Must remove, as not part of the schema
 
@@ -142,8 +143,19 @@ def main():
             templator.generate("{0}.yml.jj2".format(action), os.path.join(context.workingFolder, "{0}.yml".format(action)))
     elif action == "dumpvars":
         if SRC in context.model and VARS in context.model[SRC]:
-            txt = yaml.dump(context.model[SRC][VARS], default_flow_style=False, default_style=None)
-            print("---\n" + txt)
+            print("---")
+            variables = context.model[SRC][VARS]
+            for name in sorted(variables):
+                x = yaml.dump(variables[name], default_flow_style=True, default_style=None, explicit_end=False)
+                p = x.find("\n...\n")
+                if p > 0:
+                    x = x[:-5]
+                p = x.find("\n")
+                if p > 0:
+                    x = x[:-1]
+                print("{}: {}   ({})".format(name, x, fileByVariable[name] if name in fileByVariable else "??"))
+            print("---")
+            #txt = yaml.dump(context.model[SRC][VARS], default_flow_style=False, default_style=None)
             return
     else: 
         if not action in actions:
