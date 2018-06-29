@@ -33,7 +33,7 @@ function usage {
 	echo 'hadeploy --version'
 }
 
-VERSION="0.5.7"
+VERSION="0.5.8"
 SRC=""
 WF=""
 VAR=""
