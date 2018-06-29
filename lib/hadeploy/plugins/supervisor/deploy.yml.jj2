@@ -14,9 +14,9 @@
     with_items:
 {{% for s in scope.supervisorsToManage %}}
     - { path: {{{s.logs_dir}}}, user: {{{s.user}}}, group: {{{s.group}}} }     
-    - { path: {{{s.pid_dir}}}, user: {{{s.user}}}, group: {{{s.group}}} }     
-    - { path: {{{s.socks_dir}}}, user: {{{s.user}}}, group: {{{s.group}}} }     
     - { path: {{{s.include_dir}}}, user: {{{s.user}}}, group: {{{s.group}}} }     
+#    - { path: {{{s.pid_dir}}}, user: {{{s.user}}}, group: {{{s.group}}} }     
+#    - { path: {{{s.socks_dir}}}, user: {{{s.user}}}, group: {{{s.group}}} }     
 {{% endfor %}}
     loop_control:
       label: "{{item.path}} user:{{item.user}}"

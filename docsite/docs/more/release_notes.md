@@ -2,7 +2,7 @@
 
 ## 0.5.8
 
-- ???
+- /var/run/supervisor_xxxx folder was sometime deleted (i.e. after a hard restart). Now automatically recreated
 
 ## 0.5.7
 
