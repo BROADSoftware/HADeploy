@@ -79,6 +79,7 @@ import time
 from sets import Set as XSet
 from xml.dom import minidom
 import copy
+import traceback
 
 HAS_REQUESTS = False
 
@@ -191,6 +192,7 @@ class YarnAPI:
         resp = requests.get(url, auth=self.kerberos_auth)
         if resp.status_code == 200:
             result = resp.json()
+            debug("GET on '{}' => {}".format(url, result))
             return result
         else:
             error("Invalid returned http code '{0}' when calling GET on '{1}'".format(resp.status_code, url))
@@ -207,20 +209,21 @@ class YarnAPI:
     def updateStatus(self, status):
         body = self.get("/ws/v1/cluster/apps?states=NEW,NEW_SAVING,SUBMITTED,ACCEPTED,RUNNING")
         activeYarnApps = XSet()
-        for yarnApp in body["apps"]["app"]:
-            activeYarnApps.add(yarnApp["name"])
-            if yarnApp["name"] in status:
-                app = status[yarnApp["name"]]
-                if yarnApp["state"] in startingSet:
-                    # Found an instance in "starting" state. 
-                    if app["state"] == State.NONEXISTENT:
-                        app["state"] = State.STARTING
-                    app["ids"][yarnApp["id"]] = yarnApp["state"]
-                elif yarnApp["state"] == YarnState.RUNNING:
-                    app["state"] = State.RUNNING
-                    app["ids"][yarnApp["id"]] = yarnApp["state"]
-                else:
-                    error("Unknown Yarn State:{}".format(yarnApp["state"]))
+        if "apps" in body and body["apps"] != None and "app" in body["apps"]:
+            for yarnApp in body["apps"]["app"]:
+                activeYarnApps.add(yarnApp["name"])
+                if yarnApp["name"] in status:
+                    app = status[yarnApp["name"]]
+                    if yarnApp["state"] in startingSet:
+                        # Found an instance in "starting" state. 
+                        if app["state"] == State.NONEXISTENT:
+                            app["state"] = State.STARTING
+                        app["ids"][yarnApp["id"]] = yarnApp["state"]
+                    elif yarnApp["state"] == YarnState.RUNNING:
+                        app["state"] = State.RUNNING
+                        app["ids"][yarnApp["id"]] = yarnApp["state"]
+                    else:
+                        error("Unknown Yarn State:{}".format(yarnApp["state"]))
         for appName in status:
             if appName not in activeYarnApps:
                 if status[appName]["state"] != State.NONEXISTENT:
@@ -373,30 +376,34 @@ def main():
     
     names = p.names.split(",")
     
-    if p.state == State.GET:
-        status = yarnAPI.initStatus(names)
-        yarnAPI.updateStatus(status)
-        module.exit_json(changed=p.changed, status=status, logs=logs)
-    elif p.state == State.KILLED:
-        (errno, before, after) = yarnAPI.killAll(names, p)
-        module.exit_json(changed=p.changed, status_before=before, logs=logs)    # After is not returned as may be confusing (Jobs are still running right after)
-    elif p.state == State.NONEXISTENT:
-        (errno, before, after) = yarnAPI.waitUndefined(names, p.timeout)
-        if errno == Errno.OK:
-            module.exit_json(changed=p.changed, status_before=before, status_after=after, logs=logs)
-        else:
-            module.fail_json(msg = "waitNonexistent() exit on timeout!", status_before=before, status_after=after, logs=logs)
-    elif p.state == State.RUNNING:
-        (errno, before, after) = yarnAPI.waitRunning(names, p.timeout)
-        if errno == Errno.OK:
-            module.exit_json(changed=p.changed, status_before=before, status_after=after, logs=logs)
-        elif errno == Errno.TIMEOUT:
-            module.fail_json(msg = "waitRunning() exit on timeout!", status_before=before, status_after=after, logs=logs)
-        else:
-            module.fail_json(msg = "waitRunning(): A least one og the jobs failed to start", status_before=before, status_after=after, logs=logs)
-    else:
-        error("Unknown state '{}'".format(p.state))
+    debug("yarn_service: Debug enabled")
     
+    try:
+        if p.state == State.GET:
+            status = yarnAPI.initStatus(names)
+            yarnAPI.updateStatus(status)
+            module.exit_json(changed=p.changed, status=status, logs=logs)
+        elif p.state == State.KILLED:
+            (errno, before, after) = yarnAPI.killAll(names, p)
+            module.exit_json(changed=p.changed, status_before=before, logs=logs)    # After is not returned as may be confusing (Jobs are still running right after)
+        elif p.state == State.NONEXISTENT:
+            (errno, before, after) = yarnAPI.waitUndefined(names, p.timeout)
+            if errno == Errno.OK:
+                module.exit_json(changed=p.changed, status_before=before, status_after=after, logs=logs)
+            else:
+                module.fail_json(msg = "waitNonexistent() exit on timeout!", status_before=before, status_after=after, logs=logs)
+        elif p.state == State.RUNNING:
+            (errno, before, after) = yarnAPI.waitRunning(names, p.timeout)
+            if errno == Errno.OK:
+                module.exit_json(changed=p.changed, status_before=before, status_after=after, logs=logs)
+            elif errno == Errno.TIMEOUT:
+                module.fail_json(msg = "waitRunning() exit on timeout!", status_before=before, status_after=after, logs=logs)
+            else:
+                module.fail_json(msg = "waitRunning(): A least one og the jobs failed to start", status_before=before, status_after=after, logs=logs)
+        else:
+            error("Unknown state '{}'".format(p.state))
+    except Exception as e:  # Do not trap BaseException, as it seems module.exit_json() throw some
+        module.fail_json(msg = "Unexpected error: {}  {}".format(e, traceback.format_exc()), logs=logs)
     
 
 from ansible.module_utils.basic import *
