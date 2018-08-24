@@ -43,7 +43,7 @@ kafka_topics:
     retention.ms: 630720000000
     retention.bytes: 858993459200
 ```
-If `hdfs_relay` host a `broker_id_map` as the following:
+If `kafka_relay` host a `broker_id_map` as the following:
 ```yaml
 kafka_relay:
   ...
