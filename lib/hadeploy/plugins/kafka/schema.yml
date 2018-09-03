@@ -15,11 +15,8 @@ mapping:
       "broker_id_map":
         type: map
         allowempty: True
+      "kafka_version": { type: str, required: true }      # "0.10.0", "1.0.0", ....
       "tools_folder": { type: str, required: false }
-      "principal": { type: str, required: false }           # Kerberos principal
-      "relay_keytab_path": { type: str, required: false }         # Path to a keytab file on relay host
-      "local_keytab_path": { type: str, required: false }         # Path to a keytab file on HADeploy node
-      "kdebug": { type: bool, required: false }             # Display klist result            
       "become_user": { type: str, required: false }
       "become_method": { type: str, required: false }   
       "when": { type: bool, required: false }    # Default to true

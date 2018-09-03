@@ -36,14 +36,9 @@ KAFKA_RELAY="kafka_relay"
 ZK_HOST_GROUP="zk_host_group"
 ZK_PORT="zk_port"
 BROKER_ID_MAP="broker_id_map"
+KAFKA_VERSION="kafka_version"
 TOOLS_FOLDER="tools_folder"
 ZK_PATH="zk_path"
-PRINCIPAL="principal"
-KDEBUG="kdebug"
-KERBEROS="kerberos"
-LOCAL_KEYTAB_PATH="local_keytab_path"
-RELAY_KEYTAB_PATH="relay_keytab_path"
-_RELAY_KEYTAB_FOLDER_="_relayKeytabFolder_"        
 
         
 KAFKA_TOPICS="kafka_topics"
@@ -58,13 +53,6 @@ class KafkaPlugin(Plugin):
     
     def __init__(self, name, path, context):
         Plugin.__init__(self, name, path, context)
-
-
-    def onNewSnippet(self, snippetPath):
-        model = self.context.model
-        if KAFKA_RELAY in model[SRC]: 
-            if LOCAL_KEYTAB_PATH in model[SRC][KAFKA_RELAY]:
-                model[SRC][KAFKA_RELAY][LOCAL_KEYTAB_PATH] = misc.snippetRelocate(snippetPath, model[SRC][KAFKA_RELAY][LOCAL_KEYTAB_PATH])
 
     def getGroomingPriority(self):
         return 5000
@@ -112,9 +100,12 @@ class KafkaPlugin(Plugin):
     def buildHelper(self):
         helper = {}
         helper[DIR] = os.path.normpath(os.path.join(self.path, "helpers"))
-        jdctopicjars = glob.glob(os.path.join(helper[DIR], "jdctopic/jdctopic_uber*.jar"))
+        jarPattern = "jdctopic/jdctopic.{}-*-uber.jar".format(self.context.model[SRC][KAFKA_RELAY][KAFKA_VERSION])
+        jdctopicjars = glob.glob(os.path.join(helper[DIR], jarPattern))
         if len(jdctopicjars) < 1:
             misc.ERROR("Unable to find helper for Kafka.Please, refer to the documentation about Installation")
+        if len(jdctopicjars) > 1:
+            misc.ERROR("Several version of kafka helper jar in {}. Please, cleanup.".format(helper[DIR]))
         helper[JDCTOPIC_JAR] = os.path.basename(jdctopicjars[0])
         
         misc.ensureObjectInMaps(self.context.model, [HELPER, KAFKA], helper)
@@ -136,28 +127,10 @@ def groomKafkaRelay(model):
                         misc.ERROR("kafka_relay: BrokerId ({0}) must be integer".format(brokerId))
             misc.setDefaultInMap(model[SRC][KAFKA_RELAY], TOOLS_FOLDER, DEFAULT_TOOLS_FOLDER)
             misc.setDefaultInMap(model[SRC][KAFKA_RELAY], ZK_PATH, '/')
-            if PRINCIPAL in  model[SRC][KAFKA_RELAY]:
-                if LOCAL_KEYTAB_PATH not in model[SRC][KAFKA_RELAY] and  RELAY_KEYTAB_PATH not in model[SRC][KAFKA_RELAY]:
-                    misc.ERROR("kafka_relay: Please provide a 'local_keytab_path' and/or a 'relay_keytab_path' if you want to use a Kerberos 'principal'")
-                model[SRC][KAFKA_RELAY][KERBEROS] = True
-                if LOCAL_KEYTAB_PATH in model[SRC][KAFKA_RELAY]:
-                    if not os.path.exists(model[SRC][KAFKA_RELAY][LOCAL_KEYTAB_PATH]):
-                        misc.ERROR("kafka_relay: local_keytab_file '{0}' does not exists!".format(model[SRC][KAFKA_RELAY][LOCAL_KEYTAB_PATH]))
-                if RELAY_KEYTAB_PATH not in model[SRC][KAFKA_RELAY]:
-                    model[SRC][KAFKA_RELAY][_RELAY_KEYTAB_FOLDER_] = os.path.join(model[SRC][KAFKA_RELAY][TOOLS_FOLDER], "keytabs")
-                    model[SRC][KAFKA_RELAY][RELAY_KEYTAB_PATH] = os.path.join( model[SRC][KAFKA_RELAY][_RELAY_KEYTAB_FOLDER_], os.path.basename(model[SRC][KAFKA_RELAY][LOCAL_KEYTAB_PATH]))
-                misc.setDefaultInMap(model[SRC][KAFKA_RELAY], KDEBUG, False)
-                if BECOME_USER in model[SRC][KAFKA_RELAY]:
-                    misc.ERROR("kafka_relay: become_user and principal can't be defined both!")
-                model[SRC][KAFKA_RELAY][LOGS_USER] = "{{ansible_user}}"
+            if BECOME_USER in model[SRC][KAFKA_RELAY]:
+                model[SRC][KAFKA_RELAY][LOGS_USER] = model[SRC][KAFKA_RELAY][BECOME_USER]
             else:
-                if LOCAL_KEYTAB_PATH in model[SRC][KAFKA_RELAY] or RELAY_KEYTAB_PATH in model[SRC][KAFKA_RELAY]:
-                    misc.ERROR("kafka_relay: Please, provide a 'principal' if you need to use a keytab")
-                model[SRC][KAFKA_RELAY][KERBEROS] = False
-                if BECOME_USER in model[SRC][KAFKA_RELAY]:
-                    model[SRC][KAFKA_RELAY][LOGS_USER] = model[SRC][KAFKA_RELAY][BECOME_USER]
-                else:
-                    model[SRC][KAFKA_RELAY][LOGS_USER] = "{{ansible_user}}"
+                model[SRC][KAFKA_RELAY][LOGS_USER] = "{{ansible_user}}"
 
             
 def groomKafkaTopics(model):

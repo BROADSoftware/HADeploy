@@ -19,7 +19,7 @@
 
 MYDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-JDCTOPIC_VERSION="0.2.0"
+JDCTOPIC_VERSION="0.2.1"
 
 if [ ! -f $MYDIR/jdctopic/jdctopic_uber-${JDCTOPIC_VERSION}.jar ]
 then

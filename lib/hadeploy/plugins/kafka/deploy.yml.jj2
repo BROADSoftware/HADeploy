@@ -6,19 +6,6 @@
   any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
 
-{{% if src.kafka_relay.kerberos %}}
-  - name: Perform kinit for Kafka access
-    shell: kinit -kt {{{ src.kafka_relay.relay_keytab_path }}} {{{ src.kafka_relay.principal }}}
-    changed_when: false
-{{% if src.kafka_relay.kdebug %}} 
-  - name: Check kerberos ticket for Kafka access
-    shell: klist
-    register: klist_result
-    changed_when: false
-  - debug: var=klist_result
-{{%endif%}}
-{{%endif%}}
-
   - name: "kafka_topic: Create a temporary file name"
     shell: mktemp
     register: mktemp
@@ -44,12 +31,6 @@
     file: path={{mktemp.stdout}} state=absent
     changed_when: false
 
-{{% if src.kafka_relay.kerberos %}}
-  - name: Perform kdestroy for Kafka access
-    shell: kdestroy
-    changed_when: false
-{{%endif%}}
-    
     
 {{% endif %}}  
   

@@ -5,6 +5,7 @@
   any_errors_fatal: {{{ src.exit_on_fail }}}
   vars: 
     kafka_relay_tools_folder: "{{{ src.kafka_relay.tools_folder}}}"
+    kafka_relay_helper_jar: "{{{ helper.kafka.jdctopic_jar }}}"
     kafka_relay_logs_dir: "{{{ src.kafka_relay.tools_folder}}}/jdctopic/logs-{{{src.kafka_relay.logsUser}}}"
   tasks:
   - name: Setup kafka_relay helper (1/4)
@@ -17,7 +18,6 @@
     template: src={{{helper.kafka.dir}}}/jdctopic/templates/{{item.file}}.j2 dest={{{ src.kafka_relay.tools_folder}}}/jdctopic/{{item.file}} owner={{ansible_user}} mode={{item.mode}}
     with_items:
     - { file: "jdctopic", mode: "0755" }
-    - { file: "setenv.sh", mode: "0644" }
     - { file: "log4j.xml", mode: "0644" }
     loop_control:
       label: "{{item.file}}"
@@ -27,17 +27,11 @@
     file: path={{{ src.kafka_relay.tools_folder}}}/jdctopic/logs-{{{src.kafka_relay.logsUser}}} owner={{{src.kafka_relay.logsUser}}} state=directory
     changed_when: false
 
-{{% if  src.kafka_relay._relayKeytabFolder_ is defined %}}
-  - name: Create keytabs location
-    file: path={{{ src.kafka_relay._relayKeytabFolder_}}} owner={{ansible_user}}  mode="0700" state=directory
-{{%endif%}}
-
-{{% if  src.kafka_relay.local_keytab_path is defined %}}
-  - name: Push keytab file
-    copy: src={{{src.kafka_relay.local_keytab_path }}} dest={{{src.kafka_relay.relay_keytab_path }}} owner={{ansible_user}} mode="0400"
-{{%endif%}}
-    
-
+{{% if src.kafka_relay.become_user is defined %}}
+  # Create the file defined as remote_tmp = /tmp/.ansible-${USER}/tmp in ansible.cfg, to ensure correct permissions
+  - name: "Create ansible working file"
+    file: path=/tmp/.ansible-{{{src.kafka_relay.become_user}}}/tmp state=directory owner={{{src.kafka_relay.become_user}}} mode="0777"
+{{% endif %}}  
 
     
 {{%endif%}}
