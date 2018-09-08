@@ -61,6 +61,14 @@
 {{% endfor %}}
 
 
+{{% if  src.yarn_relay.local_keytab_path is defined %}}
+  # May need to re-issue a kinit as the script may have changed/destroyed ticket.
+  - name: Perform kinit for Yarn UI access
+    shell: kinit -kt {{{ src.yarn_relay.relay_keytab_path }}} {{{ src.yarn_relay.principal }}}
+    changed_when: false
+{{%endif%}}
+
+
 
   - name: Wait for all Yarn services to be running
     yarn_services:

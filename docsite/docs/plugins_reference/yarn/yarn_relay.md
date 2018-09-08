@@ -44,6 +44,10 @@ Regarding the keytab file, two cases:
 in a location under `tools_folder`. Note you can also modify this target location by setting also the `relay_keytab_path` parameter. In this case, 
 it must be the full path, including the keytab file name. And the containing folder must exists.
 
+Also, note this will lead SPNEGO to be used to authenticate on the RM REST API. If SPNEGO is not activated on such API (This could be the case even on a Kerberos enabled cluster), this will generate an error.
+
+The solution in such case, is to NOT define principal/keytab on the `yarn_relay`, but to explicitly add a `kinit ...` and `kdestroy` commands in the `launching_cmd` and `killing_cmd` associated scripts of each `yarn_service` (Defining a `killing_cmd` script is required in this case).  
+
 ## Example
 
 The simplest case:

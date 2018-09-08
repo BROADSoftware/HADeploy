@@ -62,6 +62,14 @@
 {{%endif%}}
 {{% endfor %}}
 
+{{% if  src.yarn_relay.local_keytab_path is defined %}}
+  # May need to re-issue a kinit as the scripts may have changed/destroyed ticket.
+  - name: Perform kinit for Yarn UI access
+    shell: kinit -kt {{{ src.yarn_relay.relay_keytab_path }}} {{{ src.yarn_relay.principal }}}
+    changed_when: false
+{{%endif%}}
+
+
 {{% if data.yarn.servicesToKill is defined %}}
   - name: Kill Yarn services '{{{data.yarn.servicesToKill}}}' using Yarn REST API 
     yarn_services:

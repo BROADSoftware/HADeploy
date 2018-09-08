@@ -82,10 +82,14 @@ Of course, all this will occur only on services HADeploy is aware of (Defined wi
 
 ## Services shutdown.
 
-When HADeploy is instructed to halt all services (`--action stop`), it will use the RM REST API, setting application in the 'KILLED' state. This is equivalent to a `yarn application --kill` command.
+When HADeploy is instructed to halt all services (`--action stop`), by default, it will use the RM REST API, setting application in the 'KILLED' state. This is equivalent to a `yarn application --kill` command.
 
-If your application provide a more graceful shutdown method, you can instruct HADeploy to use it, by providing a killing script, the same way as the launching script.
- 
+An alternate way to shutdown a yarn job is to provide a script issuing the kill command, and to define such script using the `killing_cmd` attribute. This can be used in the following case: 
+
+- If your application provide a more graceful shutdown method
+
+- If your cluster is secured by Kerberos and if the RM REST API is not secured by SPNEGO. In such case, using such API will not allow setting of the appropriate user, and a killing script is a far more easy solution. 
+
 ## Notifications: Services restart
 
 Let's say we now want to update the service's jar or one of the associated configuration files.
@@ -126,27 +130,63 @@ files:
 - { scope: "${yarn_launcher_host}", src: "mvn://myrepo/com.mydomain/datastep/${datastep_version}/uber", 
     notify: ['yarn://datastep'], dest_folder: "${basedir}", owner: "${user}", group: "${group}", mode: "0644" }
 
-- { scope: "${yarn_launcher_host}", src: "tmpl://launcher.sh", dest_folder: "${basedir}", 
+- { scope: "${yarn_launcher_host}", src: "tmpl://submit.sh", dest_folder: "${basedir}", 
     notify: ['yarn://datastep'], owner: "${user}", group: "${group}", mode: "0744" }
 
+- { scope: "${yarn_launcher_host}", src: "tmpl://kill.sh", dest_folder: "${basedir}", 
+    notify: ['yarn://datastep'], owner: "${user}", group: "${group}", mode: "0744" }
 
 yarn_services:
 - name: datastep
-  launching_cmd: ./launcher.sh
+  launching_cmd: ./submit.sh
+  launching_cmd: ./kill.sh
   launching_dir: ${basedir}
 
 ```
 
-And here is what could be a simplistic launcher script template:
+And here is what could be a simplistic submit script template:
 
 ```bash
+#/bin/bash
+
+{% if kerberos is defined and kerberos %}
+kinit -kt /etc/security/keytabs/{{user}}.keytab {{user}}
+{% endif %}
 
 spark-submit --name datastep --master yarn --deploy-mode cluster --class com.mydomain.datastep.Main \
 	--conf "spark.yarn.submit.waitAppCompletion=false" \
 	--jars {{basedir}}/datastep-{{datastep_version}}-uber.jar 
 
+{% if kerberos is defined and kerberos %}
+kdestroy
+{% endif %}
+
 ```
 
+And a killing script:
+
+```bash
+#/bin/bash
+
+{% if kerberos is defined and kerberos %}
+kinit -kt /etc/security/keytabs/{{user}}.keytab {{user}}
+{% endif %}
+
+APPLICATION_ID=$(yarn application --appStates RUNNING --list 2>/dev/null | awk "{ if (\$2==\"datastep\") print \$1 }")
+
+if [ "$APPLICATION_ID" = "" ]
+then
+	echo "?? Not running"
+else
+	yarn application --kill ${APPLICATION_ID} 2>/dev/null
+	echo "$APPLICATION_ID Killed!"
+fi
+
+{% if kerberos is defined and kerberos %}
+kdestroy
+{% endif %}
+
+```
 
 This is of course not complete, as it lack at least the target cluster definition.
 
