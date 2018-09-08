@@ -8,30 +8,53 @@
     kafka_relay_helper_jar: "{{{ helper.kafka.jdctopic_jar }}}"
     kafka_relay_logs_dir: "{{{ src.kafka_relay.tools_folder}}}/jdctopic/logs-{{{src.kafka_relay.logsUser}}}"
   tasks:
-  - name: Setup kafka_relay helper (1/4)
-    file: path={{{ src.kafka_relay.tools_folder}}}/jdctopic owner={{ansible_user}} mode="0755" state=directory
-
-  - name: Setup kafka_relay helper (2/4)
-    copy: src={{{helper.kafka.dir}}}/jdctopic/{{{helper.kafka.jdctopic_jar}}} dest={{{ src.kafka_relay.tools_folder}}}/jdctopic/ owner={{ansible_user}} mode="0644"
-
-  - name: Setup kafka_relay helper (3/4)  
-    template: src={{{helper.kafka.dir}}}/jdctopic/templates/{{item.file}}.j2 dest={{{ src.kafka_relay.tools_folder}}}/jdctopic/{{item.file}} owner={{ansible_user}} mode={{item.mode}}
-    with_items:
-    - { file: "jdctopic", mode: "0755" }
-    - { file: "log4j.xml", mode: "0644" }
-    loop_control:
-      label: "{{item.file}}"
-
-  # Create a folder for log file
-  - name: Setup kafka_relay helper (4/4)  
-    file: path={{{ src.kafka_relay.tools_folder}}}/jdctopic/logs-{{{src.kafka_relay.logsUser}}} owner={{{src.kafka_relay.logsUser}}} state=directory
+  
+{{% if src.kafka_relay.become_user is defined %}}
+  - name: "Test if '{{ ansible_user }}' can sudo to '{{{src.kafka_relay.logsUser}}}'"
+    shell: ls /
+    register: test_sudo_result
+    failed_when: false
     changed_when: false
+    become: true
+    become_user: "{{{src.kafka_relay.become_user}}}"
+{{% if src.kafka_relay.become_method is defined %}}
+    become_method: "{{{src.kafka_relay.become_method}}}"
+{{%endif%}}
+  - fail: 
+      msg: "Unable to act on behalf of '{{{src.kafka_relay.logsUser}}}'. Are you sure '{{ ansible_user }}' can sudo to '{{{src.kafka_relay.logsUser}}}' ?"
+    when: test_sudo_result.rc != 0
+{{%endif%}}
+  
+  - block: 
+    - name: Setup kafka_relay helper (1/4)
+      file: path={{{ src.kafka_relay.tools_folder}}}/jdctopic owner={{{src.kafka_relay.logsUser}}} mode="0755" state=directory
+
+    - name: Setup kafka_relay helper (2/4)
+      copy: src={{{helper.kafka.dir}}}/jdctopic/{{{helper.kafka.jdctopic_jar}}} dest={{{ src.kafka_relay.tools_folder}}}/jdctopic/ owner={{{src.kafka_relay.logsUser}}} mode="0644"
+
+    - name: Setup kafka_relay helper (3/4)  
+      template: src={{{helper.kafka.dir}}}/jdctopic/templates/{{item.file}}.j2 dest={{{ src.kafka_relay.tools_folder}}}/jdctopic/{{item.file}} owner={{{src.kafka_relay.logsUser}}} mode={{item.mode}}
+      with_items:
+      - { file: "jdctopic", mode: "0755" }
+      - { file: "log4j.xml", mode: "0644" }
+      loop_control:
+        label: "{{item.file}}"
+        
+    # Create a folder for log file
+    - name: Setup kafka_relay helper (4/4)  
+      file: path={{{ src.kafka_relay.tools_folder}}}/jdctopic/logs-{{{src.kafka_relay.logsUser}}} owner={{{src.kafka_relay.logsUser}}} state=directory
+{{% if src.kafka_relay.become_user is defined %}}
+    become: true
+    become_user: "{{{src.kafka_relay.become_user}}}"
+{{% if src.kafka_relay.become_method is defined %}}
+    become_method: "{{{src.kafka_relay.become_method}}}"
+{{%endif%}}
+{{%endif%}}
 
 {{% if src.kafka_relay.become_user is defined %}}
   # Create the file defined as remote_tmp = /tmp/.ansible-${USER}/tmp in ansible.cfg, to ensure correct permissions
   - name: "Create ansible working file"
     file: path=/tmp/.ansible-{{{src.kafka_relay.become_user}}}/tmp state=directory owner={{{src.kafka_relay.become_user}}} mode="0777"
 {{% endif %}}  
-
     
 {{%endif%}}

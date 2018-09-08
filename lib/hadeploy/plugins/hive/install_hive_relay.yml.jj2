@@ -45,5 +45,13 @@
   - name: Push keytab file
     copy: src={{{src.hive_relay.local_keytab_path }}} dest={{{src.hive_relay.relay_keytab_path }}} owner={{ansible_user}} mode="0400"
 {{%endif%}}
+
+  
+{{% if src.hive_relay.become_user is defined %}}
+  # Create the file defined as remote_tmp = /tmp/.ansible-${USER}/tmp in ansible.cfg, to ensure correct permissions
+  - name: "Create ansible working file"
+    file: path=/tmp/.ansible-{{{src.hive_relay.become_user}}}/tmp state=directory owner={{{src.hive_relay.become_user}}} mode="0777"
+{{% endif %}}  
+    
     
 {{%endif%}}

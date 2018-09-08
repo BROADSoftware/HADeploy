@@ -1,2 +1,3 @@
 ansible >= 2.3.0.0
 pykwalify >= 1.6.0
+mkdocs >= 1.0.4

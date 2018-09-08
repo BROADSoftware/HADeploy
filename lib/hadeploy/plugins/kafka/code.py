@@ -98,17 +98,18 @@ class KafkaPlugin(Plugin):
             return [os.path.join(self.path, "install_kafka_relay.yml.jj2"), os.path.join(self.path, "{0}.yml.jj2".format(action))]
     
     def buildHelper(self):
-        helper = {}
-        helper[DIR] = os.path.normpath(os.path.join(self.path, "helpers"))
-        jarPattern = "jdctopic/jdctopic.{}-*-uber.jar".format(self.context.model[SRC][KAFKA_RELAY][KAFKA_VERSION])
-        jdctopicjars = glob.glob(os.path.join(helper[DIR], jarPattern))
-        if len(jdctopicjars) < 1:
-            misc.ERROR("Unable to find helper for Kafka.Please, refer to the documentation about Installation")
-        if len(jdctopicjars) > 1:
-            misc.ERROR("Several version of kafka helper jar in {}. Please, cleanup.".format(helper[DIR]))
-        helper[JDCTOPIC_JAR] = os.path.basename(jdctopicjars[0])
-        
-        misc.ensureObjectInMaps(self.context.model, [HELPER, KAFKA], helper)
+        if KAFKA_RELAY in self.context.model[SRC]:
+            helper = {}
+            helper[DIR] = os.path.normpath(os.path.join(self.path, "helpers"))
+            jarPattern = "jdctopic/jdctopic.{}-*-uber.jar".format(self.context.model[SRC][KAFKA_RELAY][KAFKA_VERSION])
+            jdctopicjars = glob.glob(os.path.join(helper[DIR], jarPattern))
+            if len(jdctopicjars) < 1:
+                misc.ERROR("Unable to find helper for Kafka.Please, refer to the documentation about Installation")
+            if len(jdctopicjars) > 1:
+                misc.ERROR("Several version of kafka helper jar in {}. Please, cleanup.".format(helper[DIR]))
+            helper[JDCTOPIC_JAR] = os.path.basename(jdctopicjars[0])
+            
+            misc.ensureObjectInMaps(self.context.model, [HELPER, KAFKA], helper)
         
 # ------------------------------------------- Static function
 
@@ -125,12 +126,13 @@ def groomKafkaRelay(model):
                 for brokerId in model[SRC][KAFKA_RELAY][BROKER_ID_MAP].itervalues():
                     if not isinstance(brokerId, int):
                         misc.ERROR("kafka_relay: BrokerId ({0}) must be integer".format(brokerId))
-            misc.setDefaultInMap(model[SRC][KAFKA_RELAY], TOOLS_FOLDER, DEFAULT_TOOLS_FOLDER)
             misc.setDefaultInMap(model[SRC][KAFKA_RELAY], ZK_PATH, '/')
             if BECOME_USER in model[SRC][KAFKA_RELAY]:
                 model[SRC][KAFKA_RELAY][LOGS_USER] = model[SRC][KAFKA_RELAY][BECOME_USER]
+                misc.setDefaultInMap(model[SRC][KAFKA_RELAY], TOOLS_FOLDER, "/tmp/hadeploy_{}".format(model[SRC][KAFKA_RELAY][BECOME_USER]))
             else:
                 model[SRC][KAFKA_RELAY][LOGS_USER] = "{{ansible_user}}"
+                misc.setDefaultInMap(model[SRC][KAFKA_RELAY], TOOLS_FOLDER, DEFAULT_TOOLS_FOLDER)
 
             
 def groomKafkaTopics(model):
