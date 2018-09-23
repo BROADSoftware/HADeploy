@@ -21,6 +21,7 @@ from hadeploy.core.plugin import Plugin
 from hadeploy.core.const import SRC,DATA,ACTION_DEPLOY,ACTION_REMOVE,SCOPE_ELASTIC
 from sets import Set
 #import json
+import os
 
 
 logger = logging.getLogger("hadeploy.plugins.elastic")
@@ -34,6 +35,13 @@ NO_REMOVE="no_remove"
 RECREATE="recreate"
 DEFINITION="definition"
 
+VALIDATE_CERTS="validate_certs"
+CA_BUNDLE_LOCAL_FILE="ca_bundle_local_file"
+CA_BUNDLE_RELAY_FILE="ca_bundle_relay_file"
+CA_BUNDLE_RELAY_FOLDER="ca_bundle_relay_folder"
+USERNAME="username"
+PASSWORD="password"
+NO_LOG="no_log"
 
 ELASTIC="elastic"
 SERVER_BY_NAME="serverByName"
@@ -48,7 +56,11 @@ class ElasticsearchPlugin(Plugin):
         Plugin.__init__(self, name, path, context)
 
     def onNewSnippet(self, snippetPath):
-        pass
+        if ELASTICSEARCH_SERVERS in self.context.model[SRC]:
+            for server in self.context.model[SRC][ELASTICSEARCH_SERVERS]:
+                if CA_BUNDLE_LOCAL_FILE in server:
+                    server[CA_BUNDLE_LOCAL_FILE] = misc.snippetRelocate(snippetPath, server[CA_BUNDLE_LOCAL_FILE])
+                
 
     def getGroomingPriority(self):
         return 3000
@@ -80,12 +92,28 @@ class ElasticsearchPlugin(Plugin):
 def groomElasticServers(model):
     misc.ensureObjectInMaps(model[DATA][ELASTIC], [SERVER_BY_NAME], {})
     if ELASTICSEARCH_SERVERS in model[SRC]:
+        relayFiles = Set()  # To check uniqueness
         for server in model[SRC][ELASTICSEARCH_SERVERS]:
             if server[NAME] in model[DATA][ELASTIC][SERVER_BY_NAME]:
                 misc.ERROR("Elasticsearch server '{}' is defined twice!".format(server[NAME]))
             misc.ensureObjectInMaps(server, [INDICES], [])
             misc.ensureObjectInMaps(server, [TEMPLATES], [])
             model[DATA][ELASTIC][SERVER_BY_NAME][server[NAME]] = server
+            misc.setDefaultInMap(server, VALIDATE_CERTS, True)
+            misc.setDefaultInMap(server, NO_LOG, True)
+            if (USERNAME in server) != (PASSWORD in server):
+                misc.ERROR("Elasticsearch server '{}': 'username' and 'password' must be defined together or not at all!".format(server[NAME]))
+            if CA_BUNDLE_LOCAL_FILE in server:
+                if not os.path.exists(server[CA_BUNDLE_LOCAL_FILE]):
+                    misc.ERROR("Elasticsearch server '{}': ca_bundle_local_file: {0} does not exists".format(server[NAME], server[CA_BUNDLE_LOCAL_FILE]))
+                if CA_BUNDLE_RELAY_FILE not in server:
+                    misc.ERROR("Elasticsearch server '{}': If a ca_bundle_local_file is defined, then a ca_bundle_relay_file must also be defined".format(server[NAME]))
+                if not os.path.isabs(server[CA_BUNDLE_RELAY_FILE]):
+                    misc.ERROR("Elasticsearch server '{}': ca_bundle_relay_file: {0}  must be absolute!".format(server[NAME], server[CA_BUNDLE_RELAY_FILE]))
+                if server[CA_BUNDLE_RELAY_FILE] in relayFiles:
+                    misc.ERROR("ca_bundle_relay_file: {} is defined by several elasticsearch_server".format(server[CA_BUNDLE_RELAY_FILE]))
+                relayFiles.add(server[CA_BUNDLE_RELAY_FILE])
+                #server[CA_BUNDLE_RELAY_FOLDER] = os.path.dirname(server[CA_BUNDLE_RELAY_FILE] )
     
 def groomElasticIndices(model):
     nameChecker = Set()
@@ -107,7 +135,6 @@ def groomElasticIndices(model):
             else:
                 model[DATA][ELASTIC][SERVER_BY_NAME][index[SERVER]][INDICES].append(index)
             
-
 def groomElasticTemplates(model):
     nameChecker = Set()
     if ELASTICSEARCH_TEMPLATES in model[SRC]:
@@ -127,6 +154,3 @@ def groomElasticTemplates(model):
             else:
                 model[DATA][ELASTIC][SERVER_BY_NAME][template[SERVER]][TEMPLATES].append(template)
             
-   
-    
-    

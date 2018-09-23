@@ -41,6 +41,32 @@ options:
       - The Elasticsearch server base URL to access API. Typically http://elastic1.myserver.com:9200  
     required: true
     default: None
+  username:
+    description:
+      - The user name to log on the elasticsearch cluster. Must have enough rights to create templates
+    required: False
+    default: None
+    aliases: []
+  password:
+    description:
+      - The password associated with the username
+    required: False
+    default: None
+    aliases: []
+  validate_certs:
+    description:
+      - Useful if elasticsearch connection is using SSL. If no, SSL certificates will not be validated. This should only be used on personally controlled sites using self-signed certificates.
+    required: false
+    default: True
+    aliases: []
+  ca_bundle_file:
+    description:
+      - Useful if elasticsearch connection is using SSL. Allow to specify a CA_BUNDLE file, a file that contains root and intermediate certificates to validate the server certificate.
+      - In its simplest case, it could be a file containing the server certificate in .pem format.
+      - This file will be looked up on the remote system, on which this module will be executed. 
+    required: false
+    default: None
+    aliases: []
   definition:
     description:
       - Template definition as a json string or as a YAML definition
@@ -131,6 +157,7 @@ HAS_REQUESTS = False
 
 try:
     import requests
+    from requests.auth import HTTPBasicAuth
     HAS_REQUESTS = True
 except ImportError, AttributeError:
     # AttributeError if __version__ is not present
@@ -209,12 +236,16 @@ def diffDefinition(target, current, missing=None):
 
 class EsApi:
     
-    def __init__(self, endpoint):
+    def __init__(self, endpoint, username, password, verify):
         self.endpoint = endpoint
+        self.username = username
+        self.password = password
+        self.verify = verify
+        self.auth = HTTPBasicAuth(self.username, self.password)
        
     def get(self, path, okStatus=[200], noneStatus=[]):
         url = self.endpoint + path
-        resp = requests.get(url)
+        resp = requests.get(url, auth = self.auth, verify = self.verify)
         debug("HTTP GET({})  --> {}".format(url, resp.status_code))
         if resp.status_code in okStatus:
             result = resp.json()
@@ -227,7 +258,7 @@ class EsApi:
          
     def put(self, path, json):
         url = self.endpoint + path
-        resp = requests.put(url, json=json, headers={'content-type': 'application/json'})
+        resp = requests.put(url, json=json, headers={'content-type': 'application/json'}, auth = self.auth, verify = self.verify)
         debug("HTTP PUT({})  --> {}".format(url, resp.status_code))        
         if resp.status_code != 200:
             error("Invalid returned http code '{0}' when calling PUT on '{1}' : {2}\nPAYLOAD:\n{3}".format(resp.status_code, url, resp.text, pp.pformat(json)))
@@ -245,7 +276,7 @@ class EsApi:
         
     def deleteTemplate(self, name):
         url = self.endpoint + "_template/{}".format(name)
-        resp = requests.delete(url)
+        resp = requests.delete(url, auth = self.auth, verify = self.verify)
         debug("HTTP DELETE({})  --> {}".format(url, resp.status_code))        
         if resp.status_code == 200:
             return True
@@ -298,6 +329,10 @@ def main():
         argument_spec = dict(
             name = dict(type='str', required=True),
             elasticsearch_url = dict(type='str', required=True),
+            username = dict(required=False, type='str'),
+            password = dict(required=False, type='str'),
+            validate_certs = dict(required=False, type='bool', default=True),
+            ca_bundle_file = dict(required=False, type='str'),
             definition = dict(type='raw', required=False),    # Not required if state is not 'present'
             state = dict(type='str', required=False, choices=[PRESENT, ABSENT,GET], default=PRESENT),
             log_level = dict(type='str', required=False, default="None")
@@ -312,6 +347,10 @@ def main():
     p = Parameters()
     p.name = module.params['name']
     p.elasticsearchUrl = module.params['elasticsearch_url']
+    p.username = module.params['username']
+    p.password = module.params['password']
+    p.validateCerts = module.params['validate_certs']
+    p.ca_bundleFile = module.params['ca_bundle_file']
     p.definition = module.params['definition']
     p.state = module.params['state']
     p.logLevel = module.params['log_level']
@@ -325,7 +364,15 @@ def main():
     if not p.elasticsearchUrl.endswith("/"):
         p.elasticsearchUrl = p.elasticsearchUrl + "/"
 
-    api = EsApi(p.elasticsearchUrl)
+    if (p.username != None) != (p.password != None):
+        error("'username' and 'password' must be defined both or not at all")
+    
+    if p.ca_bundleFile != None:
+        verify = p.ca_bundleFile
+    else:
+        verify = p.validateCerts
+
+    api = EsApi(p.elasticsearchUrl, p.username, p.password, verify)
     
     if p.state == ABSENT:
         p.changed = api.deleteTemplate(p.name)

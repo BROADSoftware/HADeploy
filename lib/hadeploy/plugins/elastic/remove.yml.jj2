@@ -10,12 +10,30 @@
   roles: 
   - elastic_modules
   tasks:
+
+{{% if server.ca_bundle_local_file is defined and server.ca_bundle_local_file != None %}}
+  - name: Copy CA_BUNDLE
+    copy: src={{{server.ca_bundle_local_file}}} dest={{{server.ca_bundle_relay_file}}} owner={{ansible_user}} mode="0400"
+    changed_when: false 
+{{%endif%}}
+  
 {{% for index in server.indices %}}
 {{% if not index.no_remove %}}
   - name: Delete index {{{index.name}}}
+{{% if server.no_log %}}  
+    no_log: true
+{{% endif %}}
     elasticsearch_index:
       name: "{{{index.name}}}"
       elasticsearch_url: "{{{server.url}}}"
+{{% if server.username is defined %}}
+      username: "{{{server.username}}}"
+      password: "{{{server.password}}}"      
+{{% endif %}}
+      validate_certs: "{{{ server.validate_certs }}}"
+{{% if server.ca_bundle_relay_file is defined and server.ca_bundle_relay_file != None %}}
+      ca_bundle_file: "{{{ server.ca_bundle_relay_file }}}"
+{{%endif%}}
       state: absent
 {{% endif %}}
 {{% endfor %}}
@@ -23,9 +41,20 @@
 {{% for template in server.templates %}}
 {{% if not template.no_remove %}}
   - name: Delete template {{{template.name}}}
+{{% if server.no_log %}}  
+    no_log: true
+{{% endif %}}
     elasticsearch_template:
       name: "{{{template.name}}}"
       elasticsearch_url: "{{{server.url}}}"
+{{% if server.username is defined %}}
+      username: "{{{server.username}}}"
+      password: "{{{server.password}}}"      
+{{% endif %}}
+      validate_certs: "{{{ server.validate_certs }}}"
+{{% if server.ca_bundle_relay_file is defined and server.ca_bundle_relay_file != None %}}
+      ca_bundle_file: "{{{ server.ca_bundle_relay_file }}}"
+{{%endif%}}
       state: absent
 {{% endif %}}
 {{% endfor %}}
