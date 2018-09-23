@@ -10,6 +10,12 @@ mapping:
         "name": { type: str, required: true }
         "relay_host": { type: str, required: true }
         "url": { type: str, required: true }
+        "username": { type: str, required: false }
+        "password": { type: str, required: false }
+        "validate_certs": { type: bool, required: false }    # Default to true
+        "ca_bundle_relay_file": { type: str, required: false }
+        "ca_bundle_local_file": { type: str, required: false }
+        "no_log": { type: bool, required: false }    # Default to true
         "when": { type: bool, required: false }    # Default to true
 
   "elasticsearch_indices":        
