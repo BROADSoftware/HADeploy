@@ -10,7 +10,7 @@
   roles: 
   - elastic_modules
   tasks:
-  
+
 {{% if server.ca_bundle_local_file is defined and server.ca_bundle_local_file != None %}}
   - name: Copy CA_BUNDLE
     copy: src={{{server.ca_bundle_local_file}}} dest={{{server.ca_bundle_relay_file}}} owner={{ansible_user}} mode="0400"
