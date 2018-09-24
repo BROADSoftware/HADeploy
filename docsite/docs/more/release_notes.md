@@ -1,5 +1,9 @@
 # Release notes
 
+## 0.6.1
+
+ - ???
+
 ## 0.6.0
 
 - /var/run/supervisor_xxxx folder was sometime deleted (i.e. after a hard restart). Now automatically recreated
