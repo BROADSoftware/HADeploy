@@ -17,8 +17,8 @@ ranger_url|yes|The Ranger base URL to access Ranger API. Same host:port as the R
 ranger_username|yes|The user name to log on the Ranger Admin. Must have enough rights to manage policies
 ranger_password|yes|The password associated with the admin_username. May be encrypted. Refer to [encrypted variables](../core/encrypted_vars)
 validate_certs|no|Useful if Ranger Admin connection is using SSL. If no, SSL certificates will not be validated. This should only be used on personally controlled sites using self-signed certificates.<br>Default: `yes`
-ca_bundle_relay_file|no|Useful if Ranger Admin connection is using SSL. Allow to specify a CA_BUNDLE file, a file that contains root and intermediate certificates to validate the Ranger Admin certificate.<br>In its simplest case, it could be a file containing the server certificate in .pem format. This file will be looked up on the relay host system, on which this module will be executed.
-ca_bundle_local_file|no|Same as above, except this file will be looked up locally, relative to the main file. It will be copied on the relay host at the location defined by ca_bundle_relay_file
+ca_bundle_relay_file|no|Useful if Ranger Admin connection is using SSL. Allow to specify a CA_BUNDLE file, a file that contains root and intermediate certificates to validate the Ranger Admin certificate in .pem format.<br>This file will be looked up on the relay host system, on which this module will be executed.
+ca_bundle_local_file|no|Same as above, except this file will be looked up locally, relative to the main file. It will be copied on the relay host at the location defined by `ca_bundle_relay_file`
 hdfs_service_name|no|In most cases, you should not need to set this parameter. It defines the Ranger Admin HDFS service, typically: `<yourClusterName>_hadoop`.<br>It must be set if there are several such services defined in your Ranger Admin configuration, to select the one you intend to use.
 hbase_service_name|no|In most cases, you should not need to set this parameter. It defines the Ranger Admin HBase service, typically: `<yourClusterName>_hbase`.<br>It must be set if there are several such services defined in your Ranger Admin configuration, to select the one you intend to use.
 kafka_service_name|no|In most cases, you should not need to set this parameter. It defines the Ranger Admin Kafka service, typically: `<yourClusterName>_kafka`.<br>It must be set if there are several such services defined in your Ranger Admin configuration, to select the one you intend to use.
@@ -72,9 +72,11 @@ The offending line appears to be:
 
 More detail on how to encrypt a value and providing a password on execution at [encrypted variables](../core/encrypted_vars)
 
-## Simple CA_BUNDLE
+## CA_BUNDLE
+
+Internally, HADeploy use the python `requests` API to access Ranger. The provided `ca_bundle_relay_file` will be used as the `verify` parameter of all HTTP requests. More info  [here](http://docs.python-requests.org/en/master/user/advanced/#ssl-cert-verification).
  
-In its simplest case, a CA_BUNDLE can be simply the certificate of the Ranger server, in PEM format.
+In some cases, a CA_BUNDLE may be simply the certificate of the Ranger server, in PEM format.
 
 To grab this certificate, you may use a tiny python program like the following:
 ```python

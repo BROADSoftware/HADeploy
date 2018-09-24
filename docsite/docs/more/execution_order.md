@@ -4,13 +4,13 @@ The order of action performed on the target host does NOT depend of the order in
 
 * Linux local groups are created
 * Linux local users are created.
-* Apache Ranger policies are applied
-* Elastic indices and templates are created 
 * Linux nodes folders are created.
 * Files and trees with nodes as target are deployed
+* Apache Ranger policies are applied
 * hdfs_relay host is configured, if needed
 * HDFS folders are created
 * Files and trees with HDFS as target are deployed
+* Elastic indices and templates are created 
 * hbase_relay host is configured if needed.
 * HBase namespaces and table are created.
 * HBase datasets are loaded
@@ -60,10 +60,10 @@ Here are the values per plugin and action:
 |inventory            |   1300 (3) |   1300     |   1300     |    -   |   -   |   -    |
 |ansible              |   1400     |   (2)      |   (2)      |    -   |   -   |   -    |
 |users                |   2000     |   2000     |   7000     |    -   |   -   |   -    |
-|ranger               |   8000 (1) |   2500     |   6000     |    -   |   -   |   -    |
-|Elastic              |   3000     |   2700     |   5000     |    -   |   -   |   -    |
 |Nodes files & folders|   3000     |   3000     |   4000     |    -   |   -   |   -    |
+|ranger               |   8000 (1) |   3200     |   3700     |    -   |   -   |   -    |
 |hdfs files & folders |   3500 (4) |   3500     |   3500     |    -   |   -   |   -    |
+|Elastic              |   3700     |   3700     |   3200     |    -   |   -   |   -    |
 |hbase                |   4000     |   4000     |   3000     |    -   |   -   |   -    |
 |hive                 |   4500     |   4500     |   2500     |    -   |   -   |   -    |
 |kafka                |   5000     |   5000     |   2000     |    -   |   -   |   -    |

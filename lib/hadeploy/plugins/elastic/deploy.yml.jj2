@@ -12,6 +12,9 @@
   tasks:
 
 {{% if server.ca_bundle_local_file is defined and server.ca_bundle_local_file != None %}}
+  - name: Ensure CA_BUNDLE folder
+    file: path={{{server.ca_bundle_relay_folder}}} state=directory
+    
   - name: Copy CA_BUNDLE
     copy: src={{{server.ca_bundle_local_file}}} dest={{{server.ca_bundle_relay_file}}} owner={{ansible_user}} mode="0400"
     changed_when: false 

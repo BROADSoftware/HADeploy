@@ -5,12 +5,12 @@
 - /var/run/supervisor_xxxx folder was sometime deleted (i.e. after a hard restart). Now automatically recreated
 - Yarn service failed when existing job list was empty. Fixed
 - Improving documentation on Yarn services integration with Kerberos.
+- Added handling of secured access to elasticsearch cluster (Authentication and SSL).
 
 #### INCOMPATIBILITY
 
 - [kafka_relay](../plugins_reference/kafka/kafka_relay) has a new mandatory parameter: `kafka_version`. 
 - Due to change in the Kerberos handling of the Kafka plugin, `principal` and `xxx_keytab_path` parameters has been removed from the [kafka_relay](../plugins_reference/kafka/kafka_relay) definition.
-
 
 ## 0.5.7
 

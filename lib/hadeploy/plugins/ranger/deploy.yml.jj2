@@ -9,6 +9,9 @@
   tasks:
 
 {{% if src.ranger_relay.ca_bundle_local_file is defined %}}
+  - name: Ensure CA_BUNDLE folder
+    file: path={{{src.ranger_relay.ca_bundle_relay_folder}}} state=directory
+
   - name: Copy CA_BUNDLE
     copy: src={{{src.ranger_relay.ca_bundle_local_file}}} dest={{{src.ranger_relay.ca_bundle_relay_file}}} owner={{ansible_user}} mode="0400"
     changed_when: false 

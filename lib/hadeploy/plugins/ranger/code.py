@@ -131,7 +131,7 @@ class RangerPlugin(Plugin):
             return [ACTION_DEPLOY, ACTION_REMOVE]
 
     def getPriority(self, action):
-        return 2500 if action == ACTION_DEPLOY else 6000 if action == ACTION_REMOVE else misc.ERROR("Plugin 'ranger' called with invalid action: '{0}'".format(action))
+        return 3200 if action == ACTION_DEPLOY else 3700 if action == ACTION_REMOVE else misc.ERROR("Plugin 'ranger' called with invalid action: '{0}'".format(action))
 
     def onGrooming(self):
         misc.applyWhenOnSingle(self.context.model[SRC], RANGER_RELAY)

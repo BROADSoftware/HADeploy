@@ -75,7 +75,7 @@ class ElasticsearchPlugin(Plugin):
             return [ACTION_DEPLOY, ACTION_REMOVE]
 
     def getPriority(self, action):
-        return 2700 if action == ACTION_DEPLOY else 5000 if action == ACTION_REMOVE else misc.ERROR("Plugin 'elasticsearch' called with invalid action: '{0}'".format(action))
+        return 3700 if action == ACTION_DEPLOY else 3700 if action == ACTION_REMOVE else misc.ERROR("Plugin 'elasticsearch' called with invalid action: '{0}'".format(action))
 
     def onGrooming(self):
         misc.applyWhenOnList(self.context.model[SRC], ELASTICSEARCH_SERVERS)
@@ -113,7 +113,7 @@ def groomElasticServers(model):
                 if server[CA_BUNDLE_RELAY_FILE] in relayFiles:
                     misc.ERROR("ca_bundle_relay_file: {} is defined by several elasticsearch_server".format(server[CA_BUNDLE_RELAY_FILE]))
                 relayFiles.add(server[CA_BUNDLE_RELAY_FILE])
-                #server[CA_BUNDLE_RELAY_FOLDER] = os.path.dirname(server[CA_BUNDLE_RELAY_FILE] )
+                server[CA_BUNDLE_RELAY_FOLDER] = os.path.dirname(server[CA_BUNDLE_RELAY_FILE] )
     
 def groomElasticIndices(model):
     nameChecker = Set()
