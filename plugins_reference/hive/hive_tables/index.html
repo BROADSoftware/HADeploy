@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../../img/favicon.ico">
+        <title>hive_tables - HADeploy</title>
+        <link href="../../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../../css/font-awesome-4.5.0.css" rel="stylesheet">
+        <link href="../../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../../css/highlight.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+	
+	<script src="../../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../../js/highlight.pack.js"></script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../../..">HADeploy</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                    <li >
+                        <a href="../../..">Home</a>
+                    </li>
+                    <li >
+                        <a href="../../../installation/">Installation</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Getting started <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+<li >
+    <a href="../../../getting_started/first_step/">First step</a>
+</li>
+                            
+<li >
+    <a href="../../../getting_started/next_step/">Next step</a>
+</li>
+                        </ul>
+                    </li>
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Plugins reference <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Core</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../core/encrypted_vars/">encrypted_vars</a>
+</li>
+            
+<li >
+    <a href="../../core/excluded_scopes/">excluded_scopes</a>
+</li>
+            
+<li >
+    <a href="../../core/include/">include</a>
+</li>
+            
+<li >
+    <a href="../../core/included_scopes/">included_scopes</a>
+</li>
+            
+<li >
+    <a href="../../core/vars/">vars</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Ansible</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../ansible/ansible_overview/">Overview</a>
+</li>
+            
+<li >
+    <a href="../../ansible/ansible_playbooks/">ansible_playbooks</a>
+</li>
+            
+<li >
+    <a href="../../ansible/playbooks_folders/">playbooks_folders</a>
+</li>
+            
+<li >
+    <a href="../../ansible/roles_folders/">roles_folders</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Ansible_inventories</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../ansible_inventories/ansible_inventories/">ansible_inventories</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Elasticsearch</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../elastic/elasticsearch_indices/">elasticsearch_indices</a>
+</li>
+            
+<li >
+    <a href="../../elastic/elasticsearch_servers/">elasticsearch_servers</a>
+</li>
+            
+<li >
+    <a href="../../elastic/elasticsearch_templates/">elasticsearch_templates</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Files</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../files/files/">files</a>
+</li>
+            
+<li >
+    <a href="../../files/folders/">folders</a>
+</li>
+            
+<li >
+    <a href="../../files/maven_repositories/">maven_repositories</a>
+</li>
+            
+<li >
+    <a href="../../files/local_files_folders/">local_files_folders</a>
+</li>
+            
+<li >
+    <a href="../../files/local_templates_folders/">local_templates_folders</a>
+</li>
+            
+<li >
+    <a href="../../files/trees/">trees</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">HBase</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../hbase/hbase_datasets/">hbase_datasets</a>
+</li>
+            
+<li >
+    <a href="../../hbase/hbase_namespaces/">hbase_namespaces</a>
+</li>
+            
+<li >
+    <a href="../../hbase/hbase_relay/">hbase_relay</a>
+</li>
+            
+<li >
+    <a href="../../hbase/hbase_tables/">hbase_tables</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Hdfs</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../hdfs/hdfs_relay/">hdfs_relay</a>
+</li>
+            
+<li >
+    <a href="../../hdfs/source_host_credentials/">source_host_credentials</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Hive</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../hive_databases/">hive_databases</a>
+</li>
+            
+<li >
+    <a href="../hive_relay/">hive_relay</a>
+</li>
+            
+<li class="active">
+    <a href="./">hive_tables</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Inventory</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../inventory/exit_on_fail/">exit_on_fail</a>
+</li>
+            
+<li >
+    <a href="../../inventory/hosts/">hosts</a>
+</li>
+            
+<li >
+    <a href="../../inventory/host_groups/">host_groups</a>
+</li>
+            
+<li >
+    <a href="../../inventory/host_group_overrides/">host_group_overrides</a>
+</li>
+            
+<li >
+    <a href="../../inventory/host_overrides/">host_overrides</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Kafka</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../kafka/kafka_relay/">kafka_relay</a>
+</li>
+            
+<li >
+    <a href="../../kafka/kafka_topics/">kafka_topic</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Ranger</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../ranger/hbase_ranger_policies/">hbase_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../ranger/hdfs_ranger_policies/">hdfs_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../ranger/hive_ranger_policies/">hive_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../ranger/kafka_ranger_policies/">kafka_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../ranger/ranger_relay/">ranger_relay</a>
+</li>
+            
+<li >
+    <a href="../../ranger/storm_ranger_policies/">storm_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../ranger/yarn_ranger_policies/">yarn_ranger_policies</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Storm</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../storm/storm_overview/">storm_overview</a>
+</li>
+            
+<li >
+    <a href="../../storm/storm_relay/">storm_relay</a>
+</li>
+            
+<li >
+    <a href="../../storm/storm_topologies/">storm_topologies</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Systemd</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../systemd/systemd_units/">systemd_units</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Supervisors</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../supervisor/supervisor_overview/">Overview</a>
+</li>
+            
+<li >
+    <a href="../../supervisor/supervisors/">supervisors</a>
+</li>
+            
+<li >
+    <a href="../../supervisor/supervisor_groups/">supervisor_groups</a>
+</li>
+            
+<li >
+    <a href="../../supervisor/supervisor_programs/">supervisor_programs</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Users</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../users/groups/">groups</a>
+</li>
+            
+<li >
+    <a href="../../users/users/">users</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Yarn</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../yarn/yarn_overview/">yarn_overview</a>
+</li>
+            
+<li >
+    <a href="../../yarn/yarn_relay/">yarn_relay</a>
+</li>
+            
+<li >
+    <a href="../../yarn/yarn_services/">yarn_service</a>
+</li>
+    </ul>
+  </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+<li >
+    <a href="../../../more/conditional_deployment/">Conditional deployment</a>
+</li>
+                            
+<li >
+    <a href="../../../more/under_the_hood/">Under the hood</a>
+</li>
+                            
+<li >
+    <a href="../../../more/execution_order/">Execution order</a>
+</li>
+                            
+<li >
+    <a href="../../../more/altering_scope/">Altering scope</a>
+</li>
+                            
+<li >
+    <a href="../../../more/secured_cluster/">Secured cluster</a>
+</li>
+                            
+<li >
+    <a href="../../../more/yaml_tricks/">YAML tricks</a>
+</li>
+                            
+<li >
+    <a href="../../../more/release_notes/">Release notes</a>
+</li>
+                        </ul>
+                    </li>
+                </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                    <li >
+                        <a rel="next" href="../hive_relay/">
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../../inventory/exit_on_fail/">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#hive_tables">hive_tables</a></li>
+            <li><a href="#synopsis">Synopsis</a></li>
+            <li><a href="#attributes">Attributes</a></li>
+            <li><a href="#altering-table">Altering table</a></li>
+            <li><a href="#table-ownership">Table ownership</a></li>
+            <li><a href="#example">Example:</a></li>
+            <li><a href="#hbase-table-mapping">HBase table mapping</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="hive_tables">hive_tables</h1>
+<h2 id="synopsis">Synopsis</h2>
+<p>Provide a list of HIVE tables required by the application. They will be created (or destroyed) by HADeploy.</p>
+<h2 id="attributes">Attributes</h2>
+<p>Each item of the list has the following attributes:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>req?</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>yes</td>
+<td>The name of the table</td>
+</tr>
+<tr>
+<td>database</td>
+<td>yes</td>
+<td>The database this table belong to</td>
+</tr>
+<tr>
+<td>external</td>
+<td>no</td>
+<td>Boolean. Equivalent to the EXTERNAL Hive DDL clause</td>
+</tr>
+<tr>
+<td>fields</td>
+<td>no</td>
+<td>A list of fields definition describing the table's column. Refer to <a href="#field-definition">Field definition</a> below</td>
+</tr>
+<tr>
+<td>comment</td>
+<td>no</td>
+<td>An optional comment associated to the table</td>
+</tr>
+<tr>
+<td>location</td>
+<td>no</td>
+<td>Equivalent to the LOCATION Hive DDL clause</td>
+</tr>
+<tr>
+<td>properties</td>
+<td>no</td>
+<td>A map of properties. Equivalent to TBLPROPERTIES Hive DDL clause</td>
+</tr>
+<tr>
+<td>stored_as</td>
+<td>no</td>
+<td>Specify the file format, such as SEQUENCEFILE, TEXTEFILE, RCFILE, ....<br/>Equivalent to STORED AS Hive DDL clause [1]</td>
+</tr>
+<tr>
+<td>input_format</td>
+<td>no</td>
+<td>Equivalent to STORED AS INPUT FORMAT '....' Hive DDL clause [1][2]</td>
+</tr>
+<tr>
+<td>output_format</td>
+<td>no</td>
+<td>Equivalent to STORED AS OUTPUT FORMAT '....' Hive DDL clause [1][2]</td>
+</tr>
+<tr>
+<td>delimited</td>
+<td>no</td>
+<td>A map of delimiter character. Equivalent to ROW FORMAT DELIMITED Hive DDL clause. Refer to <a href="#delimited-row-format">Delimited row format</a> below [3]</td>
+</tr>
+<tr>
+<td>serde</td>
+<td>no</td>
+<td>Allow explicit definition of a <code>serde</code>'. Equivalent to ROW FORMAT SERDE Hive DDL clause [3]</td>
+</tr>
+<tr>
+<td>serde_properties</td>
+<td>no</td>
+<td>A map of properties associated to the <code>serde</code>. Equivalent to WITH SERDEPROPERTIES Hive DDL clause</td>
+</tr>
+<tr>
+<td>storage_handler</td>
+<td>no</td>
+<td>Allow definition of the storage handler. Equivalent to STORED BY Hive DDL clause</td>
+</tr>
+<tr>
+<td>partitions</td>
+<td>no</td>
+<td>A list of fields definition describing the table's partitioning. Refer to <a href="#field-definition">Field definition</a>  below</td>
+</tr>
+<tr>
+<td>clustered_by</td>
+<td>no</td>
+<td>Allow definition of a CLUSTERED BY Hive DDL clause. Refer to <a href="#table-clustering">Table clustering</a> below</td>
+</tr>
+<tr>
+<td>skewed_by</td>
+<td>no</td>
+<td>Allow definition of a SKEWED BY Hive DDL Clause. Refer to <a href="#skewed-values">Skewed values</a></td>
+</tr>
+<tr>
+<td>alterable</td>
+<td>no</td>
+<td>Boolean. Allow most of ALTER TABLE commands to be automatically issued for table modification. Refer to <a href="#altering-table">Altering table</a> below.<br>Default: <code>no</code>.</td>
+</tr>
+<tr>
+<td>droppable</td>
+<td>no</td>
+<td>Boolean. Allow this table to be dropped and recreated if definition is modified.<br>Default value is <code>yes</code> if the table is external, <code>no</code>for all other cases</td>
+</tr>
+<tr>
+<td>no_remove</td>
+<td>no</td>
+<td>Boolean: Prevent this database to be removed when HADeploy will be used in REMOVE mode.<br>Default: <code>no</code></td>
+</tr>
+<tr>
+<td>ranger_policy</td>
+<td>no</td>
+<td>Definition of Apache Ranger policy bound to this table.<br>Parameters are same as <a href="../../ranger/hive_ranger_policies">hive_ranger_policies</a> except than <code>database</code>, <code>tables</code> and <code>columns</code> should not be defined. The policy will apply on all columns of this table.<br>The policy name can be explicitly defined. Otherwise, a name will be generated as "<code>_&lt;database.table&gt;_</code>".<br>See example below for more information</td>
+</tr>
+<tr>
+<td>when</td>
+<td>no</td>
+<td>Boolean. Allow <a href="../../../more/conditional_deployment">conditional deployment</a> of this item.<br>Default <code>True</code></td>
+</tr>
+</tbody>
+</table>
+<p>[1]: Storage format can be defined using two methods:</p>
+<ul>
+<li>Use <code>stored_by</code>. This will define implicitly <code>input_format</code>, <code>output_format</code> and, for some value the <code>serde</code>.</li>
+<li>Explictly define <code>input_format</code>, <code>output_format</code> and eventually <code>serde</code>.</li>
+</ul>
+<p>The two approaches are exclusive. Defining both <code>stored_by</code> and <code>input/output_format</code> will generate an error.</p>
+<p>[2] <code>input_format</code> and <code>output_format</code> must be defined both if used.</p>
+<p>[3] <code>delimited</code> and <code>serde</code> are exclusive and can't be defined both.</p>
+<h3 id="field-definition">Field definition:</h3>
+<p>Here is the definition of a <code>field</code> element:</p>
+<table>
+<thead>
+<tr>
+<th>Field Attribute</th>
+<th align="center">Req.</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td align="center">yes</td>
+<td>The name of the field</td>
+</tr>
+<tr>
+<td>type</td>
+<td align="center">yes</td>
+<td>The type of the field. Note this file if used as-is, without interpretation from HADeploy.<br>This will allow to define Hive Complex Types here (arrays, maps, structs,union). See examples below.</td>
+</tr>
+<tr>
+<td>comment</td>
+<td align="center">no</td>
+<td>An optional comment</td>
+</tr>
+</tbody>
+</table>
+<h3 id="delimited-row-format">Delimited row format</h3>
+<p>The <code>delimited</code> map can hold the following values:</p>
+<pre><code class="yaml">fields_terminated_by:
+fields_escaped_by:
+collection_items_terminated_by:
+map_keys_terminated_by:
+lines_terminated_by:
+null_defined_as:
+</code></pre>
+
+<p>The characters must be expressed between single quote, and can be a regular character, an usual backslash escape sequence, or a unicode value. For example:</p>
+<pre><code class="yaml">...
+delimited:
+  fields_terminated_by: ','
+  map_keys_terminated_by: '\u0009'  # Same as '\t'
+  lines_terminated_by: '\n'
+  null_defined_as: '\u0001'
+</code></pre>
+
+<blockquote>
+<p>using octal notation (i.e. '\001') is not supported.</p>
+</blockquote>
+<h3 id="table-clustering">Table clustering</h3>
+<p>Here is the definition of a <code>clustered_by</code> element:</p>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th align="center">Req.</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>columns</td>
+<td align="center">yes</td>
+<td>This list of columns to CLUSTER BY</td>
+</tr>
+<tr>
+<td>nbr_buckets</td>
+<td align="center">yes</td>
+<td>The number of buckets</td>
+</tr>
+<tr>
+<td>sorted_by</td>
+<td align="center">no</td>
+<td>A list of sort item element, as defined just below</td>
+</tr>
+</tbody>
+</table>
+<p>Inner sort item element:</p>
+<table>
+<thead>
+<tr>
+<th align="right">Attribute</th>
+<th align="center">Req.</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right">columns</td>
+<td align="center">yes</td>
+<td>A list of column</td>
+</tr>
+<tr>
+<td align="right">direction</td>
+<td align="center">no</td>
+<td>The direction: <code>ASC</code> or <code>DESC</code>. Default is <code>ASC</code></td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<pre><code class="yaml">  ...
+  clustered_by:
+    columns:
+    - userid
+    - page_url
+    sorted_by:
+    - { column: userid, direction: asc }
+    - { column: page_url, direction: desc }
+    nbr_buckets: 16
+</code></pre>
+
+<p>Will be interpreted as:</p>
+<pre><code class="sql"> CLUSTERED BY(userid,page_url) SORTED BY (userid asc, page_url desc) INTO 16 BUCKETS
+</code></pre>
+
+<h3 id="skewed-values">Skewed values</h3>
+<p>Here is the definition of the <code>skewed_by</code> element:</p>
+<table>
+<thead>
+<tr>
+<th align="right">Attribute</th>
+<th align="center">Req.</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right">columns</td>
+<td align="center">yes</td>
+<td>A list of column</td>
+</tr>
+<tr>
+<td align="right">values</td>
+<td align="center">yes</td>
+<td>A list of list of values</td>
+</tr>
+<tr>
+<td align="right">stored_as_directories</td>
+<td align="center">no</td>
+<td>Boolean. Is skewed value stored as directory.<br>Default <code>no</code></td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<pre><code class="yaml">  ...
+  skewed_by:
+    columns:
+    - key
+    values:
+    - [ 1 ]
+    - [ 5 ]
+    - [ 6 ]
+    stored_as_directories: true
+</code></pre>
+
+<p>will be interpreted as:</p>
+<pre><code class="sql">SKEWED BY(key) ON(('1'),('5'),('6')) STORED AS DIRECTORIES
+</code></pre>
+
+<p>And:</p>
+<pre><code class="yaml">  skewed_by:
+    columns:
+    - col1
+    - col2
+    values:
+    - [ &quot;s1&quot;, 1 ]
+    - [ &quot;s3&quot;, 3 ]
+    - [ &quot;s13&quot;, 13 ]
+    - [ &quot;s78&quot;, 78 ]
+</code></pre>
+
+<p>will be interpreted as:</p>
+<pre><code class="sql">SKEWED BY(col1,col2) ON(('s1', 1),('s3', 3),('s13', 13),('s78',78))
+</code></pre>
+
+<h2 id="altering-table">Altering table</h2>
+<p>The must tricky operation with tools like <code>HADeploy</code> is not table creation, but how it must behave on existing table evolution, specially if theses table already contains some data. </p>
+<p>In case of table schema update, operation can be classified in several categories:</p>
+<ul>
+<li>
+<p>Modification which can be performed by issuing one or several ALTER TABLE command and which are independent of data layout. For example, changing a comment. These operations are automatically performed.</p>
+</li>
+<li>
+<p>Modification which can be performed by issuing one or several ALTER TABLE command, but may introduce a shift between the effective stored data and the new table definition definition. Such operation need to be allowed by setting the <code>alterable</code>flag to <code>yes</code>. </p>
+</li>
+</ul>
+<blockquote>
+<p>Most if not all ALTER TABLE commands will only modify Hive's metadata, and will not modify data. Users should make sure the actual data layout of the table/partition conforms with the new metadata definition.</p>
+</blockquote>
+<ul>
+<li>Modification which occurs on table which can be freely dropped without deleting the data. This is the case for example for EXTERNAL tables. In such case, the table is dropped and recreated in case of schema modification. This can be controlled using the <code>droppable</code> flag.</li>
+<li>Modification which can't be performed as too complex or there is no corresponding ALTER TABLE command. Such operation should be performed by an external, user defined, script. See below for more information.</li>
+</ul>
+<h3 id="database-migration">Database migration.</h3>
+<p>Database migration is a complex subject, as it involve not only modifying the database schema, but also adjusting existing data to comply for the new schema.</p>
+<p>In some case, like adding a new column, it could be quite simple. But it is generally more involving. </p>
+<p>Just think of a simple use case: Breaking a <code>full_name</code> field (content: i.e. 'Sylvester STALLONE') in two fields: <code>first_name</code> ('Sylvester') and <code>last_name</code> ('STALLONE'). It is obvious you will need some application specific code to be executed to perform this.</p>
+<p>This problem has been addressed by some tools in the RDBMS fields. But there is no miracle. These tools are in fact more frameworks which globally act the following way:</p>
+<ul>
+<li>Version database schema</li>
+<li>Request the user to provide a set of migration scripts to transform database version X to version Y</li>
+<li>For each migration, lookup source and target version. And try to find a appropriate sequence of user's migration scripts</li>
+</ul>
+<p>Currently, HADeploy do not provide such solution yet. But, under the hood, all HIVE operation are performed by a special tools: <a href="https://github.com/BROADSoftware/jdchive">jdchive</a>. This tool has been designed with this migraton pattern in mind. Check <a href="https://github.com/BROADSoftware/jdchive#database-migration">here</a></p>
+<h2 id="table-ownership">Table ownership</h2>
+<p>As there is no command such as 'ALTER TABLE SET USER...' the database owner will be the account under which the table creation commands was launched during database creation.</p>
+<p>This account can be set be the <code>user</code>attribute of the <a href="../hive_relay">hive_relay</a>. If not, it will be the <code>ssh_user</code> attached to the host used for relaying (<code>hive_relay.host</code>).</p>
+<p>Once the table is created, there is no way to change this table ownership.</p>
+<h2 id="example">Example:</h2>
+<pre><code class="yaml">hive_tables:
+- name: testSimple
+  database: jdctest1
+  comment: &quot;A first, simple test table&quot;
+  location: &quot;/tmp/xxx&quot;
+  fields:
+  - name: fname
+    type: string
+    comment: &quot;First name&quot;
+  - name: lname
+    type: string
+    comment: &quot;Last name&quot;
+- name: testRcFile
+  database: jdctest1
+  comment: &quot;A RCFILE table&quot;
+  fields: [ { name: fname, type: string, comment: 'The first name' }, { name: lname, type: string } ]
+  stored_as: RCFILE
+</code></pre>
+
+<p>Will be interpreted, for creation as:</p>
+<pre><code class="sql">CREATE  TABLE jdctest1.testSimple ( fname string COMMENT 'First name', lname string COMMENT 'Last name' ) COMMENT 'A first, simple test table' LOCATION 'hdfs://mycluster/tmp/xxx'
+CREATE  TABLE jdctest1.testRcFile ( fname string COMMENT 'The first name', lname string ) COMMENT 'A RCFILE table' STORED AS RCFILE
+</code></pre>
+
+<p>And:</p>
+<pre><code class="yaml">hive_tables:
+- name: testPartitions
+  database: jdctest1
+  comment: &quot;A table with partitions&quot;
+  fields:
+  - name: viewTime
+    type: INT
+  - name: userid
+    type: BIGINT
+  - name: page_url
+    type: STRING
+  - name: referrer_url
+    type: STRING
+  - name: ip
+    type: STRING
+    comment: &quot;IP Address of the User&quot;
+  partitions:
+  - name: dt
+    type: STRING
+  - name: country
+    type: STRING
+  stored_as: SEQUENCEFILE
+  state: present
+</code></pre>
+
+<p>Will be interpreted, for creation as:</p>
+<pre><code class="sql">CREATE  TABLE jdctest1.testPartitions ( viewTime INT, userid BIGINT, page_url STRING, referrer_url STRING, ip STRING COMMENT 'IP Address of the User' ) COMMENT 'A table with partitions' PARTITIONED BY ( dt STRING, country STRING ) STORED AS SEQUENCEFILE
+
+</code></pre>
+
+<p>And:</p>
+<pre><code class="yaml">hive_tables:
+- name: testSerde
+  database: jdctest1
+  comment: &quot;Serde test&quot;
+  fields:
+  - { name: host, type: STRING }
+  - { name: identity, type: STRING }
+  - { name: theuser, type: STRING }
+  serde: &quot;org.apache.hadoop.hive.serde2.RegexSerDe&quot;
+  serde_properties:
+    input.regex: &quot;([^ ]*) ([^ ]*) ([^ ]*)&quot;
+  state: present
+  alterable: true
+</code></pre>
+
+<p>Will be interpreted, for creation as:</p>
+<pre><code class="sql">CREATE  TABLE jdctest1.testSerde ( host STRING, identity STRING, theuser STRING) COMMENT 'Serde test' ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.RegexSerDe' WITH SERDEPROPERTIES ( 'input.regex'='([^ ]*) ([^ ]*) ([^ ]*)')
+</code></pre>
+
+<h3 id="complex-types-example">Complex Types example</h3>
+<p>Here, the field <code>value</code> is not a simple scalar one:</p>
+<pre><code class="yaml">- name: testComplex
+  database: jdctest1
+  external: true
+  fields:
+  - { name: compressed, type: boolean }
+  - { name: value, type: &quot;struct&lt;contentType:string, message:string, sender:string, properties: array&lt;struct&lt;key:string,value:int&gt;&gt;, type:string&gt;&quot; }
+  - { name: timestamp, type: string }
+</code></pre>
+
+<p>And same example, but expressed differently:</p>
+<pre><code class="yaml">- name: testComplex
+  database: jdctest1
+  external: true
+  fields:
+  - { name: compressed, type: boolean }
+  - name: value
+    type: |
+      struct&lt;
+        contentType:string, 
+        message:string, 
+        sender:string, 
+        properties: array&lt;
+          struct&lt;
+            key:string,
+            value:int
+          &gt;
+        &gt;, 
+        type:string
+      &gt;
+  - { name: timestamp, type: string }
+</code></pre>
+
+<h3 id="apache-ranger-example">Apache Ranger example</h3>
+<p>Following is an illustration of Apache Ranger policy association: The table is created with select and update permissions for all users of the 'users' group. And user 'sa' can also create new indexes.</p>
+<pre><code class="yaml">hive_tables:
+- name: testranger
+  database: jdctest1
+  comment: &quot;A first, simple test table&quot;
+  location: &quot;/tmp/xxx&quot;
+  fields:
+  - name: fname
+    type: string
+    comment: &quot;First name&quot;
+  - name: lname
+    type: string
+    comment: &quot;Last name&quot;
+  ranger_policy:
+    permissions:
+    - groups:
+      - users
+      accesses: 
+      - select
+      - update
+    - users:
+      - sa
+      accesses:
+      - index
+</code></pre>
+
+<h2 id="hbase-table-mapping">HBase table mapping</h2>
+<p>A frequent use case is the mapping of HBase table by HIVE, to ease querying. This can be achieved using HADeploy. </p>
+<h3 id="example_1">Example:</h3>
+<p>Provided the following HBase table definition:</p>
+<pre><code class="yaml">hbase_namespaces:
+- name: test2
+
+hbase_tables:
+  - name: test2a
+    namespace: test2
+    column_families:
+    - name: id
+    - name: job
+</code></pre>
+
+<p>(Refer to <a href="../../hbase/hbase_namespaces">hbase_namespaces</a> and <a href="../../hbase/hbase_tables">hbase_tables</a> for more informations</p>
+<p>One can easely map an external HIVE table: </p>
+<pre><code class="yaml">hive_tables
+- name: testHBase
+  database: jdctest1
+  fields:
+  - { name: rowkey, type: string, comment: &quot;The row key&quot; }
+  - { name: number, type: int }
+  - { name: prefix, type: string }
+  - { name: fname, type: string }
+  - { name: lname, type: string }
+  - { name: company, type: string }
+  - { name: title, type: string }
+  external: true
+  storage_handler: &quot;org.apache.hadoop.hive.hbase.HBaseStorageHandler&quot;
+  properties:
+    hbase.table.name: &quot;test2:test2a&quot;
+  serde_properties:
+    hbase.columns.mapping: &quot;:key,id:reg,id:prefix,id:fname,id:lname,job:cpny,job:title&quot;
+  state: present
+</code></pre>
+
+<p>Will be interpreted, for creation as:</p>
+<pre><code class="sql">CREATE EXTERNAL TABLE jdctest1.testHBase ( rowkey string COMMENT 'The row key', number int, prefix string, fname string, lname string, company string, title string ) STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler' WITH SERDEPROPERTIES ( 'hbase.columns.mapping'=':key,id:reg,id:prefix,id:fname,id:lname,job:cpny,job:title') TBLPROPERTIES ( 'hbase.table.name'='test2:test2a')
+</code></pre></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>var base_url = '../../..';</script>
+        <script data-main="../../../mkdocs/js/search.js" src="../../../mkdocs/js/require.js"></script>
+        <script src="../../../js/base.js"></script><div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

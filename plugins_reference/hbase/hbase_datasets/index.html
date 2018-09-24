@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../../img/favicon.ico">
+        <title>hbase_datasets - HADeploy</title>
+        <link href="../../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../../css/font-awesome-4.5.0.css" rel="stylesheet">
+        <link href="../../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../../css/highlight.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+	
+	<script src="../../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../../js/highlight.pack.js"></script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../../..">HADeploy</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                    <li >
+                        <a href="../../..">Home</a>
+                    </li>
+                    <li >
+                        <a href="../../../installation/">Installation</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Getting started <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+<li >
+    <a href="../../../getting_started/first_step/">First step</a>
+</li>
+                            
+<li >
+    <a href="../../../getting_started/next_step/">Next step</a>
+</li>
+                        </ul>
+                    </li>
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Plugins reference <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Core</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../core/encrypted_vars/">encrypted_vars</a>
+</li>
+            
+<li >
+    <a href="../../core/excluded_scopes/">excluded_scopes</a>
+</li>
+            
+<li >
+    <a href="../../core/include/">include</a>
+</li>
+            
+<li >
+    <a href="../../core/included_scopes/">included_scopes</a>
+</li>
+            
+<li >
+    <a href="../../core/vars/">vars</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Ansible</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../ansible/ansible_overview/">Overview</a>
+</li>
+            
+<li >
+    <a href="../../ansible/ansible_playbooks/">ansible_playbooks</a>
+</li>
+            
+<li >
+    <a href="../../ansible/playbooks_folders/">playbooks_folders</a>
+</li>
+            
+<li >
+    <a href="../../ansible/roles_folders/">roles_folders</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Ansible_inventories</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../ansible_inventories/ansible_inventories/">ansible_inventories</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Elasticsearch</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../elastic/elasticsearch_indices/">elasticsearch_indices</a>
+</li>
+            
+<li >
+    <a href="../../elastic/elasticsearch_servers/">elasticsearch_servers</a>
+</li>
+            
+<li >
+    <a href="../../elastic/elasticsearch_templates/">elasticsearch_templates</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Files</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../files/files/">files</a>
+</li>
+            
+<li >
+    <a href="../../files/folders/">folders</a>
+</li>
+            
+<li >
+    <a href="../../files/maven_repositories/">maven_repositories</a>
+</li>
+            
+<li >
+    <a href="../../files/local_files_folders/">local_files_folders</a>
+</li>
+            
+<li >
+    <a href="../../files/local_templates_folders/">local_templates_folders</a>
+</li>
+            
+<li >
+    <a href="../../files/trees/">trees</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">HBase</a>
+    <ul class="dropdown-menu">
+            
+<li class="active">
+    <a href="./">hbase_datasets</a>
+</li>
+            
+<li >
+    <a href="../hbase_namespaces/">hbase_namespaces</a>
+</li>
+            
+<li >
+    <a href="../hbase_relay/">hbase_relay</a>
+</li>
+            
+<li >
+    <a href="../hbase_tables/">hbase_tables</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Hdfs</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../hdfs/hdfs_relay/">hdfs_relay</a>
+</li>
+            
+<li >
+    <a href="../../hdfs/source_host_credentials/">source_host_credentials</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Hive</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../hive/hive_databases/">hive_databases</a>
+</li>
+            
+<li >
+    <a href="../../hive/hive_relay/">hive_relay</a>
+</li>
+            
+<li >
+    <a href="../../hive/hive_tables/">hive_tables</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Inventory</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../inventory/exit_on_fail/">exit_on_fail</a>
+</li>
+            
+<li >
+    <a href="../../inventory/hosts/">hosts</a>
+</li>
+            
+<li >
+    <a href="../../inventory/host_groups/">host_groups</a>
+</li>
+            
+<li >
+    <a href="../../inventory/host_group_overrides/">host_group_overrides</a>
+</li>
+            
+<li >
+    <a href="../../inventory/host_overrides/">host_overrides</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Kafka</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../kafka/kafka_relay/">kafka_relay</a>
+</li>
+            
+<li >
+    <a href="../../kafka/kafka_topics/">kafka_topic</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Ranger</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../ranger/hbase_ranger_policies/">hbase_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../ranger/hdfs_ranger_policies/">hdfs_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../ranger/hive_ranger_policies/">hive_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../ranger/kafka_ranger_policies/">kafka_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../ranger/ranger_relay/">ranger_relay</a>
+</li>
+            
+<li >
+    <a href="../../ranger/storm_ranger_policies/">storm_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../ranger/yarn_ranger_policies/">yarn_ranger_policies</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Storm</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../storm/storm_overview/">storm_overview</a>
+</li>
+            
+<li >
+    <a href="../../storm/storm_relay/">storm_relay</a>
+</li>
+            
+<li >
+    <a href="../../storm/storm_topologies/">storm_topologies</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Systemd</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../systemd/systemd_units/">systemd_units</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Supervisors</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../supervisor/supervisor_overview/">Overview</a>
+</li>
+            
+<li >
+    <a href="../../supervisor/supervisors/">supervisors</a>
+</li>
+            
+<li >
+    <a href="../../supervisor/supervisor_groups/">supervisor_groups</a>
+</li>
+            
+<li >
+    <a href="../../supervisor/supervisor_programs/">supervisor_programs</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Users</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../users/groups/">groups</a>
+</li>
+            
+<li >
+    <a href="../../users/users/">users</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Yarn</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../yarn/yarn_overview/">yarn_overview</a>
+</li>
+            
+<li >
+    <a href="../../yarn/yarn_relay/">yarn_relay</a>
+</li>
+            
+<li >
+    <a href="../../yarn/yarn_services/">yarn_service</a>
+</li>
+    </ul>
+  </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+<li >
+    <a href="../../../more/conditional_deployment/">Conditional deployment</a>
+</li>
+                            
+<li >
+    <a href="../../../more/under_the_hood/">Under the hood</a>
+</li>
+                            
+<li >
+    <a href="../../../more/execution_order/">Execution order</a>
+</li>
+                            
+<li >
+    <a href="../../../more/altering_scope/">Altering scope</a>
+</li>
+                            
+<li >
+    <a href="../../../more/secured_cluster/">Secured cluster</a>
+</li>
+                            
+<li >
+    <a href="../../../more/yaml_tricks/">YAML tricks</a>
+</li>
+                            
+<li >
+    <a href="../../../more/release_notes/">Release notes</a>
+</li>
+                        </ul>
+                    </li>
+                </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                    <li >
+                        <a rel="next" href="../../files/trees/">
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../hbase_namespaces/">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#hbase_datasets">hbase_datasets</a></li>
+            <li><a href="#synopsis">Synopsis</a></li>
+            <li><a href="#attributes">Attributes</a></li>
+            <li><a href="#example">Example</a></li>
+            <li><a href="#action-on-pre-existing-data">Action on pre-existing data</a></li>
+            <li><a href="#file-format">File format</a></li>
+            <li><a href="#limitations">Limitations</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="hbase_datasets">hbase_datasets</h1>
+<h2 id="synopsis">Synopsis</h2>
+<p>Provide a list of datasets to upload in HBase tables </p>
+<h2 id="attributes">Attributes</h2>
+<p>Each item of the list has the following attributes:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>req?</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>table</td>
+<td>yes</td>
+<td>The table to populate</td>
+</tr>
+<tr>
+<td>namespace</td>
+<td>yes</td>
+<td>The name of the HBase namespace where the table is.</td>
+</tr>
+<tr>
+<td>src</td>
+<td></td>
+<td>The file containing the data to load in the table. May be in the form:<ul><li><code>http://....</code> for fetching the file from a remote http server</li><li><code>https://...</code> for fetching the file from a remote https server</li><li><code>file://...</code> for fetching the file locally, from one of the folder provided by the <a href="../../files/local_files_folders"><code>local_files_folders:</code></a> list</li><li><code>file:///...</code> for fetching the file locally, with a absolute path on the HADeploy node.</li><li><code>tmpl://...</code>  Source is a template, which will be processed by Ansible/Jinja2 mechanism. Template will be fetched locally, from one of the folders provided by the <a href="../../files/local_templates_folders"><code>local_templates_folders:</code></a> list</li><li><code>tmpl:///...</code> Same as above, except source template will be fetched from the HADeploy node with an absolute path.</li></ul>The file format is described below</td>
+</tr>
+<tr>
+<td>delRows</td>
+<td>no</td>
+<td>See below.<br>Default: <code>no</code></td>
+</tr>
+<tr>
+<td>delValues</td>
+<td>no</td>
+<td>See below.<br>Default: <code>no</code></td>
+</tr>
+<tr>
+<td>dontAddRow</td>
+<td>no</td>
+<td>See below.<br>Default: <code>no</code></td>
+</tr>
+<tr>
+<td>dontAddValue</td>
+<td>no</td>
+<td>See below.<br>Default: <code>no</code></td>
+</tr>
+<tr>
+<td>updValues</td>
+<td>no</td>
+<td>See below.<br>Default: <code>no</code></td>
+</tr>
+<tr>
+<td>validate_certs</td>
+<td>no</td>
+<td>Boolean; In case of src: <code>https://...</code> Setting to false, will disable strict certificate checking, thus allowing self-signed certificate.<br>Default: <code>yes</code></td>
+</tr>
+<tr>
+<td>force_basic_auth</td>
+<td>no</td>
+<td>Boolean; In case of <code>src: http[s]://...</code> . The underlying module only sends authentication information when a webservice responds to an initial request with a 401 status. Since some basic auth services do not properly send a 401, logins will fail. This option forces the sending of the Basic authentication header upon initial request.</td>
+</tr>
+<tr>
+<td>url_username</td>
+<td>no</td>
+<td>String; In case of <code>src: http[s]://...</code>. The username for use in HTTP basic authentication. This parameter can be used without url_password for sites that allow empty passwords.</td>
+</tr>
+<tr>
+<td>url_password</td>
+<td>no</td>
+<td>String; In case of <code>src: http[s]://...</code>. The password for use in HTTP basic authentication</td>
+</tr>
+<tr>
+<td>no_remove</td>
+<td>no</td>
+<td>Boolean: Prevent this dataset to be deleted from the table when HADeploy will be used in REMOVE mode.<br>Default: <code>no</code></td>
+</tr>
+<tr>
+<td>when</td>
+<td>no</td>
+<td>Boolean. Allow <a href="../../../more/conditional_deployment">conditional deployment</a> of this item.<br>Default <code>True</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="example">Example</h2>
+<pre><code class="yaml">hbase_datasets:
+  - table: hbload1
+    namespace: default
+    src: file://dataset1.json
+    updValues: yes
+</code></pre>
+
+<h2 id="action-on-pre-existing-data">Action on pre-existing data</h2>
+<p>If the HBase table already contains some data, the default behavior is 'Just add, don't delete, don't modify'. Options are provided to modify such behavior.</p>
+<ul>
+<li>Un-existing row will be added. (Un-existing means there is no row with this rowKey present in the table). If you want to prevent this, set dontAddRow.</li>
+<li>Row existing in the table but not in the dataset file will NOT be deleted. If you want to delete them, set delRows.</li>
+<li>If a row already exists and is identical, it will not be modified.</li>
+<li>If a row exists in the table, but the input dataset provide more columns:values, the missing column:value will be added. If you want to prevent this, set dontAddValue</li>
+<li>If a row exists, but the input file provide less column:value, the column:value will NOT be deleted. If you want to delete them, set delValues.</li>
+<li>If a row exists but some value for an existing qualifier differs from the one in the input file, value will NOT be updated. If you want to update them, set updValues.</li>
+</ul>
+<p>If you set this switches combination:</p>
+<pre><code class="yaml">dontAddRow: yes
+dontAddValue: yes
+</code></pre>
+
+<p>Then, this operation will not modify the table</p>
+<p>If you set this switches combination:</p>
+<pre><code class="yaml">delRows: yes
+delValues: yes
+updValues: yes
+</code></pre>
+
+<p>Then, the content of the table will be adjusted to be fully identical to the content of the dataset file.</p>
+<h2 id="file-format">File format</h2>
+<p>The file format used by hbase_datasets is a json with the following form:</p>
+<pre><code class="json">{
+    { &quot;rowKey1&quot;: { &quot;colFamily1&quot;: { &quot;qualifier1&quot;: &quot;value1&quot;, ...}, &quot;colFamily2&quot;: { ... }, ...}, 
+    { &quot;rowKey2&quot;: { &quot;colFamily1&quot;: { &quot;qualifier1&quot;: &quot;value1&quot;, ...}, &quot;colFamily2&quot;: { ... }, ...},
+    ...
+} 
+</code></pre>
+
+<p>For example:</p>
+<pre><code class="json">{
+    &quot;000000&quot;: { &quot;id&quot;: { &quot;fname&quot;: &quot;Delpha&quot;, &quot;lname&quot;: &quot;Dickinson&quot;, &quot;prefix&quot;: &quot;Mr.&quot;, &quot;reg&quot;: &quot;000000&quot; }, &quot;job&quot;: { &quot;cpny&quot;: &quot;Barton, Barton and Barton&quot;, &quot;title&quot;: &quot;Human Branding Officer&quot; } }
+   ,&quot;000001&quot;: { &quot;id&quot;: { &quot;fname&quot;: &quot;Alvina&quot;, &quot;lname&quot;: &quot;Schulist&quot;, &quot;prefix&quot;: &quot;Dr.&quot;, &quot;reg&quot;: &quot;000001&quot; }, &quot;job&quot;: { &quot;cpny&quot;: &quot;Hilll, Hilll and Hilll&quot;, &quot;title&quot;: &quot;Investor Brand Coordinator&quot; } }
+   ,&quot;000002&quot;: { &quot;id&quot;: { &quot;fname&quot;: &quot;Berniece&quot;, &quot;lname&quot;: &quot;Bahringer&quot;, &quot;prefix&quot;: &quot;Mrs.&quot;, &quot;reg&quot;: &quot;000002&quot; }, &quot;job&quot;: { &quot;cpny&quot;: &quot;Eichmann-Eichmann&quot;, &quot;title&quot;: &quot;District Paradigm Coordinator&quot; } }
+}
+</code></pre>
+
+<h3 id="binary-representation">Binary representation</h3>
+<p>Internally, HBase does not handle String, but byte[]. So, there is a need to represent binary data in string representation. Choice has been made to use the escape convention of the HBase function <code>Bytes.toByteBinary()</code> and <code>Bytes.toStringBinary()</code>, using the <code>'\xXX'</code> notation, where <code>XX</code> is the hexadecimal code of the byte.
+Note, the <code>'\'</code> itself must be escaped. For example, the binary code 1 will be represented by <code>"\\0x01"</code></p>
+<h3 id="fetch-dataset-from-an-existing-file">Fetch dataset from an existing file</h3>
+<p>It can be useful to create an initial dataset file from data already existing in an HBase file.</p>
+<p>You can use the <code>hbdump</code> tool you will find at </p>
+<p><a href="https://github.com/BROADSoftware/hbtools">https://github.com/BROADSoftware/hbtools</a></p>
+<p>Note than, internally, HADeploy uses the <code>hbload</code> tool to load these dataset.</p>
+<p>Also, note the <code>hbdump</code> output will not escape printable characters, so, for example <code>"7000003"</code> and <code>"\\x37000003"</code> represents the same byte, as <code>x37</code> is the hexadecimal code of the character <code>'7'</code>. Same for <code>"\\x2E000007"</code> and <code>".000007"</code></p>
+<h2 id="limitations">Limitations</h2>
+<ul>
+<li><code>hbase_datasets</code> does not dynamically create HBase column family. All column family referenced in the input file must be already defined in the HBase table. Or an error will be generated.</li>
+<li><code>hbase_datasets</code> does not handle HBase cell's timestamp.</li>
+<li><code>hbase_datasets</code> is not intended to work on 'big' dataset. It is intended to be use in application deployment where some tables need to be populated with an initial bunch of data. It will fully load its dataset in memory, thus limiting the volume it will be able to manage.</li>
+</ul></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>var base_url = '../../..';</script>
+        <script data-main="../../../mkdocs/js/search.js" src="../../../mkdocs/js/require.js"></script>
+        <script src="../../../js/base.js"></script><div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../../img/favicon.ico">
+        <title>host_group_overrides - HADeploy</title>
+        <link href="../../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../../css/font-awesome-4.5.0.css" rel="stylesheet">
+        <link href="../../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../../css/highlight.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+	
+	<script src="../../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../../js/highlight.pack.js"></script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../../..">HADeploy</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                    <li >
+                        <a href="../../..">Home</a>
+                    </li>
+                    <li >
+                        <a href="../../../installation/">Installation</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Getting started <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+<li >
+    <a href="../../../getting_started/first_step/">First step</a>
+</li>
+                            
+<li >
+    <a href="../../../getting_started/next_step/">Next step</a>
+</li>
+                        </ul>
+                    </li>
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Plugins reference <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Core</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../core/encrypted_vars/">encrypted_vars</a>
+</li>
+            
+<li >
+    <a href="../../core/excluded_scopes/">excluded_scopes</a>
+</li>
+            
+<li >
+    <a href="../../core/include/">include</a>
+</li>
+            
+<li >
+    <a href="../../core/included_scopes/">included_scopes</a>
+</li>
+            
+<li >
+    <a href="../../core/vars/">vars</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Ansible</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../ansible/ansible_overview/">Overview</a>
+</li>
+            
+<li >
+    <a href="../../ansible/ansible_playbooks/">ansible_playbooks</a>
+</li>
+            
+<li >
+    <a href="../../ansible/playbooks_folders/">playbooks_folders</a>
+</li>
+            
+<li >
+    <a href="../../ansible/roles_folders/">roles_folders</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Ansible_inventories</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../ansible_inventories/ansible_inventories/">ansible_inventories</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Elasticsearch</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../elastic/elasticsearch_indices/">elasticsearch_indices</a>
+</li>
+            
+<li >
+    <a href="../../elastic/elasticsearch_servers/">elasticsearch_servers</a>
+</li>
+            
+<li >
+    <a href="../../elastic/elasticsearch_templates/">elasticsearch_templates</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Files</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../files/files/">files</a>
+</li>
+            
+<li >
+    <a href="../../files/folders/">folders</a>
+</li>
+            
+<li >
+    <a href="../../files/maven_repositories/">maven_repositories</a>
+</li>
+            
+<li >
+    <a href="../../files/local_files_folders/">local_files_folders</a>
+</li>
+            
+<li >
+    <a href="../../files/local_templates_folders/">local_templates_folders</a>
+</li>
+            
+<li >
+    <a href="../../files/trees/">trees</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">HBase</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../hbase/hbase_datasets/">hbase_datasets</a>
+</li>
+            
+<li >
+    <a href="../../hbase/hbase_namespaces/">hbase_namespaces</a>
+</li>
+            
+<li >
+    <a href="../../hbase/hbase_relay/">hbase_relay</a>
+</li>
+            
+<li >
+    <a href="../../hbase/hbase_tables/">hbase_tables</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Hdfs</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../hdfs/hdfs_relay/">hdfs_relay</a>
+</li>
+            
+<li >
+    <a href="../../hdfs/source_host_credentials/">source_host_credentials</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Hive</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../hive/hive_databases/">hive_databases</a>
+</li>
+            
+<li >
+    <a href="../../hive/hive_relay/">hive_relay</a>
+</li>
+            
+<li >
+    <a href="../../hive/hive_tables/">hive_tables</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Inventory</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../exit_on_fail/">exit_on_fail</a>
+</li>
+            
+<li >
+    <a href="../hosts/">hosts</a>
+</li>
+            
+<li >
+    <a href="../host_groups/">host_groups</a>
+</li>
+            
+<li class="active">
+    <a href="./">host_group_overrides</a>
+</li>
+            
+<li >
+    <a href="../host_overrides/">host_overrides</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Kafka</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../kafka/kafka_relay/">kafka_relay</a>
+</li>
+            
+<li >
+    <a href="../../kafka/kafka_topics/">kafka_topic</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Ranger</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../ranger/hbase_ranger_policies/">hbase_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../ranger/hdfs_ranger_policies/">hdfs_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../ranger/hive_ranger_policies/">hive_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../ranger/kafka_ranger_policies/">kafka_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../ranger/ranger_relay/">ranger_relay</a>
+</li>
+            
+<li >
+    <a href="../../ranger/storm_ranger_policies/">storm_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../ranger/yarn_ranger_policies/">yarn_ranger_policies</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Storm</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../storm/storm_overview/">storm_overview</a>
+</li>
+            
+<li >
+    <a href="../../storm/storm_relay/">storm_relay</a>
+</li>
+            
+<li >
+    <a href="../../storm/storm_topologies/">storm_topologies</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Systemd</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../systemd/systemd_units/">systemd_units</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Supervisors</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../supervisor/supervisor_overview/">Overview</a>
+</li>
+            
+<li >
+    <a href="../../supervisor/supervisors/">supervisors</a>
+</li>
+            
+<li >
+    <a href="../../supervisor/supervisor_groups/">supervisor_groups</a>
+</li>
+            
+<li >
+    <a href="../../supervisor/supervisor_programs/">supervisor_programs</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Users</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../users/groups/">groups</a>
+</li>
+            
+<li >
+    <a href="../../users/users/">users</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Yarn</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../yarn/yarn_overview/">yarn_overview</a>
+</li>
+            
+<li >
+    <a href="../../yarn/yarn_relay/">yarn_relay</a>
+</li>
+            
+<li >
+    <a href="../../yarn/yarn_services/">yarn_service</a>
+</li>
+    </ul>
+  </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+<li >
+    <a href="../../../more/conditional_deployment/">Conditional deployment</a>
+</li>
+                            
+<li >
+    <a href="../../../more/under_the_hood/">Under the hood</a>
+</li>
+                            
+<li >
+    <a href="../../../more/execution_order/">Execution order</a>
+</li>
+                            
+<li >
+    <a href="../../../more/altering_scope/">Altering scope</a>
+</li>
+                            
+<li >
+    <a href="../../../more/secured_cluster/">Secured cluster</a>
+</li>
+                            
+<li >
+    <a href="../../../more/yaml_tricks/">YAML tricks</a>
+</li>
+                            
+<li >
+    <a href="../../../more/release_notes/">Release notes</a>
+</li>
+                        </ul>
+                    </li>
+                </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                    <li >
+                        <a rel="next" href="../host_groups/">
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../host_overrides/">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#host_group_overrides">host_group_overrides</a></li>
+            <li><a href="#synopsis">Synopsis</a></li>
+            <li><a href="#attributes">Attributes</a></li>
+            <li><a href="#example">Example</a></li>
+            <li><a href="#tricks">Tricks</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="host_group_overrides">host_group_overrides</h1>
+<h2 id="synopsis">Synopsis</h2>
+<p>Provide a list of host group overriding values, to modify an existing inventory.</p>
+<p>Typically used to patch an Ansible inventory (see <a href="../../ansible_inventory/ansible_inventory_files"><code>ansible_inventory_files</code></a>) with some new values</p>
+<h2 id="attributes">Attributes</h2>
+<p>Each item of the list has the following attributes:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>req?</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>yes</td>
+<td>The name of the host to patch. Must be an existing host. Also may be 'all' or '*' to patch all hosts.</td>
+</tr>
+<tr>
+<td>hosts</td>
+<td>no</td>
+<td>Allow to override the original hosts list</td>
+</tr>
+<tr>
+<td>force_setup</td>
+<td>no</td>
+<td>A common Ansible problem is when referencing host info for a host which has not being accessed, so there is no fact grabbed for it.<br>Setting this flag to <code>yes</code> will trigger an access to all hosts of this group at the begining of the play.</td>
+</tr>
+<tr>
+<td>when</td>
+<td>no</td>
+<td>Boolean. Allow <a href="../../../more/conditional_deployment">conditional deployment</a> of this item.<br>Default <code>True</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="example">Example</h2>
+<p>A common pitfall is the infamous <code>AnsibleUndefinedVariable: 'dict object' has no attribute 'ansible_fqdn'</code> message. 
+This is due to the fact we are referencing some variables (<code>ansible_fqdn</code>) of hosts which are not part of the playbook.</p>
+<p>The following example force all hosts of the <code>zookeepers</code> group to be included at the top of the playbook </p>
+<pre><code class="yaml">host_group_overrides:
+- name: zookeepers
+  force_setup: yes
+</code></pre>
+
+<h2 id="tricks">Tricks</h2>
+<p>If, when running HADeploy you encounter error like:</p>
+<pre><code class="bash">fatal: [dn1]: FAILED! =&gt; {&quot;changed&quot;: false, &quot;failed&quot;: true, &quot;msg&quot;: &quot;AnsibleUndefinedVariable: 'dict object' has no attribute 'ansible_fqdn'&quot;}
+</code></pre>
+
+<p>it is most likely that you need to set <code>force_setup</code> on some host_group or host.  </p></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>var base_url = '../../..';</script>
+        <script data-main="../../../mkdocs/js/search.js" src="../../../mkdocs/js/require.js"></script>
+        <script src="../../../js/base.js"></script><div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

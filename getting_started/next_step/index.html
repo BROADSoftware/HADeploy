@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Next step - HADeploy</title>
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome-4.5.0.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../css/highlight.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+	
+	<script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../js/highlight.pack.js"></script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../..">HADeploy</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                    <li >
+                        <a href="../..">Home</a>
+                    </li>
+                    <li >
+                        <a href="../../installation/">Installation</a>
+                    </li>
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Getting started <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+<li >
+    <a href="../first_step/">First step</a>
+</li>
+                            
+<li class="active">
+    <a href="./">Next step</a>
+</li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Plugins reference <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Core</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../plugins_reference/core/encrypted_vars/">encrypted_vars</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/core/excluded_scopes/">excluded_scopes</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/core/include/">include</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/core/included_scopes/">included_scopes</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/core/vars/">vars</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Ansible</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../plugins_reference/ansible/ansible_overview/">Overview</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/ansible/ansible_playbooks/">ansible_playbooks</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/ansible/playbooks_folders/">playbooks_folders</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/ansible/roles_folders/">roles_folders</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Ansible_inventories</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../plugins_reference/ansible_inventories/ansible_inventories/">ansible_inventories</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Elasticsearch</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../plugins_reference/elastic/elasticsearch_indices/">elasticsearch_indices</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/elastic/elasticsearch_servers/">elasticsearch_servers</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/elastic/elasticsearch_templates/">elasticsearch_templates</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Files</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../plugins_reference/files/files/">files</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/files/folders/">folders</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/files/maven_repositories/">maven_repositories</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/files/local_files_folders/">local_files_folders</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/files/local_templates_folders/">local_templates_folders</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/files/trees/">trees</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">HBase</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../plugins_reference/hbase/hbase_datasets/">hbase_datasets</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/hbase/hbase_namespaces/">hbase_namespaces</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/hbase/hbase_relay/">hbase_relay</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/hbase/hbase_tables/">hbase_tables</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Hdfs</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../plugins_reference/hdfs/hdfs_relay/">hdfs_relay</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/hdfs/source_host_credentials/">source_host_credentials</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Hive</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../plugins_reference/hive/hive_databases/">hive_databases</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/hive/hive_relay/">hive_relay</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/hive/hive_tables/">hive_tables</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Inventory</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../plugins_reference/inventory/exit_on_fail/">exit_on_fail</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/inventory/hosts/">hosts</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/inventory/host_groups/">host_groups</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/inventory/host_group_overrides/">host_group_overrides</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/inventory/host_overrides/">host_overrides</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Kafka</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../plugins_reference/kafka/kafka_relay/">kafka_relay</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/kafka/kafka_topics/">kafka_topic</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Ranger</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../plugins_reference/ranger/hbase_ranger_policies/">hbase_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/ranger/hdfs_ranger_policies/">hdfs_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/ranger/hive_ranger_policies/">hive_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/ranger/kafka_ranger_policies/">kafka_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/ranger/ranger_relay/">ranger_relay</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/ranger/storm_ranger_policies/">storm_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/ranger/yarn_ranger_policies/">yarn_ranger_policies</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Storm</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../plugins_reference/storm/storm_overview/">storm_overview</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/storm/storm_relay/">storm_relay</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/storm/storm_topologies/">storm_topologies</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Systemd</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../plugins_reference/systemd/systemd_units/">systemd_units</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Supervisors</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../plugins_reference/supervisor/supervisor_overview/">Overview</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/supervisor/supervisors/">supervisors</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/supervisor/supervisor_groups/">supervisor_groups</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/supervisor/supervisor_programs/">supervisor_programs</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Users</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../plugins_reference/users/groups/">groups</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/users/users/">users</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Yarn</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../plugins_reference/yarn/yarn_overview/">yarn_overview</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/yarn/yarn_relay/">yarn_relay</a>
+</li>
+            
+<li >
+    <a href="../../plugins_reference/yarn/yarn_services/">yarn_service</a>
+</li>
+    </ul>
+  </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+<li >
+    <a href="../../more/conditional_deployment/">Conditional deployment</a>
+</li>
+                            
+<li >
+    <a href="../../more/under_the_hood/">Under the hood</a>
+</li>
+                            
+<li >
+    <a href="../../more/execution_order/">Execution order</a>
+</li>
+                            
+<li >
+    <a href="../../more/altering_scope/">Altering scope</a>
+</li>
+                            
+<li >
+    <a href="../../more/secured_cluster/">Secured cluster</a>
+</li>
+                            
+<li >
+    <a href="../../more/yaml_tricks/">YAML tricks</a>
+</li>
+                            
+<li >
+    <a href="../../more/release_notes/">Release notes</a>
+</li>
+                        </ul>
+                    </li>
+                </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                    <li >
+                        <a rel="next" href="../first_step/">
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../../plugins_reference/core/encrypted_vars/">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#next-step">Next step</a></li>
+            <li><a href="#infrastructure-description">Infrastructure description</a></li>
+            <li><a href="#application-description">Application description</a></li>
+            <li><a href="#templates">Templates</a></li>
+            <li><a href="#project-layout">Project layout</a></li>
+            <li><a href="#launching-hadeploy">Launching HADeploy</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="next-step">Next step</h1>
+<p>We will describe here the deployment of a simple application, 'broadapp', which will need to deploy some artifacts and resources on a Hadoop cluster, both on nodes and on HDFS.</p>
+<p>We will not deeply enter in the detail of all items. You will find more exhaustive description in the Reference part of this document.</p>
+<blockquote>
+<p><sub>NOTE: This sample is intended to demonstrate the basic features of HADeploy. It is not intended to define 'Best Practices' about Hadoop Application deployment.</sub></p>
+</blockquote>
+<p>This example will be divided in two parts: One describing the target Hadoop cluster (Infrastructure description) and a second one the application deployment itself (Application description) </p>
+<h2 id="infrastructure-description">Infrastructure description</h2>
+<p>There is two methods to provide HADeploy with the target infrastructure description. One is to explicitly list all hosts. Another one is to refer to an already existing Ansible Inventory.</p>
+<p>Let's start with the first one: </p>
+<h3 id="explicit-description">Explicit description</h3>
+<p>The infrastructure is described in a file with the following content:</p>
+<pre><code class="yaml"># ------------------------------------- Infrastructure part
+
+hosts:
+# A first host expressed the standard yaml style
+- name: sr
+  ssh_host: sr.cluster1.mydomain.com
+  ssh_user: root
+  ssh_private_key_file: &quot;keys/build_key&quot; 
+# And these others using more consise yaml 'flow style'
+- { name: en1, ssh_host: en.cluster1.mydomain.com, ssh_user: root, ssh_private_key_file: &quot;keys/build_key&quot; }
+- { name: nn1, ssh_host: nn1.cluster1.mydomain.com, ssh_user: root, ssh_private_key_file: &quot;keys/build_key&quot; }
+- { name: nn2, ssh_host: nn2.cluster1.mydomain.com, ssh_user: root, ssh_private_key_file: &quot;keys/build_key&quot; }
+- { name: dn1, ssh_host: dn1.cluster1.mydomain.com, ssh_user: root, ssh_private_key_file: &quot;keys/build_key&quot; }
+- { name: dn2, ssh_host: dn2.cluster1.mydomain.com, ssh_user: root, ssh_private_key_file: &quot;keys/build_key&quot; }
+- { name: dn3, ssh_host: dn3.cluster1.mydomain.com, ssh_user: root, ssh_private_key_file: &quot;keys/build_key&quot; }
+
+host_groups:
+- name: data_nodes
+  hosts:    # This host list in standart YAML style
+  - dn1
+  - dn2
+  - dn3
+- name: control_nodes
+  hosts: [ &quot;sr&quot;, &quot;en&quot;, &quot;nn1&quot;, &quot;nn2&quot; ]   # And these in YAML 'flow style'
+- name: zookeepers
+  hosts: [ &quot;sr&quot;, &quot;nn1&quot;, &quot;nn2&quot; ]
+
+hdfs_relay:
+  host: en1
+
+kafka_relay:
+  host: br1
+  zookeeper:
+    host_group: zookeepers
+
+hbase_relay:
+  host: en1
+</code></pre>
+
+<p>First, we will describe the several hosts our cluster is made of. Each host as a name: entry, by which we will reference it, and others entries describing how to access it through ssh.</p>
+<p>The specified <code>ssh_user:</code> is typically <code>root</code>, as it must be a user with enough rights to perform all the required actions.</p>
+<p>Then we will find a block of <a href="../../plugins_reference/inventory/host_groups"><code>host_groups</code></a>: description. This will simply allow grouping hosts by function, and easing hosts's reference.</p>
+<p>Then is the definition of the <a href="../../plugins_reference/hdfs/hdfs_relay"><code>hdfs_relay</code></a>: specifying which host will support all HDFS related operations.</p>
+<p>Then is the definition of the <a href="../../plugins_reference/kafka/kafka_relay"><code>kafka_relay</code></a>: which will be relaying all topics creation, modification and removal operations. As such it need to know how to access zookeeper and to be able to access Kafka library folder as it use corresponding jar files. The simplest solution is to use a broker node for this task.</p>
+<p>And last is the definition of <a href="../../plugins_reference/hbase/hbase_relay"><code>hbase_relay</code></a>: which will be relaying all HBase table creation, modification and removal operation. </p>
+<h3 id="from-an-existing-ansible-inventory">From an existing Ansible inventory.</h3>
+<p>Those familiar to Ansible should have noted such description is very similar to the way Ansible describe its inventory.</p>
+<p>If the target cluster is already described in an Ansible inventory file, then one may simple reference it instead of duplicate information.</p>
+<p>In such case, the infrastructure part of the file will look like:</p>
+<pre><code class="yaml"># ------------------------------------- Infrastructure part
+
+ansible_inventories:
+- file: &quot;.../some-ansible-build/inventory&quot;
+
+host_groups:
+- name: control_nodes
+  hosts: [ &quot;sr1&quot;, &quot;en1&quot;, &quot;en2&quot;, &quot;nn1&quot;, &quot;nn2&quot; ]
+- name: zookeepers
+  hosts: [ &quot;sr1&quot;, &quot;nn1&quot;, &quot;nn2&quot; ]
+
+hdfs_relay:
+  host: en1
+
+kafka_relay:
+  host: br1
+  zookeeper:
+    host_group: zookeepers
+
+hbase_relay:
+  host: en1
+</code></pre>
+
+<p>In our case, we add some <a href="../../plugins_reference/inventory/host_groups"><code>host_groups</code></a> as we need them for the following, and there were not defined in the source Ansible inventory</p>
+<p>Note we also have the ability to modify only some attributes of one, several or all hosts of this Ansible inventory. See <a href="../../plugins_reference/inventory/host_overrides"><code>host_overrides</code></a> in the reference part.</p>
+<h2 id="application-description">Application description</h2>
+<p>Here is the file describing the application deployment:</p>
+<pre><code class="yaml"># ------------------------------------ Environment part
+# Except if begining with /, All path are relative to this file
+local_files_folders:
+- &quot;./files&quot;
+
+local_templates_folders:
+- &quot;./templates&quot;
+
+# ------------------------------------- Application part
+
+vars:
+  app_version: &quot;0.1.1&quot;
+  repository_server: &quot;myserver.com&quot;
+  app_jar_url: &quot;http://${repository_server}/repo/broadapp-${app_version}.jar&quot;
+  zookeeper:
+    connection_timeout: 60000
+    zkpath: /broadapp
+
+
+groups:
+  - scope: all
+    name: broadgroup
+
+users:
+- login: broadapp
+  comment: &quot;Broadapp technical account&quot;
+  groups: &quot;broadgroup&quot;
+
+- { login: broaduser, scope: control_nodes, comment: &quot;Broadapp user account&quot;, groups: &quot;broadgroup&quot;, can_sudo_to: &quot;hdfs, yarn&quot; }
+
+folders:
+- { scope: &quot;en1:data_nodes&quot;, path: /var/log/broadapp, owner: broadapp, group: broadgroup, mode: &quot;0755&quot; }
+- { scope: en1, path: /etc/broadapp, owner: root, group: root, mode: &quot;0755&quot; }
+- { scope: en1, path: /opt/broadapp, owner: root, group: root, mode: &quot;0755&quot; }
+
+- { scope: hdfs, path: /apps/broadapp, owner: broadapp, group: broadgroup, mode: &quot;0755&quot; }
+
+files:
+- { scope: en1, src: &quot;${app_jar_url}&quot;, dest_folder: &quot;/opt/broadapp&quot;,  owner: root, group: root, mode: &quot;0644&quot;, validate_certs: no }
+- { scope: en1, src: &quot;tmpl://broadapp.cfg.j2&quot;, dest_folder: /etc/broadapp, dest_name: broadapp.cfg, owner: root, group: root, mode: &quot;0644&quot; }
+
+- { scope: hdfs, src: &quot;${app_jar_url}&quot;, dest_folder: &quot;/apps/broadapp&quot;, dest_name: broadapp.jar, owner: broadapp, group: broadgroup, mode: &quot;0644&quot;, validate_certs: no }
+
+trees:
+- { scope: hdfs, src: &quot;file://data&quot;, dest_folder: &quot;/apps/broadapp/init_data&quot;, owner: broadapp, group: broadgroup, file_mode: &quot;0644&quot;, folder_mode: &quot;0755&quot; }
+
+
+kafka_topics:
+- name: broadapp_t1
+  partition_factor: 3
+  replication_factor: 2
+  properties:
+    retention.ms: 630720000000
+    retention.bytes: 858993459200
+
+hbase_namespaces:
+- name: broadgroup
+
+hbase_tables: 
+- name: broadapp_t1
+  namespace: broadgroup
+  properties: 
+    regionReplication: 1
+    durability: ASYNC_WAL
+  column_families:
+  - name: cf1
+    properties: 
+      maxVersions: 12
+      minVersions: 2
+      timeToLive: 200000
+</code></pre>
+
+<p>Let's describe it part by part:</p>
+<h3 id="environment-part">Environment part</h3>
+<pre><code class="yaml"># ------------------------------------ Environment part
+# Except if begining with /, All path are relative to this file
+local_files_folders:
+- &quot;./files&quot;
+
+local_templates_folders:
+- &quot;./templates&quot;
+</code></pre>
+
+<p>This part describes the local environment, from where to find the files, which will be pushed on the target clusters.</p>
+<p>Also allow defining a template folder, where all the template source files will be stored (Templating is a powerful mechanism for defining configuration files. HADeploy use Ansible template subsystem, based on Jinja2).</p>
+<h3 id="vars">Vars</h3>
+<pre><code class="yaml">vars:
+  app_version: &quot;0.1.1&quot;
+  repository_server: &quot;myserver.com&quot;
+  app_jar_url: &quot;http://${repository_server}/repo/broadapp-${app_version}.jar&quot;
+  zookeeper:
+    connection_timeout: 60000
+    zkpath: /broadapp
+</code></pre>
+
+<p>HADeploy allow you to defined variable which then will be substituted by surrounding the variable name with  "${ "and "}"</p>
+<p>And, as demonstrated by the <code>app_jar_url:</code> entry, variable value can themself include other variable.</p>
+<p>Note also than variable can be a scalar (String, int, etc...) but also a map.</p>
+<p>There is also a method to provide variable definition on the command line when launching HADeploy. See <a href="#launching-hadeploy">Launching HADeploy</a> below.</p>
+<h3 id="groups">Groups</h3>
+<p>This block allows definition of Linux groups.</p>
+<pre><code class="yaml">groups:
+  - scope: all
+    name: broadgroup
+</code></pre>
+
+<p>Here we create a Linux local group named broadgroup on all hosts of the clusters.</p>
+<p>Some of the items of HADeploy definition file have a <code>scope:</code> attribute, which defines the target on which action will be performed. Such attribute may be optional and may have <code>all</code> as default value. So, the following is equivalent:</p>
+<pre><code class="yaml">groups:
+  - name: broadgroup
+</code></pre>
+
+<h3 id="users">Users</h3>
+<p>This block will allow us to define Linux account required by the application.</p>
+<pre><code class="yaml">users:
+- login: broadapp
+  comment: &quot;Broadapp technical account&quot;
+  groups: &quot;broadgroup&quot;
+
+- { login: broaduser, scope: control_nodes, comment: &quot;Broadapp user account&quot;, groups: &quot;broadgroup&quot;,
+      can_sudo_to: &quot;hdfs, yarn&quot; }
+</code></pre>
+
+<p>Each entry will support most of the usual user's configuration parameters. See <a href="../../plugins_reference/users/users"><code>users</code></a> in the Reference part.</p>
+<p>As for groups, we can define on which hosts users will be created using the <code>scope:</code> attribute.</p>
+<h3 id="folders">Folders</h3>
+<p>This block allow us to define the directory used by the application, with all associated permissions</p>
+<pre><code class="yaml">folders:
+- { scope: en1, path: /etc/broadapp, owner: root, group: root, mode: &quot;0755&quot; }
+- { scope: en1, path: /opt/broadapp, owner: root, group: root, mode: &quot;0755&quot; }
+- { scope: &quot;en1:data_nodes&quot;, path: /var/log/broadapp, owner: broadapp, group: broadgroup, mode: &quot;0755&quot; }
+
+- { scope: hdfs, path: /apps/broadapp, owner: broadapp, group: broadgroup, mode: &quot;0755&quot; }
+</code></pre>
+
+<p>Note again the <code>scope:</code> attribute; with allow specifying where the directory will be created:</p>
+<p>For a single node of name en1:</p>
+<pre><code class="yaml">scope: en1
+</code></pre>
+
+<p>For the same en node, plus all hosts belonging to the <code>data_nodes</code> group:</p>
+<pre><code class="yaml">scope: en1:data_nodes
+</code></pre>
+
+<p>Here the folder will not be create on one or several hosts, but on the HDFS file system:</p>
+<pre><code class="yaml">scope: hdfs
+</code></pre>
+
+<h3 id="files">Files</h3>
+<p>Then the following block will set the application file in place, also with permission.</p>
+<pre><code class="yaml">files:
+- { scope: en1, src: &quot;${app_jar_url}&quot;, dest_folder: &quot;/opt/broadapp&quot;,  owner: root, group: root, mode: &quot;0644&quot;, validate_certs: no }
+- { scope: en1, src: &quot;tmpl://broadapp.cfg.j2&quot;, dest_folder: /etc/broadapp, dest_name: broadapp.cfg, owner: root, group: root, mode: &quot;0644&quot; }
+
+- { scope: hdfs, src: &quot;${app_jar_url}&quot;, dest_folder: &quot;/apps/broadapp&quot;, dest_name: broadapp.jar, owner: broadapp, group: broadgroup, mode: &quot;0644&quot;, validate_certs: no }
+</code></pre>
+
+<p>Here again, the <code>scope:</code> attribute indicates where to store the file. And the <code>src:</code> attribute is an URI, providing a choice of sources. More on that in the reference part.</p>
+<p>Note also variable are surrounded by quotes. This is required when using 'flow style', otherwise the opening '{' will be confused when the start of map delimiter. 
+See also <a href="../../plugins_reference/core/vars/#alternate-notation">alternate variable notation</a> for non-String variables.</p>
+<h3 id="trees">Trees</h3>
+<p>HADeploy also provide ability to copy recursively a folder with all its content.</p>
+<p>The following definition will copy all the content of the data folder on HDFS, under the path <code>/apps/broadapp/init_data</code>.</p>
+<p>All copied files ownership and permission will be adjusted with the provided values. Also, inner subfolder will be created if any, and ownership and permission also adjusted.</p>
+<pre><code class="yaml">trees:
+- { scope: hdfs, src: &quot;file://data&quot;, dest_folder: &quot;/apps/broadapp/init_data&quot;, owner: broadapp, group: broadgroup, file_mode: &quot;0644&quot;, folder_mode: &quot;0755&quot; }
+</code></pre>
+
+<h3 id="kafka_topics">kafka_topics</h3>
+<p>This block define a Kafka topic which would be required by the application:</p>
+<pre><code class="yaml">kafka_topics:
+- name: broadapp_t1
+  partition_factor: 3
+  replication_factor: 2
+  properties:
+    retention.ms: 630720000000
+    retention.bytes: 858993459200
+</code></pre>
+
+<p>You will find here typical parameters of a Kafka topic: name, partition and replication factor, and a set of properties.</p>
+<h3 id="hbase-namespaces-and-tables">Hbase namespaces and tables</h3>
+<pre><code class="yaml">hbase_namespaces:
+- name: broadgroup
+
+hbase_tables: 
+- name: broadapp_t1
+  namespace: broadgroup
+  properties: 
+    regionReplication: 1
+    durability: ASYNC_WAL
+  column_families:
+  - name: cf1
+    properties: 
+      maxVersions: 12
+      minVersions: 2
+      timeToLive: 200000
+</code></pre>
+
+<p>This block defines one namespace broadgroup and a HBase table named broadapp_t1 in it, with specifics properties and one column family.</p>
+<h2 id="templates">Templates</h2>
+<p>Note in the <code>files:</code> part of this sample the second file with <code>src:</code> attribute: <code>tmpl://broadapp.cfg.j2</code>.</p>
+<pre><code class="yaml">files:
+...
+- { scope: en1, src: &quot;tmpl://broadapp.cfg.j2&quot;, dest_folder: /etc/broadapp, dest_name: broadapp.cfg, owner: root, group: root, mode: &quot;0644&quot; }
+</code></pre>
+
+<p>The tmpl scheme stands for 'template'. And the corresponding source template will be fetched from one of the folders defined by the <code>local_templates_folders</code> list described previously.</p>
+<p>Now, let's dig inside this file. Here is what it could look like:</p>
+<p><strong>Broadapp Config file:</strong></p>
+<pre><code>zookeeper.connect={% for host in groups['zookeepers'] %}{% if not loop.first %},{% endif %}{{  hostvars[host]['ansible_fqdn'] }}:2181{% endfor %}${zookeeper.zkpath}
+
+zookeeper.connection.timeout.ms={{ zookeeper.connection_timeout }}
+</code></pre>
+
+<p>Here we see how we can refer to the <code>zookeeper.connection_timeout</code> variable we defined in a previous <code>vars:</code> block.</p>
+<p>The <code>zookeeper.connect</code> value is a bit more complex. It is a typical Ansible pattern used to build a zookeeper quorum value. </p>
+<p>Important point to note is, in a template, we have access to both variable defined in the HADeploy definition file and to all the variables grabbed by Ansible from remote hosts (Called Facts in Ansible terminology).</p>
+<h2 id="project-layout">Project layout</h2>
+<p>HADeploy project layout may be simple. For examples, in our case, it could be:</p>
+<pre><code>app.yml
+files/
+infra/cluster1.yml
+keys/build_key
+templates/broadapp.cfg.j2
+</code></pre>
+
+<p>Note the file folder is empty, as we fetch our binary resources from a repository server. We could also define a self-contained project as the following:</p>
+<pre><code>app.yml
+files/broadapp-0.1.1.jar
+infra/cluster1.yml
+keys/build_key
+templates/broadapp.cfg.j2
+</code></pre>
+
+<p>Then, the <code>app_jar_url</code> should be set to</p>
+<pre><code class="yaml">vars:
+  app_jar_url: &quot;file://broadapp-${app_version}.jar&quot;
+</code></pre>
+
+<h2 id="launching-hadeploy">Launching HADeploy</h2>
+<p>Let's assume we have <a href="../../installation">installed HADeploy</a> and have arranged to have the <code>....../hadeploy/bin</code> folder in our PATH (See Installation above), and we are in our project directory.</p>
+<p>To launch the deployment, just type:</p>
+<pre><code class="bash">hadeploy --src app.yml --src infra/cluster1.yml --action deploy
+</code></pre>
+
+<p>And to perform the reverse action (Fully remove all application from target cluster):</p>
+<pre><code class="bash">hadeploy --src app.yml --src infra/cluster1.yml --action remove
+</code></pre>
+
+<p>HADeploy command line also allow direct variable definition, with the form --var name=value. For example:</p>
+<pre><code class="bash">hadeploy --var app_version=0.1.2 --src app.yml --src infra/cluster1.yml --action deploy
+</code></pre>
+
+<p>Note in this case, the value will be overwritten by the one provided in <code>app.yml</code>. So you will have to remove from the definition file a variable you intend to specify on the command line.</p>
+<p>The general rule is than variable definitions are evaluated/overridden in order of which they appears. So the order of --var and --src on the command line is significant.</p>
+<p>There is also another option <code>--action dumpvars</code>, to display all defined variables:</p>
+<pre><code class="bash">hadeploy --var app_version=0.1.2 --src app.yml --src infra/cluster1.yml --action dumpvars
+app_version: 0.1.2
+file_mode: 640
+folder_mode: 750
+forceAll: true
+zookeeper:
+  connection_timeout: 60000
+  zkpath: /broadapp
+</code></pre>
+
+<p>This can be of great help in case you have a quite complex configuration, whith several level of included files.</p>
+<p>Some other option of the HADeploy command are described in other chapters:</p>
+<ul>
+<li>
+<p><code>--workingFolder</code>: Refer to <a href="../../more/under_the_hood"><code>Under_the_hood</code></a> chapter.</p>
+</li>
+<li>
+<p><code>--askVaultPassword</code> and <code>--vaultPasswordFile</code>: Refer to <a href="../../plugins_reference/core/encrypted_vars">Encrypted variables</a></p>
+</li>
+<li>
+<p><code>--scope</code> and <code>--noScope</code>: Refer to <a href="../../more/altering_scope">Altering scope</a></p>
+</li>
+</ul></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>var base_url = '../..';</script>
+        <script data-main="../../mkdocs/js/search.js" src="../../mkdocs/js/require.js"></script>
+        <script src="../../js/base.js"></script><div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

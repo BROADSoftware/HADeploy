@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../../img/favicon.ico">
+        <title>systemd_units - HADeploy</title>
+        <link href="../../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../../css/font-awesome-4.5.0.css" rel="stylesheet">
+        <link href="../../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../../css/highlight.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+	
+	<script src="../../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../../js/highlight.pack.js"></script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../../..">HADeploy</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                    <li >
+                        <a href="../../..">Home</a>
+                    </li>
+                    <li >
+                        <a href="../../../installation/">Installation</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Getting started <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+<li >
+    <a href="../../../getting_started/first_step/">First step</a>
+</li>
+                            
+<li >
+    <a href="../../../getting_started/next_step/">Next step</a>
+</li>
+                        </ul>
+                    </li>
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Plugins reference <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Core</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../core/encrypted_vars/">encrypted_vars</a>
+</li>
+            
+<li >
+    <a href="../../core/excluded_scopes/">excluded_scopes</a>
+</li>
+            
+<li >
+    <a href="../../core/include/">include</a>
+</li>
+            
+<li >
+    <a href="../../core/included_scopes/">included_scopes</a>
+</li>
+            
+<li >
+    <a href="../../core/vars/">vars</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Ansible</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../ansible/ansible_overview/">Overview</a>
+</li>
+            
+<li >
+    <a href="../../ansible/ansible_playbooks/">ansible_playbooks</a>
+</li>
+            
+<li >
+    <a href="../../ansible/playbooks_folders/">playbooks_folders</a>
+</li>
+            
+<li >
+    <a href="../../ansible/roles_folders/">roles_folders</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Ansible_inventories</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../ansible_inventories/ansible_inventories/">ansible_inventories</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Elasticsearch</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../elastic/elasticsearch_indices/">elasticsearch_indices</a>
+</li>
+            
+<li >
+    <a href="../../elastic/elasticsearch_servers/">elasticsearch_servers</a>
+</li>
+            
+<li >
+    <a href="../../elastic/elasticsearch_templates/">elasticsearch_templates</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Files</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../files/files/">files</a>
+</li>
+            
+<li >
+    <a href="../../files/folders/">folders</a>
+</li>
+            
+<li >
+    <a href="../../files/maven_repositories/">maven_repositories</a>
+</li>
+            
+<li >
+    <a href="../../files/local_files_folders/">local_files_folders</a>
+</li>
+            
+<li >
+    <a href="../../files/local_templates_folders/">local_templates_folders</a>
+</li>
+            
+<li >
+    <a href="../../files/trees/">trees</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">HBase</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../hbase/hbase_datasets/">hbase_datasets</a>
+</li>
+            
+<li >
+    <a href="../../hbase/hbase_namespaces/">hbase_namespaces</a>
+</li>
+            
+<li >
+    <a href="../../hbase/hbase_relay/">hbase_relay</a>
+</li>
+            
+<li >
+    <a href="../../hbase/hbase_tables/">hbase_tables</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Hdfs</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../hdfs/hdfs_relay/">hdfs_relay</a>
+</li>
+            
+<li >
+    <a href="../../hdfs/source_host_credentials/">source_host_credentials</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Hive</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../hive/hive_databases/">hive_databases</a>
+</li>
+            
+<li >
+    <a href="../../hive/hive_relay/">hive_relay</a>
+</li>
+            
+<li >
+    <a href="../../hive/hive_tables/">hive_tables</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Inventory</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../inventory/exit_on_fail/">exit_on_fail</a>
+</li>
+            
+<li >
+    <a href="../../inventory/hosts/">hosts</a>
+</li>
+            
+<li >
+    <a href="../../inventory/host_groups/">host_groups</a>
+</li>
+            
+<li >
+    <a href="../../inventory/host_group_overrides/">host_group_overrides</a>
+</li>
+            
+<li >
+    <a href="../../inventory/host_overrides/">host_overrides</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Kafka</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../kafka/kafka_relay/">kafka_relay</a>
+</li>
+            
+<li >
+    <a href="../../kafka/kafka_topics/">kafka_topic</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Ranger</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../ranger/hbase_ranger_policies/">hbase_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../ranger/hdfs_ranger_policies/">hdfs_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../ranger/hive_ranger_policies/">hive_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../ranger/kafka_ranger_policies/">kafka_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../ranger/ranger_relay/">ranger_relay</a>
+</li>
+            
+<li >
+    <a href="../../ranger/storm_ranger_policies/">storm_ranger_policies</a>
+</li>
+            
+<li >
+    <a href="../../ranger/yarn_ranger_policies/">yarn_ranger_policies</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Storm</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../storm/storm_overview/">storm_overview</a>
+</li>
+            
+<li >
+    <a href="../../storm/storm_relay/">storm_relay</a>
+</li>
+            
+<li >
+    <a href="../../storm/storm_topologies/">storm_topologies</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Systemd</a>
+    <ul class="dropdown-menu">
+            
+<li class="active">
+    <a href="./">systemd_units</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Supervisors</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../supervisor/supervisor_overview/">Overview</a>
+</li>
+            
+<li >
+    <a href="../../supervisor/supervisors/">supervisors</a>
+</li>
+            
+<li >
+    <a href="../../supervisor/supervisor_groups/">supervisor_groups</a>
+</li>
+            
+<li >
+    <a href="../../supervisor/supervisor_programs/">supervisor_programs</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Users</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../users/groups/">groups</a>
+</li>
+            
+<li >
+    <a href="../../users/users/">users</a>
+</li>
+    </ul>
+  </li>
+                            
+  <li class="dropdown-submenu">
+    <a href="#">Yarn</a>
+    <ul class="dropdown-menu">
+            
+<li >
+    <a href="../../yarn/yarn_overview/">yarn_overview</a>
+</li>
+            
+<li >
+    <a href="../../yarn/yarn_relay/">yarn_relay</a>
+</li>
+            
+<li >
+    <a href="../../yarn/yarn_services/">yarn_service</a>
+</li>
+    </ul>
+  </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+<li >
+    <a href="../../../more/conditional_deployment/">Conditional deployment</a>
+</li>
+                            
+<li >
+    <a href="../../../more/under_the_hood/">Under the hood</a>
+</li>
+                            
+<li >
+    <a href="../../../more/execution_order/">Execution order</a>
+</li>
+                            
+<li >
+    <a href="../../../more/altering_scope/">Altering scope</a>
+</li>
+                            
+<li >
+    <a href="../../../more/secured_cluster/">Secured cluster</a>
+</li>
+                            
+<li >
+    <a href="../../../more/yaml_tricks/">YAML tricks</a>
+</li>
+                            
+<li >
+    <a href="../../../more/release_notes/">Release notes</a>
+</li>
+                        </ul>
+                    </li>
+                </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                    <li >
+                        <a rel="next" href="../../storm/storm_topologies/">
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../../supervisor/supervisor_overview/">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#systemd_units">systemd_units</a></li>
+            <li><a href="#synopsis">Synopsis</a></li>
+            <li><a href="#attributes">Attributes</a></li>
+            <li><a href="#unit-files">Unit files</a></li>
+            <li><a href="#example">Example</a></li>
+            <li><a href="#actions-stop-start-and-status">Actions stop, start and status</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="systemd_units">systemd_units</h1>
+<h2 id="synopsis">Synopsis</h2>
+<p>Provide a list of <code>systemd</code> service units, related to the deployed application.</p>
+<p>This will allow to declare node local application processes as system services. All <code>systemctl</code> commands (start, stop, status, ...) will then apply to this newly created service.</p>
+<p>This module require <code>root</code> access on the target host. If you need to deploy local services under the control of a non-privileged user, you can use the <a href="../../supervisor/supervisor_overview">'supervisor'</a> module.</p>
+<p>This module will also allow HADeploy to handle start and stop of the defined services.</p>
+<h2 id="attributes">Attributes</h2>
+<p>Each item of the list has the following attributes:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>req?</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>yes</td>
+<td>Name of the service.</td>
+</tr>
+<tr>
+<td>scope</td>
+<td>yes</td>
+<td>On which target does this file be deployed? May be:<ul><li>A single <code>host</code> name</li><li>A single <code>host_group</code> name</li><li>Several <code>hosts</code> or <code>host_groups</code>, separated by the character ':'</li></ul></td>
+</tr>
+<tr>
+<td>unit_file</td>
+<td>yes</td>
+<td>The unit file, describing how and when this service will be launched. See below</td>
+</tr>
+<tr>
+<td>no_remove</td>
+<td>no</td>
+<td>Boolean: Prevent this service to be removed when HADeploy will be used with <code>--action remove</code>.<br>Default: <code>no</code></td>
+</tr>
+<tr>
+<td>enabled</td>
+<td>no</td>
+<td>Is this service start on system boot ? Default: <code>yes</code>.</td>
+</tr>
+<tr>
+<td>state</td>
+<td>no</td>
+<td><lu><li><code>started</code>: The service will be started on deployment</li><li><code>stopped</code>: The service will be stopped on deployment.</li><li><code>current</code>: The service state will be left unchanged during deployment. (stopped on initial creation).</li></ul>Default value: <code>current</code>.</td>
+</tr>
+<tr>
+<td>action_on_notify</td>
+<td>no</td>
+<td>Action to be performed when this service is notified of the modification of some file it depend on.<br>Can be <code>restart</code>, <code>reload</code> or <code>none</code>. Default is <code>restart</code>.<br>Not all services support <code>reload</code>.<br>See the <code>notify</code> attribute the <a href="../../files/files"><code>files</code></a> module.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="unit-files">Unit files</h2>
+<p>A systemd unit file encode information about several system object type, such as services, device, mount point, etc... In our case, only services unit are of interest.</p>
+<p>A systemd.service unit file will provide all information to handle operation of a service life cycle, such as start, stop, restart on failure, reload, etc.. Full documentation can be found <a href="https://www.freedesktop.org/software/systemd/man/systemd.service.html#">here</a></p>
+<p>HADeploy will place the provided unit file in the <code>/usr/lib/systemd/system</code> folder and trigger appropriate operation to make systemd aware of this newly created (or modified) file.</p>
+<h3 id="unit-file-example">Unit file example</h3>
+<p>The following is a unit file for a simple service providing a REST interface.</p>
+<pre><code>[Unit]
+Description=HARelay (Helper REST server for Hadoop)
+
+[Service]
+Type=simple
+User={{user}}
+Group={{group}}
+SyslogIdentifier=harelay
+TimeoutSec=15
+Restart=always
+ExecStart=/bin/bash /opt/harelay/bin/harelay -c /opt/harelay/etc/config.conf
+
+[Install]
+WantedBy=multi-user.target
+
+</code></pre>
+
+<p>Note the following for the above example:</p>
+<ul>
+<li>
+<p>The <code>Type=simple</code> means the process lauching by <code>ExecStart</code> is the main process and will NOT exit. In other word, it does not 'daemonize' itself.</p>
+</li>
+<li>
+<p>The process will be restarted by systemd in case of unattended exit, in all case (i.e on failure).</p>
+</li>
+<li>
+<p>The process will be executed as a specific user/group, defined by the <code>{{user}}</code> and <code>{{group}}</code> variable. It is expected these variables are set in a <code>vars</code> block in the HADeploy file. And than the unit file is a 'template'.</p>
+</li>
+</ul>
+<h2 id="example">Example</h2>
+<pre><code class="yaml">vars:
+  user: harelay
+  group: harelay
+
+files:
+- { scope: edge_nodes, notify: [ &quot;systemd://harelay&quot; ], src: &quot;tmpl://harelay&quot;, dest_folder: &quot;/opt/harelay/bin&quot;, 
+    owner: &quot;${user}&quot;, group: &quot;${group}&quot;, mode: &quot;0755&quot; }
+- { scope: edge_nodes, notify: [ &quot;systemd://harelay&quot; ], src: &quot;tmpl://config.conf&quot;, dest_folder: &quot;/opt/harelay/etc&quot;, 
+    owner: &quot;${user}&quot;, group: &quot;${group}&quot;, mode: &quot;0644&quot; }
+
+systemd_units:
+- name: harelay
+  scope: edge_nodes
+  unit_file: &quot;tmpl://harelay.service.j2&quot;
+
+</code></pre>
+
+<p>Note the <code>notify</code> attribute in the <a href="../../files/files"><code>files</code></a> entries, to trigger a service restart in case of modification of these files.</p>
+<h2 id="actions-stop-start-and-status">Actions <code>stop</code>, <code>start</code> and <code>status</code></h2>
+<p>The <code>services</code> plugin introduce three new actions:</p>
+<pre><code class="sh">hadeploy --src ..... --action stop
+</code></pre>
+
+<p>Will stop all services described by the <code>systemd_units</code> list. And </p>
+<pre><code class="sh">hadeploy --src ..... --action start
+</code></pre>
+
+<p>Will start the same services. While </p>
+<pre><code class="sh">hadeploy --src ..... --action status
+</code></pre>
+
+<p>will display current status of the managed services, in a rather primitive form.</p></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>var base_url = '../../..';</script>
+        <script data-main="../../../mkdocs/js/search.js" src="../../../mkdocs/js/require.js"></script>
+        <script src="../../../js/base.js"></script><div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
