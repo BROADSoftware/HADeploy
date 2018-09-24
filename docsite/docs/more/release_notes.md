@@ -1,6 +1,6 @@
 # Release notes
 
-## 0.5.8
+## 0.6.0
 
 - /var/run/supervisor_xxxx folder was sometime deleted (i.e. after a hard restart). Now automatically recreated
 - Yarn service failed when existing job list was empty. Fixed
