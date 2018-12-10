@@ -43,7 +43,12 @@
     # Create a folder for log file
     - name: Setup kafka_relay helper (4/4)  
       file: path={{{ src.kafka_relay.tools_folder}}}/jdctopic/logs-{{{src.kafka_relay.logsUser}}} owner={{{src.kafka_relay.logsUser}}} state=directory
+      
 {{% if src.kafka_relay.become_user is defined %}}
+      # Create the file defined as remote_tmp = /tmp/.ansible-${USER}/tmp in ansible.cfg, to ensure correct permissions
+    - name: "Create ansible working file"
+      file: path=/tmp/.ansible-{{{src.kafka_relay.become_user}}}/tmp state=directory owner={{{src.kafka_relay.become_user}}} mode="0777"
+      
     become: true
     become_user: "{{{src.kafka_relay.become_user}}}"
 {{% if src.kafka_relay.become_method is defined %}}
@@ -51,10 +56,5 @@
 {{%endif%}}
 {{%endif%}}
 
-{{% if src.kafka_relay.become_user is defined %}}
-  # Create the file defined as remote_tmp = /tmp/.ansible-${USER}/tmp in ansible.cfg, to ensure correct permissions
-  - name: "Create ansible working file"
-    file: path=/tmp/.ansible-{{{src.kafka_relay.become_user}}}/tmp state=directory owner={{{src.kafka_relay.become_user}}} mode="0777"
-{{% endif %}}  
     
 {{%endif%}}
