@@ -352,7 +352,7 @@ def main():
             rm_endpoint = dict(required=False, default=None),
             log_level = dict(required=False, default="None")
         ),
-        supports_check_mode=True
+        supports_check_mode=False
     )
     
     if not HAS_REQUESTS:

@@ -338,7 +338,7 @@ def main():
             log_level = dict(type='str', required=False, default="None")
             
         ),
-        supports_check_mode=True
+        supports_check_mode=False
     )
     
     if not HAS_REQUESTS:
