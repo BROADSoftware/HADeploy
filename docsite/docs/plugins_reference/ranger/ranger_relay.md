@@ -52,6 +52,7 @@ it must be the full path, including the keytab file name. And the containing fol
 ## Example
 
 A simple configuration:
+
 ```yaml
 ranger_relay:
   host: en1
@@ -60,6 +61,7 @@ ranger_relay:
   ranger_password: admin
 ```
 A more secure configuration, with https, certificate validation and encrypted password.
+
 ```yaml
 encrypted_vars:
   ranger_password: |
@@ -89,8 +91,17 @@ The offending line appears to be:
                       ^ here
 ```
 
-
 More detail on how to encrypt a value and providing a password on execution at [encrypted variables](../core/encrypted_vars)
+
+A configuration using Kerberos authentication:
+
+```yaml
+ranger_relay:
+  host: en1
+  ranger_url:  http://ranger.mycluster.mycompany.com:6080
+  principal: sa
+  local_keytab_path: ./sa-gate17.keytab  
+```
 
 ## CA_BUNDLE
 
