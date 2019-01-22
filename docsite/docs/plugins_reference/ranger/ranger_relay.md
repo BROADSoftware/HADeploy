@@ -14,8 +14,12 @@ Name | req? |	Description
 --- | ---  | ---
 host|yes|From which host these commands will be launched. Typically, an edge node in the cluster. But may be a host outside the cluster.
 ranger_url|yes|The Ranger base URL to access Ranger API. Same host:port as the Ranger Admin GUI. Typically: <br>`http://myranger.server.com:6080`<br>or<br>`https://myranger.server.com:6182`
-ranger_username|yes|The user name to log on the Ranger Admin. Must have enough rights to manage policies
-ranger_password|yes|The password associated with the admin_username. May be encrypted. Refer to [encrypted variables](../core/encrypted_vars)
+ranger_username|no|The user name to log on the Ranger Admin. Must have enough rights to manage policies
+ranger_password|no|The password associated with the admin_username. May be encrypted. Refer to [encrypted variables](../core/encrypted_vars)
+principal|no|A Kerberos principal allowing all Ranger related operation to be performed. See [below](#kerberos-authentication)
+local_keytab_path|no|A local path to the associated keytab file. This path is relative to the embeding file. See [below](#kerberos-authentication)
+relay_keytab_path|no|A path to the associated keytab file on the relay host. See [below](#kerberos-authentication)
+tools_folder|no|Folder used by HADeploy to store keytab if needed.<br>Default: `/tmp/hadeploy_<user>/` where `user` is the [`ssh_user`](../inventory/hosts) defined for this relay host.
 validate_certs|no|Useful if Ranger Admin connection is using SSL. If no, SSL certificates will not be validated. This should only be used on personally controlled sites using self-signed certificates.<br>Default: `yes`
 ca_bundle_relay_file|no|Useful if Ranger Admin connection is using SSL. Allow to specify a CA_BUNDLE file, a file that contains root and intermediate certificates to validate the Ranger Admin certificate in .pem format.<br>This file will be looked up on the relay host system, on which this module will be executed.
 ca_bundle_local_file|no|Same as above, except this file will be looked up locally, relative to the main file. It will be copied on the relay host at the location defined by `ca_bundle_relay_file`
@@ -28,6 +32,22 @@ storm_service_name|no|In most cases, you should not need to set this parameter. 
 policy_name_decorator|no|To distinguish Ranger policy managed by HADeploy, a naming convention is applied by default. The policy name, as it will appears in the GUI Ranger interface will be in the form `HAD[<policyName>]`, where `<policyName>` is the name of the policy as you provide it.<br>This is achieved by wrapping the name with this pattern, where `{0}` is substituted with the policy name. <br>For python aware reader, this is performed as:<br>`"HAD[{0}]".format(policyName)`.<br>If you just want to have raw policy name, simply define the parameter with `{0}`.<br>Default: `HAD[{0}]`
 no_log|no|Boolean. Prevent some messages to be displayed, as they can contains sensitive information. This can make debugging somewhat more difficult, so temporary setting this swith to `False` may be useful to get more information (Including sensitive ones!).<br>Default `True` 
 when|no|Boolean. Allow [conditional deployment](../../more/conditional_deployment) of this item.<br>Default `True` 
+
+## Kerberos authentication
+
+When `principal` and `..._keytab_path` variables are defined, Kerberos authentication will be activated for all Ranger operations. This means a `kinit` will be issued with provided values before any Ranger access, and a `kdestroy` issued after. This has the following consequences:
+
+* All Ranger operations will be performed on behalf of the user defined by the provided principal. **This user must have enough rights to perform required policy manipulation.** Granting this user with 'admin' role through Ranger UI is the simplest way to achieve this.
+
+* The `kinit` will be issued on the relay host with the [`ssh_user`](../inventory/hosts) account. This means any previous ticket own by this user on this node will be lost. 
+
+Regarding the keytab file, two cases:
+
+* This keytab file already exists on the relay host. In such case, the `relay_keytab_path` must be set to the location of this file. And the relay host's [`ssh_user`](../inventory/hosts) must have read access on it.
+
+* This keytab file is not present on the relay host. In such case the `local_keytab_path` must be set to its local location. HADeploy will take care of copying it on the remote relay host, 
+in a location under `tools_folder`. Note you can also modify this target location by setting also the `relay_keytab_path` parameter. In this case, 
+it must be the full path, including the keytab file name. And the containing folder must exists.
 
 ## Example
 
