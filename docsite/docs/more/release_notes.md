@@ -1,5 +1,9 @@
 # Release notes
 
+## 0.6.2
+
+ - ???
+
 ## 0.6.1
 
  - In addition to login/password, Ranger authentication can now be performed through Kerberos.
