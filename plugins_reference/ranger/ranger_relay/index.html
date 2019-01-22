@@ -629,6 +629,14 @@ ranger_relay:
 </code></pre>
 
 <p>More detail on how to encrypt a value and providing a password on execution at <a href="../../core/encrypted_vars">encrypted variables</a></p>
+<p>A configuration using Kerberos authentication:</p>
+<pre><code class="yaml">ranger_relay:
+  host: en1
+  ranger_url:  http://ranger.mycluster.mycompany.com:6080
+  principal: sa
+  local_keytab_path: ./sa-gate17.keytab  
+</code></pre>
+
 <h2 id="ca_bundle">CA_BUNDLE</h2>
 <p>Internally, HADeploy use the python <code>requests</code> API to access Ranger. The provided <code>ca_bundle_relay_file</code> will be used as the <code>verify</code> parameter of all HTTP requests. More info  <a href="http://docs.python-requests.org/en/master/user/advanced/#ssl-cert-verification">here</a>.</p>
 <p>In some cases, a CA_BUNDLE may be simply the certificate of the Ranger server, in PEM format.</p>
