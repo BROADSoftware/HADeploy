@@ -17,7 +17,7 @@
 
 import logging
 from hadeploy.core.plugin import Plugin
-from hadeploy.core.const import SRC,DATA,SCOPE_RANGER,ACTION_DEPLOY,ACTION_REMOVE
+from hadeploy.core.const import SRC,DATA,SCOPE_RANGER,ACTION_DEPLOY,ACTION_REMOVE,DEFAULT_TOOLS_FOLDER
 import hadeploy.core.misc as misc
 import os
 from sets import Set
@@ -38,6 +38,17 @@ CA_BUNDLE_LOCAL_FILE="ca_bundle_local_file"
 CA_BUNDLE_RELAY_FILE="ca_bundle_relay_file"
 POLICY_NAME_DECORATOR="policy_name_decorator"
 CA_BUNDLE_RELAY_FOLDER="ca_bundle_relay_folder"
+
+RANGER_USERNAME="ranger_username"
+RANGER_PASSWORD="ranger_password"
+PRINCIPAL="principal"
+LOCAL_KEYTAB_PATH="local_keytab_path"
+RELAY_KEYTAB_PATH="relay_keytab_path"
+KDEBUG="kdebug"
+_KERBEROS_="_kerberos_"
+TOOLS_FOLDER="tools_folder"
+_RELAY_KEYTAB_FOLDER_="_relayKeytabFolder_"        
+
 
 NAME="name"
 RECURSIVE="recursive"
@@ -113,9 +124,12 @@ class RangerPlugin(Plugin):
         self.myHostGroups = []
     
     def onNewSnippet(self, snippetPath):
-        if RANGER_RELAY in self.context.model[SRC]:
-            if CA_BUNDLE_LOCAL_FILE in self.context.model[SRC][RANGER_RELAY]:
-                self.context.model[SRC][RANGER_RELAY][CA_BUNDLE_LOCAL_FILE] = misc.snippetRelocate(snippetPath, self.context.model[SRC][RANGER_RELAY][CA_BUNDLE_LOCAL_FILE])
+        model = self.context.model
+        if RANGER_RELAY in model[SRC]:
+            if CA_BUNDLE_LOCAL_FILE in model[SRC][RANGER_RELAY]:
+                model[SRC][RANGER_RELAY][CA_BUNDLE_LOCAL_FILE] = misc.snippetRelocate(snippetPath, model[SRC][RANGER_RELAY][CA_BUNDLE_LOCAL_FILE])
+            if LOCAL_KEYTAB_PATH in model[SRC][RANGER_RELAY]:
+                model[SRC][RANGER_RELAY][LOCAL_KEYTAB_PATH] = misc.snippetRelocate(snippetPath, model[SRC][RANGER_RELAY][LOCAL_KEYTAB_PATH])
             
 
     def getGroomingPriority(self):
@@ -195,6 +209,8 @@ def groomRangerRelay(model):
         misc.setDefaultInMap(relay, VALIDATE_CERTS, True)
         misc.setDefaultInMap(relay, NO_LOG, True)
         misc.setDefaultInMap(relay, POLICY_NAME_DECORATOR, 'HAD[{0}]')
+        misc.setDefaultInMap(model[SRC][RANGER_RELAY], TOOLS_FOLDER, DEFAULT_TOOLS_FOLDER)
+        
         if CA_BUNDLE_LOCAL_FILE in relay:
             if not os.path.exists(relay[CA_BUNDLE_LOCAL_FILE]):
                 misc.ERROR("ranger_relay.ca_bundle_local_file: {0} does not exists".format(relay[CA_BUNDLE_LOCAL_FILE]))
@@ -203,6 +219,28 @@ def groomRangerRelay(model):
             if not os.path.isabs(relay[CA_BUNDLE_RELAY_FILE]):
                 misc.ERROR("ranger_relay.ca_bundle_remote_file: {0}  must be absolute!".format(relay[CA_BUNDLE_RELAY_FILE]))
             relay[CA_BUNDLE_RELAY_FOLDER] = os.path.dirname(relay[CA_BUNDLE_RELAY_FILE] )
+            
+        if PRINCIPAL in  model[SRC][RANGER_RELAY]:
+            if LOCAL_KEYTAB_PATH not in model[SRC][RANGER_RELAY] and  RELAY_KEYTAB_PATH not in model[SRC][RANGER_RELAY]:
+                misc.ERROR("ranger_relay: Please provide a 'local_keytab_path' and/or a 'relay_keytab_path' if you want to use a Kerberos 'principal'")
+            model[SRC][RANGER_RELAY][_KERBEROS_] = True
+            if LOCAL_KEYTAB_PATH in model[SRC][RANGER_RELAY]:
+                if not os.path.exists(model[SRC][RANGER_RELAY][LOCAL_KEYTAB_PATH]):
+                    misc.ERROR("ranger_relay: local_keytab_file '{0}' does not exists!".format(model[SRC][RANGER_RELAY][LOCAL_KEYTAB_PATH]))
+            if RELAY_KEYTAB_PATH not in model[SRC][RANGER_RELAY]:
+                model[SRC][RANGER_RELAY][_RELAY_KEYTAB_FOLDER_] = os.path.join(model[SRC][RANGER_RELAY][TOOLS_FOLDER], "keytabs")
+                model[SRC][RANGER_RELAY][RELAY_KEYTAB_PATH] = os.path.join( model[SRC][RANGER_RELAY][_RELAY_KEYTAB_FOLDER_], os.path.basename(model[SRC][RANGER_RELAY][LOCAL_KEYTAB_PATH]))
+            misc.setDefaultInMap(model[SRC][RANGER_RELAY], KDEBUG, False)
+            if RANGER_USERNAME in model[SRC][RANGER_RELAY] or RANGER_PASSWORD in model[SRC][RANGER_RELAY]:
+                misc.ERROR("ranger_relay: If a principal is defined both ranger_usernmame and ranger_passsword must not be defined!")
+            model[SRC][RANGER_RELAY][RANGER_USERNAME] = "KERBEROS"
+            model[SRC][RANGER_RELAY][RANGER_PASSWORD] = "unused"
+        else:
+            if LOCAL_KEYTAB_PATH in model[SRC][RANGER_RELAY] or RELAY_KEYTAB_PATH in model[SRC][RANGER_RELAY]:
+                misc.ERROR("kafka_relay: Please, provide a 'principal' if you need to use a keytab")
+            model[SRC][RANGER_RELAY][_KERBEROS_] = False
+            if RANGER_USERNAME not in model[SRC][RANGER_RELAY] or RANGER_PASSWORD not in model[SRC][RANGER_RELAY]:
+                misc.ERROR("ranger_relay: If a principal is not defined both ranger_usernmame and ranger_passsword must be defined!")
         
 # -------------------------------------------------------------- HDFS
 

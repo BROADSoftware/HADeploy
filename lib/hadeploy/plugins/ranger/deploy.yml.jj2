@@ -17,6 +17,29 @@
     changed_when: false 
 {{%endif%}}
 
+
+{{% if src.ranger_relay._kerberos_ %}}
+{{% if  src.ranger_relay._relayKeytabFolder_ is defined %}}
+  - name: Create keytabs location
+    file: path={{{ src.ranger_relay._relayKeytabFolder_}}} owner={{ansible_user}}  mode="0700" state=directory
+{{%endif%}}
+{{% if  src.ranger_relay.local_keytab_path is defined %}}
+  - name: Push keytab file
+    copy: src={{{src.ranger_relay.local_keytab_path }}} dest={{{src.ranger_relay.relay_keytab_path }}} owner={{ansible_user}} mode="0400"
+{{%endif%}}
+  - name: Perform kinit for Ranger UI access
+    shell: kinit -kt {{{ src.ranger_relay.relay_keytab_path }}} {{{ src.ranger_relay.principal }}}
+    changed_when: false
+{{% if src.ranger_relay.kdebug %}} 
+  - name: Check kerberos ticket for Ranger UI access
+    shell: klist
+    register: klist_result
+    changed_when: false
+  - debug: var=klist_result
+{{%endif%}}
+{{%endif%}}
+
+
 {{% if src.hdfs_ranger_policies is defined and src.hdfs_ranger_policies|length > 0 %}}
   - name: will set HDFS policies
 {{% if src.ranger_relay.no_log %}}  
@@ -248,6 +271,13 @@
 {{% endfor %}}
 {{%endif%}}
 {{% endfor %}}
+{{%endif%}}
+
+
+{{% if src.ranger_relay._kerberos_ %}}
+  - name: Perform kdestroy for Ranger UI access
+    shell: kdestroy
+    changed_when: false
 {{%endif%}}
 
   

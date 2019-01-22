@@ -7,8 +7,13 @@ mapping:
     mapping:
       "host": { type: str, required: true }
       "ranger_url": { type: str, required: true }
-      "ranger_username": { type: str, required: true }
-      "ranger_password": { type: str, required: true }
+      "ranger_username": { type: str, required: false }
+      "ranger_password": { type: str, required: false }
+      "principal": { type: str, required: false }           # Kerberos principal
+      "relay_keytab_path": { type: str, required: false }         # Path to a keytab file on relay host
+      "local_keytab_path": { type: str, required: false }         # Path to a keytab file on HADeploy node
+      "kdebug": { type: bool, required: false }             # Display klist result
+      "tools_folder": { type: str, required: false }
       "validate_certs": { type: bool, required: false }    # Default to true
       "ca_bundle_relay_file": { type: str, required: false }
       "ca_bundle_local_file": { type: str, required: false }
