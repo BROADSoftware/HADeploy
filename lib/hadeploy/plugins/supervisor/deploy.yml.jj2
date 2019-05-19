@@ -7,7 +7,7 @@
   any_errors_fatal: {{{ src.exit_on_fail }}}
   tasks:
   - name: Install supervisor package
-    yum: name=supervisor  state=present  
+    yum: name=supervisor  state=present and (hadeploy_privileged is not defined or hadeploy_privileged)  
   # ----------------- Create supervisor_xxxx folders
   - name: create Supervisor folders
     file: state=directory path={{item.path}} owner={{item.user}} group={{item.group}} mode="0755"

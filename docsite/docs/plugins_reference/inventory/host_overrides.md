@@ -31,6 +31,7 @@ become_method|no|Allow to override become_method
 become_user|no|Allow to override become_user
 become_pass|no|Allow to override become_pass. This may be encrypted. Refer to [encrypted variables](../core/encrypted_vars)
 become_exe|no|Allow to override become_exe
+privileged|no|Allow to override privileged. See usage in [hosts](./hosts)
 priority|no|An integer number allowing to order overriding in case of multiple `host_override` on the same host(s). See example below.<br>Default: 100
 when|no|Boolean. Allow [conditional deployment](../../more/conditional_deployment) of this item.<br>Default `True` 
 
@@ -71,8 +72,11 @@ host_overrides:
   ssh_user: deployer      
   ssh_password: "{{deployer_password}}"
   ssh_private_key_file: ''
+  privileged: no
 ```
 Refer to [encrypted variables](../core/encrypted_vars) for more information.
+
+Note than we also set `privileged` flag to `no`. This to skip some operation which would have required some 'root' access.
 
 ### Priority
 

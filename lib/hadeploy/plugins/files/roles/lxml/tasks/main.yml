@@ -19,9 +19,9 @@
 
 - name: Install 'lxml' package for maven_repository module (RedHat)
   yum: name=python-lxml state=present
-  when: ansible_os_family == 'RedHat'
+  when: ansible_os_family == 'RedHat' and (hadeploy_privileged is not defined or hadeploy_privileged)
 
 - name: Install 'lxml' package for maven_repository module (Debian)
   apt: name=python-lxml state=present
-  when: ansible_os_family == 'Debian'
+  when: ansible_os_family == 'Debian' and (hadeploy_privileged is not defined or hadeploy_privileged)
   

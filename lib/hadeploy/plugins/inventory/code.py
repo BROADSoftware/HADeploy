@@ -106,6 +106,9 @@ def prepareAnsibleModel(model):
                 # Fix a delta between HADeploy and Ansible attributes
                 elif key == "ssh_password":
                     ansibleModel["ansible_ssh_pass"] = host[key]
+                # Handle name change for hadeploy specific
+                elif key == "privileged":
+                    ansibleModel["hadeploy_privileged"] = host[key]
                 # Skip attributes not intended to Ansible
                 elif key == "name" or key == "force_setup":
                     pass 

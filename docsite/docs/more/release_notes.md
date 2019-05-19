@@ -1,8 +1,8 @@
 # Release notes
 
-## 0.6.2
+## 0.6.2beta
 
- - ???
+ - Add `privileged` flag to [hosts](../plugins_reference/inventory/hosts) and [host_overrides](../plugins_reference/inventory/host_overrides)
 
 ## 0.6.1
 
