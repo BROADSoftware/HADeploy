@@ -28,6 +28,7 @@ mapping:
         "become_pass": { type: str, required: false }
         "become_exe": { type: str, required: false }
         "become_flags": { type: str, required: false }
+        "python_interpreter": { type: str, required: false }
         "privileged": { type: bool, required: false }
         "when": { type: bool, required: false }    # Default to true
 
@@ -55,6 +56,7 @@ mapping:
         "become_pass": { type: str, required: false }
         "become_exe": { type: str, required: false }
         "become_flags": { type: str, required: false }
+        "python_interpreter": { type: str, required: false }
         "privileged": { type: bool, required: false }
         "priority": { type: int, required: false }    # Default to 100
         "when": { type: bool, required: false }    # Default to true

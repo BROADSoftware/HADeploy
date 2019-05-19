@@ -29,6 +29,7 @@ become_user|no|Allows to set the user you become through privilege escalation
 become_pass|no|Allows you to set the privilege escalation password. This may be encrypted. Refer to [encrypted variables](../core/encrypted_vars)
 become_exe|no|Allows you to set the executable for the escalation method selected
 become\_flags|no|Allows you to set the flags passed to the selected escalation method.
+python\_interpreter|no|Allow to set the `ansible_python_interpreter` Ansible variable. May be set to use a non-default Python interpreter, or a specific Python virtualenv, which include some required packages.
 privileged|no|Specify if `ssh_user` has privileged access (Typically is root). If not, some operation, such as `yum install` will be skipped (instead of failing). In this case, it is up to the user to ensure required package are already presents.<br>Default `True` 
 when|no|Boolean. Allow [conditional deployment](../../more/conditional_deployment) of this item.<br>Default `True` 
 

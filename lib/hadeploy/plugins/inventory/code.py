@@ -109,6 +109,8 @@ def prepareAnsibleModel(model):
                 # Handle name change for hadeploy specific
                 elif key == "privileged":
                     ansibleModel["hadeploy_privileged"] = host[key]
+                elif key == "python_interpreter":
+                    ansibleModel["ansible_python_interpreter"] = host[key]
                 # Skip attributes not intended to Ansible
                 elif key == "name" or key == "force_setup":
                     pass 

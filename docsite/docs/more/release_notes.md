@@ -3,7 +3,8 @@
 ## 0.6.2beta
 
  - Add `privileged` flag to [hosts](../plugins_reference/inventory/hosts) and [host_overrides](../plugins_reference/inventory/host_overrides)
-
+ - Add `python_interpreter` variable to [hosts](../plugins_reference/inventory/hosts) and [host_overrides](../plugins_reference/inventory/host_overrides)
+ 
 ## 0.6.1
 
  - In addition to login/password, Ranger authentication can now be performed through Kerberos.
